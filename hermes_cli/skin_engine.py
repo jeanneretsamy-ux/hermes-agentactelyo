@@ -58,7 +58,7 @@ def _wings(*glyphs) -> List[List[str]]:
 
 # Branding shared by every Hermes-named built-in (mono/daylight override help_header).
 _HERMES_BRANDING: Dict[str, str] = _branding(
-    "Hermes", "☤", "Goodbye! ☤", prompt="❯", help_header="(^_^)? Available Commands")
+    "Actelyo Legal Harness", "⚖", "Goodbye! ☤", prompt="❯", help_header="(^_^)? Available Commands")
 
 _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
     "default": {

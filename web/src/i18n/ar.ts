@@ -50,12 +50,12 @@ export const ar = defineLocale({
   },
 
   app: {
-    brand: "Hermes Agent",
+    brand: "Actelyo Legal Harness Agent",
     brandShort: "HA",
     closeNavigation: "إغلاق التنقل",
     closeModelTools: "إغلاق النموذج والأدوات",
     footer: {
-      org: "Nous Research",
+      org: "Actelyo",
     },
     activeSessionsLabel: "الجلسات النشطة:",
     gatewayStatusLabel: "حالة البوابة:",
@@ -120,8 +120,8 @@ export const ar = defineLocale({
     starting: "قيد البدء",
     startedInBackground: "بدء في الخلفية — تحقق من السجلات للتقدم",
     stopped: "متوقف",
-    updateHermes: "تحديث Hermes",
-    updatingHermes: "جاري تحديث Hermes…",
+    updateHermes: "تحديث Actelyo Legal Harness",
+    updatingHermes: "جاري تحديث Actelyo Legal Harness…",
     waitingForOutput: "في انتظار الناتج…",
   },
 
@@ -273,7 +273,7 @@ export const ar = defineLocale({
       "تم الحفظ — أعد تشغيل البوابة لتطبيق التغيير.",
     forceReinstall: "إعادة تثبيت إجباري (حذف المجلد الموجود أولاً)",
     headline:
-      "اكتشف وثبِّت وفعِّل وحدِّث مكوِّنات Hermes الإضافية (مطابقة `hermes plugins`).",
+      "اكتشف وثبِّت وفعِّل وحدِّث مكوِّنات Actelyo Legal Harness الإضافية (مطابقة `hermes plugins`).",
     identifierLabel: "رابط Git أو owner/repo",
     inactive: "غير نشط",
     installBtn: "تثبيت من Git",
@@ -439,11 +439,11 @@ export const ar = defineLocale({
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "إنجازات Hermes",
+      title: "إنجازات Actelyo Legal Harness",
       subtitle:
-        "شارات Hermes قابلة للجمع مكتسبة من سجل الجلسات الفعلي. الإنجازات غير المكتملة المعروفة تُعرض كـ Discovered؛ تبقى الإنجازات السرية مخفية حتى يظهر السلوك المطابق لأول مرة.",
+        "شارات Actelyo Legal Harness قابلة للجمع مكتسبة من سجل الجلسات الفعلي. الإنجازات غير المكتملة المعروفة تُعرض كـ Discovered؛ تبقى الإنجازات السرية مخفية حتى يظهر السلوك المطابق لأول مرة.",
       scan_subtitle:
-        "فحص سجل جلسات Hermes. يمكن أن يستغرق الفحص الأول 5–10 ثوانٍ على السجلات الكبيرة.",
+        "فحص سجل جلسات Actelyo Legal Harness. يمكن أن يستغرق الفحص الأول 5–10 ثوانٍ على السجلات الكبيرة.",
     },
     actions: {
       rescan: "إعادة الفحص",
@@ -458,7 +458,7 @@ export const ar = defineLocale({
       highest_tier: "أعلى مستوى",
       highest_tier_hint: "نحاس → فضة → ذهب ← ماس → أوليمبي",
       latest: "الأحدث",
-      latest_hint_empty: "شغِّل Hermes أكثر",
+      latest_hint_empty: "شغِّل Actelyo Legal Harness أكثر",
       none_yet: "لا توجد بعد",
     },
     state: {
@@ -489,10 +489,10 @@ export const ar = defineLocale({
       tiers_header: "المستويات",
       secret_header: "الإنجازات السرية",
       secret_body:
-        "تخفى الأسرار محددها الدقيق. بمجرد أن ترى Hermes إشارة ذات صلة، تصبح البطاقة مكتشفة وتعرض متطلباتها.",
+        "تخفى الأسرار محددها الدقيق. بمجرد أن ترى Actelyo Legal Harness إشارة ذات صلة، تصبح البطاقة مكتشفة وتعرض متطلباتها.",
       scan_status_header: "حالة الفحص",
       scan_status_body:
-        "تُفحص Hermes السجل المحلي مرة واحدة، ثم تظهر البطاقات تلقائيًا. لا يوجد توقف إذا استغرق هذا بضع ثوانٍ.",
+        "تُفحص Actelyo Legal Harness السجل المحلي مرة واحدة، ثم تظهر البطاقات تلقائيًا. لا يوجد توقف إذا استغرق هذا بضع ثوانٍ.",
       what_scanned_header: "ما يتم فحصه",
       what_scanned_body:
         "الجلسات، استدعاءات الأدوات، بيانات تعريف النموذج، الأخطاء، الإنجازات، وحالة الفتح المحلية.",
@@ -539,7 +539,7 @@ export const ar = defineLocale({
         "المشاركة على X تفتح منشورًا معدَّلاً مسبقًا في تبويب جديد. انقر نسخ الصورة أولاً إذا أردت شارة الإنجاز 1200×630 مرفقة — يسمح X باللصق مباشرة في مؤلف التغريد. تنزيل PNG يحفظ الملف للاستخدام anywhere.",
       clipboard_unsupported:
         "نسخ صورة الحافظة غير مدعوم في هذا المتصفح — استخدم التنزيل بدلاً من ذلك.",
-      tweet_text: "فتحت للتو {tier_part}\"{name}\" في Hermes Agent ☤"
+      tweet_text: "فتحت للتو {tier_part}\"{name}\" في Actelyo Legal Harness Agent ☤"
     },
   },
 

@@ -1,13 +1,13 @@
 {
   "name": "hermes",
-  "productName": "Hermes",
+  "productName": "Actelyo Legal Harness",
   "private": true,
   "version": "0.0.0",
-  "description": "Native desktop shell for Hermes Agent.",
-  "author": "Nous Research",
+  "description": "Interface PC Actelyo Legal Harness.",
+  "author": "Actelyo",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NousResearch/hermes-agent.git"
+    "url": "git+https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git"
   },
   "type": "module",
   "main": "dist/electron-main.mjs",
