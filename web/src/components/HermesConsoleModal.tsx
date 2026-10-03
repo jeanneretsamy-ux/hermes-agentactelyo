@@ -109,8 +109,8 @@ export function HermesConsoleModal({ open, onClose }: HermesConsoleModalProps) {
   const termRef = useRef<XtermTerminal | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const lineRef = useRef("");
-  const promptRef = useRef("hermes> ");
-  const inputPromptRef = useRef("hermes> ");
+  const promptRef = useRef("actelyo> ");
+  const inputPromptRef = useRef("actelyo> ");
   const historyRef = useRef<string[]>([]);
   const historyIndexRef = useRef<number | null>(null);
   const activeCommandRef = useRef(false);
@@ -281,7 +281,7 @@ export function HermesConsoleModal({ open, onClose }: HermesConsoleModalProps) {
       if (!term) return;
 
       if (frame.type === "ready") {
-        const nextPrompt = frame.prompt || "hermes> ";
+        const nextPrompt = frame.prompt?.replace(/^hermes>/, "actelyo>") || "actelyo> ";
         promptRef.current = nextPrompt;
         inputPromptRef.current = nextPrompt;
         hasReadyFrameRef.current = true;

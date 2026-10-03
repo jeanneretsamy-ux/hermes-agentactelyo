@@ -253,3 +253,6 @@ html[dir="rtl"] {
   direction: rtl;
 }
 
+
+/* Official Actelyo wordmark contrast, shared across components and themes. */
+:root { --actelyo-brand-tile: #102a43; }

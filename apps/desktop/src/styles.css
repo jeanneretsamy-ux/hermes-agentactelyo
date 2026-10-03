@@ -3814,3 +3814,6 @@ html[data-hud-window] [data-slot='popover-content'] {
 [data-pane-hidden] * {
   visibility: inherit !important;
 }
+
+/* Official Actelyo wordmark contrast, shared across components and themes. */
+:root { --actelyo-brand-tile: #102a43; }
