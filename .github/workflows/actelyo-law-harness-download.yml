@@ -71,6 +71,16 @@ jobs:
           if (Test-Path -LiteralPath $cache) { throw 'Rebuild cache directory already exists' }
           if (Test-Path -LiteralPath $seedCache) { Move-Item -LiteralPath $seedCache -Destination $cache }
           else { New-Item -ItemType Directory -Path $cache | Out-Null }
+          # Never rebuild over a sealed cached source tree: its .pyc files are read-only.
+          # Rename the owned generated directory; do not chmod or delete cache bytes.
+          $payloadRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload'))
+          $priorRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload-prior'))
+          if (-not $payloadRoot.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar) -or -not $priorRoot.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Payload staging escaped workspace' }
+          if (Test-Path -LiteralPath $priorRoot) { throw 'Prior payload directory already exists' }
+          if (Test-Path -LiteralPath $payloadRoot) {
+            if ((Get-Item -LiteralPath $payloadRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Payload root must not be a link' }
+            Move-Item -LiteralPath $payloadRoot -Destination $priorRoot
+          }
           "ACTELYO_REBUILD_CACHE=$cache" >> $env:GITHUB_ENV
       - name: Stage the local agent runtime
         if: steps.payload.outputs.cache-hit != 'true'
