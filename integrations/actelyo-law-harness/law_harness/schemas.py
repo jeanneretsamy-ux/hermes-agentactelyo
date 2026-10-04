@@ -1,4 +1,5 @@
 """Schemas shared by prompts and constrained model generation."""
+import copy
 STRING = {"type": "string"}
 STRINGS = {"type": "array", "items": STRING}
 
@@ -25,3 +26,13 @@ REVIEW_SCHEMA = {
                     "type": "object", "additionalProperties": False,
                     "required": ["evidence_id", "quote"],
                     "properties": {"evidence_id": STRING, "quote": STRING}}}}}}}}
+
+
+def review_schema(documents, evidence):
+    schema = copy.deepcopy(REVIEW_SCHEMA)
+    fields = schema["properties"]["risks"]["items"]["properties"]
+    fields["clause"]["properties"]["document_id"] = {
+        "type": "string", "enum": [d["id"] for d in documents]}
+    fields["citations"]["items"]["properties"]["evidence_id"] = {
+        "type": "string", "enum": list(evidence)}
+    return schema

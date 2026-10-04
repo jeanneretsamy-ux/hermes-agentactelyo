@@ -140,7 +140,17 @@ La connexion effective depuis LM Studio reste à vérifier sur l'application ins
 | Statut de revue | Signification |
 |---|---|
 | `insufficient_evidence` | Aucune preuve exploitable ; aucune analyse inventée |
-| `blocked_validation` | Sortie ou citations invalides ; ne pas accepter le livrable |
+| `blocked_validation` | Sortie/citations invalides, contradiction signalée ou audit factuel non concluant ; ne pas accepter le livrable |
+
+La génération contraint `document_id` et `evidence_id` aux identifiants réellement
+fournis. Les extraits restent vérifiés exactement après génération ; aucun identifiant
+inconnu n'est réparé automatiquement. Une seconde lecture par le même modèle compare
+les affirmations factuelles du brouillon aux contrats. Un conflit, une incertitude ou
+un échec de cet audit bloque la sortie. Les constats doivent citer une affirmation
+du brouillon et un passage exact du document. Ce contrôle peut manquer une contradiction
+ou en signaler une à tort ; il ne certifie ni l'interprétation juridique ni l'absence
+d'hallucination. `human_validation_required` reste toujours vrai. L'API conserve le
+brouillon brut des rapports bloqués : chaque consommateur doit respecter leur statut.
 | `draft_incomplete` | Brouillon avec source en échec ou date inconnue |
 | `draft` | Contrôles techniques passés ; validation juridique humaine requise |
 

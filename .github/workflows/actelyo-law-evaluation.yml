@@ -1,0 +1,22 @@
+name: Actelyo legal evaluation counters
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/actelyo-local-modules-20261003]
+    paths:
+      - evals/actelyo-law-harness/**
+      - tests/evals/test_actelyo_evaluation.py
+      - .github/workflows/actelyo-law-evaluation.yml
+permissions:
+  contents: read
+jobs:
+  counters:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check evaluation denominators and human adjudication
+        run: python -m unittest discover -s tests/evals -p test_actelyo_evaluation.py -v

@@ -58,8 +58,11 @@ class FakeModel:
         self.output = output or analysis()
 
     def complete(self, system, payload, schema=None):
+        if schema.get("required") == ["status", "findings"]:
+            self.calls.append((system, payload))
+            return {"status": "clear", "findings": []}
         self.calls.append((system, payload))
-        if len(self.calls) % 2 == 1:
+        if schema.get("required") == ["issues", "queries"]:
             return {"queries": ["responsabilité contractuelle"], "issues": ["Limitation de responsabilité"]}
         return copy.deepcopy(self.output)
 
@@ -107,6 +110,40 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(result["external_write"])
         self.assertFalse(result["search_exhaustive"])
         self.assertEqual(len(result["evidence"][0]["sha256"]), 64)
+
+    def test_generation_identifiers_are_bound_to_supplied_documents_and_evidence(self):
+        captured = []
+        class InspectModel(FakeModel):
+            def complete(self, system, payload, schema=None):
+                captured.append((payload, copy.deepcopy(schema)))
+                if schema.get("required") == ["status", "findings"]:
+                    return {"status": "clear", "findings": []}
+                return super().complete(system, payload, schema)
+        result = self.harness(model=InspectModel()).review(request())
+        review_payload, schema = captured[1]
+        risk = schema["properties"]["risks"]["items"]["properties"]
+        self.assertEqual(set(risk["clause"]["properties"]["document_id"]["enum"]),
+                         {d["id"] for d in review_payload["documents"]})
+        self.assertEqual(set(risk["citations"]["items"]["properties"]["evidence_id"]["enum"]),
+                         {e["evidence_id"] for e in result["evidence"]})
+
+    def test_semantic_audit_blocks_contradiction_or_unavailable_audit(self):
+        output = analysis()
+        output["summary"] = "Le contrat ne contient aucune exclusion de responsabilité."
+        for failure in (False, True):
+            with self.subTest(unavailable=failure):
+                class AuditModel(FakeModel):
+                    def complete(self, system, payload, schema=None):
+                        if schema.get("required") == ["status", "findings"]:
+                            if failure:
+                                raise HarnessError("Audit indisponible de test")
+                            return {"status": "contradiction", "findings": [{
+                                "claim": output["summary"], "document_id": "contrat",
+                                "document_quote": CLAUSE, "reason": "L'exclusion est explicite."}]}
+                        return super().complete(system, payload, schema)
+                result = self.harness(model=AuditModel(output)).review(request())
+                self.assertEqual(result["status"], "blocked_validation")
+                self.assertTrue(result["validation_errors"])
 
     def test_wrong_principal_matter_prevents_model_call(self):
         model = FakeModel()
