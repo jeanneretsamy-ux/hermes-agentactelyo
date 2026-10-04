@@ -72,6 +72,14 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $appSource = (Resolve-Path apps/desktop/release/win-unpacked).Path
           if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
+          # Inno's file reader needs short paths for deeply nested SDK modules.
+          # Move only the generated copy inside this job's checkout.
+          $workspaceRoot = (Resolve-Path $env:GITHUB_WORKSPACE).Path
+          $shortSource = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'app'))
+          if (-not $appSource.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar) -or -not $shortSource.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Generated app outside workspace' }
+          if (Test-Path -LiteralPath $shortSource) { throw 'Installer staging directory already exists' }
+          Move-Item -LiteralPath $appSource -Destination $shortSource
+          $appSource = $shortSource
           $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
           if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
           $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
