@@ -89,55 +89,55 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
-    hermes chat -q "Hello"        Single query mode
-    hermes --tui                  Launch the modern TUI (or set display.interface: tui)
-    hermes --cli                  Force the classic REPL (overrides display.interface: tui)
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
-    hermes --resume latest        Resume the most recent session (same as -c)
-    hermes --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
-    hermes setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
-    hermes auth add <provider>    Add a pooled credential
-    hermes auth list              List pooled credentials
-    hermes auth remove <p> <t>    Remove pooled credential by index, id, or label
-    hermes auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
-    hermes auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
-    hermes auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
-    hermes model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `hermes model`)
-    hermes fallback remove        Remove a fallback provider from the chain
-    hermes config                 View configuration
-    hermes config edit            Edit config in $EDITOR
-    hermes config set model gpt-4 Set a config value
-    hermes gateway                Run messaging gateway
-    hermes gateway install        Install gateway background service
-    hermes gateway start          Start the installed gateway service
-    hermes gateway stop           Stop the gateway service
-    hermes gateway status         Show gateway status
-    hermes -p <profile> <cmd>     Run any command against a named profile's
-                                  home (also --profile) — e.g. hermes -p coder gateway stop
-    hermes -s hermes-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
-    hermes sessions list          List past sessions
-    hermes sessions browse        Interactive session picker
-    hermes sessions rename ID T   Rename/title a session
-    hermes logs                   View agent.log (last 50 lines)
-    hermes logs -f                Follow agent.log in real time
-    hermes logs errors            View errors.log
-    hermes logs --since 1h        Lines from the last hour
-    hermes debug share             Upload debug report for support
-    hermes console                Open the safe Hermes command console
-    hermes update                 Update to latest version
-    hermes dashboard              Start web UI dashboard (port 9119)
-    hermes dashboard --stop       Stop running dashboard processes
-    hermes dashboard --status     List running dashboard processes
+    actelyo-law-harness                        Start interactive chat
+    actelyo-law-harness chat -q "Hello"        Single query mode
+    actelyo-law-harness --tui                  Launch the modern TUI (or set display.interface: tui)
+    actelyo-law-harness --cli                  Force the classic REPL (overrides display.interface: tui)
+    actelyo-law-harness -c                     Resume the most recent session
+    actelyo-law-harness -c "my project"        Resume a session by name (latest in lineage)
+    actelyo-law-harness --resume <session_id>  Resume a specific session by ID
+    actelyo-law-harness --resume latest        Resume the most recent session (same as -c)
+    actelyo-law-harness --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
+    actelyo-law-harness setup                  Run setup wizard
+    actelyo-law-harness logout                 Clear stored authentication
+    actelyo-law-harness auth add <provider>    Add a pooled credential
+    actelyo-law-harness auth list              List pooled credentials
+    actelyo-law-harness auth remove <p> <t>    Remove pooled credential by index, id, or label
+    actelyo-law-harness auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
+    actelyo-law-harness auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
+    actelyo-law-harness auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
+    actelyo-law-harness model                  Select default model
+    actelyo-law-harness fallback [list]        Show fallback provider chain
+    actelyo-law-harness fallback add           Add a fallback provider (same picker as `actelyo-law-harness model`)
+    actelyo-law-harness fallback remove        Remove a fallback provider from the chain
+    actelyo-law-harness config                 View configuration
+    actelyo-law-harness config edit            Edit config in $EDITOR
+    actelyo-law-harness config set model gpt-4 Set a config value
+    actelyo-law-harness gateway                Run messaging gateway
+    actelyo-law-harness gateway install        Install gateway background service
+    actelyo-law-harness gateway start          Start the installed gateway service
+    actelyo-law-harness gateway stop           Stop the gateway service
+    actelyo-law-harness gateway status         Show gateway status
+    actelyo-law-harness -p <profile> <cmd>     Run any command against a named profile's
+                                  home (also --profile) — e.g. actelyo-law-harness -p coder gateway stop
+    actelyo-law-harness -s hermes-agent-dev,github-auth
+    actelyo-law-harness -w                     Start in isolated git worktree
+    actelyo-law-harness sessions list          List past sessions
+    actelyo-law-harness sessions browse        Interactive session picker
+    actelyo-law-harness sessions rename ID T   Rename/title a session
+    actelyo-law-harness logs                   View agent.log (last 50 lines)
+    actelyo-law-harness logs -f                Follow agent.log in real time
+    actelyo-law-harness logs errors            View errors.log
+    actelyo-law-harness logs --since 1h        Lines from the last hour
+    actelyo-law-harness debug share             Upload debug report for support
+    actelyo-law-harness console                Open the safe Hermes command console
+    actelyo-law-harness update                 Update to latest version
+    actelyo-law-harness dashboard              Start web UI dashboard (port 9119)
+    actelyo-law-harness dashboard --stop       Stop running dashboard processes
+    actelyo-law-harness dashboard --status     List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    actelyo-law-harness <command> --help
 """
 
 
@@ -368,7 +368,7 @@ def build_top_level_parser():
     ``subparsers.add_parser(...)``.
     """
     parser = HermesArgumentParser(
-        prog="hermes", description="Hermes Agent - AI assistant with tool-calling capabilities",
+        prog="actelyo-law-harness", description="Actelyo Law Harness - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter, epilog=_EPILOGUE)
     _add_top_level_flags(parser)
     # metavar keeps the usage line to ``hermes [...] <command>`` instead of the brace list of
