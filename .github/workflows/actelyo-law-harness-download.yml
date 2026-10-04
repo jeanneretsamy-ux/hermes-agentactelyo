@@ -69,17 +69,10 @@ jobs:
           $cache = [IO.Path]::GetFullPath((Join-Path $tempRoot 'actelyo-runtime-rebuild-cache'))
           if (-not $seedCache.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar) -or -not $cache.StartsWith($tempRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Cache paths escaped owned job directories' }
           if (Test-Path -LiteralPath $cache) { throw 'Rebuild cache directory already exists' }
-          # Published bytecode is read-only. This is only the generated job copy;
-          # unseal it before the supported staging routine replaces its source.
-          $payloadRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload'))
-          if (-not $payloadRoot.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Payload outside workspace' }
-          if (Test-Path -LiteralPath $payloadRoot) {
-            Get-ChildItem -LiteralPath $payloadRoot -Recurse -Force -File | Where-Object { $_.IsReadOnly } | ForEach-Object { $_.IsReadOnly = $false }
-          }
           if (Test-Path -LiteralPath $seedCache) { Move-Item -LiteralPath $seedCache -Destination $cache }
           else { New-Item -ItemType Directory -Path $cache | Out-Null }
           # Never rebuild over a sealed cached source tree: its .pyc files are read-only.
-          # Rename the owned generated directory; do not chmod or delete cache bytes.
+          # Keep its generated job copy until the fresh runtime is complete.
           $payloadRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload'))
           $priorRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload-prior'))
           if (-not $payloadRoot.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar) -or -not $priorRoot.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Payload staging escaped workspace' }
