@@ -1,0 +1,62 @@
+# Copy to config.toml. Secrets belong in environment variables, never here.
+# One process / configuration / token per principal; not a multi-tenant service.
+principal = "cabinet-utilisateur-a-configurer"
+allowed_matters = ["EXEMPLE-001"]
+allow_documents_to_model = false
+allow_persist_documents = false
+documents_rights_basis = ""
+allow_search_queries_external = false
+max_document_chars = 60000
+max_context_chars = 120000
+max_sources = 8
+
+[model]
+base_url = "http://127.0.0.1:1234/v1"
+name = ""
+token_env = "LM_STUDIO_API_TOKEN"
+allow_remote_documents = false
+timeout_seconds = 120
+
+[sources.legifrance]
+enabled = false
+rights_basis = ""
+allow_process = false
+allow_display = false
+allow_persist = false
+allow_index = false
+allow_train = false
+environment = "sandbox"
+client_id_env = "PISTE_CLIENT_ID"
+client_secret_env = "PISTE_CLIENT_SECRET"
+
+[sources.legal_data_hunter]
+enabled = false
+rights_basis = ""
+allow_process = false
+allow_display = false
+allow_persist = false
+allow_index = false
+allow_train = false
+token_env = "LEGAL_DATA_HUNTER_API_KEY"
+# Explicit source allowlist from /v1/discover/countries/FR/sources.
+# Confirm spelling against your account's API before using these examples.
+allowed_sources = ["FR/Judilibre"]
+
+[sources.lexis]
+enabled = false
+rights_basis = ""
+allow_process = false
+allow_display = false
+allow_persist = false
+allow_index = false
+allow_train = false
+# Deliberately no scraping connector. Requires an authorized API specification.
+
+[sources.dalloz]
+enabled = false
+rights_basis = ""
+allow_process = false
+allow_display = false
+allow_persist = false
+allow_index = false
+allow_train = false
