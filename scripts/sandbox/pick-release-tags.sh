@@ -13,11 +13,12 @@
 # between (config-schema bumps, venv layout changes, dependency floors).
 #
 # Usage:
-#   scripts/sandbox/pick-release-tags.sh [--count N] [--repo DIR]
+#   scripts/sandbox/pick-release-tags.sh [--count N] [--repo DIR] [--allow-unreleased]
 #
 #   --count   how many tags to emit (default 5, minimum 1). Fewer tags than
 #             requested emits all of them.
 #   --repo    repository to read tags from (default: this checkout).
+#   --allow-unreleased  emit [] when no releases exist, retaining HEAD -> NEXT tests.
 #
 # Reads tags from the local checkout, so it needs one fetched with tags
 # (actions/checkout with fetch-depth: 0, or `fetch-tags: true`). A shallow
@@ -30,12 +31,14 @@
 set -euo pipefail
 
 COUNT=5
+ALLOW_UNRELEASED=false
 # Default to the repository containing this script, resolved through its real
 # path so a symlinked or copied script still reads the checkout it lives in
 # rather than whatever repo the caller happens to be standing in.
 REPO=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    --allow-unreleased) ALLOW_UNRELEASED=true; shift ;;
     --count)
       [ "$#" -ge 2 ] || { echo 'error: --count needs a value' >&2; exit 1; }
       COUNT="$2"; shift 2 ;;
@@ -74,6 +77,11 @@ mapfile -t tags < <(
 
 total="${#tags[@]}"
 if [ "$total" -eq 0 ]; then
+  if [ "$ALLOW_UNRELEASED" = true ]; then
+    echo 'No published release baseline: only current-source install/update coverage is available.' >&2
+    printf '[]\n'
+    exit 0
+  fi
   echo "error: no release tags found in $REPO" >&2
   echo '       A shallow clone has no tags: fetch with tags (actions/checkout' >&2
   echo '       with fetch-depth: 0, or fetch-tags: true).' >&2

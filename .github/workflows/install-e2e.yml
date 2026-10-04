@@ -183,8 +183,13 @@ jobs:
           fetch-tags: true
           sparse-checkout: |
             scripts/sandbox/pick-release-tags.sh
+            scripts/sandbox/generate-e2e-matrix.mjs
             scripts/releases/pick_tags.py
+            tests/scripts/sandbox/unreleased-install-e2e.test.mjs
+            tests/install/e2e-assets/known-failures.json
           sparse-checkout-cone-mode: false
+      - name: Validate release baseline selection
+        run: node --test tests/scripts/sandbox/unreleased-install-e2e.test.mjs
       - id: pick
         env:
           # Inputs never touch shell syntax directly: TAG_COUNT arrives via
@@ -201,6 +206,7 @@ jobs:
           INSTALL_REF: ${{ inputs.install-ref }}
           EXCLUDE_REF: ${{ inputs.exclude-ref }}
           RELEASE_MODE: ${{ inputs.release }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
           [[ "$TAG_COUNT" =~ ^(10|[1-9])$ ]] || { echo "tag-count must be 1-10, got: $TAG_COUNT" >&2; exit 1; }
@@ -212,7 +218,17 @@ jobs:
           elif [ "$RELEASE_MODE" = true ]; then
             tags="$(python3 -m scripts.releases.pick_tags --count "$TAG_COUNT" --exclude-ref "$EXCLUDE_REF")"
           else
-            tags="$(scripts/sandbox/pick-release-tags.sh --count "$TAG_COUNT")"
+            options=()
+            # Actelyo has no published historical versions yet. Keep genuine
+            # HEAD -> NEXT installs/updates; stable-release gates remain strict.
+            if [ "$REPOSITORY" = "jeanneretsamy-ux/hermes-agentactelyo" ]; then
+              options+=(--allow-unreleased)
+            fi
+            tags="$(scripts/sandbox/pick-release-tags.sh --count "$TAG_COUNT" "${options[@]}")"
+            if [ "$tags" = '[]' ]; then
+              echo '::warning::No published Actelyo release baseline; testing current-source installation and HEAD -> NEXT updates only.'
+              echo 'No published Actelyo release baseline. Historical release migrations are NOT validated; current-source install/update legs still run.' >> "$GITHUB_STEP_SUMMARY"
+            fi
           fi
           echo "Testing updates from: $tags"
           # Annotate each tag with what its own tree supports, so run
@@ -463,8 +479,15 @@ jobs:
           sparse-checkout-cone-mode: false
       - env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAGS: ${{ needs.pick-releases.outputs.tags }}
+          PICK_RESULT: ${{ needs.pick-releases.result }}
         run: |
           set -euo pipefail
+          if [ "$PICK_RESULT" != success ]; then
+            echo "::warning::Release baseline selection failed ($PICK_RESULT); installation/update tests were not validated."
+            echo "Release baseline selection failed ($PICK_RESULT). Installation/update tests were not validated; inspect Pick release tags." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           # The repo's GITHUB_TOKEN shares one hourly API budget with every
           # other workflow; a busy hour answered "API rate limit exceeded for
           # installation" and turned a green matrix red here. Retry, then
@@ -493,6 +516,6 @@ jobs:
             echo 'Legend: ✅ upgrade passed · known [n] = exact historical failure, see footnote · ❌ unexpected failure · pre-desktop / TODO = why a leg skipped · 📼 opens the leg player (recording + synced logs)'
             echo
             node scripts/sandbox/generate-e2e-matrix.mjs --format results \
-              --tags '${{ needs.pick-releases.outputs.tags }}' \
+              --tags "$RELEASE_TAGS" \
               --artifacts /tmp/e2e-artifacts.ndjson < /tmp/e2e-jobs.ndjson
           } >> "$GITHUB_STEP_SUMMARY"
