@@ -6,7 +6,7 @@ import { $localModelsEnabled } from '@/store/local-models-flag'
 import { makeOAuthProvider } from '@/test/oauth-provider'
 import type { OAuthProvider } from '@/types/hermes'
 
-import { ApiKeyForm, Picker } from '.'
+import { ApiKeyForm, Picker, providerTitle } from '.'
 
 function setProviders(providers: OAuthProvider[]) {
   $desktopOnboarding.set({
@@ -91,7 +91,7 @@ describe('onboarding Picker', () => {
     setProviders([makeOAuthProvider('anthropic', 'Anthropic Claude'), makeOAuthProvider('nous', 'Nous Portal')])
     render(<Picker ctx={ctx} />)
 
-    expect(screen.getByText('Nous Portal')).toBeTruthy()
+    expect(screen.getByText(providerTitle(makeOAuthProvider('nous', 'Nous Portal')))).toBeTruthy()
     expect(screen.getByText('Recommended')).toBeTruthy()
     // Fireworks stays behind the disclosure with the other alternatives; only
     // Nous Portal is visible before the user expands the list.
