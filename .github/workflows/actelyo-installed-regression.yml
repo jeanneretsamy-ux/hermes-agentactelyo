@@ -1,8 +1,6 @@
 name: Actelyo installed Windows onboarding regression
 on:
   workflow_dispatch:
-  push:
-    paths: ['scripts/actelyo-download/verify-installed.mjs', '.github/workflows/actelyo-installed-regression.yml']
 permissions:
   contents: read
   actions: read
@@ -13,7 +11,11 @@ jobs:
     env:
       ACTELYO_SOURCE_SHA: 8a7c8e98fa5e9461e07d004cfd867a654619e52c
     steps:
+      # Historical regression: pair the retained 8a7c8e9 installer with its verifier.
+      # Current builds are verified by actelyo-law-harness-download.yml.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: c8afa40e9eba32611ae2dacb5e04ad4cdd7f0e0a
       - name: Download exact installer built with verified Inno 7
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
