@@ -33,6 +33,7 @@ if not (home / "config.yaml").exists():
         "model": {"default": "legalya-v30", "provider": "lmstudio", "base_url": "http://127.0.0.1:1234/v1", "context_length": 16384},
         "providers": {"lmstudio": {"request_timeout_seconds": 600}},
         "display": {"language": "fr"},
+        "platform_hints": {"tui": {"append": "Le nom de cette application est Actelyo Law Harness. Présente-toi sous ce nom exact et réponds en français. Les noms techniques dans les chemins ou les outils ne sont pas ton nom."}},
         "terminal": {"backend": "local", "cwd": str(home)},
         "telemetry": {"shared_metrics": {"enabled": False, "send": False}},
         # All tools remain discoverable without sending every schema each turn.
