@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {mkdtempSync,rmSync} from 'node:fs';
+import {mkdtempSync,rmSync,mkdirSync} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -34,4 +34,27 @@ test('no historical releases still produces executable current-source upgrade le
  assert.ok(legs.every(leg=>leg.install_ref==='HEAD'));
  const report=spawnSync(process.execPath,[script,'--tags','[]','--format','results'],{encoding:'utf8',cwd:root,input:''});
  assert.equal(report.status,0,report.stderr);assert.ok(report.stdout.length>0);
+});
+
+test('installer Git transport reaches the same staged repository with either URL suffix',()=>{
+ const work=mkdtempSync(path.join(os.tmpdir(),'actelyo-e2e-redirect-'));
+ try {
+  const repo=path.join(work,'repo'),serve=path.join(work,'serve.git');mkdirSync(repo);
+  const git=(args)=>{const result=spawnSync('git',args,{encoding:'utf8'});assert.equal(result.status,0,result.stderr);return result.stdout.trim();};
+  git(['-C',repo,'init']);git(['-C',repo,'-c','user.name=Test','-c','user.email=test@example.invalid','commit','--allow-empty','-m','fixture']);
+  const sha=git(['-C',repo,'rev-parse','HEAD']);git(['clone','--bare',repo,serve]);
+  const url='https://github.com/jeanneretsamy-ux/hermes-agentactelyo';git(['-C',repo,'remote','add','origin',url]);
+  for(const origin of [url,url+'.git']){
+   git(['-C',repo,'remote','set-url','origin',origin]);
+   const run=spawnSync(bash,['-c',`set -euo pipefail
+source "$1"
+fail() { echo "$*" >&2; exit 1; }
+ok() { :; }
+repo=$(cd "$2" && pwd); work=$(cd "$3" && pwd); serve=$(cd "$4" && pwd)
+arm_source_redirect "$repo" "$work" "$serve"
+for url in "$5" "$5.git"; do "$HERMES_E2E_REAL_GIT" ls-remote "$url" HEAD; done
+`,'fixture',process.env.ACTELYO_TEST_REDIRECT || path.join(root,'tests/install/e2e-assets/installer-common.sh'),repo,work,serve,url],{encoding:'utf8',cwd:root});
+   assert.equal(run.status,0,run.stderr);assert.ok(run.stdout.trim().split('\n').every(line=>line.startsWith(sha)));
+  }
+ }finally{rmSync(work,{recursive:true,force:true});}
 });

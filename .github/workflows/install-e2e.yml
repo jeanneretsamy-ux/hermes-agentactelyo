@@ -187,6 +187,7 @@ jobs:
             scripts/releases/pick_tags.py
             tests/scripts/sandbox/unreleased-install-e2e.test.mjs
             tests/install/e2e-assets/known-failures.json
+            tests/install/e2e-assets/installer-common.sh
           sparse-checkout-cone-mode: false
       - name: Validate release baseline selection
         run: node --test tests/scripts/sandbox/unreleased-install-e2e.test.mjs
