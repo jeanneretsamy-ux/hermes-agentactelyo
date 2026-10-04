@@ -22,7 +22,7 @@ jobs:
     env:
       HERMES_DESKTOP_VARIANT: bundled
       # Pin the complete product source; packaging fixes may reuse these exact inputs.
-      ACTELYO_SOURCE_SHA: cad3a0ce180d7cc24db94df88caebb58e34dd51b
+      ACTELYO_SOURCE_SHA: 031e03f1d96579bc59cd6b380da2d9d888390e9f
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Install pinned compiler supporting extended paths
@@ -57,6 +57,7 @@ jobs:
           path: apps/desktop/build/agent-payload
           key: actelyo-payload-${{ runner.os }}-${{ env.ACTELYO_SOURCE_SHA }}
           restore-keys: |
+            actelyo-payload-${{ runner.os }}-cad3a0ce180d7cc24db94df88caebb58e34dd51b
             actelyo-payload-${{ runner.os }}-8a7c8e98fa5e9461e07d004cfd867a654619e52c
       - name: Reuse dependency cache while rebuilding the actual source
         if: steps.payload.outputs.cache-hit != 'true'

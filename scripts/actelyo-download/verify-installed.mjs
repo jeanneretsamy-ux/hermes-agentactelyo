@@ -55,10 +55,18 @@ try {
   assert.equal(await catalog.locator('iframe').count(), 0)
   const logos = await page.locator('img').evaluateAll(nodes => nodes.map(n => ({ src: n.src, alt: n.alt, loaded: n.complete && n.naturalWidth > 0 })))
   assert(logos.some(n => n.loaded && /actelyo/i.test(n.src + n.alt)), 'Loaded Actelyo logo missing')
+  const metadata = page.getByText('metadata', { exact: true }).locator('..')
+  await metadata.waitFor()
+  assert.match(await metadata.innerText(), /actelyo:/i)
+  assert(!/\bhermes\b/i.test(await metadata.innerText()), 'Legacy engine namespace in displayed skill metadata')
+  const instructions = page.locator('pre[data-selectable-text="true"]').filter({ hasText: 'Actelyo Applications Skill' })
+  await instructions.waitFor()
+  assert.match(await instructions.innerText(), /actelyo-law-harness config set browser\.cdp_url/)
+  assert(!/\bhermes\b/i.test(await instructions.innerText()), 'Legacy command in the Actelyo application skill')
   await page.screenshot({ path: path.join(proof, 'installed-skills.png') })
   fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
-    localPayloadPresent: true, nativeCatalogVerified: true, providerChoicesVerified: ['openrouter', 'local_endpoint'], logos,
+    localPayloadPresent: true, nativeCatalogVerified: true, skillMetadataBranded: true, providerChoicesVerified: ['openrouter', 'local_endpoint'], logos,
     modelIncluded: false, codeSigned: false
   }, null, 2))
 } catch (error) {
