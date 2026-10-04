@@ -17,6 +17,8 @@ home.mkdir(parents=True, exist_ok=True)
 os.environ["HERMES_HOME"] = str(home)
 os.environ["PYTHONPATH"] = str(repo) + (os.pathsep + os.environ["PYTHONPATH"] if os.environ.get("PYTHONPATH") else "")
 os.environ.pop("HERMES_SERVE_HEADLESS", None)
+# Windows cold imports can exceed the terminal's 15-second default handshake.
+os.environ.setdefault("HERMES_TUI_STARTUP_TIMEOUT_MS", "120000")
 if args.web_dist:
     os.environ["HERMES_WEB_DIST"] = str(args.web_dist.resolve())
 os.environ["PATH"] = str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"]
