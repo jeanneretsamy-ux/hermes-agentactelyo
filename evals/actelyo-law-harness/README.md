@@ -36,6 +36,14 @@ python evals/actelyo-law-harness/run.py adjudicate --folder results/pilot-fr-v1 
 
 Le dossier de sortie doit être nouveau. Le service est importé depuis integrations/actelyo-law-harness. Aucune dépendance supplémentaire.
 
+Pour tester une nouvelle version du pipeline face au même témoin, utiliser
+`--baseline-prompt evals/actelyo-law-harness/baseline-fr-v1.txt`. Le manifeste distingue
+les empreintes des deux prompts, et leurs textes sont conservés dans la sortie. La
+version corrigée ajoute les identifiants contraints et un audit factuel par le même
+modèle. Ce dernier est un contrôle de production faillible, pas le juge du benchmark.
+Le corpus v1 déjà examiné constitue maintenant un jeu de régression ; les progrès sur
+ce corpus ne prouvent pas une généralisation à des contrats inconnus.
+
 Le paquet en aveugle est `blind-answers.json` ; transmettre aussi `dataset.snapshot.json` au juriste. Garder `blind-key.json` et `records.jsonl` à part pendant la notation. La grille `jurist-annotations.template.json` exige le nom du relecteur, son statut de juriste, chaque critère binaire et le constat d'hallucination. La note définitive exige toutes les annotations ; une notation partielle affiche son propre dénominateur. Un second juriste et une procédure de désaccord sont requis avant revendication indépendante.
 
 Les fichiers de résultats ne doivent pas être commités automatiquement. Les données sont destinées à l'évaluation, pas à l'entraînement.

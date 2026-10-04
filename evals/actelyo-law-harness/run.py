@@ -187,6 +187,7 @@ def adjudicate(folder, filename):
 def run(args):
     raw = args.dataset.read_bytes()
     dataset = json.loads(raw)
+    baseline_prompt = args.baseline_prompt.read_text(encoding="utf-8") if args.baseline_prompt else REVIEW_PROMPT
     cases = dataset["cases"][:args.limit] if args.limit else dataset["cases"]
     args.out.mkdir(parents=True, exist_ok=False)
     cfg = load_config(ROOT / "integrations" / "actelyo-law-harness" / "config.example.toml")
@@ -200,17 +201,23 @@ def run(args):
                                     "allow_process": True, "allow_display": True}}
     source_root = ROOT / "integrations" / "actelyo-law-harness" / "law_harness"
     manifest = {"created_at": datetime.now(timezone.utc).isoformat(), "dataset_sha256": digest(raw),
+        "code_revision": args.code_revision,
         "case_ids": [c["id"] for c in cases], "repeats": args.repeats, "model": args.model,
         "base_url": args.base_url, "temperature": 0, "max_output_tokens": args.max_tokens,
         "timeout_seconds": args.timeout, "review_prompt_sha256": digest(REVIEW_PROMPT.encode()),
+        "baseline_prompt_sha256": digest(baseline_prompt.encode()),
+        "baseline_prompt_file": str(args.baseline_prompt) if args.baseline_prompt else None,
         "service_files_sha256": {p.name: digest(p.read_bytes()) for p in sorted(source_root.glob("*.py"))},
         "retrieval": "fixed public statutory snapshots; oracle fixture, not a live API",
         "contracts": "synthetic", "rubric_author": "internal agent, not independently lawyer validated",
-        "model_weights_sha256": None, "baseline": "same REVIEW_PROMPT and sources; no planner, no date exclusion, no hard gates",
-        "differences": ["harness planning call", "date exclusion", "scope refusal", "exact quotation/identity validation"],
+        "model_weights_sha256": None, "baseline": "frozen baseline prompt when supplied; same sources; no planner, no date exclusion, no hard gates",
+        "differences": ["harness planning call", "date exclusion", "scope refusal", "exact quotation/identity validation",
+                        "identifier-bound schema and prompt", "same-model factual consistency audit"],
         "judges": "mechanical checks only; jurist annotations not yet supplied", "justinian_comparable": False}
     write_json(args.out / "manifest.json", manifest)  # Frozen BEFORE any model call.
     write_json(args.out / "dataset.snapshot.json", {**dataset, "cases": cases})
+    (args.out / "baseline-prompt.txt").write_text(baseline_prompt, encoding="utf-8")
+    (args.out / "review-prompt.txt").write_text(REVIEW_PROMPT, encoding="utf-8")
     records = []
     for repeat in range(1, args.repeats + 1):
         for case in cases:
@@ -230,7 +237,7 @@ def run(args):
                             connectors={"legifrance": SnapshotConnector(items, case.get("connector_failure", False))}).review(case["request"])
                     else:
                         payload = {**case["request"], "issues": [], "evidence": [e.as_dict() for e in checked]}
-                        answer = model.complete(REVIEW_PROMPT, payload, schema=REVIEW_SCHEMA)
+                        answer = model.complete(baseline_prompt, payload, schema=REVIEW_SCHEMA)
                         report = {"status": "draft", "analysis": answer, "evidence": [e.as_dict() for e in checked]}
                 except HarnessError as exc:
                     refused = arm == "harness" and "Seule la juridiction FR" in str(exc)
@@ -256,6 +263,8 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     cmd = commands.add_parser("run")
     cmd.add_argument("--dataset", type=Path, default=Path(__file__).with_name("pilot-fr-v1.json"))
+    cmd.add_argument("--baseline-prompt", type=Path, help="Frozen prompt for a stable baseline across harness versions")
+    cmd.add_argument("--code-revision", default=None, help="Published code revision recorded before generation")
     cmd.add_argument("--out", type=Path, required=True)
     cmd.add_argument("--model", default="legalya-v30")
     cmd.add_argument("--base-url", default="http://127.0.0.1:1234/v1")
@@ -270,6 +279,8 @@ def main():
     judge.add_argument("--annotations", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "run":
+        if args.code_revision is not None and not re.fullmatch(r"[0-9a-f]{40}", args.code_revision):
+            parser.error("code-revision must be a full lowercase commit SHA")
         if args.repeats < 1 or args.repeats > 10 or args.limit is not None and args.limit < 1:
             parser.error("Positive bounded repeats and limit required")
         run(args)
