@@ -1,0 +1,42 @@
+import { _electron } from 'playwright'
+import fs from 'node:fs'
+import path from 'node:path'
+import assert from 'node:assert/strict'
+
+const [installed, proof] = process.argv.slice(2)
+assert(installed && proof, 'Usage: verify-installed.mjs installed-directory proof-directory')
+fs.mkdirSync(proof, { recursive: true })
+const exe = path.join(installed, 'Actelyo Law Harness.exe')
+assert(fs.existsSync(exe), 'Installed Actelyo executable missing')
+assert(fs.existsSync(path.join(installed, 'resources', 'agent-payload')), 'Bundled local agent missing')
+const app = await _electron.launch({
+  executablePath: exe,
+  env: {
+    ...process.env,
+    HERMES_HOME: path.join(proof, 'clean-home'),
+    HERMES_DESKTOP_USER_DATA_DIR: path.join(proof, 'clean-desktop'),
+    HERMES_DESKTOP_DISABLE_GPU: '1'
+  },
+  timeout: 180000
+})
+try {
+  const page = await app.firstWindow({ timeout: 180000 })
+  await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
+  await page.screenshot({ path: path.join(proof, 'installed-window.png') })
+  const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
+  assert.match(identity.name, /Actelyo/i)
+  await page.getByText(/^(Capabilities|Capacités)$/).first().click()
+  const catalog = page.getByRole('region', { name: 'Actelyo · Skills Hub' })
+  await catalog.waitFor({ timeout: 90000 })
+  assert.equal(await catalog.locator('iframe').count(), 0)
+  const logos = await page.locator('img').evaluateAll(nodes => nodes.map(n => ({ src: n.src, alt: n.alt, loaded: n.complete && n.naturalWidth > 0 })))
+  assert(logos.some(n => n.loaded && /actelyo/i.test(n.src + n.alt)), 'Loaded Actelyo logo missing')
+  await page.screenshot({ path: path.join(proof, 'installed-skills.png') })
+  fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
+    identity, sourceCommit: process.env.GITHUB_SHA, executable: path.basename(exe),
+    localPayloadPresent: true, nativeCatalogVerified: true, logos,
+    modelIncluded: false, codeSigned: false
+  }, null, 2))
+} finally {
+  await app.close()
+}
