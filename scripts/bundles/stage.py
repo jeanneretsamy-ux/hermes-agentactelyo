@@ -22,6 +22,7 @@ def main(argv=None) -> int:
     parser.add_argument("--cache", type=Path, help="persistent uv build cache")
     parser.add_argument("--tui", type=Path)
     parser.add_argument("--web", type=Path)
+    parser.add_argument("--icons", type=Path, help="already prepared product artwork (no regeneration)")
     args = parser.parse_args(argv)
     if bool(args.tui) != bool(args.web):
         parser.error("supply both --tui and --web products, or neither to build them")
@@ -41,13 +42,19 @@ def main(argv=None) -> int:
         from scripts.build.icon_environment import prepare_icon_environment
         snapshot(ROOT, args.ref, source)
         # The staging interpreter need not be a Hermes runtime; render icons on one.
-        icon_python = prepare_icon_environment(source, products / "icon-environment", args.cache)
-        env = {**os.environ, "HERMES_PYTHON": str(icon_python)}
+        icons = args.icons.resolve() if args.icons else products / "icons"
+        if args.icons:
+            if not (icons / "web/public/favicon.ico").is_file():
+                raise FileNotFoundError("Prepared web favicon is required with --icons")
+            env = dict(os.environ)
+        else:
+            icon_python = prepare_icon_environment(source, products / "icon-environment", args.cache)
+            env = {**os.environ, "HERMES_PYTHON": str(icon_python)}
         commands = [
             ["scripts/build/node-deps.mjs", "--source", str(source), "--workspace", "ui-tui", "--workspace", "web"],
-            ["scripts/generate-icons.mjs", "--source", str(source), "--out", str(products / "icons")],
+            *([] if args.icons else [["scripts/generate-icons.mjs", "--source", str(source), "--out", str(icons)]]),
             ["scripts/build/tui.mjs", "--source", str(source), "--out", str(products / "tui")],
-            ["scripts/build/web.mjs", "--source", str(source), "--icons", str(products / "icons"), "--out", str(products / "web")],
+            ["scripts/build/web.mjs", "--source", str(source), "--icons", str(icons), "--out", str(products / "web")],
         ]
         for command in commands:
             subprocess.run([node, *command], cwd=ROOT, env=env, check=True)

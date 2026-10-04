@@ -6,6 +6,8 @@ on:
     paths:
       - .github/workflows/actelyo-law-harness-download.yml
       - scripts/actelyo-download/**
+      - scripts/bundles/stage.py
+      - agent/prompt_builder.py
 permissions:
   contents: write
 concurrency:
@@ -28,7 +30,7 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
       - name: Stage the local agent runtime
-        run: npm run payload --workspace apps/desktop
+        run: node scripts/build/python.mjs scripts/bundles/stage.py --out apps/desktop/build/agent-payload --icons .
       - name: Build current desktop
         run: npm run build --workspace apps/desktop
       - name: Package Windows bundled application
