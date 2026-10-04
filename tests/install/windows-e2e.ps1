@@ -246,10 +246,12 @@ function Set-GitRedirect {
     }
     # first, get the set origin url
     $actualGitUrl = Invoke-Git @("-C", $RepoRoot, "remote", "get-url", "origin")
+    $actualGitBase = $actualGitUrl -replace '\.git$', ''
     # then override it
     @"
 [url "$fileUrl"]
-	insteadOf = $actualGitUrl
+    insteadOf = $actualGitBase.git
+    insteadOf = $actualGitBase
     insteadOf = $RepoUrlHttps
     insteadOf = $RepoUrlSsh
 "@ | Set-Content -LiteralPath $gitCfg -Encoding ASCII

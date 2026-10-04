@@ -16,7 +16,10 @@ arm_source_redirect() {
   # A global file survives install.sh replacing GIT_CONFIG_COUNT/KEY_n/VALUE_n.
   printf '' > "$cfg"
   for url in "$actual" "$https" "$ssh"; do
-    "$real_git" config --file "$cfg" --add "url.file://$serve.insteadOf" "$url"
+    # Git uses prefix replacement. Match both complete URL spellings so a
+    # suffix-less checkout origin cannot turn serve.git into serve.git.git.
+    "$real_git" config --file "$cfg" --add "url.file://$serve.insteadOf" "${url%.git}.git"
+    "$real_git" config --file "$cfg" --add "url.file://$serve.insteadOf" "${url%.git}"
   done
   export GIT_CONFIG_GLOBAL="$cfg"
   [ "$(git -C "$repo" remote get-url origin)" = "file://$serve" ] \
