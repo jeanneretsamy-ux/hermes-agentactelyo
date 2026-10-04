@@ -49,8 +49,9 @@ export async function buildWeb(options) {
     await build({
       root,
       configFile: path.join(root, 'vite.config.ts'),
-      // Vite's default config bundler writes into source node_modules/.vite-temp.
-      configLoader: 'runner',
+      // Node loads native plugin bindings and CommonJS dependencies directly.
+      // The module runner evaluates picomatch as ESM on native Windows.
+      configLoader: 'native',
       cacheDir: path.join(scratch, 'vite-cache'),
       publicDir,
       build: { outDir: product, emptyOutDir: true }

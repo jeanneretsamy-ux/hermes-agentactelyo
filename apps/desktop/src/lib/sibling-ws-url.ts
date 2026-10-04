@@ -50,7 +50,7 @@ export async function resolveSiblingWsUrl(
   const desktop = window.hermesDesktop
 
   if (!desktop?.getConnection) {
-    throw new Error("Actelyo Legal Harness Desktop connection bridge unavailable")
+    throw new Error("Actelyo Law Harness Desktop connection bridge unavailable")
   }
 
   const connectionId = route.connectionId?.trim() || null

@@ -25,7 +25,7 @@ const RU_NOUN = (count: number | string, one: string, few: string, many: string)
 
 export const ru = defineLocale({
   sharedMetrics: {
-    consentTitle: "Помочь улучшить Actelyo Legal Harness?",
+    consentTitle: "Помочь улучшить Actelyo Law Harness?",
     consentBody:
       'Общие метрики — это только ограниченные счётчики. Никаких запросов, файлов, путей или текстов ошибок. Сбор идёт локально. Отправка в Nous — отдельное согласие.',
     whatIsCollected: 'Что собирается',
@@ -37,9 +37,9 @@ export const ru = defineLocale({
     collectedReliability:
       'Результаты и длительность обновлений, сбои, скорость запуска и ответа, состояние мессенджер-платформ',
     collectedUsage:
-      "Как используется Actelyo Legal Harness: точность и эффективность агента (успешные правки, зацикливания, восстановление после ошибок, токены и вызовы инструментов на задачу, сбросы кэша), активное время по интерфейсам и режимам Desktop, какие разделы, действия и настройки приложения используются, быстро закрываются или отключаются, и итоги настройки провайдеров",
+      "Как используется Actelyo Law Harness: точность и эффективность агента (успешные правки, зацикливания, восстановление после ошибок, токены и вызовы инструментов на задачу, сбросы кэша), активное время по интерфейсам и режимам Desktop, какие разделы, действия и настройки приложения используются, быстро закрываются или отключаются, и итоги настройки провайдеров",
     collectedMachine:
-      "Общие сведения о машине: диапазон ОЗУ, тип GPU, возраст и канал версии Actelyo Legal Harness, число пропущенных обновлений, используется ли локальный сервер моделей",
+      "Общие сведения о машине: диапазон ОЗУ, тип GPU, возраст и канал версии Actelyo Law Harness, число пропущенных обновлений, используется ли локальный сервер моделей",
     installId:
       'При отправке ежедневный пакет загружается в сервис телеметрии Nous. Пакеты содержат идентификатор установки этого профиля — постоянный случайный UUID без личных данных; он сбрасывается удалением каталога общих метрик.',
     consentWindow:
@@ -55,14 +55,14 @@ export const ru = defineLocale({
     sendLabel: 'Отправлять статистику в Nous',
     sendDesc:
       'Загружать ежедневный пакет в сервис телеметрии Nous. Отправляются только данные из окна согласия. Требует включённого сбора.',
-    unavailable: "Обновите бэкенд Actelyo Legal Harness, чтобы изменить этот параметр.",
+    unavailable: "Обновите бэкенд Actelyo Law Harness, чтобы изменить этот параметр.",
     stripBody: 'Только ограниченные счётчики, никаких промптов и файлов.',
     stripChoices: { share: 'Отправлять в Nous', local: 'Только локально', off: 'Нет, спасибо' },
     stripDetails: 'Подробнее'
   },
   sessionImport: {
     title: 'Продолжить из другого приложения',
-    subtitle: "Перенесите разговор в Actelyo Legal Harness и продолжите с того места, где остановились.",
+    subtitle: "Перенесите разговор в Actelyo Law Harness и продолжите с того места, где остановились.",
     action: 'Импортировать сессию',
     readingFrom: 'Читаем с',
     connectedComputer: 'подключённого компьютера',
@@ -80,18 +80,18 @@ export const ru = defineLocale({
     more: 'Загрузить ещё сессии',
     messages: 'сообщений',
     choose: 'Разговор, который стоит продолжить',
-    chooseHelp: "Выберите сессию, чтобы прочитать историю перед импортом в Actelyo Legal Harness.",
+    chooseHelp: "Выберите сессию, чтобы прочитать историю перед импортом в Actelyo Law Harness.",
     previewLoading: 'Открываем просмотр',
     previewError: 'Просмотр недоступен',
     previewHelp: 'Исходный файл мог переместиться или измениться. Обновите список и повторите попытку.',
     previewLimit: 'Просмотр сокращён для удобства чтения. Импортируется весь разговор.',
     you: 'Вы',
-    snapshot: "Этот разговор уже есть в Actelyo Legal Harness. Откройте существующую копию, чтобы продолжить.",
+    snapshot: "Этот разговор уже есть в Actelyo Law Harness. Откройте существующую копию, чтобы продолжить.",
     copyNotice:
       'Копируется текст разговора. Исходные файлы не меняются. Вывод инструментов и рассуждения не переносятся.',
     importing: 'Импорт…',
-    open: "Открыть в Actelyo Legal Harness",
-    continue: "Продолжить в Actelyo Legal Harness",
+    open: "Открыть в Actelyo Law Harness",
+    continue: "Продолжить в Actelyo Law Harness",
     importError: 'Не удалось импортировать разговор.'
   },
   common: {
@@ -156,19 +156,19 @@ export const ru = defineLocale({
     revealMissing: 'Этой папки нет на этом компьютере'
   },
   boot: {
-    ready: "Actelyo Legal Harness Desktop готов",
+    ready: "Actelyo Law Harness Desktop готов",
     desktopBootFailedWithMessage: message => `Не удалось запустить приложение: ${message}`,
     steps: {
       connectingGateway: 'Подключение к шлюзу',
-      loadingSettings: "Загрузка настроек Actelyo Legal Harness",
+      loadingSettings: "Загрузка настроек Actelyo Law Harness",
       loadingSessions: 'Загрузка последних сеансов',
-      retryingRemoteBackend: "Переподключение к удалённому бэкенду Actelyo Legal Harness…",
+      retryingRemoteBackend: "Переподключение к удалённому бэкенду Actelyo Law Harness…",
       startingDesktopConnection: 'Запуск подключения приложения',
-      startingHermesDesktop: "Запуск Actelyo Legal Harness Desktop…"
+      startingHermesDesktop: "Запуск Actelyo Law Harness Desktop…"
     },
     errors: {
-      backgroundExited: "Фоновый процесс Actelyo Legal Harness завершён.",
-      backgroundExitedDuringStartup: "Фоновый процесс Actelyo Legal Harness завершился при запуске.",
+      backgroundExited: "Фоновый процесс Actelyo Law Harness завершён.",
+      backgroundExitedDuringStartup: "Фоновый процесс Actelyo Law Harness завершился при запуске.",
       backendStopped: 'Бэкенд остановлен',
       desktopBootFailed: 'Не удалось запустить приложение',
       gatewayConnectionLost: 'Соединение с шлюзом потеряно',
@@ -176,7 +176,7 @@ export const ru = defineLocale({
       ipcBridgeUnavailable: 'IPC-мост приложения недоступен.'
     },
     failure: {
-      title: "Actelyo Legal Harness не удалось запустить",
+      title: "Actelyo Law Harness не удалось запустить",
       description:
         'Фоновый шлюз не запустился. Попробуйте один из шагов восстановления ниже. Ничто из этого не удаляет ваши чаты и настройки.',
       remoteTitle: 'Требуется вход в удалённый шлюз',
@@ -207,7 +207,7 @@ export const ru = defineLocale({
   },
   notifications: {
     sharedProfileWarning:
-      "Другая установка Actelyo Legal Harness использует этот профиль. Обе установки используют общие настройки и данные, поэтому изменения могут конфликтовать. Можно продолжить работу или закрыть другую установку перед внесением изменений.",
+      "Другая установка Actelyo Law Harness использует этот профиль. Обе установки используют общие настройки и данные, поэтому изменения могут конфликтовать. Можно продолжить работу или закрыть другую установку перед внесением изменений.",
     region: 'Уведомления',
     hide: 'Скрыть',
     show: 'Показать',
@@ -220,13 +220,13 @@ export const ru = defineLocale({
     copyDetailFailed: 'Не удалось скопировать подробность уведомления',
     backendOutOfDateTitle: 'Устаревший бэкенд',
     backendOutOfDateMessage:
-      "Ваш бэкенд Actelyo Legal Harness старше этой сборки приложения и может работать некорректно. Обновите их, чтобы они совпали.",
+      "Ваш бэкенд Actelyo Law Harness старше этой сборки приложения и может работать некорректно. Обновите их, чтобы они совпали.",
     desktopOutOfDateTitle: 'Устаревшее приложение',
     desktopOutOfDateMessage:
-      "Это приложение Actelyo Legal Harness старше подключённого бэкенда и может работать некорректно. Обновите приложение, чтобы они совпали.",
+      "Это приложение Actelyo Law Harness старше подключённого бэкенда и может работать некорректно. Обновите приложение, чтобы они совпали.",
     updateDesktopApp: 'Обновить приложение',
     installMethodUnsupportedTitle: 'Неподдерживаемый способ установки',
-    updateHermes: "Обновить Actelyo Legal Harness",
+    updateHermes: "Обновить Actelyo Law Harness",
     updateReadyTitle: 'Обновление готово',
     updateReadyMessage: count =>
       `Доступно ${count} ${count % 10 === 1 && count % 100 !== 11 ? 'новое изменение' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'новых изменения' : 'новых изменений'}.`,
@@ -249,7 +249,7 @@ export const ru = defineLocale({
       diskFull: 'Диск заполнен — освободите место и повторите.',
       gatewayAuthFailed: 'Аутентификация шлюза не удалась — проверьте API_SERVER_KEY.',
       methodNotAllowed:
-        "Бэкенд приложения отклонил запрос (405 Method Not Allowed). Попробуйте перезапустить Actelyo Legal Harness Desktop.",
+        "Бэкенд приложения отклонил запрос (405 Method Not Allowed). Попробуйте перезапустить Actelyo Law Harness Desktop.",
       microphonePermission: 'Доступ к микрофону запрещён.',
       openaiRejectedApiKey: 'OpenAI отклонил API-ключ.',
       openaiTtsNeedsKey: 'Для TTS OpenAI нужен VOICE_TOOLS_OPENAI_KEY или OPENAI_API_KEY.'
@@ -281,8 +281,8 @@ export const ru = defineLocale({
       rejectAction: 'Отклонить',
       inputTitle: 'Требуется ввод',
       inputTitleNamed: session => `Требуется ввод — ${session}`,
-      inputBody: "Actelyo Legal Harness ожидает ваш ответ.",
-      turnDoneTitle: "Actelyo Legal Harness завершил",
+      inputBody: "Actelyo Law Harness ожидает ваш ответ.",
+      turnDoneTitle: "Actelyo Law Harness завершил",
       turnDoneBody: '',
       turnErrorTitle: 'Ход не удался',
       backgroundDoneTitle: 'Фоновая задача завершена',
@@ -511,7 +511,7 @@ export const ru = defineLocale({
     exportConfig: 'Экспорт конфигурации',
     importConfig: 'Импорт конфигурации',
     resetToDefaults: 'Сбросить к значениям по умолчанию',
-    resetConfirm: "Сбросить все настройки к значениям Actelyo Legal Harness по умолчанию?",
+    resetConfirm: "Сбросить все настройки к значениям Actelyo Law Harness по умолчанию?",
     exportFailed: 'Не удалось экспортировать',
     resetFailed: 'Не удалось сбросить',
     nav: {
@@ -581,7 +581,7 @@ export const ru = defineLocale({
         desktopSuccess: name => `Плагин приложения ${name} установлен`,
         agentFailed: 'Не удалось установить плагин агента',
         installUncertain:
-          "Actelyo Legal Harness перестал ждать результат установки, но плагин может всё ещё устанавливаться. Закройте это окно и обновите список плагинов перед повторной установкой.",
+          "Actelyo Law Harness перестал ждать результат установки, но плагин может всё ещё устанавливаться. Закройте это окно и обновите список плагинов перед повторной установкой.",
         desktopFailed: 'Не удалось установить плагин приложения',
         missingEnv: (_name, vars) => `Не хватает переменных окружения: ${vars}. Добавьте их в Настройки → Ключи.`,
         toolsConnected: n => `Подключено инструментов: ${n}`,
@@ -595,7 +595,7 @@ export const ru = defineLocale({
       intro: 'Системные уведомления (не всплывающие внутри приложения). Настраивается для каждого устройства.',
       enableAll: 'Включить уведомления',
       enableAllDesc: 'Если выключено — все уведомления ниже будут заглушены.',
-      focusedHint: "Оповещения о завершении срабатывают только пока Actelyo Legal Harness в фоне.",
+      focusedHint: "Оповещения о завершении срабатывают только пока Actelyo Law Harness в фоне.",
       kinds: {
         approval: {
           label: 'Нужно одобрение',
@@ -603,11 +603,11 @@ export const ru = defineLocale({
         },
         input: {
           label: 'Нужен ввод',
-          description: "Actelyo Legal Harness задал вопрос или требует пароль/секрет."
+          description: "Actelyo Law Harness задал вопрос или требует пароль/секрет."
         },
         turnDone: {
           label: 'Ответ готов',
-          description: "Ход завершился, пока Actelyo Legal Harness был в фоне."
+          description: "Ход завершился, пока Actelyo Law Harness был в фоне."
         },
         turnError: {
           label: 'Ход не удался',
@@ -623,11 +623,11 @@ export const ru = defineLocale({
         },
         plugin: {
           label: 'Уведомления плагинов',
-          description: "Плагин приложения отправил уведомление, пока Actelyo Legal Harness был в фоне."
+          description: "Плагин приложения отправил уведомление, пока Actelyo Law Harness был в фоне."
         }
       },
       test: 'Отправить тестовое уведомление',
-      testTitle: "Actelyo Legal Harness",
+      testTitle: "Actelyo Law Harness",
       testBody: 'Уведомления работают.',
       testSent:
         'Тест отправлен. Если ничего не появилось, проверьте разрешения на уведомления в системе и режим «Не беспокоить».',
@@ -647,7 +647,7 @@ export const ru = defineLocale({
       advanced: 'Дополнительно'
     },
     searchPlaceholder: {
-      about: "О Actelyo Legal Harness Desktop",
+      about: "О Actelyo Law Harness Desktop",
       config: 'Поиск настроек…',
       gateway: 'Подключение шлюза…',
       keys: 'Поиск API-ключей…',
@@ -666,7 +666,7 @@ export const ru = defineLocale({
       title: 'Внешний вид',
       intro: 'Только для приложения. Режим — это яркость, тема — палитра и оформление чата.',
       colorMode: 'Цветовой режим',
-      colorModeDesc: "Выберите фиксированный режим или позвольте Actelyo Legal Harness следовать настройкам системы.",
+      colorModeDesc: "Выберите фиксированный режим или позвольте Actelyo Law Harness следовать настройкам системы.",
       toolViewTitle: 'Отображение вызовов инструментов',
       toolViewDesc: 'Режим «Продукт» скрывает сырые данные инструментов, «Технический» показывает полный вход/выход.',
       hideCodeDiffsTitle: 'Скрывать изменения кода',
@@ -742,7 +742,7 @@ export const ru = defineLocale({
       modelPricingTitle: 'Цены моделей',
       modelPricingDesc: 'Показывать в выборе модели цены за миллион токенов: ввод, вывод и чтение из кэша.',
       reactionsTitle: 'Реакции на сообщения',
-      reactionsDesc: "Эмодзи-тапбеки в стиле iMessage — реагируйте на сообщения, и Actelyo Legal Harness сможет реагировать на ваши.",
+      reactionsDesc: "Эмодзи-тапбеки в стиле iMessage — реагируйте на сообщения, и Actelyo Law Harness сможет реагировать на ваши.",
       composerPopoutTitle: 'Плавающий композер',
       composerPopoutDesc:
         'Позволяет вытягивать композер из его док-зоны. Когда выключено, он остаётся закреплённым внизу.',
@@ -780,9 +780,9 @@ export const ru = defineLocale({
       pet: {
         title: 'Питомец',
         intro:
-          "Заберите анимированного питомца из petdex, который парит над приложением и реагирует на действия Actelyo Legal Harness — «бегает», пока выполняются инструменты, радуется успеху и хмурится при ошибках.",
+          "Заберите анимированного питомца из petdex, который парит над приложением и реагирует на действия Actelyo Law Harness — «бегает», пока выполняются инструменты, радуется успеху и хмурится при ошибках.",
         restartHint:
-          "Питомцам нужен быстрый перезапуск — текущее приложение запустилось до появления этой функции. Выйдите из Actelyo Legal Harness и откройте снова, затем вернитесь сюда.",
+          "Питомцам нужен быстрый перезапуск — текущее приложение запустилось до появления этой функции. Выйдите из Actelyo Law Harness и откройте снова, затем вернитесь сюда.",
         scaleTitle: 'Размер',
         scaleDesc: 'Меняет размер парящего питомца. Применяется мгновенно везде.',
         roamTitle: 'Блуждание',
@@ -1005,7 +1005,7 @@ export const ru = defineLocale({
       timezone: 'Идентификатор часового пояса IANA. Пустое значение — системный часовой пояс.',
       agent: {
         imageInputMode: 'Управляет тем, как вложения изображений отправляются модели.',
-        maxTurns: "Верхний предел ходов с вызовами инструментов, после которого Actelyo Legal Harness останавливает запуск."
+        maxTurns: "Верхний предел ходов с вызовами инструментов, после которого Actelyo Law Harness останавливает запуск."
       },
       terminal: {
         cwd: 'Папка проекта по умолчанию для инструментов и терминала.',
@@ -1019,9 +1019,9 @@ export const ru = defineLocale({
       codeExecution: {
         mode: 'Насколько строго выполнение кода ограничено текущим проектом.'
       },
-      fileReadMaxChars: "Максимальное число символов, которые Actelyo Legal Harness может прочитать из одного запроса к файлу.",
+      fileReadMaxChars: "Максимальное число символов, которые Actelyo Law Harness может прочитать из одного запроса к файлу.",
       approvals: {
-        mode: "Как Actelyo Legal Harness обрабатывает команды, требующие явного подтверждения.",
+        mode: "Как Actelyo Law Harness обрабатывает команды, требующие явного подтверждения.",
         timeout: 'Как долго запросы подтверждения ждут перед тайм-аутом.'
       },
       security: {
@@ -1075,7 +1075,7 @@ export const ru = defineLocale({
       },
       updates: {
         nonInteractiveLocalChanges:
-          "Когда Actelyo Legal Harness обновляет себя из приложения (без запроса в терминале), сохранять локальные правки исходников (stash) или выбрасывать (discard). Обновления из терминала всегда спрашивают."
+          "Когда Actelyo Law Harness обновляет себя из приложения (без запроса в терминале), сохранять локальные правки исходников (stash) или выбрасывать (discard). Обновления из терминала всегда спрашивают."
       }
     }),
     about: {
@@ -1084,7 +1084,7 @@ export const ru = defineLocale({
     config: {
       minimizeToTrayTitle: 'Сворачивать в трей',
       minimizeToTrayDesc:
-        "Сворачивание окон или закрытие главного окна скрывает их в системном трее (строке меню macOS), оставляя Actelyo Legal Harness работать. Для выхода выберите «Выйти из Actelyo Legal Harness» в меню трея или нажмите Cmd+Q. По умолчанию выключено; действует только на этом устройстве.",
+        "Сворачивание окон или закрытие главного окна скрывает их в системном трее (строке меню macOS), оставляя Actelyo Law Harness работать. Для выхода выберите «Выйти из Actelyo Law Harness» в меню трея или нажмите Cmd+Q. По умолчанию выключено; действует только на этом устройстве.",
       minimizeToTrayUnavailable:
         'Системный трей недоступен. Окна будут сворачиваться и закрываться как обычно. Выключите и снова включите настройку, чтобы повторить попытку.',
       none: 'Нет',
@@ -1095,7 +1095,7 @@ export const ru = defineLocale({
       searchPlaceholder: 'Поиск…',
       noResults: 'Ничего не найдено',
       systemDefault: 'Системное по умолчанию',
-      loading: "Загрузка конфигурации Actelyo Legal Harness…",
+      loading: "Загрузка конфигурации Actelyo Law Harness…",
       emptyTitle: 'Настраивать нечего',
       emptyDesc: 'В этом разделе нет настраиваемых параметров.',
       failedLoad: 'Не удалось загрузить настройки',
@@ -1130,27 +1130,27 @@ export const ru = defineLocale({
       description:
         'Нажмите и отпустите ⌘ + Option на Mac или Ctrl + Alt на Windows/Linux, чтобы вызвать HUD из любого приложения. По умолчанию выключено; действует только на этом устройстве.',
       permission:
-        "Разрешите Actelyo Legal Harness в Системных настройках → Конфиденциальность и безопасность → Мониторинг ввода, затем повторите попытку. Жест не записывает нажатия клавиш и не снимает экран.",
+        "Разрешите Actelyo Law Harness в Системных настройках → Конфиденциальность и безопасность → Мониторинг ввода, затем повторите попытку. Жест не записывает нажатия клавиш и не снимает экран.",
       unavailable:
-        "Вспомогательная программа жеста HUD не запустилась или неожиданно остановилась. Повторите попытку или перезапустите Actelyo Legal Harness. Обычное сочетание HUD по-прежнему работает внутри Actelyo Legal Harness.",
+        "Вспомогательная программа жеста HUD не запустилась или неожиданно остановилась. Повторите попытку или перезапустите Actelyo Law Harness. Обычное сочетание HUD по-прежнему работает внутри Actelyo Law Harness.",
       missingHelper:
-        "В этой установке Actelyo Legal Harness отсутствует вспомогательная программа жеста HUD. Обновите или переустановите Actelyo Legal Harness и повторите попытку.",
+        "В этой установке Actelyo Law Harness отсутствует вспомогательная программа жеста HUD. Обновите или переустановите Actelyo Law Harness и повторите попытку.",
       unsupportedSession:
         'Этот сеанс рабочего стола не поддерживает глобальные нажатия модификаторов. В Linux требуется X11; Wayland не поддерживается.'
     },
     screenshot: {
       enabledTitle: 'Сочетание клавиш для снимка окна',
       enabledDesc:
-        "Нажмите обе клавиши Command одновременно в любом приложении, чтобы снять его переднее окно и прикрепить снимок к текущему черновику Actelyo Legal Harness. Автоматической отправки нет. По умолчанию выключено; действует только на этом Mac. Окно может содержать конфиденциальные данные — проверьте вложение перед отправкой.",
+        "Нажмите обе клавиши Command одновременно в любом приложении, чтобы снять его переднее окно и прикрепить снимок к текущему черновику Actelyo Law Harness. Автоматической отправки нет. По умолчанию выключено; действует только на этом Mac. Окно может содержать конфиденциальные данные — проверьте вложение перед отправкой.",
       statusTitle: 'Состояние сочетания для снимка окна',
       checking: 'Проверка сочетания для снимка окна…',
       disabled: 'Сочетание для снимка окна выключено.',
       starting: 'Запускается отслеживание сочетания. Оно пока не готово.',
       ready: 'Сочетание готово. Снимки прикрепляются к текущему черновику без отправки.',
       inputPermission:
-        "Разрешение на мониторинг ввода позволяет Actelyo Legal Harness распознавать обе клавиши Command, когда активно другое приложение. Разрешите Actelyo Legal Harness доступ в Системных настройках → Конфиденциальность и безопасность → Мониторинг ввода, затем вернитесь сюда и повторите попытку.",
+        "Разрешение на мониторинг ввода позволяет Actelyo Law Harness распознавать обе клавиши Command, когда активно другое приложение. Разрешите Actelyo Law Harness доступ в Системных настройках → Конфиденциальность и безопасность → Мониторинг ввода, затем вернитесь сюда и повторите попытку.",
       screenPermission:
-        "Разрешение на запись экрана позволяет Actelyo Legal Harness снимать переднее окно приложения при использовании этого сочетания. Разрешите Actelyo Legal Harness доступ в Системных настройках → Конфиденциальность и безопасность → Запись экрана, затем вернитесь сюда и повторите попытку. Перезапустите Actelyo Legal Harness, если macOS попросит.",
+        "Разрешение на запись экрана позволяет Actelyo Law Harness снимать переднее окно приложения при использовании этого сочетания. Разрешите Actelyo Law Harness доступ в Системных настройках → Конфиденциальность и безопасность → Запись экрана, затем вернитесь сюда и повторите попытку. Перезапустите Actelyo Law Harness, если macOS попросит.",
       openSettings: 'Открыть Системные настройки',
       retry: 'Повторить',
       unavailable: 'Сочетание для снимка окна недоступно. Повторите попытку или выключите его.',
@@ -1165,7 +1165,7 @@ export const ru = defineLocale({
     quickEntry: {
       enabledTitle: 'Быстрый ввод',
       enabledDesc:
-        "Глобальным горячим ключом вызывайте маленький композер откуда угодно и отправляйте запрос, не открывая Actelyo Legal Harness.",
+        "Глобальным горячим ключом вызывайте маленький композер откуда угодно и отправляйте запрос, не открывая Actelyo Law Harness.",
       shortcutTitle: 'Горячий ключ быстрого ввода',
       shortcutDesc: 'Нужен хотя бы один модификатор, например CommandOrControl+Shift+Space.',
       active: 'Горячий ключ активен.',
@@ -1196,7 +1196,7 @@ export const ru = defineLocale({
     connections: {
       title: 'Зарегистрированные шлюзы',
       intro:
-        "Управляйте этим устройством и всеми шлюзами Actelyo Legal Harness, до которых можно дотянуться через удалённые, SSH или Cloud-соединения.",
+        "Управляйте этим устройством и всеми шлюзами Actelyo Law Harness, до которых можно дотянуться через удалённые, SSH или Cloud-соединения.",
       stagedNote:
         'Переключайтесь между шлюзами из раздела «Сеансы». Профили, чаты, мессенджеры и cron-задачи остаются за своим шлюзом; работа на других шлюзах продолжается.',
       launchModeTitle: 'При запуске возвращаться к «Сеансам» на последнем шлюзе',
@@ -1228,10 +1228,10 @@ export const ru = defineLocale({
       kindRemote: 'Удалённый шлюз',
       kindCloud: 'Hermes Cloud',
       kindSsh: 'SSH',
-      kindLocalDesc: "Рантайм Actelyo Legal Harness, которым управляет это приложение.",
-      kindRemoteDesc: "Шлюз Actelyo Legal Harness, доступный по HTTP(S) — LAN, Tailscale или интернет.",
+      kindLocalDesc: "Рантайм Actelyo Law Harness, которым управляет это приложение.",
+      kindRemoteDesc: "Шлюз Actelyo Law Harness, доступный по HTTP(S) — LAN, Tailscale или интернет.",
       kindCloudDesc: 'Хостинговая инстанция, обнаруженная через ваш аккаунт Hermes Cloud.',
-      kindSshDesc: "Установка Actelyo Legal Harness, доступная по SSH.",
+      kindSshDesc: "Установка Actelyo Law Harness, доступная по SSH.",
       labelTitle: 'Имя',
       labelDesc:
         'Обязательно. Показывается везде, где фигурирует эта инстанция; должно быть уникальным (напр. «Домашняя лаборатория», «Рабочий ноутбук»).',
@@ -1240,7 +1240,7 @@ export const ru = defineLocale({
       sshHostTitle: 'SSH-хост',
       headersTitle: 'Дополнительные заголовки шлюза',
       headersDesc:
-        "Отправляются с каждым HTTP- и WebSocket-запросом к этому шлюзу — например, для прокси доступа вроде Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Значения хранятся зашифрованными. Заголовки, которыми управляет Actelyo Legal Harness (Authorization, Cookie, Host…), игнорируются.",
+        "Отправляются с каждым HTTP- и WebSocket-запросом к этому шлюзу — например, для прокси доступа вроде Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Значения хранятся зашифрованными. Заголовки, которыми управляет Actelyo Law Harness (Authorization, Cookie, Host…), игнорируются.",
       headerValuePlaceholder: 'Значение',
       headerValueSaved: 'Сохранено — оставьте пустым, чтобы не менять',
       headerAdd: 'Добавить заголовок',
@@ -1264,15 +1264,15 @@ export const ru = defineLocale({
       title: 'Подключение шлюза',
       envOverride: 'переопределение переменными окружения',
       intro:
-        "По умолчанию — локальный. Используйте удалённый, когда приложение должно управлять бэкендом Actelyo Legal Harness в другом месте. Соединения шлюзов — на уровне машины; профили обнаруживаются из подключённых шлюзов.",
+        "По умолчанию — локальный. Используйте удалённый, когда приложение должно управлять бэкендом Actelyo Law Harness в другом месте. Соединения шлюзов — на уровне машины; профили обнаруживаются из подключённых шлюзов.",
       envOverrideTitle: 'Переменные окружения управляют этой сессией приложения.',
       envOverrideDesc:
         'Сбросьте HERMES_DESKTOP_REMOTE_URL и HERMES_DESKTOP_REMOTE_TOKEN, чтобы использовать сохранённую настройку ниже.',
       modeTitle: 'Режим подключения',
       localTitle: 'Локальный шлюз',
-      localDesc: "Запускает приватный бэкенд Actelyo Legal Harness на localhost. Это значение по умолчанию, работает офлайн.",
+      localDesc: "Запускает приватный бэкенд Actelyo Law Harness на localhost. Это значение по умолчанию, работает офлайн.",
       remoteTitle: 'Удалённый шлюз',
-      remoteDesc: "Подключает это приложение к удалённому бэкенду Actelyo Legal Harness.",
+      remoteDesc: "Подключает это приложение к удалённому бэкенду Actelyo Law Harness.",
       remoteAuthHint:
         'Хостинговые шлюзы используют OAuth или логин/пароль; самохостинговые могут использовать токен сессии.',
       cloudTitle: 'Hermes Cloud',
@@ -1353,9 +1353,9 @@ export const ru = defineLocale({
       enterUrlFirst: 'Сначала введите удалённый URL.',
       restartingTitle: 'Перезапуск соединения шлюза',
       savedTitle: 'Настройки шлюза сохранены',
-      restartingMessage: "Actelyo Legal Harness Desktop переподключится с сохранёнными настройками — оболочка останется открытой.",
+      restartingMessage: "Actelyo Law Harness Desktop переподключится с сохранёнными настройками — оболочка останется открытой.",
       savedMessage: 'Сохранено для следующего перезапуска.',
-      connectedTo: (baseUrl, version) => `Подключено к ${baseUrl}${version ? ` · Actelyo Legal Harness ${version}` : ''}`,
+      connectedTo: (baseUrl, version) => `Подключено к ${baseUrl}${version ? ` · Actelyo Law Harness ${version}` : ''}`,
       reachableTitle: 'Удалённый шлюз доступен',
       signedOutTitle: 'Вы вышли',
       signedOutMessage: 'Сессия удалённого шлюза сброшена.',
@@ -1367,7 +1367,7 @@ export const ru = defineLocale({
       saveFailed: 'Не удалось сохранить настройки шлюза',
       sshTitle: 'Подключение по SSH',
       sshDesc:
-        "Actelyo Legal Harness запускается на удалённой машине по SSH и туннелируется в это приложение — ничего не нужно запускать или открывать самим. Требуется рабочая SSH-аутентификация по ключу на хост.",
+        "Actelyo Law Harness запускается на удалённой машине по SSH и туннелируется в это приложение — ничего не нужно запускать или открывать самим. Требуется рабочая SSH-аутентификация по ключу на хост.",
       sshTrustHint:
         'Первый предъявленный ключ хоста доверяется и фиксируется; последующие изменения приведут к отказу.',
       sshHostTitle: 'Хост',
@@ -1383,25 +1383,25 @@ export const ru = defineLocale({
       sshPortDesc: 'Пусто = 22 или порт из ~/.ssh/config.',
       sshKeyTitle: 'Файл ключа',
       sshKeyDesc: 'Путь к закрытому ключу. Пусто = ssh-agent или ~/.ssh/config.',
-      sshHermesPathTitle: "Путь к Actelyo Legal Harness (необязательно)",
+      sshHermesPathTitle: "Путь к Actelyo Law Harness (необязательно)",
       sshHermesPathDesc: 'Полный путь к бинарнику hermes на удалённой машине. Пусто = автоопределение.',
       sshHermesPathPlaceholder: 'автоопределение',
       sshTestConnection: 'Проверить SSH',
       sshConnect: 'Подключиться',
       sshButtonsHint: '«Сохранить» применится при следующем запуске. «Подключиться» переподключится сейчас.',
-      sshReachable: (host, platform) => `Доступен: ${host} (${platform}) — Actelyo Legal Harness найден`,
+      sshReachable: (host, platform) => `Доступен: ${host} (${platform}) — Actelyo Law Harness найден`,
       sshIncompleteHost: 'Введите SSH-хост перед подключением.',
       sshErrUnreachable: 'Не удалось достичь этого хоста по SSH. Проверьте хост, порт и сеть.',
       sshErrAuth:
-        "SSH-аутентификация не удалась. Загрузите ключ в ssh-agent (ssh-add) или задайте IdentityFile в ~/.ssh/config — Actelyo Legal Harness запускает ssh в неинтерактивном режиме.",
+        "SSH-аутентификация не удалась. Загрузите ключ в ssh-agent (ssh-add) или задайте IdentityFile в ~/.ssh/config — Actelyo Law Harness запускает ssh в неинтерактивном режиме.",
       sshErrHostKey:
         'Ключ хоста ИЗМЕНИЛСЯ с последнего подключения. Убедитесь, что это ожидаемо, затем выполните ssh-keygen -R <host> и переподключитесь.',
       sshErrNotInstalled:
         'Hermes не установлен на удалённой машине. Установите его там (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) или задайте путь к Hermes.',
       sshErrPlatform:
-        "Неподдерживаемая удалённая платформа. SSH-режим Actelyo Legal Harness Desktop поддерживает удалённые хосты Linux, macOS и Windows.",
+        "Неподдерживаемая удалённая платформа. SSH-режим Actelyo Law Harness Desktop поддерживает удалённые хосты Linux, macOS и Windows.",
       sshErrTimeout: 'SSH-соединение истекло. Хост может быть недоступен или «спит».',
-      sshErrUpdateRequired: "Перед подключением через SSH обновите Actelyo Legal Harness на удалённой машине.",
+      sshErrUpdateRequired: "Перед подключением через SSH обновите Actelyo Law Harness на удалённой машине.",
       sshErrUnknown: 'SSH-соединение не удалось.'
     },
     keys: {
@@ -1449,7 +1449,7 @@ export const ru = defineLocale({
       noOutput: 'Вывода пока нет.',
       deepLinkTitle: 'Добавить MCP-сервер?',
       deepLinkDescription:
-        "Ссылка запросила добавить этот MCP-сервер в Actelyo Legal Harness. Проверьте конфигурацию ниже — она пришла из ссылки, а не из Actelyo Legal Harness.",
+        "Ссылка запросила добавить этот MCP-сервер в Actelyo Law Harness. Проверьте конфигурацию ниже — она пришла из ссылки, а не из Actelyo Law Harness.",
       deepLinkStdioWarning:
         'Этот сервер запускает локальный процесс на вашей машине командой, показанной ниже. Продолжайте только если доверяете источнику.',
       deepLinkConfirm: 'Добавить сервер',
@@ -1523,7 +1523,7 @@ export const ru = defineLocale({
       connectAccount: 'Подключить аккаунт',
       haveApiKey: 'Ввести API-ключ вместо этого?',
       intro:
-        "Войдите по подписке — копировать API-ключ не нужно. Actelyo Legal Harness проведёт вход в браузере прямо здесь, в приложении.",
+        "Войдите по подписке — копировать API-ключ не нужно. Actelyo Law Harness проведёт вход в браузере прямо здесь, в приложении.",
       connected: 'Подключено',
       collapse: 'Свернуть',
       connectAnother: 'Подключить другой провайдер',
@@ -1544,7 +1544,7 @@ export const ru = defineLocale({
       noKeysMatch: 'Провайдеры, подходящие под поиск, не найдены.',
       localEndpoint: {
         title: 'Локальный / свой эндпоинт',
-        description: "Направьте Actelyo Legal Harness на любой OpenAI-совместимый эндпоинт (Zyphra, vLLM, llama.cpp, Ollama и т. д.)."
+        description: "Направьте Actelyo Law Harness на любой OpenAI-совместимый эндпоинт (Zyphra, vLLM, llama.cpp, Ollama и т. д.)."
       },
       loading: 'Загрузка провайдеров…'
     },
@@ -1807,7 +1807,7 @@ export const ru = defineLocale({
     loadFailed: 'Не удалось загрузить граф памяти',
     loading: 'Загрузка…',
     emptyTitle: 'Пока ничего не изучено',
-    emptyDesc: "По мере того как Actelyo Legal Harness создаёт навыки и память для вашей работы, они появятся здесь.",
+    emptyDesc: "По мере того как Actelyo Law Harness создаёт навыки и память для вашей работы, они появятся здесь.",
     share: 'Поделиться картой',
     shareHint:
       'Скопируйте код, чтобы поделиться этой картой, или вставьте код для загрузки. Включает только раскладку, а не вашу память или текст навыков.',
@@ -1888,7 +1888,7 @@ export const ru = defineLocale({
       placeholder: 'Поиск питомцев…',
       loading: 'Загрузка галереи petdex…',
       error: 'Не удалось подключиться к галерее petdex.',
-      staleBackend: "Перезапустите Actelyo Legal Harness, чтобы использовать питомцев — бэкенд старше этой функции.",
+      staleBackend: "Перезапустите Actelyo Law Harness, чтобы использовать питомцев — бэкенд старше этой функции.",
       empty: 'Совпадающих питомцев нет.',
       turnOff: 'Отключить',
       turnOn: 'Включить',
@@ -1915,8 +1915,8 @@ export const ru = defineLocale({
       hatchComposing: 'Собираем по частям…',
       hatchSaving: 'Почти готово…',
       namePlaceholder: 'Имя для вашего питомца',
-      staleBackend: "Обновите Actelyo Legal Harness, чтобы генерировать питомцев.",
-      backgroundHint: "Можно закрыть — Actelyo Legal Harness уведомит, когда будет готово.",
+      staleBackend: "Обновите Actelyo Law Harness, чтобы генерировать питомцев.",
+      backgroundHint: "Можно закрыть — Actelyo Law Harness уведомит, когда будет готово.",
       slowProviderHint: 'Это может занять несколько минут',
       remix: 'Ремикс',
       remixConfirmTitle: 'Сделать ремикс из этого облика?',
@@ -1946,7 +1946,7 @@ export const ru = defineLocale({
     sections: { maintenance: 'Обслуживание', sessions: 'Сеансы', system: 'Система', usage: 'Использование' },
     nav: {
       newChat: { title: 'Новый сеанс', detail: 'Начать новый сеанс' },
-      settings: { title: 'Настройки', detail: "Настройка Actelyo Legal Harness desktop" },
+      settings: { title: 'Настройки', detail: "Настройка Actelyo Law Harness desktop" },
       capabilities: { title: 'Возможности', detail: 'Навыки, инструменты и MCP-серверы' },
       messaging: { title: 'Сообщения', detail: 'Настройка Telegram, Slack, Discord и других' },
       artifacts: { title: 'Артефакты', detail: 'Просмотр сгенерированных результатов' }
@@ -1968,7 +1968,7 @@ export const ru = defineLocale({
     noSessions: 'Сеансов пока нет.',
     gatewayRunning: 'Шлюз сообщений работает',
     gatewayStopped: 'Шлюз сообщений остановлен',
-    hermesActiveSessions: (version, count) => `Actelyo Legal Harness ${version} · Активные сеансы: ${count}`,
+    hermesActiveSessions: (version, count) => `Actelyo Law Harness ${version} · Активные сеансы: ${count}`,
     restartGateway: 'Перезапустить шлюз',
     openBrowser: 'Переключить браузер',
     toggleBrowser: 'Переключить браузер',
@@ -1977,7 +1977,7 @@ export const ru = defineLocale({
     sharedGatewayRestartDescription: bots => `Все боты на этом устройстве переподключатся: ${bots}`,
     sharedGatewayRestartConfirm: 'Перезапустить все',
     sharedGatewayRestarted: count => `Общий шлюз перезапущен (ботов: ${count})`,
-    updateHermes: "Обновить Actelyo Legal Harness",
+    updateHermes: "Обновить Actelyo Law Harness",
     reloadWindow: 'Перезагрузить окно',
     actionRunning: 'выполняется',
     actionDone: 'готово',
@@ -2135,11 +2135,11 @@ export const ru = defineLocale({
     telegramQr: {
       title: 'Выберите способ подключения Telegram-бота',
       subtitle:
-        "Оба способа подключают бота под вашим контролем и сохраняют его данные только в этой установке Actelyo Legal Harness.",
+        "Оба способа подключают бота под вашим контролем и сохраняют его данные только в этой установке Actelyo Law Harness.",
       quickSetup: 'Быстрая настройка',
       recommended: 'Рекомендуется',
       quickHelp:
-        "Отсканируйте QR-код и подтвердите в Telegram. Actelyo Legal Harness создаст бота и определит ваш Telegram ID автоматически.",
+        "Отсканируйте QR-код и подтвердите в Telegram. Actelyo Law Harness создаст бота и определит ваш Telegram ID автоматически.",
       createWithQr: 'Создать по QR',
       starting: 'Запуск…',
       replaceWarning:
@@ -2340,13 +2340,13 @@ export const ru = defineLocale({
     manageProfiles: 'Управлять профилями…',
     connectGateway: 'Управлять шлюзами…',
     fleet: {
-      localDevice: "Это устройство (локальный бэкенд — установит Actelyo Legal Harness, если его нет, иначе откроет новую сессию)",
+      localDevice: "Это устройство (локальный бэкенд — установит Actelyo Law Harness, если его нет, иначе откроет новую сессию)",
       switchDeviceTitle: 'Переключиться на это устройство?',
       switchDeviceDesc: 'Откроется новая сессия на этом компьютере. Текущий разговор останется на другом шлюзе.',
       switchDeviceConfirm: 'Переключить',
       installDeviceTitle: 'Переключиться на это устройство?',
       installDeviceDesc:
-        "Actelyo Legal Harness будет установлен локально, затем откроется новая сессия на этом компьютере. Установка не начнётся, пока вы не подтвердите.",
+        "Actelyo Law Harness будет установлен локально, затем откроется новая сессия на этом компьютере. Установка не начнётся, пока вы не подтвердите.",
       installDeviceConfirm: 'Установить локально',
       connectExistingInstead: 'Вместо этого подключить существующий'
     },
@@ -2357,7 +2357,7 @@ export const ru = defineLocale({
     setAsDefault: 'Сделать по умолчанию',
     defaultProfile: 'Профиль по умолчанию',
     defaultSet: name => `${name} теперь используется по умолчанию`,
-    defaultDescription: "Используется при запуске Actelyo Legal Harness и для новых чатов. Профили существующих сессий не меняются.",
+    defaultDescription: "Используется при запуске Actelyo Law Harness и для новых чатов. Профили существующих сессий не меняются.",
     failedSetDefault: 'Не удалось установить профиль по умолчанию',
     setColor: color => `Установить цвет ${color}`,
     autoColor: 'Авто',
@@ -2395,7 +2395,7 @@ export const ru = defineLocale({
     deleteDescMid: ' и сотрёт его ',
     deleteDescSuffix: ' каталог. Это действие необратимо.',
     deleting: 'Удаление...',
-    createDesc: "Профили — это независимые среды Actelyo Legal Harness: отдельные настройки, навыки и SOUL.md.",
+    createDesc: "Профили — это независимые среды Actelyo Law Harness: отдельные настройки, навыки и SOUL.md.",
     nameLabel: 'Имя',
     cloneFrom: 'Клонировать из',
     cloneFromNone: 'Нет (пустой)',
@@ -2429,7 +2429,7 @@ export const ru = defineLocale({
     failedRename: 'Не удалось переименовать профиль'
   },
   modelAssignment: {
-    saveFailed: "Actelyo Legal Harness не сохранил это изменение модели."
+    saveFailed: "Actelyo Law Harness не сохранил это изменение модели."
   },
 
   cron: {
@@ -2491,7 +2491,7 @@ export const ru = defineLocale({
     everyHourAt: minute => `Каждый час на :${minute}`,
     newCron: 'Новый cron',
     emptyDescNew:
-      "Запланируйте промпт, который будет выполняться по cron-выражению. Actelyo Legal Harness выполнит его и доставит результаты в выбранное вами место.",
+      "Запланируйте промпт, который будет выполняться по cron-выражению. Actelyo Law Harness выполнит его и доставит результаты в выбранное вами место.",
     emptyDescSearch: 'Попробуйте более широкий запрос.',
     emptyTitleNew: 'Запланированных задач пока нет',
     emptyTitleSearch: 'Нет совпадений',
@@ -2739,8 +2739,8 @@ export const ru = defineLocale({
         'Проект создан в прежнем подключении или профиле. Вернитесь к нему; файл IDEA.md не был записан.',
       createFailed: 'Не удалось создать проект',
       staleBackend:
-        "Обновите бэкенд Actelyo Legal Harness, чтобы создавать проекты — ваш бэкенд старше этого desktop-приложения (Настройки → Обновления → Бэкенд).",
-      deleteConfirm: "Это удалит сохранённый проект из Actelyo Legal Harness. Файлы, git-репозитории и worktrees не пострадают.",
+        "Обновите бэкенд Actelyo Law Harness, чтобы создавать проекты — ваш бэкенд старше этого desktop-приложения (Настройки → Обновления → Бэкенд).",
+      deleteConfirm: "Это удалит сохранённый проект из Actelyo Law Harness. Файлы, git-репозитории и worktrees не пострадают.",
       startWork: 'Новый worktree',
       newWorktreeTitle: 'Новый worktree',
       newWorktreeDesc: 'Назовите ветку для этого worktree.',
@@ -2750,7 +2750,7 @@ export const ru = defineLocale({
       baseBranchNone: 'Ветки не найдены',
       startWorkFailed: 'Не удалось создать worktree',
       worktreeStaleBackend:
-        "Обновите бэкенд Actelyo Legal Harness, чтобы создавать worktrees по этому удалённому соединению — он старше git worktree API.",
+        "Обновите бэкенд Actelyo Law Harness, чтобы создавать worktrees по этому удалённому соединению — он старше git worktree API.",
       worktreeProjectLabel: 'Проект',
       worktreeProjectPlaceholder: 'Поиск проектов…',
       worktreeProjectNone: 'Нет проектов с папкой',
@@ -2846,12 +2846,12 @@ export const ru = defineLocale({
   composer: {
     message: 'Сообщение',
     wakingProfile: profile => `Пробуждаем ${profile}…`,
-    placeholderStarting: "Запуск Actelyo Legal Harness...",
-    placeholderReconnecting: "Переподключение к Actelyo Legal Harness…",
+    placeholderStarting: "Запуск Actelyo Law Harness...",
+    placeholderReconnecting: "Переподключение к Actelyo Law Harness…",
     placeholderFollowUp: 'Отправить продолжение',
     newSessionPlaceholders: [
       'Что будем делать?',
-      "Дайте Actelyo Legal Harness задачу",
+      "Дайте Actelyo Law Harness задачу",
       'О чём вы думаете?',
       'Опишите, что нужно',
       'Что обсудим?',
@@ -2931,7 +2931,7 @@ export const ru = defineLocale({
       '/journey': 'Открыть граф памяти — навыки и воспоминания во времени',
       '/queue': 'Добавить, просмотреть, изменить, удалить, переместить или очистить запросы в очереди',
       '/steer': 'Добавить сообщение после следующего вызова инструмента без прерывания',
-      '/goal': "Задать постоянную цель, над которой Actelyo Legal Harness работает до завершения",
+      '/goal': "Задать постоянную цель, над которой Actelyo Law Harness работает до завершения",
       '/heartbeat': 'Задать повторяющийся запрос для этого сеанса в состоянии простоя',
       '/refine': 'Проанализировать беседу и сохранить выводы в памяти или навыках',
       '/review': 'Запустить независимого субагента для проверки обсуждаемой работы',
@@ -2943,7 +2943,7 @@ export const ru = defineLocale({
       '/egress': 'Показать состояние исходящего прокси Docker',
       '/context': 'Показать использование контекста, категории, статистику сжатия и скорость обработки',
       '/whoami': 'Показать права доступа к слеш-командам',
-      '/profile': "Переключить активный профиль Actelyo Legal Harness",
+      '/profile': "Переключить активный профиль Actelyo Law Harness",
       '/codex-runtime': 'Переключить среду Codex app-server для моделей OpenAI/Codex',
       '/personality': 'Выбрать готовую личность',
       '/battery': 'Переключить цветной индикатор батареи в строке состояния',
@@ -2970,7 +2970,7 @@ export const ru = defineLocale({
       '/subscription': 'Показать план Nous и изменить его в браузере',
       '/topup': 'Показать баланс Nous и управлять оплатой',
       '/platform': 'Приостановить, возобновить или перечислить сбоящие платформы шлюза',
-      '/version': "Показать версию Actelyo Legal Harness Agent",
+      '/version': "Показать версию Actelyo Law Harness Agent",
       '/debug': 'Загрузить отчёт отладки с данными системы и журналами и получить ссылку',
       '/model': 'Переключить модель для этого сеанса'
     },
@@ -2985,7 +2985,7 @@ export const ru = defineLocale({
       'composer.history': 'переключать поповер / историю'
     },
     attachUrlTitle: 'Прикрепить URL',
-    attachUrlDesc: "Actelyo Legal Harness загрузит страницу и добавит её как контекст для этого хода.",
+    attachUrlDesc: "Actelyo Law Harness загрузит страницу и добавит её как контекст для этого хода.",
     urlPlaceholder: 'https://example.com/post',
     urlHintPre: 'Укажите полный URL, например ',
     attach: 'Прикрепить',
@@ -3237,7 +3237,7 @@ export const ru = defineLocale({
       createPr: 'Создать PR',
       openPr: 'Открыть PR',
       ghMissing: 'Установите GitHub CLI (gh) и войдите, чтобы открывать PR',
-      agentShip: "Попросить Actelyo Legal Harness открыть PR",
+      agentShip: "Попросить Actelyo Law Harness открыть PR",
       agentShipUnavailable: 'Чат, которому принадлежат эти изменения, не на экране.',
       agentShipPrompt:
         'Проверьте текущие изменения, закоммитьте их с ясным conventional-commit сообщением, запушьте ветку и создайте pull request.',
@@ -3249,23 +3249,23 @@ export const ru = defineLocale({
     }
   },
   updates: {
-    discontinuedTitle: "Эта сборка Actelyo Legal Harness больше не поддерживается",
+    discontinuedTitle: "Эта сборка Actelyo Law Harness больше не поддерживается",
     discontinuedBody:
-      "Эта сборка Actelyo Legal Harness больше не поддерживается и может перестать работать — удалите её. Ваши данные останутся на диске.",
+      "Эта сборка Actelyo Law Harness больше не поддерживается и может перестать работать — удалите её. Ваши данные останутся на диске.",
     channels: { stable: 'Стабильный', canary: 'Тестовый' },
     bundleSwapPending: 'Перезапустите, чтобы завершить обновление',
     bundleSwapPendingDesc:
-      "Обновлённое приложение уже установлено — достаточно перезапустить Actelyo Legal Harness, чтобы загрузить его. Чаты и настройки не пострадают.",
-    bundleSwapPendingAction: "Перезапустить Actelyo Legal Harness",
+      "Обновлённое приложение уже установлено — достаточно перезапустить Actelyo Law Harness, чтобы загрузить его. Чаты и настройки не пострадают.",
+    bundleSwapPendingAction: "Перезапустить Actelyo Law Harness",
     stages: {
       idle: 'Готовимся…',
       prepare: 'Готовимся…',
       fetch: 'Скачиваем…',
       pull: 'Почти готово…',
       pydeps: 'Завершаем…',
-      update: "Обновляем Actelyo Legal Harness…",
+      update: "Обновляем Actelyo Law Harness…",
       rebuild: 'Пересобираем desktop-приложение…',
-      restart: "Перезапускаем Actelyo Legal Harness…",
+      restart: "Перезапускаем Actelyo Law Harness…",
       done: 'Обновление завершено',
       manual: 'Обновление из терминала',
       guiSkew: 'Обновите desktop-приложение',
@@ -3275,17 +3275,17 @@ export const ru = defineLocale({
     checkFailedTitle: 'Не удалось проверить обновления',
     tryAgain: 'Попробовать снова',
     notAvailableTitle: 'Обновление недоступно',
-    unsupportedMessage: "Эта версия Actelyo Legal Harness не может обновлять себя из приложения.",
+    unsupportedMessage: "Эта версия Actelyo Law Harness не может обновлять себя из приложения.",
     connectionRetry: 'Проверьте соединение и попробуйте снова.',
-    gitUnusable: "Actelyo Legal Harness не удалось запустить Git на этом компьютере, поэтому проверить обновления не получилось.",
+    gitUnusable: "Actelyo Law Harness не удалось запустить Git на этом компьютере, поэтому проверить обновления не получилось.",
     latestBody: 'У вас последняя версия.',
     versionDetailsDistributionStore: 'Microsoft Store',
     latestBodyBackend: 'Бэкенд работает на последней версии.',
     allSetTitle: 'Всё готово',
     availableTitle: 'Доступно новое обновление',
-    availableBody: "Новая версия Actelyo Legal Harness готова к установке.",
+    availableBody: "Новая версия Actelyo Law Harness готова к установке.",
     availableTitleBackend: 'Доступно обновление бэкенда',
-    availableBodyBackend: "Новая версия подключённого бэкенда Actelyo Legal Harness готова к установке.",
+    availableBodyBackend: "Новая версия подключённого бэкенда Actelyo Law Harness готова к установке.",
     availableBodyNoChangelog: 'Новая версия готова. Заметки о выпуске недоступны для этого типа установки.',
     updateNow: 'Обновить сейчас',
     maybeLater: 'Возможно позже',
@@ -3294,31 +3294,31 @@ export const ru = defineLocale({
     manualTitle: 'Обновление из терминала',
     manualUnavailableTitle: 'Обновление здесь недоступно',
     manualBody:
-      "Actelyo Legal Harness установлен из командной строки, поэтому обновления тоже выполняются там. Вставьте это в терминал:",
-    manualPickedUp: "Actelyo Legal Harness подхватит новую версию при следующем запуске.",
-    manualBodyBackend: "Бэкенд Actelyo Legal Harness управляется вне этого приложения. Выполните это на сервере, где он размещён:",
+      "Actelyo Law Harness установлен из командной строки, поэтому обновления тоже выполняются там. Вставьте это в терминал:",
+    manualPickedUp: "Actelyo Law Harness подхватит новую версию при следующем запуске.",
+    manualBodyBackend: "Бэкенд Actelyo Law Harness управляется вне этого приложения. Выполните это на сервере, где он размещён:",
     manualPickedUpBackend: 'Бэкенд загрузит новую версию после завершения обновления.',
     guiSkewTitle: 'Обновите desktop-приложение',
     guiSkewBody:
-      "Бэкенд обновлён, но пакет этого desktop-приложения не изменился. Обновите или переустановите desktop-приложение Actelyo Legal Harness (ваш AppImage / .deb / .rpm), чтобы версии совпали.",
+      "Бэкенд обновлён, но пакет этого desktop-приложения не изменился. Обновите или переустановите desktop-приложение Actelyo Law Harness (ваш AppImage / .deb / .rpm), чтобы версии совпали.",
     copy: 'Копировать',
     copied: 'Скопировано',
     done: 'Готово',
     applyingBody:
-      "Обновлятор Actelyo Legal Harness возьмёт процесс на себя в своём окне и автоматически перезапустит Actelyo Legal Harness, когда закончит. Пожалуйста, не открывайте Actelyo Legal Harness вручную во время обновления.",
+      "Обновлятор Actelyo Law Harness возьмёт процесс на себя в своём окне и автоматически перезапустит Actelyo Law Harness, когда закончит. Пожалуйста, не открывайте Actelyo Law Harness вручную во время обновления.",
     applyingBodyBackend:
-      "Удалённый бэкенд применяет обновление и перезапустится. Actelyo Legal Harness переподключится автоматически, когда он снова заработает.",
-    applyingClose: "Это окно закроется во время обновления, затем Actelyo Legal Harness откроется сам.",
+      "Удалённый бэкенд применяет обновление и перезапустится. Actelyo Law Harness переподключится автоматически, когда он снова заработает.",
+    applyingClose: "Это окно закроется во время обновления, затем Actelyo Law Harness откроется сам.",
     errorTitle: 'Обновление не завершилось',
     errorBody: 'Не переживайте — ничего не потеряно. Можно попробовать снова прямо сейчас.',
-    blockerTitle: "Закрыть локальные предпросмотры, чтобы обновить Actelyo Legal Harness?",
+    blockerTitle: "Закрыть локальные предпросмотры, чтобы обновить Actelyo Law Harness?",
     blockerBody:
-      "Actelyo Legal Harness нужно остановить эти локальные предпросмотры перед обновлением. Ваши файлы не будут изменены или удалены.",
-    foreignBlockerTitle: "Закрыть другие процессы, чтобы обновить Actelyo Legal Harness",
+      "Actelyo Law Harness нужно остановить эти локальные предпросмотры перед обновлением. Ваши файлы не будут изменены или удалены.",
+    foreignBlockerTitle: "Закрыть другие процессы, чтобы обновить Actelyo Law Harness",
     foreignBlockerBody:
-      "Actelyo Legal Harness не может безопасно закрыть эти процессы автоматически. Закройте приложение, терминал или службу, которой принадлежит каждый из них, и повторите обновление.",
+      "Actelyo Law Harness не может безопасно закрыть эти процессы автоматически. Закройте приложение, терминал или службу, которой принадлежит каждый из них, и повторите обновление.",
     mixedBlockerBody:
-      "Actelyo Legal Harness может закрыть локальные предпросмотры, перечисленные ниже. Остальные процессы нужно закрыть вручную, прежде чем обновление сможет продолжиться.",
+      "Actelyo Law Harness может закрыть локальные предпросмотры, перечисленные ниже. Остальные процессы нужно закрыть вручную, прежде чем обновление сможет продолжиться.",
     closePreviewsAndUpdate: 'Закрыть предпросмотры и обновить',
     closePreviewsAndCheckAgain: 'Закрыть предпросмотры и проверить снова',
     localPreview: 'Локальный предпросмотр',
@@ -3371,12 +3371,12 @@ export const ru = defineLocale({
     justNowSuffix: ' · только что',
     bundleOutOfSync: 'Сборка приложения устарела',
     bundleOutOfSyncDesc:
-      "Рантайм Actelyo Legal Harness обновлён, но само приложение — ещё старая сборка: новые функции интерфейса (например, Bot Mode) не появятся до обновления. Запустите обновление ниже, чтобы пересобрать приложение. Если предупреждение не исчезнет, переустановите с последнего установщика.",
+      "Рантайм Actelyo Law Harness обновлён, но само приложение — ещё старая сборка: новые функции интерфейса (например, Bot Mode) не появятся до обновления. Запустите обновление ниже, чтобы пересобрать приложение. Если предупреждение не исчезнет, переустановите с последнего установщика.",
     bundleOutOfSyncAction: 'Скачать установщик',
     checkingShort: 'Проверка…'
   },
   guidedGreeting: {
-    line: "Заходите. Я Actelyo Legal Harness. Дайте мне пару минут — обустрою тут всё под вас, а потом займёмся тем, что вам правда нужно.\n\nДля начала: как к вам обращаться?",
+    line: "Заходите. Я Actelyo Law Harness. Дайте мне пару минут — обустрою тут всё под вас, а потом займёмся тем, что вам правда нужно.\n\nДля начала: как к вам обращаться?",
     nameSuggestion: (name: string) => `(Могу звать вас просто ${name}, если так удобнее.)`
   },
   install: {
@@ -3387,7 +3387,7 @@ export const ru = defineLocale({
       skipped: 'Пропущено',
       failed: 'Ошибка'
     },
-    oneTimeTitle: "Actelyo Legal Harness требует одноразовой установки",
+    oneTimeTitle: "Actelyo Law Harness требует одноразовой установки",
     unsupportedDesc: platform =>
       `Автоматическая установка при первом запуске пока недоступна на ${platform}. Откройте Терминал и выполните команду ниже, затем перезапустите это приложение. При следующих запусках этот шаг будет пропущен.`,
     installCommand: 'Команда установки',
@@ -3395,23 +3395,23 @@ export const ru = defineLocale({
     viewDocs: 'Открыть документацию по установке',
     installTo: 'Будет установлено в',
     retryAfterRun: 'Я выполнил — попробовать снова',
-    setupChoiceTitle: "Настройка Actelyo Legal Harness Desktop",
+    setupChoiceTitle: "Настройка Actelyo Law Harness Desktop",
     setupChoiceDesc:
-      "Подключите это приложение к уже работающему шлюзу Actelyo Legal Harness или установите Actelyo Legal Harness локально на этот компьютер.",
-    connectExistingTitle: "Подключиться к существующему Actelyo Legal Harness",
+      "Подключите это приложение к уже работающему шлюзу Actelyo Law Harness или установите Actelyo Law Harness локально на этот компьютер.",
+    connectExistingTitle: "Подключиться к существующему Actelyo Law Harness",
     connectExistingShort: 'Подключить существующий',
     connectExistingDesc:
       'Используйте удалённый бэкенд с сессионным токеном или входом через браузер. Локальная установка не начнётся.',
-    installLocalTitle: "Установить Actelyo Legal Harness локально",
-    installLocalDesc: "Скачайте Actelyo Legal Harness, создайте его Python-окружение и запустите бэкенд на этом компьютере.",
-    localStartUnavailable: "Не удалось начать локальную установку. Перезапустите Actelyo Legal Harness Desktop и попробуйте снова.",
-    remoteSetupTitle: "Подключиться к существующему Actelyo Legal Harness",
-    remoteSetupDesc: "Введите URL вашего шлюза. Actelyo Legal Harness Desktop определит, нужен токен или вход через браузер.",
+    installLocalTitle: "Установить Actelyo Law Harness локально",
+    installLocalDesc: "Скачайте Actelyo Law Harness, создайте его Python-окружение и запустите бэкенд на этом компьютере.",
+    localStartUnavailable: "Не удалось начать локальную установку. Перезапустите Actelyo Law Harness Desktop и попробуйте снова.",
+    remoteSetupTitle: "Подключиться к существующему Actelyo Law Harness",
+    remoteSetupDesc: "Введите URL вашего шлюза. Actelyo Law Harness Desktop определит, нужен токен или вход через браузер.",
     remoteUrlTitle: 'URL шлюза',
     remoteUrlDesc: 'Используйте базовый URL шлюза Hermes, включая https:// для удалённых.',
     remoteUrlPlaceholder: 'https://gateway.example.com/hermes',
     probing: 'Определяем аутентификацию шлюза...',
-    probeError: "Не удалось подключиться к этому шлюзу Actelyo Legal Harness.",
+    probeError: "Не удалось подключиться к этому шлюзу Actelyo Law Harness.",
     identityProvider: 'ваш провайдер аутентификации',
     authTitle: 'Аутентификация',
     authNeedsOauth: provider => `Сначала войдите через ${provider}, чтобы проверить этот шлюз.`,
@@ -3431,12 +3431,12 @@ export const ru = defineLocale({
     applyRemote: 'Применить и переподключиться',
     backToSetup: 'Назад',
     failedTitle: 'Установка не удалась',
-    settingUpTitle: "Настройка Actelyo Legal Harness Agent",
+    settingUpTitle: "Настройка Actelyo Law Harness Agent",
     finishingTitle: 'Завершаем',
     failedDesc:
-      "Один из шагов установки завершился ошибкой. На Windows это может произойти, если запущена другая инстанция Actelyo Legal Harness CLI или desktop. Остановите все работающие инстанции Actelyo Legal Harness и повторите. Подробности — ниже или в журнале desktop.",
+      "Один из шагов установки завершился ошибкой. На Windows это может произойти, если запущена другая инстанция Actelyo Law Harness CLI или desktop. Остановите все работающие инстанции Actelyo Law Harness и повторите. Подробности — ниже или в журнале desktop.",
     activeDesc:
-      "Это одноразовая настройка. Установщик Actelyo Legal Harness скачивает зависимости и настраивает вашу машину. При следующих запусках этот шаг будет пропущен.",
+      "Это одноразовая настройка. Установщик Actelyo Law Harness скачивает зависимости и настраивает вашу машину. При следующих запусках этот шаг будет пропущен.",
     progress: (completed, total) => `Выполнено ${completed} из ${total} шагов`,
     currentStage: stage => ` — сейчас: ${stage}`,
     fetchingManifest: 'Загружаем манифест установщика...',
@@ -3453,10 +3453,10 @@ export const ru = defineLocale({
     reloadRetry: 'Перезагрузить и повторить'
   },
   onboarding: {
-    headerTitle: "Настроим для вас Actelyo Legal Harness Agent",
+    headerTitle: "Настроим для вас Actelyo Law Harness Agent",
     headerDesc: 'Подключите провайдера модели, чтобы начать общение. Большинство вариантов — в один клик.',
-    preparingInstall: "Actelyo Legal Harness завершает установку. Обычно это занимает меньше минуты при первом запуске.",
-    starting: "Запускаем Actelyo Legal Harness…",
+    preparingInstall: "Actelyo Law Harness завершает установку. Обычно это занимает меньше минуты при первом запуске.",
+    starting: "Запускаем Actelyo Law Harness…",
     lookingUpProviders: 'Ищем провайдеров...',
     collapse: 'Свернуть',
     otherProviders: 'Другие провайдеры',
@@ -3464,7 +3464,7 @@ export const ru = defineLocale({
     chooseLater: 'Выберу провайдера позже',
     recommended: 'Рекомендуется',
     connected: 'Подключено',
-    featuredPitch: "Одна подписка, 300+ передовых моделей — рекомендуемый способ запускать Actelyo Legal Harness",
+    featuredPitch: "Одна подписка, 300+ передовых моделей — рекомендуемый способ запускать Actelyo Law Harness",
     fireworksPitch: 'Прямой API моделей — передовые модели на хостинге Fireworks',
     openRouterPitch: 'Один ключ, сотни моделей — надёжный вариант по умолчанию',
     apiKeyOptions: {
@@ -3482,7 +3482,7 @@ export const ru = defineLocale({
       local: {
         short: 'self-hosted',
         description:
-          "Укажите Actelyo Legal Harness локальный или self-hosted OpenAI-совместимый endpoint (vLLM, llama.cpp, Ollama и т.д.)."
+          "Укажите Actelyo Law Harness локальный или self-hosted OpenAI-совместимый endpoint (vLLM, llama.cpp, Ollama и т.д.)."
       }
     },
     backToSignIn: 'Назад ко входу',
@@ -3495,7 +3495,7 @@ export const ru = defineLocale({
     update: 'Обновить',
     flowSubtitles: {
       pkce: 'Откроет браузер для входа, затем продолжит здесь',
-      device_code: "Откроет страницу подтверждения в браузере — Actelyo Legal Harness подключится автоматически",
+      device_code: "Откроет страницу подтверждения в браузере — Actelyo Law Harness подключится автоматически",
       external: 'Войдите один раз в терминале, затем вернитесь в чат'
     },
     startingSignIn: provider => `Начинаем вход для ${provider}...`,
@@ -3506,12 +3506,12 @@ export const ru = defineLocale({
     pickDifferentProvider: 'Выбрать другого провайдера',
     signInWith: provider => `Войти через ${provider}`,
     openedBrowser: provider => `Мы открыли ${provider} в вашем браузере.`,
-    authorizeThere: "Авторизуйте Actelyo Legal Harness там.",
+    authorizeThere: "Авторизуйте Actelyo Law Harness там.",
     copyAuthCode: 'Скопируйте код авторизации и вставьте его ниже.',
     pasteAuthCode: 'Вставьте код авторизации',
     reopenAuthPage: 'Открыть страницу авторизации снова',
     autoBrowser: provider =>
-      `Мы открыли ${provider} в вашем браузере. Авторизуйте Actelyo Legal Harness там, и подключение произойдёт автоматически — ничего копировать и вставлять не нужно.`,
+      `Мы открыли ${provider} в вашем браузере. Авторизуйте Actelyo Law Harness там, и подключение произойдёт автоматически — ничего копировать и вставлять не нужно.`,
     reopenSignInPage: 'Открыть страницу входа снова',
     waitingAuthorize: 'Ждём вашей авторизации...',
     externalPending: provider =>
@@ -3631,13 +3631,13 @@ export const ru = defineLocale({
       update: 'обновление',
       updateInProgress: 'Обновление выполняется',
       commitsBehind: (count, branch) => `${count} ${RU_NOUN(count, 'коммит', 'коммита', 'коммитов')} позади ${branch}`,
-      desktopVersion: version => `Actelyo Legal Harness Desktop v${version}`,
+      desktopVersion: version => `Actelyo Law Harness Desktop v${version}`,
       backendVersion: version => `Бэкенд v${version}`,
       clientLabel: version => `клиент v${version}`,
       connectionSsh: host => `SSH: ${host}`,
       connectionRemote: host => `Удалённый: ${host}`,
       connectionCloud: host => `Облако: ${host}`,
-      connectionCloudTooltip: host => `Actelyo Legal Harness Cloud · ${host}`,
+      connectionCloudTooltip: host => `Actelyo Law Harness Cloud · ${host}`,
       connectionSshTooltip: host => `SSH · ${host}`,
       connectionRemoteTooltip: host => `Удалённый · ${host}`,
       backendLabel: version => `бэкенд v${version}`,
@@ -3783,7 +3783,7 @@ export const ru = defineLocale({
     binaryTitle: 'Похоже на бинарный файл',
     binaryBody: label => `Предпросмотр ${label} может показать нечитаемый текст.`,
     largeTitle: 'Этот файл большой',
-    largeBody: (label, size) => `${label} — ${size}. Actelyo Legal Harness покажет только первые 512 КБ.`,
+    largeBody: (label, size) => `${label} — ${size}. Actelyo Law Harness покажет только первые 512 КБ.`,
     previewAnyway: 'Предпросмотр всё равно',
     truncated: 'Показаны первые 512 КБ.',
     noInlineTitle: 'Нет inline-предпросмотра',
@@ -3826,11 +3826,11 @@ export const ru = defineLocale({
         'Этот адрес указывает на машину, на которой работает ваш агент, а не на эту. Панель браузера загружает страницы локально, поэтому для удалённого dev-сервера нужен порт-форвардинг или доступный hostname.',
       failedToLoad: 'Не удалось загрузить предпросмотр',
       tryAgain: 'Попробовать снова',
-      restarting: "Actelyo Legal Harness перезапускается...",
-      askRestart: "Попросить Actelyo Legal Harness перезапустить сервер",
-      lookingRestart: taskId => `Actelyo Legal Harness ищет сервер предпросмотра для перезапуска (${taskId})`,
+      restarting: "Actelyo Law Harness перезапускается...",
+      askRestart: "Попросить Actelyo Law Harness перезапустить сервер",
+      lookingRestart: taskId => `Actelyo Law Harness ищет сервер предпросмотра для перезапуска (${taskId})`,
       restartingTitle: 'Перезапуск сервера предпросмотра',
-      restartingMessage: "Actelyo Legal Harness работает в фоне. Следите за прогрессом в консоли предпросмотра.",
+      restartingMessage: "Actelyo Law Harness работает в фоне. Следите за прогрессом в консоли предпросмотра.",
       startRestartFailed: message => `Не удалось запустить перезапуск сервера: ${message}`,
       restartFailed: 'Перезапуск сервера не удался',
       hideConsole: 'Скрыть консоль предпросмотра',
@@ -3842,16 +3842,16 @@ export const ru = defineLocale({
       reload: 'Перезагрузить страницу',
       address: 'Адрес',
       addressPlaceholder: 'Введите адрес',
-      blankPageBody: "Введите адрес выше, чтобы просматривать, или попросите Actelyo Legal Harness открыть страницу.",
-      finishedRestarting: message => `Actelyo Legal Harness завершил перезапуск сервера предпросмотра${message ? `: ${message}` : ''}`,
+      blankPageBody: "Введите адрес выше, чтобы просматривать, или попросите Actelyo Law Harness открыть страницу.",
+      finishedRestarting: message => `Actelyo Law Harness завершил перезапуск сервера предпросмотра${message ? `: ${message}` : ''}`,
       failedRestarting: message => `Перезапуск сервера не удался: ${message}`,
       unknownError: 'неизвестная ошибка',
       restartedTitle: 'Сервер предпросмотра перезапущен',
       reloadingNow: 'Перезагружаем предпросмотр.',
       restartFailedTitle: 'Перезапуск предпросмотра не удался',
-      restartFailedMessage: "Actelyo Legal Harness не смог перезапустить сервер.",
+      restartFailedMessage: "Actelyo Law Harness не смог перезапустить сервер.",
       stillWorking:
-        "Actelyo Legal Harness всё ещё работает, но результата перезапуска пока нет. Команда сервера может выполняться в foreground.",
+        "Actelyo Law Harness всё ещё работает, но результата перезапуска пока нет. Команда сервера может выполняться в foreground.",
       workspaceReloading: 'Рабочее пространство изменилось, перезагружаем предпросмотр',
       fileChanged: url => `Файл изменился, перезагружаем предпросмотр: ${url}`,
       filesChanged: (count, url) =>
@@ -3867,12 +3867,12 @@ export const ru = defineLocale({
   },
   interfaceMode: {
     title: 'Режим интерфейса',
-    hint: "Меняет то, что показано, а не то, что умеет Actelyo Legal Harness.",
+    hint: "Меняет то, что показано, а не то, что умеет Actelyo Law Harness.",
     sessionNote:
       'Задано простым режимом. Изменение здесь действует до конца сеанса; переключитесь в расширенный, чтобы сделать его своим.',
     simple: {
       label: 'Простой',
-      description: "Для общения с Actelyo Legal Harness. Боковая панель и чат; без терминала, файлов и панелей diff."
+      description: "Для общения с Actelyo Law Harness. Боковая панель и чат; без терминала, файлов и панелей diff."
     },
     advanced: {
       label: 'Расширенный',
@@ -3956,7 +3956,7 @@ export const ru = defineLocale({
     thread: {
       loadingSession: 'Загрузка сеанса',
       showEarlier: 'Показать ранние сообщения',
-      loadingResponse: "Actelyo Legal Harness загружает ответ",
+      loadingResponse: "Actelyo Law Harness загружает ответ",
       resumeWhenBackgroundDone: count =>
         count === 1
           ? 'Продолжится, когда фоновая задача завершится'
@@ -3998,7 +3998,7 @@ export const ru = defineLocale({
       attachingFile: 'Прикрепление…'
     },
     approval: {
-      gatewayDisconnected: "Шлюз Actelyo Legal Harness не подключён",
+      gatewayDisconnected: "Шлюз Actelyo Law Harness не подключён",
       sendFailed: 'Не удалось отправить ответ на подтверждение',
       run: 'Выполнить',
       command: 'Команда',
@@ -4009,12 +4009,12 @@ export const ru = defineLocale({
       reject: 'Отклонить',
       alwaysTitle: 'Всегда разрешать эту команду?',
       alwaysDescription: pattern =>
-        `Это добавит паттерн «${pattern}» в ваш постоянный список разрешений (~/.hermes/config.yaml). Actelyo Legal Harness больше не будет спрашивать о подобных командах — ни в этом сеансе, ни в будущем.`,
+        `Это добавит паттерн «${pattern}» в ваш постоянный список разрешений (~/.hermes/config.yaml). Actelyo Law Harness больше не будет спрашивать о подобных командах — ни в этом сеансе, ни в будущем.`,
       alwaysAllow: 'Всегда разрешать'
     },
     clarify: {
       notReady: 'Запрос уточнения ещё не готов',
-      gatewayDisconnected: "Шлюз Actelyo Legal Harness не подключён",
+      gatewayDisconnected: "Шлюз Actelyo Law Harness не подключён",
       sendFailed: 'Не удалось отправить ответ на уточнение',
       loadingQuestion: 'Загрузка вопроса…',
       other: 'Другое (введите ответ)',
@@ -4067,7 +4067,7 @@ export const ru = defineLocale({
       envRequired: 'Сначала заполните обязательные учётные данные',
       sendFailed: 'Не удалось отправить ответ на настройку MCP',
       reloadFailed: 'Сервер сохранён, но перезагрузка MCP-инструментов не удалась — они загрузятся в следующем сеансе',
-      gatewayDisconnected: "Шлюз Actelyo Legal Harness не подключён"
+      gatewayDisconnected: "Шлюз Actelyo Law Harness не подключён"
     },
     tool: {
       copyCode: 'Копировать код',
@@ -4185,7 +4185,7 @@ export const ru = defineLocale({
     }
   },
   prompts: {
-    gatewayDisconnected: "Шлюз Actelyo Legal Harness не подключён",
+    gatewayDisconnected: "Шлюз Actelyo Law Harness не подключён",
     sudoSendFailed: 'Не удалось отправить пароль sudo',
     secretSendFailed: 'Не удалось отправить секрет',
     sudoTitle: 'Пароль администратора',
@@ -4193,10 +4193,10 @@ export const ru = defineLocale({
       'Проверьте команду перед вводом пароля sudo. Пароль отправляется агенту, который её выполняет, и кэшируется на время сеанса.',
     sudoCommandUnavailable: 'Агент не предоставил команду. Отмените запрос, если не можете проверить её в разговоре.',
     sudoInstallDesc:
-      "Actelyo Legal Harness нужен ваш пароль sudo, чтобы установить пакеты Bot Screen (TigerVNC + Xfce) на хосте шлюза. Он отправляется только на этот хост.",
+      "Actelyo Law Harness нужен ваш пароль sudo, чтобы установить пакеты Bot Screen (TigerVNC + Xfce) на хосте шлюза. Он отправляется только на этот хост.",
     sudoPlaceholder: 'пароль sudo',
     secretTitle: 'Требуется секрет',
-    secretDesc: "Actelyo Legal Harness нужны учётные данные, чтобы продолжить.",
+    secretDesc: "Actelyo Law Harness нужны учётные данные, чтобы продолжить.",
     secretPlaceholder: 'значение секрета'
   },
   desktop: {
@@ -4263,8 +4263,8 @@ export const ru = defineLocale({
     sessionExportFailed: 'Не удалось экспортировать сеанс',
     imageSaved: 'Изображение сохранено',
     downloadStarted: 'Загрузка началась',
-    restartToUseSaveImage: "Перезапустите Actelyo Legal Harness Desktop, чтобы использовать «Сохранить изображение».",
-    restartToSaveImages: "Перезапустите Actelyo Legal Harness Desktop, чтобы сохранять изображения",
+    restartToUseSaveImage: "Перезапустите Actelyo Law Harness Desktop, чтобы использовать «Сохранить изображение».",
+    restartToSaveImages: "Перезапустите Actelyo Law Harness Desktop, чтобы сохранять изображения",
     imageDownloadFailed: 'Загрузка изображения не удалась',
     openImage: 'Открыть изображение',
     downloadImage: 'Скачать изображение',

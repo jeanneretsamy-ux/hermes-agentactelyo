@@ -35,6 +35,7 @@ export function applyDesktopIdentity(
   },
   identity: Readonly<ProductIdentity> = PRODUCT_IDENTITY
 ): string | null {
+  app.setName(identity.displayName)
   if (!identity.token && identity.appNamePascal === identity.artifactNamePascal) {
     return null
   }

@@ -50,7 +50,7 @@ export const es: Translations = {
   },
 
   app: {
-    brand: "Actelyo Legal Harness Agent",
+    brand: "Actelyo Law Harness Agent",
     brandShort: "HA",
     closeNavigation: "Cerrar navegación",
     closeModelTools: "Cerrar modelo y herramientas",
@@ -120,8 +120,8 @@ export const es: Translations = {
     starting: "Iniciando",
     startedInBackground: "Iniciado en segundo plano — revisa los registros para ver el progreso",
     stopped: "Detenido",
-    updateHermes: "Actualizar Actelyo Legal Harness",
-    updatingHermes: "Actualizando Actelyo Legal Harness…",
+    updateHermes: "Actualizar Actelyo Law Harness",
+    updatingHermes: "Actualizando Actelyo Law Harness…",
     waitingForOutput: "Esperando salida…",
   },
 
@@ -334,7 +334,7 @@ export const es: Translations = {
       "Guardado: reinicia el gateway para aplicar el cambio.",
     forceReinstall: "Forzar reinstalación (eliminar carpeta existente primero)",
     headline:
-      "Descubre, instala, habilita y actualiza complementos de Actelyo Legal Harness (equivalente a `hermes plugins`).",
+      "Descubre, instala, habilita y actualiza complementos de Actelyo Law Harness (equivalente a `hermes plugins`).",
     identifierLabel: "URL de Git u owner/repo",
     inactive: "inactivo",
     installBtn: "Instalar",
@@ -448,7 +448,7 @@ export const es: Translations = {
     showValue: "Mostrar valor real",
     hideValue: "Ocultar valor",
     customTitle: "Claves personalizadas",
-    customHint: "Variables de entorno arbitrarias almacenadas en tu .env que Actelyo Legal Harness no reconoce. Úsalas para inyectar variables de entorno para skills, servidores MCP o tus propias herramientas.",
+    customHint: "Variables de entorno arbitrarias almacenadas en tu .env que Actelyo Law Harness no reconoce. Úsalas para inyectar variables de entorno para skills, servidores MCP o tus propias herramientas.",
     customConfigured: "{count} clave(s) personalizada(s) configurada(s)",
     addCustomKey: "Añadir una clave personalizada",
     customKeyName: "Nombre de la variable",
@@ -512,11 +512,11 @@ export const es: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Actelyo Legal Harness Achievements",
+      title: "Actelyo Law Harness Achievements",
       subtitle:
-        "Insignias coleccionables de Actelyo Legal Harness ganadas a partir del historial real de sesiones. Los logros conocidos no completados se muestran como Descubiertos; los logros secretos permanecen ocultos hasta que aparece el primer comportamiento coincidente.",
+        "Insignias coleccionables de Actelyo Law Harness ganadas a partir del historial real de sesiones. Los logros conocidos no completados se muestran como Descubiertos; los logros secretos permanecen ocultos hasta que aparece el primer comportamiento coincidente.",
       scan_subtitle:
-        "Escaneando el historial de sesiones de Actelyo Legal Harness. El primer escaneo puede tardar 5–10 segundos en historiales grandes.",
+        "Escaneando el historial de sesiones de Actelyo Law Harness. El primer escaneo puede tardar 5–10 segundos en historiales grandes.",
     },
     actions: {
       rescan: "Volver a escanear",
@@ -531,7 +531,7 @@ export const es: Translations = {
       highest_tier: "Nivel más alto",
       highest_tier_hint: "Copper → Silver → Gold → Diamond → Olympian",
       latest: "Más reciente",
-      latest_hint_empty: "usa Actelyo Legal Harness más",
+      latest_hint_empty: "usa Actelyo Law Harness más",
       none_yet: "Ninguno aún",
     },
     state: {
@@ -562,10 +562,10 @@ export const es: Translations = {
       tiers_header: "Niveles",
       secret_header: "Logros secretos",
       secret_body:
-        "Los secretos ocultan su disparador exacto. Una vez que Actelyo Legal Harness detecta una señal relacionada, la tarjeta pasa a Descubierto y muestra su requisito.",
+        "Los secretos ocultan su disparador exacto. Una vez que Actelyo Law Harness detecta una señal relacionada, la tarjeta pasa a Descubierto y muestra su requisito.",
       scan_status_header: "Estado del escaneo",
       scan_status_body:
-        "Actelyo Legal Harness está escaneando el historial local una vez, después las tarjetas aparecerán automáticamente. No hay nada bloqueado si tarda unos segundos.",
+        "Actelyo Law Harness está escaneando el historial local una vez, después las tarjetas aparecerán automáticamente. No hay nada bloqueado si tarda unos segundos.",
       what_scanned_header: "Qué se escanea",
       what_scanned_body:
         "Sesiones, llamadas a herramientas, metadatos del modelo, errores, logros y estado de desbloqueo local.",
@@ -612,7 +612,7 @@ export const es: Translations = {
         "Compartir en X abre una publicación predefinida en una nueva pestaña. Haz clic primero en Copiar imagen si quieres adjuntar la insignia 1200×630: X te permite pegarla directamente en el redactor del tuit. Descargar PNG guarda el archivo para usarlo en cualquier lugar.",
       clipboard_unsupported:
         "Este navegador no admite copiar imágenes al portapapeles: usa Descargar en su lugar.",
-      tweet_text: "Just unlocked {tier_part}\"{name}\" in Actelyo Legal Harness Agent ☤",
+      tweet_text: "Just unlocked {tier_part}\"{name}\" in Actelyo Law Harness Agent ☤",
     },
   },
   kanban: {

@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Chuaigh nuashonrú Hermes thar am tar éis 30 nóiméad."
     finished_success: "✅ Críochnaíodh nuashonrú Hermes go rathúil."
     last_lines: "{msg}\n\nLínte deiridh:\n```\n{tail}\n```"
-    managed_action: "Hermes Agent a nuashonrú"
+    managed_action: "Actelyo Law Harness a nuashonrú"
     not_applicable: "✗ Ní bhaineann `hermes update` leis an suiteáil seo ({method}).\nNuashonraigh le: {command}"
   usage:
     rate_limits: "⏱️ **Teorainneacha Ráta:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ Iarracht slais Discord gan údarú\nÚsáideoir: {user_name} ({user_id})\nCainéal: {chan_id} (guild {guild_id})\nOrdú: {command_text}\nCúis: {reason}"
     thread:
       seed_message: "🧵 Snáithe cruthaithe ag Hermes: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Aistriú Hermes: **{name}**"
       auto_create_failed: "⚠️ Níorbh fhéidir le Hermes snáithe Discord a chruthú don teachtaireacht seo, mar sin níor próiseáladh an t-iarratas. Bain triail eile as le do thoil."
       auto_create_failed_generic: "Níor próiseáladh an t-iarratas. Bain triail eile as le do thoil."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "Sáraíonn méid {label} {size_mb}MB an teorainn {cap}; seoladh mar chomhad ina ionad."
   email:
     image_line: "Íomhá: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔Ag smaoineamh"
       done: "🥳Déanta"
   irc:
-    quit_message: "Hermes Agent ag múchadh"
+    quit_message: "Actelyo Law Harness ag múchadh"
     standalone_quit: "seachadta"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "Ceadaigh uair amháin"
     confirm_always_approve: "Ceadaigh i gcónaí"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "Socraigh an comhrá seo mar an cainéal baile"
   update:
-    description: "Nuashonraigh Hermes Agent go dtí an leagan is déanaí"
+    description: "Nuashonraigh Actelyo Law Harness go dtí an leagan is déanaí"
   category:
     session: "Seisiún"
     configuration: "Cumraíocht"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "Ceangail comhad íomhá logánta do do chéad leid eile"
   version:
-    description: "Taispeáin leagan Hermes Agent"
+    description: "Taispeáin leagan Actelyo Law Harness"
   debug:
     description: "Uaslódáil tuairisc dhífhabhtaithe (eolas córais + logaí) agus faigh naisc in-roinnte"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "Níl aon chárta sábháilte ar comhad — treoraíonn “Cuir cistí leis” tú trí cheann a chur leis."
     actions_require_admin: "Teastaíonn riarthóir/úinéir eagraíochta le haghaidh gníomhartha billeála."
     remote_spending_off_for_org: "Tá caiteachas cianda as don eagraíocht seo."
-    killswitch_reason_overview: "Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Hermes Agent na tairsí chun cistí a chur leis anseo."
-    killswitch_reason_buy: "Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Hermes Agent na tairsí roimh chistí a chur leis."
+    killswitch_reason_overview: "Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Actelyo Law Harness na tairsí chun cistí a chur leis anseo."
+    killswitch_reason_buy: "Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Actelyo Law Harness na tairsí roimh chistí a chur leis."
     add_funds_now_hint: "Cuir cistí leis anois — muirear aonair, curtha le d'iarmhéid inniu."
     refill_when_low_amounts: "Athlíon nuair atá sé íseal — gearrtar {reload_to} go huathoibríoch nuair a thiteann d'iarmhéid faoi bhun {threshold}."
     refill_when_low_generic: "Athlíon nuair atá sé íseal — gearrtar muirear ar do chárta go huathoibríoch nuair a thiteann d'iarmhéid faoi bhun an mhéid a shocraíonn tú."
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 Diúltaíodh do chárta. Bain triail as cárta eile ar an tairseach."
     charge_failed_generic: "🔴 Níor éirigh leis an muirear ({reason})."
     charge_error_no_payment_method: "💳 Níl aon chárta ar comhad — breisigh agus bainistigh billeáil ar an tairseach."
-    charge_error_remote_spending_disabled: "Tá caiteachas cianda as don chuntas seo — is féidir le riarthóir billeála é a chur ar siúl ó leathanach Hermes Agent na tairsí."
+    charge_error_remote_spending_disabled: "Tá caiteachas cianda as don chuntas seo — is féidir le riarthóir billeála é a chur ar siúl ó leathanach Actelyo Law Harness na tairsí."
     charge_error_role_required: "Teastaíonn riarthóir/úinéir eagraíochta chun cistí a chur leis. Iarr ar riarthóir, nó bainistigh ar an tairseach."
     charge_error_idempotency_conflict: "🔴 Úsáideadh an eochair mhuirir sin cheana le haghaidh méid eile. Tosaigh breisiú nua."
     revoked_by_admin: "Stop riarthóir caiteachas an teirminéil seo."
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "Rith `hermes portal` agus ceadaigh Caiteachas Cianda, ansin bain triail eile as."
     charge_stepup_declined: "Níor gearradh aon mhuirear. Rith /topup nuair is mian leat Caiteachas Cianda a cheadú."
     charge_stepup_not_granted: "Níorbh fhéidir Caiteachas Cianda a cheadú — ní mór do riarthóir nó úinéir eagraíochta é a cheadú. Níor gearradh muirear ar do chárta."
-    allowed_but_org_off: "Tá Caiteachas Cianda ceadaithe don teirminéal seo, ach tá sé fós as don eagraíocht seo. Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Hermes Agent na tairsí, ansin rith /topup arís."
+    allowed_but_org_off: "Tá Caiteachas Cianda ceadaithe don teirminéal seo, ach tá sé fós as don eagraíocht seo. Is féidir le riarthóir billeála é a chur ar siúl ó leathanach Actelyo Law Harness na tairsí, ansin rith /topup arís."
     allowed_no_card: "Caiteachas Cianda ceadaithe — ach níl aon chárta ar comhad go fóill."
     topup_on_portal_to_continue: "Breisigh agus bainistigh billeáil ar an tairseach chun leanúint ar aghaidh."
     allowed_run_topup: "Caiteachas Cianda ceadaithe. Rith /topup chun leanúint ar aghaidh."
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} íomhá ceangailte"
     images_attached_other: "📎 {count} íomhá ceangailte"
     command_interrupted: "Briseadh isteach ar an ordú."
-    welcome: "Fáilte go Hermes Agent! Clóscríobh do theachtaireacht nó /help le haghaidh orduithe."
+    welcome: "Fáilte go Actelyo Law Harness! Clóscríobh do theachtaireacht nó /help le haghaidh orduithe."
     activated_skills_label: "Scileanna gníomhachtaithe:"
     redaction_disabled_title: "⚠  Tá ceilt rún DÍCHUMASAITHE"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). D'fhéadfadh eochracha API agus comharthaí a bheith le feiceáil focal ar fhocal in aschur comhrá, i JSON na seisiún agus i logaí. Socraigh {setting} i config.yaml chun é a athchumasú."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[Freagra claochlaithe tar éis an tsruthaithe]"
     banner_tagline: "{name} - Creatlach Gníomhaire IS"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "Ní féidir próisis chúlra a stiúradh; stop iad nó léigh an loga."
     count_live: "{count} beo"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "Stampaí ama teachtaireachtaí"
     update:
-      managed_action: "nuashonraigh Hermes Agent"
+      managed_action: "nuashonraigh Actelyo Law Harness"
       choice_update: "Nuashonraigh Anois"
-      choice_update_desc: "scoir den seisiún reatha agus nuashonraigh Hermes Agent"
+      choice_update_desc: "scoir den seisiún reatha agus nuashonraigh Actelyo Law Harness"
       choice_cancel: "Cealaigh"
       choice_cancel_desc: "coinnigh an seisiún reatha"
-      title: "☤  Nuashonraigh Hermes Agent"
+      title: "☤  Nuashonraigh Actelyo Law Harness"
       detail: "Scoirfidh sé seo den seisiún reatha agus rithfidh sé `hermes update`."
       cancelled: "🟡 /update cealaithe."
       launching: "☤ Ag lainseáil an nuashonraithe..."

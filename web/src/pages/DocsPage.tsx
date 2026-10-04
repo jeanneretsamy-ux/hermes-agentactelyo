@@ -17,7 +17,7 @@ export default function DocsPage() {
   }, [setEnd, t]);
   return <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-6 p-4 text-midground">
     <PluginSlot name="docs:top" />
-    <h1 className="text-2xl font-bold">Actelyo Legal Harness</h1>
+    <h1 className="text-2xl font-bold">Actelyo Law Harness</h1>
     <p>Module agent local complémentaire à Actelyo. Son compte et ses autorisations sont distincts de ceux de l’ERP.</p>
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Installation locale</h2>

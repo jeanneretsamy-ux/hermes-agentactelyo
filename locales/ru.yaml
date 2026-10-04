@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Обновление Hermes прервано по тайм-ауту через 30 минут."
     finished_success: "✅ Обновление Hermes успешно завершено."
     last_lines: "{msg}\n\nПоследние строки:\n```\n{tail}\n```"
-    managed_action: "обновить Hermes Agent"
+    managed_action: "обновить Actelyo Law Harness"
     not_applicable: "✗ `hermes update` не применимо к этой установке ({method}).\nОбновляйте так: {command}"
   usage:
     rate_limits: "⏱️ **Ограничения скорости:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ Попытка вызова слеш-команды Discord без доступа\nПользователь: {user_name} ({user_id})\nКанал: {chan_id} (сервер {guild_id})\nКоманда: {command_text}\nПричина: {reason}"
     thread:
       seed_message: "🧵 Тред создан Hermes: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Передача Hermes: **{name}**"
       auto_create_failed: "⚠️ Hermes не смог создать тред Discord для этого сообщения, поэтому запрос не обработан. Пожалуйста, повторите."
       auto_create_failed_generic: "Запрос не обработан. Пожалуйста, повторите."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label}: размер {size_mb} МБ превышает лимит {cap}; отправлено как файл."
   email:
     image_line: "Изображение: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔Думаю"
       done: "🥳Готово"
   irc:
-    quit_message: "Hermes Agent завершает работу"
+    quit_message: "Actelyo Law Harness завершает работу"
     standalone_quit: "доставлено"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "Одобрить один раз"
     confirm_always_approve: "Одобрять всегда"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "Сделать этот чат домашним каналом"
   update:
-    description: "Обновить Hermes Agent до последней версии"
+    description: "Обновить Actelyo Law Harness до последней версии"
   category:
     session: "Сеанс"
     configuration: "Конфигурация"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "Прикрепить локальный файл изображения к следующему промпту"
   version:
-    description: "Показать версию Hermes Agent"
+    description: "Показать версию Actelyo Law Harness"
   debug:
     description: "Загрузить отладочный отчёт (сведения о системе + логи) и получить ссылки для обмена"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "Сохранённой карты нет — «Добавить средства» поможет её привязать."
     actions_require_admin: "Для операций с оплатой нужны права администратора или владельца организации."
     remote_spending_off_for_org: "Удалённые платежи отключены для этой организации."
-    killswitch_reason_overview: "Администратор биллинга может включить их на странице Hermes Agent портала, чтобы добавлять средства отсюда."
-    killswitch_reason_buy: "Администратор биллинга может включить их на странице Hermes Agent портала перед добавлением средств."
+    killswitch_reason_overview: "Администратор биллинга может включить их на странице Actelyo Law Harness портала, чтобы добавлять средства отсюда."
+    killswitch_reason_buy: "Администратор биллинга может включить их на странице Actelyo Law Harness портала перед добавлением средств."
     add_funds_now_hint: "Добавить средства сейчас — разовое списание, зачисляется на баланс сегодня."
     refill_when_low_amounts: "Пополнять при низком балансе — автоматически списывает {reload_to}, когда баланс опускается ниже {threshold}."
     refill_when_low_generic: "Пополнять при низком балансе — автоматически списывает с карты, когда баланс опускается ниже заданной вами суммы."
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 Ваша карта отклонена. Попробуйте другую карту на портале."
     charge_failed_generic: "🔴 Платёж не прошёл ({reason})."
     charge_error_no_payment_method: "💳 Карта не добавлена — пополните баланс и управляйте оплатой на портале."
-    charge_error_remote_spending_disabled: "Удалённые платежи отключены для этого аккаунта — администратор биллинга может включить их на странице Hermes Agent портала."
+    charge_error_remote_spending_disabled: "Удалённые платежи отключены для этого аккаунта — администратор биллинга может включить их на странице Actelyo Law Harness портала."
     charge_error_role_required: "Для добавления средств нужны права администратора или владельца организации. Обратитесь к администратору или управляйте оплатой на портале."
     charge_error_idempotency_conflict: "🔴 Этот ключ платежа уже использован для другой суммы. Начните пополнение заново."
     revoked_by_admin: "Администратор остановил платежи из этого терминала."
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "Выполните `hermes portal`, разрешите удалённые платежи и повторите попытку."
     charge_stepup_declined: "Платёж не выполнен. Выполните /topup, когда захотите разрешить удалённые платежи."
     charge_stepup_not_granted: "Не удалось разрешить удалённые платежи — их должен одобрить администратор или владелец организации. Средства с карты не списаны."
-    allowed_but_org_off: "Удалённые платежи разрешены для этого терминала, но всё ещё отключены для этой организации. Администратор биллинга может включить их на странице Hermes Agent портала, после чего выполните /topup снова."
+    allowed_but_org_off: "Удалённые платежи разрешены для этого терминала, но всё ещё отключены для этой организации. Администратор биллинга может включить их на странице Actelyo Law Harness портала, после чего выполните /topup снова."
     allowed_no_card: "Удалённые платежи разрешены — но карта пока не добавлена."
     topup_on_portal_to_continue: "Чтобы продолжить, пополните баланс и настройте оплату на портале."
     allowed_run_topup: "Remote Spending разрешён. Выполните /topup, чтобы продолжить."
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} изображение прикреплено"
     images_attached_other: "📎 Изображений прикреплено: {count}"
     command_interrupted: "Команда прервана."
-    welcome: "Добро пожаловать в Hermes Agent! Введите сообщение или /help для списка команд."
+    welcome: "Добро пожаловать в Actelyo Law Harness! Введите сообщение или /help для списка команд."
     activated_skills_label: "Активированные навыки:"
     redaction_disabled_title: "⚠  Скрытие секретов ВЫКЛЮЧЕНО"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). API-ключи и токены могут появляться в открытом виде в выводе чата, JSON-файлах сеансов и логах. Чтобы включить снова, задайте {setting} в config.yaml."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[Ответ преобразован после потоковой передачи]"
     banner_tagline: "{name} — фреймворк ИИ-агентов"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "Фоновые процессы нельзя корректировать; остановите их или прочитайте лог."
     count_live: "активных: {count}"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "Метки времени сообщений"
     update:
-      managed_action: "обновить Hermes Agent"
+      managed_action: "обновить Actelyo Law Harness"
       choice_update: "Обновить сейчас"
-      choice_update_desc: "выйти из текущего сеанса и обновить Hermes Agent"
+      choice_update_desc: "выйти из текущего сеанса и обновить Actelyo Law Harness"
       choice_cancel: "Отмена"
       choice_cancel_desc: "оставить текущий сеанс"
-      title: "☤  Обновить Hermes Agent"
+      title: "☤  Обновить Actelyo Law Harness"
       detail: "Текущий сеанс будет завершён, затем запустится `hermes update`."
       cancelled: "🟡 /update отменено."
       launching: "☤ Запускаю обновление..."

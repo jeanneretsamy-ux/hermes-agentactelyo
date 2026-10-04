@@ -1,6 +1,6 @@
 // The desktop product identity — THE single source for every name-shaped
-// value a variant owns. HERMES_DESKTOP_VARIANT=light builds "Hermes
-// Light", the remote-only client; everything else is full "Hermes".
+// value a variant owns. HERMES_DESKTOP_VARIANT=light builds
+// "Actelyo Law Harness Light", the remote-only client.
 //
 // Consumed at build time by electron-builder.config.cjs (packaging
 // identity). electron/product-identity.ts is the typed runtime accessor.
@@ -9,16 +9,16 @@
 'use strict'
 
 const variants = {
-  '': { display: 'Hermes', kebab: 'hermes', pascal: 'Hermes' },
+  '': { display: 'Actelyo Law Harness', kebab: 'actelyo-law-harness', pascal: 'ActelyoLawHarness' },
   light: {
-    display: 'Hermes Light',
-    kebab: 'hermes-light',
-    pascal: 'HermesLight'
+    display: 'Actelyo Law Harness Light',
+    kebab: 'actelyo-law-harness-light',
+    pascal: 'ActelyoLawHarnessLight'
   },
   bundled: {
-    display: 'Hermes Agent',
-    kebab: 'hermes-bundled',
-    pascal: 'HermesBundled'
+    display: 'Actelyo Law Harness',
+    kebab: 'actelyo-law-harness-bundled',
+    pascal: 'ActelyoLawHarnessBundled'
   }
 }
 
@@ -32,6 +32,7 @@ if (!['', 'light', 'bundled', 'store'].includes(variant)) {
 // userData + single-instance lock with the out-of-store install), different
 // MSIX package identity. The Store re-signs on submission.
 const store = variant === 'store'
+if (store) throw new Error('Actelyo Store publication requires an Actelyo publisher identity and certificate; use the local bundled build.')
 const light = variant === 'light'
 const name = variants[store ? 'bundled' : (variant || '')]
 
@@ -66,25 +67,14 @@ const identity = {
   store,
   light,
   displayName,
-  appId: `com.nousresearch.${name.kebab}${kebabSuffix}`,
+  appId: `fr.actelyo.${name.kebab}${kebabSuffix}`,
   // Store and commit builds do not publish a release feed.
   channel: store || buildCommit ? null : light ? (canary ? 'light-canary' : 'light') : (canary ? 'canary' : 'latest'),
   appNamePascal: `${name.pascal}${pascalSuffix}`,
   artifactNamePascal: name.pascal,
   windowsExecutableName: kebabSuffix ? cliName : displayName,
   cliName,
-  msixAppIdWithOrg: `NousResearch.${name.pascal}${pascalSuffix}`,
-  ...(store
-    ? {
-        storeMsix: {
-          // Partner Center publisher identity (the account's publisher ID) —
-          // validated + re-signed by the Store on submission.
-          identityName: 'NousResearchInc.HermesAgent',
-          publisher: 'CN=EE6D86E4-606F-4E38-B940-AD7248C9D519',
-          publisherDisplayName: 'Nous Research Inc.'
-        }
-      }
-    : {})
+  msixAppIdWithOrg: `Actelyo.${name.pascal}${pascalSuffix}`
 }
 
 const { channelBuildRequest } = require('../../scripts/msix-shared.mjs')

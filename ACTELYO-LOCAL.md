@@ -1,6 +1,6 @@
 # Modules IA locaux Actelyo
 
-Cette distribution ajoute trois modules optionnels à Actelyo : **Legal Inference** (moteur et modèles GGUF), **Legal Harness** (agent et outils) et **LLMQushu** (documents et RAG).
+Cette distribution ajoute trois modules optionnels à Actelyo : **Legal Inference** (moteur et modèles GGUF), **Actelyo Law Harness** (agent et outils) et **LLMQushu** (documents et RAG).
 
 ## Préparer et lancer sur votre PC
 
@@ -24,7 +24,7 @@ Les interfaces sont disponibles uniquement sur votre PC :
 | Module | Interface | API d'inférence |
 | --- | --- | --- |
 | Legal Inference | http://127.0.0.1:8091 | http://127.0.0.1:8092/v1 |
-| Legal Harness | http://127.0.0.1:9119 | Protocole de l'agent |
+| Actelyo Law Harness | http://127.0.0.1:9119 | Protocole de l'agent |
 | LLMQushu | http://127.0.0.1:3001 | API du module documentaire |
 
 Le compte du Harness est `actelyo`. Son mot de passe est la valeur `ACTELYO_HARNESS_PASSWORD` du fichier `.env`. Chaque module conserve son propre compte et ses autorisations : cette version n'ajoute pas de connexion unique avec le compte Actelyo.

@@ -5,7 +5,7 @@ import { introFr } from './intro-fr'
 
 export const frOverrides = {
   sharedMetrics: {
-    consentTitle: "Aider à améliorer Actelyo Legal Harness ?",
+    consentTitle: "Aider à améliorer Actelyo Law Harness ?",
     consentBody:
       'Les métriques partagées ne contiennent que des compteurs bornés. Jamais de prompts, fichiers, chemins ni textes d’erreur. La collecte reste locale. Les envoyer à Nous est un consentement distinct.',
     whatIsCollected: 'Ce qui est collecté',
@@ -17,9 +17,9 @@ export const frOverrides = {
     collectedReliability:
       'Résultats et durée des mises à jour, plantages, vitesse de démarrage et de réponse, état des plateformes de messagerie',
     collectedUsage:
-      "Comment Actelyo Legal Harness est utilisé : précision et efficacité de l'agent (modifications réussies, boucles, reprises après erreur, jetons et appels d'outils par tâche, ruptures de cache), temps actif par interface et mode Desktop, zones, actions et réglages de l'app utilisés, vite fermés ou désactivés, et résultats de la configuration des fournisseurs",
+      "Comment Actelyo Law Harness est utilisé : précision et efficacité de l'agent (modifications réussies, boucles, reprises après erreur, jetons et appels d'outils par tâche, ruptures de cache), temps actif par interface et mode Desktop, zones, actions et réglages de l'app utilisés, vite fermés ou désactivés, et résultats de la configuration des fournisseurs",
     collectedMachine:
-      "Données générales de la machine : plage de RAM, type de GPU, âge et canal de la version de Actelyo Legal Harness, mises à jour en retard, utilisation d'un serveur de modèles local",
+      "Données générales de la machine : plage de RAM, type de GPU, âge et canal de la version de Actelyo Law Harness, mises à jour en retard, utilisation d'un serveur de modèles local",
     installId:
       'L’envoi transmet chaque paquet quotidien au service de télémétrie de Nous. Les paquets portent l’identifiant d’installation de ce profil : un UUID aléatoire stable sans information personnelle, réinitialisé en supprimant le dossier des métriques partagées.',
     consentWindow:
@@ -36,7 +36,7 @@ export const frOverrides = {
     sendLabel: 'Envoyer les statistiques d’utilisation à Nous',
     sendDesc:
       'Envoyer chaque paquet quotidien au service de télémétrie de Nous. Seules les données d’une fenêtre de consentement sont envoyées. Nécessite la collecte activée.',
-    unavailable: "Mettez à jour le backend Actelyo Legal Harness pour modifier ce réglage.",
+    unavailable: "Mettez à jour le backend Actelyo Law Harness pour modifier ce réglage.",
     stripBody: 'Uniquement des compteurs bornés, jamais de prompts ni de fichiers.',
     stripChoices: { share: 'Envoyer à Nous', local: 'Local uniquement', off: 'Non merci' },
     stripDetails: 'Détails'
@@ -66,7 +66,7 @@ export const frOverrides = {
     ownerMissing: 'Rouvrez cette conversation pour gérer ses connexions.',
     search: 'Rechercher une application',
     empty: 'Aucune application correspondante',
-    disclaimer: "La connexion est facultative. N'autorisez que les applications que vous voulez confier à Actelyo Legal Harness.",
+    disclaimer: "La connexion est facultative. N'autorisez que les applications que vous voulez confier à Actelyo Law Harness.",
     execution: 'Outils des connecteurs',
     setup: server => `Configurer ${server}`,
     openInBrowser: 'Ouvrir dans le navigateur',
@@ -99,7 +99,7 @@ export const frOverrides = {
       kindCatalog: 'MCP · Catalogue',
       kindCustom: 'MCP · Personnalisé',
       kindPlugin: (plugin: string) => `MCP · Plugin ${plugin}`,
-      inCatalog: "Dans le catalogue Actelyo Legal Harness",
+      inCatalog: "Dans le catalogue Actelyo Law Harness",
       hostedTwin: 'Version gérée disponible',
       alsoLocal: 'Fonctionne aussi sur cet appareil',
       open: (name: string) => `Ouvrir ${name}`,
@@ -148,7 +148,7 @@ export const frOverrides = {
       loading: 'Lecture du catalogue et des serveurs de cet ordinateur',
       emptyTitle: 'Aucune application pour le moment. Ajoutez un serveur sur cet ordinateur pour commencer.',
       noMatchTitle: 'Aucune application correspondante',
-      noMatchBody: "Aucun résultat. Indiquez à Actelyo Legal Harness votre propre serveur MCP pour l’ajouter.",
+      noMatchBody: "Aucun résultat. Indiquez à Actelyo Law Harness votre propre serveur MCP pour l’ajouter.",
       clearSearch: 'Effacer la recherche',
       hostedFailedTitle: 'Impossible de joindre les applications hébergées.',
       hostedFailedBody:
@@ -164,7 +164,7 @@ export const frOverrides = {
       managedUnavailable: 'Les applications gérées ne sont pas encore disponibles pour ce compte.',
       writeFailed: 'Cette modification n’a pas été enregistrée.',
       refreshFailed: 'La liste des outils n’a pas été actualisée.',
-      disconnectNoAccount: "Actelyo Legal Harness n’a aucun compte à déconnecter ici. Actualisez la page et réessayez.",
+      disconnectNoAccount: "Actelyo Law Harness n’a aucun compte à déconnecter ici. Actualisez la page et réessayez.",
       disconnectRefused:
         'Nous ne peut pas supprimer cette connexion pour le moment. Désactivez plutôt l’application avec l’interrupteur, ou réessayez plus tard.'
     },
@@ -204,23 +204,23 @@ export const frOverrides = {
     dialog: {
       disconnect: 'Déconnecter',
       disconnectTitle: (name: string) => `Déconnecter ${name} ?`,
-      disconnectBody: "Actelyo Legal Harness cesse d'agir avec ce compte. Vous pouvez vous reconnecter à tout moment.",
+      disconnectBody: "Actelyo Law Harness cesse d'agir avec ce compte. Vous pouvez vous reconnecter à tout moment.",
       menuRefreshTools: 'Actualiser les outils',
       moreActions: "Plus d'actions",
       removeServerTitle: (name: string) => `Supprimer ${name} ?`,
       removeServerBody: "L'entrée est retirée de mcp.json sur cet ordinateur. Rien d'autre n'est supprimé.",
-      appSwitch: (name: string) => `Actelyo Legal Harness peut utiliser ${name}`,
+      appSwitch: (name: string) => `Actelyo Law Harness peut utiliser ${name}`,
       waysTitle: (name: string) => `Où ${name} s'exécute`,
       wayNotConnected: (name: string) => `Pas encore connecté. Connectez-vous à ${name} dans votre navigateur.`,
       wayHosted: 'Géré',
-      bothOn: (name: string) => `Les deux sont activés : Actelyo Legal Harness voit donc chaque outil ${name} en double.`,
+      bothOn: (name: string) => `Les deux sont activés : Actelyo Law Harness voit donc chaque outil ${name} en double.`,
       turnOffLocal: 'Désactiver le serveur local',
       providedByPlugin: (plugin: string) => `Fourni par le plugin ${plugin}`,
       openPlugins: "Ouvrir l'onglet Plugins",
       nousLine: 'Les applications Nous suivent votre compte, pas le profil.',
       rulesReadOnly: 'Les règles ne peuvent pas être modifiées pour le moment.',
       rulesAppOff: (name: string) => `Activez ${name} pour modifier ses outils.`,
-      rulesSignIn: "Connectez-vous pour modifier ce que Actelyo Legal Harness peut faire ici.",
+      rulesSignIn: "Connectez-vous pour modifier ce que Actelyo Law Harness peut faire ici.",
       orgNote: (count: number) => `Votre organisation a désactivé ${count} outil${count > 1 ? 's' : ''}.`,
       orgLink: "Ouvrir l'administration des connecteurs",
       connectEnded: "La connexion n'a pas abouti.",
@@ -233,8 +233,8 @@ export const frOverrides = {
     tools: {
       title: 'Outils',
       notInstalledBody: "Installez-le sur cet appareil pour voir les outils qu'il apporte.",
-      summaryTitle: (name: string) => `Ce que Actelyo Legal Harness peut faire avec ${name}`,
-      summaryPreviewTitle: (name: string) => `Ce que Actelyo Legal Harness pourra faire avec ${name} une fois connecté`,
+      summaryTitle: (name: string) => `Ce que Actelyo Law Harness peut faire avec ${name}`,
+      summaryPreviewTitle: (name: string) => `Ce que Actelyo Law Harness pourra faire avec ${name} une fois connecté`,
       summaryCount: (count: number) => `${count} outil${count > 1 ? 's' : ''}`,
       summaryAllTools: 'Tous les outils',
       summaryOther: 'Autres',
@@ -267,7 +267,7 @@ export const frOverrides = {
       needsAuthBody: 'La connexion reste sur cet ordinateur. Rien ne le quitte.',
       retry: 'Réessayer',
       goneTitle: (name: string) => `${name} a quitté le catalogue.`,
-      goneBody: "Actelyo Legal Harness ne peut plus l'appeler. La ligne reste jusqu'à ce que vous la supprimiez : rien ne disparaît.",
+      goneBody: "Actelyo Law Harness ne peut plus l'appeler. La ligne reste jusqu'à ce que vous la supprimiez : rien ne disparaît.",
       remove: 'Supprimer',
       offTitle: (name: string) => `${name} est désactivé.`,
       offBody: "Activez-le avec l'interrupteur ci-dessus pour lire les outils qu'il apporte.",
@@ -344,7 +344,7 @@ export const frOverrides = {
   },
   sessionImport: {
     title: 'Reprendre depuis une autre application',
-    subtitle: "Importez une conversation dans Actelyo Legal Harness et reprenez là où vous en étiez.",
+    subtitle: "Importez une conversation dans Actelyo Law Harness et reprenez là où vous en étiez.",
     action: 'Importer une session',
     readingFrom: 'Lecture depuis',
     connectedComputer: "l'ordinateur connecté",
@@ -362,18 +362,18 @@ export const frOverrides = {
     more: 'Charger davantage de sessions',
     messages: 'messages',
     choose: 'Une conversation à poursuivre',
-    chooseHelp: "Choisissez une session pour lire son historique avant de l'importer dans Actelyo Legal Harness.",
+    chooseHelp: "Choisissez une session pour lire son historique avant de l'importer dans Actelyo Law Harness.",
     previewLoading: "Ouverture de l'aperçu",
     previewError: 'Aperçu indisponible',
     previewHelp: 'La source a peut-être été déplacée ou modifiée. Actualisez la liste et réessayez.',
     previewLimit: 'Aperçu abrégé pour faciliter la lecture. La conversation est importée dans son intégralité.',
     you: 'Vous',
-    snapshot: "Cette conversation est déjà dans Actelyo Legal Harness. Ouvrez votre copie existante pour continuer.",
+    snapshot: "Cette conversation est déjà dans Actelyo Law Harness. Ouvrez votre copie existante pour continuer.",
     copyNotice:
       'Copie le texte de la conversation sans modifier les fichiers sources. Les résultats des outils et le raisonnement ne sont pas transférés.',
     importing: 'Importation…',
-    open: "Ouvrir dans Actelyo Legal Harness",
-    continue: "Continuer dans Actelyo Legal Harness",
+    open: "Ouvrir dans Actelyo Law Harness",
+    continue: "Continuer dans Actelyo Law Harness",
     importError: "Impossible d'importer cette conversation."
   },
   common: {
@@ -440,21 +440,21 @@ export const frOverrides = {
       "Ce chemin n'est pas sur cet ordinateur : il se trouve sur la machine du backend. Utilisez « Afficher dans l'arborescence »."
   },
   boot: {
-    ready: "Actelyo Legal Harness Desktop est prêt",
+    ready: "Actelyo Law Harness Desktop est prêt",
     desktopBootFailedWithMessage: message => `Échec du démarrage : ${message}`,
     steps: {
       connectingGateway: 'Connexion au gateway desktop',
-      loadingSettings: "Chargement des paramètres Actelyo Legal Harness",
+      loadingSettings: "Chargement des paramètres Actelyo Law Harness",
       loadingSessions: 'Chargement des sessions récentes',
-      retryingRemoteBackend: "Reconnexion au backend Actelyo Legal Harness distant…",
+      retryingRemoteBackend: "Reconnexion au backend Actelyo Law Harness distant…",
       startingDesktopConnection: 'Démarrage de la connexion desktop',
-      startingHermesDesktop: "Démarrage de Actelyo Legal Harness Desktop…"
+      startingHermesDesktop: "Démarrage de Actelyo Law Harness Desktop…"
     },
     errors: {
-      backgroundExited: "Le processus en arrière-plan de Actelyo Legal Harness s'est arrêté.",
-      backgroundExitedDuringStartup: "Le processus en arrière-plan de Actelyo Legal Harness s'est arrêté pendant le démarrage.",
+      backgroundExited: "Le processus en arrière-plan de Actelyo Law Harness s'est arrêté.",
+      backgroundExitedDuringStartup: "Le processus en arrière-plan de Actelyo Law Harness s'est arrêté pendant le démarrage.",
       backendStopped: 'Backend arrêté',
-      restartHermes: "Redémarrer Actelyo Legal Harness",
+      restartHermes: "Redémarrer Actelyo Law Harness",
       openLogs: 'Ouvrir les journaux',
       desktopBootFailed: 'Échec du démarrage',
       gatewayConnectionLost: 'Connexion au gateway perdue',
@@ -469,16 +469,16 @@ export const frOverrides = {
       ipcBridgeUnavailable: 'Le pont IPC du desktop est indisponible.'
     },
     causes: {
-      exitedEarly: "Le service en arrière-plan de Actelyo Legal Harness s'est arrêté juste après son démarrage.",
-      timedOut: "Le service en arrière-plan de Actelyo Legal Harness n'a pas répondu à temps.",
-      permission: "Actelyo Legal Harness n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
-      diskFull: "Le disque est plein ; Actelyo Legal Harness n'a donc pas pu démarrer.",
-      portInUse: "Un autre programme utilise le port réseau nécessaire à Actelyo Legal Harness.",
+      exitedEarly: "Le service en arrière-plan de Actelyo Law Harness s'est arrêté juste après son démarrage.",
+      timedOut: "Le service en arrière-plan de Actelyo Law Harness n'a pas répondu à temps.",
+      permission: "Actelyo Law Harness n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
+      diskFull: "Le disque est plein ; Actelyo Law Harness n'a donc pas pu démarrer.",
+      portInUse: "Un autre programme utilise le port réseau nécessaire à Actelyo Law Harness.",
       installMissing:
-        "Une partie de l'installation de Actelyo Legal Harness est manquante. Choisissez Réparer l'installation pour la restaurer."
+        "Une partie de l'installation de Actelyo Law Harness est manquante. Choisissez Réparer l'installation pour la restaurer."
     },
     failure: {
-      title: "Actelyo Legal Harness n'a pas pu démarrer",
+      title: "Actelyo Law Harness n'a pas pu démarrer",
       description:
         "Le gateway en arrière-plan n'a pas pu se lancer. Essayez l'une des étapes de récupération ci-dessous. Rien ici ne supprime vos conversations ou paramètres.",
       details: 'Détails',
@@ -528,13 +528,13 @@ export const frOverrides = {
     copyDetailFailed: 'Impossible de copier le détail de la notification',
     backendOutOfDateTitle: 'Backend obsolète',
     backendOutOfDateMessage:
-      "Votre backend Actelyo Legal Harness est plus ancien que cette version du desktop et peut ne pas fonctionner correctement. Mettez-le à jour pour les aligner.",
-    desktopOutOfDateTitle: "Application Actelyo Legal Harness obsolète",
+      "Votre backend Actelyo Law Harness est plus ancien que cette version du desktop et peut ne pas fonctionner correctement. Mettez-le à jour pour les aligner.",
+    desktopOutOfDateTitle: "Application Actelyo Law Harness obsolète",
     desktopOutOfDateMessage:
-      "Cette application Actelyo Legal Harness est plus ancienne que le backend auquel elle est connectée et peut ne pas fonctionner correctement. Effectuez la mise à jour de l'application pour les aligner.",
+      "Cette application Actelyo Law Harness est plus ancienne que le backend auquel elle est connectée et peut ne pas fonctionner correctement. Effectuez la mise à jour de l'application pour les aligner.",
     updateDesktopApp: "Mettre à jour l'application",
     installMethodUnsupportedTitle: "Méthode d'installation non prise en charge",
-    updateHermes: "Mettre à jour Actelyo Legal Harness",
+    updateHermes: "Mettre à jour Actelyo Law Harness",
     updateReadyTitle: 'Mise à jour prête',
     updateReadyMessage: count =>
       `${count} ${count === 1 ? 'nouvelle modification disponible' : 'nouvelles modifications disponibles'}.`,
@@ -556,20 +556,20 @@ export const frOverrides = {
       elevenLabsRejectedKey: 'ElevenLabs a rejeté la clé API (401).',
       diskFull: "Le disque est plein. Libérez de l'espace disque, puis réessayez.",
       storageFailure:
-        "Actelyo Legal Harness n'a pas pu enregistrer dans son dossier de données. Ouvrez Maintenance pour le vérifier et le réparer.",
+        "Actelyo Law Harness n'a pas pu enregistrer dans son dossier de données. Ouvrez Maintenance pour le vérifier et le réparer.",
       gatewayAuthFailed: "Échec de l'authentification du gateway — vérifiez API_SERVER_KEY.",
       methodNotAllowed:
-        "Le backend du desktop a rejeté cette requête (405 Method Not Allowed). Essayez de redémarrer Actelyo Legal Harness Desktop.",
+        "Le backend du desktop a rejeté cette requête (405 Method Not Allowed). Essayez de redémarrer Actelyo Law Harness Desktop.",
       microphonePermission: "L'autorisation du microphone a été refusée.",
       openaiRejectedApiKey: 'OpenAI a rejeté la clé API.',
       openaiTtsNeedsKey: 'TTS OpenAI nécessite VOICE_TOOLS_OPENAI_KEY ou OPENAI_API_KEY.',
       codeSkewRestartRequired:
         "Ce backend exécute encore l'ancien code après une mise à jour. Redémarrez-le pour charger le nouveau code.",
       rpcOutOfSync: "L'application et le backend ne sont pas sur la même version. Mettez-les tous les deux à jour.",
-      restartHermesFailed: "Impossible de redémarrer Actelyo Legal Harness"
+      restartHermesFailed: "Impossible de redémarrer Actelyo Law Harness"
     },
     actions: {
-      restartHermes: "Redémarrer Actelyo Legal Harness",
+      restartHermes: "Redémarrer Actelyo Law Harness",
       openKeys: 'Ouvrir les clés',
       openGateways: 'Ouvrir les gateways',
       openMaintenance: 'Ouvrir Maintenance'
@@ -597,7 +597,7 @@ export const frOverrides = {
       liveEndedConnectionLost: 'La session vocale en direct a perdu sa connexion.',
       liveEndedClosed: 'La session vocale en direct a été fermée par le service.',
       liveError: 'Voix en direct',
-      liveDelegationFailed: "Impossible de transmettre la demande à Actelyo Legal Harness",
+      liveDelegationFailed: "Impossible de transmettre la demande à Actelyo Law Harness",
       liveUnavailable: reason =>
         `Le chat vocal GPT-Live n'est pas disponible : ${reason}. Utilisation de la reconnaissance vocale à la place.`
     },
@@ -608,8 +608,8 @@ export const frOverrides = {
       rejectAction: 'Rejeter',
       inputTitle: 'Saisie requise',
       inputTitleNamed: session => `Saisie requise — ${session}`,
-      inputBody: "Actelyo Legal Harness attend votre réponse.",
-      turnDoneTitle: "Actelyo Legal Harness a terminé",
+      inputBody: "Actelyo Law Harness attend votre réponse.",
+      turnDoneTitle: "Actelyo Law Harness a terminé",
       turnDoneBody: '',
       turnErrorTitle: 'Échec du tour',
       backgroundDoneTitle: 'Tâche en arrière-plan terminée',
@@ -865,7 +865,7 @@ export const frOverrides = {
     exportConfig: 'Exporter la configuration',
     importConfig: 'Importer la configuration',
     resetToDefaults: 'Réinitialiser aux valeurs par défaut',
-    resetConfirm: "Réinitialiser tous les paramètres aux valeurs par défaut de Actelyo Legal Harness ?",
+    resetConfirm: "Réinitialiser tous les paramètres aux valeurs par défaut de Actelyo Law Harness ?",
     exportFailed: "Échec de l'export",
     resetFailed: 'Échec de la réinitialisation',
     nav: {
@@ -921,7 +921,7 @@ export const frOverrides = {
         agentTargetLocal: (profile, dir) => `Installe dans le backend ${profile} (${dir})`,
         agentTargetRemote: profile => `S'installe dans le backend ${profile} connecté`,
         catalogPinned: (name, sha) =>
-          `Entrée « ${name} » du catalogue Actelyo Legal Harness — le composant agent sera installé depuis le commit vérifié${sha ? ` ${sha}` : ''}, et non depuis la tête de branche.`,
+          `Entrée « ${name} » du catalogue Actelyo Law Harness — le composant agent sera installé depuis le commit vérifié${sha ? ` ${sha}` : ''}, et non depuis la tête de branche.`,
         reviewedHeading: 'Entrée du catalogue vérifiée',
         reviewedIntro:
           'Cette entrée a été vérifiée manuellement à son commit épinglé. Vous pouvez encore examiner le code exact ci-dessous.',
@@ -963,7 +963,7 @@ export const frOverrides = {
         desktopSuccess: name => `Plugin Desktop ${name} installé`,
         agentFailed: "Échec de l'installation du plugin de l'agent",
         installUncertain:
-          "Actelyo Legal Harness n'attend plus le résultat de l'installation, mais le plugin est peut-être encore en cours d'installation. Fermez cette fenêtre et actualisez la liste des plugins avant de relancer l'installation.",
+          "Actelyo Law Harness n'attend plus le résultat de l'installation, mais le plugin est peut-être encore en cours d'installation. Fermez cette fenêtre et actualisez la liste des plugins avant de relancer l'installation.",
         desktopFailed: "Échec de l'installation du plugin Desktop",
         missingEnv: (name, vars) =>
           `${name} est installé, mais a besoin d'une clé pour fonctionner : ${vars}. Ajoutez-la maintenant, sinon les outils du plugin échoueront.`
@@ -1024,7 +1024,7 @@ export const frOverrides = {
       otpField: "Clé d'authentificateur",
       otpPlaceholder: 'Secret Base32 ou lien otpauth://',
       otpHint:
-        "La « clé d'installation » que le site affiche lorsque vous activez 2FA. Avec elle enregistrée, Actelyo Legal Harness génère lui-même les codes.",
+        "La « clé d'installation » que le site affiche lorsque vous activez 2FA. Avec elle enregistrée, Actelyo Law Harness génère lui-même les codes.",
       twoFactorBadge: '2FA auto',
       deleteTitle: 'Supprimer cet élément ?',
       deleteDescription: label => `« ${label} » sera supprimé définitivement.`,
@@ -1035,12 +1035,12 @@ export const frOverrides = {
           "Les gestionnaires de mots de passe installés sont repérés automatiquement. L'agent vous demande de déverrouiller l'un la première fois qu'il en a besoin (une fois par session) ; seul un jeton de session reste en mémoire, et l'agent ne voit jamais votre mot de passe principal ou aucun identifiant.",
         toggleFailed: 'Impossible de mettre à jour le gestionnaire de mots de passe',
         notInstalled: name =>
-          `Non détecté. Installez l’outil en ligne de commande ${name} et connectez-vous ; Actelyo Legal Harness le repère automatiquement.`,
-        disabledDesc: "Détecté mais désactivé pour Actelyo Legal Harness.",
+          `Non détecté. Installez l’outil en ligne de commande ${name} et connectez-vous ; Actelyo Law Harness le repère automatiquement.`,
+        disabledDesc: "Détecté mais désactivé pour Actelyo Law Harness.",
         lockedDesc:
           "Détecté. L'agent vous demandera de le déverrouiller lorsqu'il en a besoin, ou déverrouillez maintenant.",
         unlockedDesc:
-          "Déverrouillé pour cette session. Se verrouille automatiquement après 30 minutes d'inactivité ou lorsque Actelyo Legal Harness se ferme.",
+          "Déverrouillé pour cette session. Se verrouille automatiquement après 30 minutes d'inactivité ou lorsque Actelyo Law Harness se ferme.",
         statusLocked: 'Verrouillé',
         statusNotDetected: 'Non détecté',
         statusOff: 'Désactivé',
@@ -1060,7 +1060,7 @@ export const frOverrides = {
       intro: "Notifications système (pas les toasts de l'application). Par appareil.",
       enableAll: 'Activer les notifications',
       enableAllDesc: 'Désactivé coupe toutes les notifications ci-dessous.',
-      focusedHint: "Les alertes de fin ne se déclenchent que quand Actelyo Legal Harness est en arrière-plan.",
+      focusedHint: "Les alertes de fin ne se déclenchent que quand Actelyo Law Harness est en arrière-plan.",
       kinds: {
         approval: {
           label: 'Approbation requise',
@@ -1068,11 +1068,11 @@ export const frOverrides = {
         },
         input: {
           label: 'Saisie requise',
-          description: "Actelyo Legal Harness a posé une question ou a besoin d'un mot de passe ou d'un secret."
+          description: "Actelyo Law Harness a posé une question ou a besoin d'un mot de passe ou d'un secret."
         },
         turnDone: {
           label: 'Réponse prête',
-          description: "Un tour s'est terminé pendant que Actelyo Legal Harness était en arrière-plan."
+          description: "Un tour s'est terminé pendant que Actelyo Law Harness était en arrière-plan."
         },
         turnError: {
           label: 'Échec du tour',
@@ -1088,11 +1088,11 @@ export const frOverrides = {
         },
         plugin: {
           label: 'Notifications des plugins',
-          description: "Un plugin desktop a envoyé une notification pendant que Actelyo Legal Harness était en arrière-plan."
+          description: "Un plugin desktop a envoyé une notification pendant que Actelyo Law Harness était en arrière-plan."
         }
       },
       test: 'Envoyer une notification de test',
-      testTitle: "Actelyo Legal Harness",
+      testTitle: "Actelyo Law Harness",
       testBody: 'Les notifications fonctionnent.',
       testSent:
         "Test envoyé. Si rien n'apparaît, vérifiez les autorisations de notification de votre système et le mode Ne pas déranger.",
@@ -1112,7 +1112,7 @@ export const frOverrides = {
       advanced: 'Avancé'
     },
     searchPlaceholder: {
-      about: "À propos de Actelyo Legal Harness Desktop",
+      about: "À propos de Actelyo Law Harness Desktop",
       config: 'Rechercher dans les paramètres...',
       gateway: 'Connexion au gateway...',
       keys: 'Rechercher des clés API...',
@@ -1141,7 +1141,7 @@ export const frOverrides = {
       intro:
         'Exclusif au desktop. Le mode contrôle la luminosité ; le thème contrôle la palette et le chrome de la conversation.',
       colorMode: 'Mode couleur',
-      colorModeDesc: "Choisissez un mode fixe ou laissez Actelyo Legal Harness suivre le paramètre système.",
+      colorModeDesc: "Choisissez un mode fixe ou laissez Actelyo Law Harness suivre le paramètre système.",
       toolViewTitle: "Affichage des appels d'outil",
       toolViewDesc:
         'Le mode Produit masque les charges utiles brutes ; le mode Technique affiche les entrées/sorties complètes.',
@@ -1220,15 +1220,15 @@ export const frOverrides = {
       modelPricingDesc:
         "Affiche les prix d'entrée, de sortie et de lecture du cache par million de jetons dans le sélecteur de modèle.",
       reactionsTitle: 'Réactions aux messages',
-      reactionsDesc: "Réactions emoji façon iMessage — réagissez aux messages, et Actelyo Legal Harness peut réagir aux vôtres.",
+      reactionsDesc: "Réactions emoji façon iMessage — réagissez aux messages, et Actelyo Law Harness peut réagir aux vôtres.",
       tipsTitle: "Astuces dans l'application",
       tipsDesc:
-        "Une petite bulle désigne occasionnellement une partie de l'application lorsque vous êtes inactif ou lorsque Actelyo Legal Harness peut vous aider. Fermer une astuce la masque définitivement.",
+        "Une petite bulle désigne occasionnellement une partie de l'application lorsque vous êtes inactif ou lorsque Actelyo Law Harness peut vous aider. Fermer une astuce la masque définitivement.",
       tipsReset: (count: number) =>
         `Réafficher ${count} astuce${count === 1 ? '' : 's'} fermée${count === 1 ? '' : 's'}`,
       toursTitle: 'Visites guidées',
       toursDesc:
-        "Laissez Actelyo Legal Harness vous guider dans l'application en assombrissant l'écran et en mettant chaque étape en évidence.",
+        "Laissez Actelyo Law Harness vous guider dans l'application en assombrissant l'écran et en mettant chaque étape en évidence.",
       composerPopoutTitle: 'Détacher la zone de saisie',
       composerPopoutDesc:
         'Permet de faire glisser la zone de saisie hors de son emplacement. Désactivé, elle reste ancrée en bas.',
@@ -1270,9 +1270,9 @@ export const frOverrides = {
       pet: {
         title: 'Animal de compagnie',
         intro:
-          "Adoptez une mascotte petdex animée qui flotte au-dessus de l'application et réagit aux actions de Actelyo Legal Harness — court pendant l'exécution des outils, fête les réussites, boude les erreurs.",
+          "Adoptez une mascotte petdex animée qui flotte au-dessus de l'application et réagit aux actions de Actelyo Law Harness — court pendant l'exécution des outils, fête les réussites, boude les erreurs.",
         restartHint:
-          "Les animaux de compagnie nécessitent un redémarrage rapide — l'application en cours a démarré avant l'ajout de cette fonctionnalité. Fermez et rouvrez Actelyo Legal Harness, puis revenez ici.",
+          "Les animaux de compagnie nécessitent un redémarrage rapide — l'application en cours a démarré avant l'ajout de cette fonctionnalité. Fermez et rouvrez Actelyo Law Harness, puis revenez ici.",
         scaleTitle: 'Taille',
         scaleDesc: "Redimensionnez la mascotte flottante. S'applique partout instantanément.",
         roamTitle: 'Errer',
@@ -1500,11 +1500,11 @@ export const frOverrides = {
       timezone: 'Identifiant de fuseau horaire IANA. Si vide, utilise le fuseau horaire du système.',
       browser: {
         useRealProfile:
-          "La navigation locale utilise vos vraies connexions. Actelyo Legal Harness copie le profil de votre navigateur par défaut (cookies, connexions, préférences) dans un instantané géré et le pilote avec son Chromium intégré — votre profil actif n’est jamais ouvert directement, et la copie est actualisée à chaque exécution. Permet aussi à l’agent d’ouvrir sur demande une session locale avec votre vrai profil, même si un backend de navigateur cloud est configuré. Seuls les navigateurs Chromium (Chrome, Edge, Brave, Brave Origin, Chromium) sont pris en charge ; un navigateur par défaut non Chromium échoue avec un message clair. Désactivé par défaut."
+          "La navigation locale utilise vos vraies connexions. Actelyo Law Harness copie le profil de votre navigateur par défaut (cookies, connexions, préférences) dans un instantané géré et le pilote avec son Chromium intégré — votre profil actif n’est jamais ouvert directement, et la copie est actualisée à chaque exécution. Permet aussi à l’agent d’ouvrir sur demande une session locale avec votre vrai profil, même si un backend de navigateur cloud est configuré. Seuls les navigateurs Chromium (Chrome, Edge, Brave, Brave Origin, Chromium) sont pris en charge ; un navigateur par défaut non Chromium échoue avec un message clair. Désactivé par défaut."
       },
       agent: {
         imageInputMode: 'Contrôle la façon dont les pièces jointes image sont envoyées au modèle.',
-        maxTurns: "Limite supérieure de tours d'appel d'outils avant que Actelyo Legal Harness n'arrête une exécution."
+        maxTurns: "Limite supérieure de tours d'appel d'outils avant que Actelyo Law Harness n'arrête une exécution."
       },
       terminal: {
         cwd: 'Dossier de projet par défaut pour les outils et le terminal.',
@@ -1518,9 +1518,9 @@ export const frOverrides = {
       codeExecution: {
         mode: "Degré de restriction de l'exécution du code au projet actuel."
       },
-      fileReadMaxChars: "Nombre maximal de caractères que Actelyo Legal Harness peut lire dans une demande de fichier.",
+      fileReadMaxChars: "Nombre maximal de caractères que Actelyo Law Harness peut lire dans une demande de fichier.",
       approvals: {
-        mode: "Comment Actelyo Legal Harness gère les commandes nécessitant une approbation explicite.",
+        mode: "Comment Actelyo Law Harness gère les commandes nécessitant une approbation explicite.",
         timeout: "Durée d'attente des invites d'approbation avant expiration."
       },
       security: {
@@ -1549,11 +1549,11 @@ export const frOverrides = {
       voice: {
         autoTts: "Lit automatiquement les réponses de l'assistant à voix haute.",
         voiceChatMode:
-          "chained : reconnaissance vocale → Actelyo Legal Harness → synthèse vocale avec les fournisseurs ci-dessous. gpt-live : un modèle vocal OpenAI full-duplex (gpt-live-1) écoute et parle, et confie chaque vraie demande à Actelyo Legal Harness — le modèle que vous avez sélectionné répond avec l’ensemble des outils. Nécessite une clé API OpenAI ; la couche vocale est facturée 0,05 $ par minute.",
+          "chained : reconnaissance vocale → Actelyo Law Harness → synthèse vocale avec les fournisseurs ci-dessous. gpt-live : un modèle vocal OpenAI full-duplex (gpt-live-1) écoute et parle, et confie chaque vraie demande à Actelyo Law Harness — le modèle que vous avez sélectionné répond avec l’ensemble des outils. Nécessite une clé API OpenAI ; la couche vocale est facturée 0,05 $ par minute.",
         gptLive: {
           voice: 'Voix du mode GPT-Live. Les identifiants de voix personnalisés sont acceptés.',
           instructions:
-            "Phrases supplémentaires pour la personnalité vocale en direct (ton, rythme, langue). Actelyo Legal Harness conserve son propre prompt système."
+            "Phrases supplémentaires pour la personnalité vocale en direct (ton, rythme, langue). Actelyo Law Harness conserve son propre prompt système."
         }
       },
       tts: {
@@ -1581,13 +1581,13 @@ export const frOverrides = {
       },
       updates: {
         nonInteractiveLocalChanges:
-          "Quand Actelyo Legal Harness se met à jour depuis l'application (sans invite de terminal), conserve les modifications locales (stash) ou les abandonne (discard). Les mises à jour via le terminal demandent toujours confirmation."
+          "Quand Actelyo Law Harness se met à jour depuis l'application (sans invite de terminal), conserve les modifications locales (stash) ou les abandonne (discard). Les mises à jour via le terminal demandent toujours confirmation."
       }
     }),
     uninstallSection: {
       dangerZone: 'Zone dangereuse',
       checkingInstalled: 'Vérification des éléments installés…',
-      uninstallHermes: "Désinstaller Actelyo Legal Harness",
+      uninstallHermes: "Désinstaller Actelyo Law Harness",
       chooseHowMuch:
         'Choisissez ce que vous souhaitez supprimer. L’application se ferme pour terminer ; rouvrez le programme d’installation à tout moment pour revenir.',
       confirmUninstall: 'Confirmer la désinstallation',
@@ -1600,22 +1600,22 @@ export const frOverrides = {
         gui: {
           title: 'Désinstaller uniquement l’interface de chat',
           description:
-            "Supprime cette application de bureau. L’agent Actelyo Legal Harness, votre configuration et vos conversations sont conservés.",
+            "Supprime cette application de bureau. L’agent Actelyo Law Harness, votre configuration et vos conversations sont conservés.",
           consequence: 'l’interface de chat de bureau (cette application et ses données)'
         },
         lite: {
           title: 'Désinstaller l’interface et l’agent, conserver mes données',
           description:
-            "Supprime l’application et l’agent Actelyo Legal Harness, mais conserve la configuration, les conversations et les secrets pour une future réinstallation.",
+            "Supprime l’application et l’agent Actelyo Law Harness, mais conserve la configuration, les conversations et les secrets pour une future réinstallation.",
           consequence:
-            "l’interface de chat et l’agent Actelyo Legal Harness (la configuration, les conversations et les secrets sont conservés)"
+            "l’interface de chat et l’agent Actelyo Law Harness (la configuration, les conversations et les secrets sont conservés)"
         },
         full: {
           title: 'Tout désinstaller',
           description:
             'Supprime l’application, l’agent et toutes les données utilisateur : configuration, conversations, tâches planifiées, secrets, journaux.',
           consequence:
-            "TOUT — l’interface de chat, l’agent Actelyo Legal Harness et l’ensemble de votre configuration, de vos conversations, secrets et journaux"
+            "TOUT — l’interface de chat, l’agent Actelyo Law Harness et l’ensemble de votre configuration, de vos conversations, secrets et journaux"
         }
       }
     },
@@ -1678,7 +1678,7 @@ export const frOverrides = {
     config: {
       minimizeToTrayTitle: 'Réduire dans la barre d’état',
       minimizeToTrayDesc:
-        "Réduire les fenêtres ou fermer la fenêtre principale les masque dans la zone de notification (barre des menus sur macOS) et Actelyo Legal Harness continue de s’exécuter. Utilisez Quitter Actelyo Legal Harness dans le menu de la zone de notification ou Cmd+Q pour quitter. Désactivé par défaut ; s’applique uniquement à cet appareil.",
+        "Réduire les fenêtres ou fermer la fenêtre principale les masque dans la zone de notification (barre des menus sur macOS) et Actelyo Law Harness continue de s’exécuter. Utilisez Quitter Actelyo Law Harness dans le menu de la zone de notification ou Cmd+Q pour quitter. Désactivé par défaut ; s’applique uniquement à cet appareil.",
       minimizeToTrayUnavailable:
         'La zone de notification est indisponible. Les fenêtres seront réduites et fermées normalement. Désactivez puis réactivez cette option pour réessayer.',
       none: 'Aucun',
@@ -1689,7 +1689,7 @@ export const frOverrides = {
       searchPlaceholder: 'Rechercher…',
       noResults: 'Aucun résultat trouvé',
       systemDefault: 'Par défaut du système',
-      loading: "Chargement de la configuration Actelyo Legal Harness...",
+      loading: "Chargement de la configuration Actelyo Law Harness...",
       emptyTitle: 'Rien à configurer',
       emptyDesc: 'Cette section ne contient aucun paramètre ajustable.',
       failedLoad: 'Échec du chargement des paramètres',
@@ -1719,27 +1719,27 @@ export const frOverrides = {
       description:
         'Appuyez puis relâchez ⌘ + Option sur Mac, ou Ctrl + Alt sous Windows/Linux, pour afficher le HUD depuis n’importe quelle application. Désactivé par défaut ; s’applique uniquement à cet appareil.',
       permission:
-        "Autorisez Actelyo Legal Harness dans Réglages Système → Confidentialité et sécurité → Surveillance de l’entrée, puis réessayez. Ce geste n’enregistre pas les frappes et ne capture pas votre écran.",
+        "Autorisez Actelyo Law Harness dans Réglages Système → Confidentialité et sécurité → Surveillance de l’entrée, puis réessayez. Ce geste n’enregistre pas les frappes et ne capture pas votre écran.",
       unavailable:
-        "L’assistant du geste HUD n’a pas pu démarrer ou s’est arrêté de manière inattendue. Réessayez ou redémarrez Actelyo Legal Harness. Le raccourci HUD existant fonctionne toujours dans Actelyo Legal Harness.",
+        "L’assistant du geste HUD n’a pas pu démarrer ou s’est arrêté de manière inattendue. Réessayez ou redémarrez Actelyo Law Harness. Le raccourci HUD existant fonctionne toujours dans Actelyo Law Harness.",
       missingHelper:
-        "Il manque l’assistant du geste HUD dans cette installation de Actelyo Legal Harness. Mettez à jour ou réinstallez Actelyo Legal Harness, puis réessayez.",
+        "Il manque l’assistant du geste HUD dans cette installation de Actelyo Law Harness. Mettez à jour ou réinstallez Actelyo Law Harness, puis réessayez.",
       unsupportedSession:
         'Cette session de bureau ne prend pas en charge les appuis globaux sur les touches de modification. Linux nécessite X11 ; Wayland n’est pas pris en charge.'
     },
     screenshot: {
       enabledTitle: "Raccourci de capture d'écran",
       enabledDesc:
-        "Appuyez simultanément sur les deux touches Commande depuis n'importe quelle application pour capturer sa fenêtre au premier plan et la joindre au brouillon Actelyo Legal Harness actuel. Rien n'est envoyé automatiquement. Désactivé par défaut et limité à ce Mac. Le contenu peut être sensible : vérifiez la pièce jointe avant l'envoi.",
+        "Appuyez simultanément sur les deux touches Commande depuis n'importe quelle application pour capturer sa fenêtre au premier plan et la joindre au brouillon Actelyo Law Harness actuel. Rien n'est envoyé automatiquement. Désactivé par défaut et limité à ce Mac. Le contenu peut être sensible : vérifiez la pièce jointe avant l'envoi.",
       statusTitle: "État du raccourci de capture d'écran",
       checking: "Vérification du raccourci de capture d'écran…",
       disabled: "Le raccourci de capture d'écran est désactivé.",
       starting: "Démarrage de l'écouteur du raccourci ; il n'est pas encore prêt.",
       ready: "Le raccourci est prêt. Les captures d'écran sont jointes au brouillon actuel sans être envoyées.",
       inputPermission:
-        "L'autorisation Surveillance de l'entrée permet à Actelyo Legal Harness de détecter les deux touches Commande lorsqu'une autre application est active. Autorisez Actelyo Legal Harness dans Réglages Système → Confidentialité et sécurité → Surveillance de l'entrée, puis réessayez.",
+        "L'autorisation Surveillance de l'entrée permet à Actelyo Law Harness de détecter les deux touches Commande lorsqu'une autre application est active. Autorisez Actelyo Law Harness dans Réglages Système → Confidentialité et sécurité → Surveillance de l'entrée, puis réessayez.",
       screenPermission:
-        "L'autorisation Enregistrement de l'écran permet à Actelyo Legal Harness de capturer la fenêtre au premier plan. Autorisez Actelyo Legal Harness dans Réglages Système → Confidentialité et sécurité → Enregistrement de l'écran, puis réessayez. Redémarrez Actelyo Legal Harness si macOS le demande.",
+        "L'autorisation Enregistrement de l'écran permet à Actelyo Law Harness de capturer la fenêtre au premier plan. Autorisez Actelyo Law Harness dans Réglages Système → Confidentialité et sécurité → Enregistrement de l'écran, puis réessayez. Redémarrez Actelyo Law Harness si macOS le demande.",
       openSettings: 'Ouvrir les Réglages Système',
       retry: 'Réessayer',
       unavailable: "Le raccourci de capture d'écran est indisponible. Réessayez ou désactivez-le.",
@@ -1754,7 +1754,7 @@ export const frOverrides = {
     quickEntry: {
       enabledTitle: 'Saisie rapide',
       enabledDesc:
-        "Faites apparaître un petit compositeur depuis n'importe où avec un raccourci global et envoyez une invite sans ouvrir Actelyo Legal Harness.",
+        "Faites apparaître un petit compositeur depuis n'importe où avec un raccourci global et envoyez une invite sans ouvrir Actelyo Law Harness.",
       shortcutTitle: 'Raccourci de saisie rapide',
       shortcutDesc: 'Nécessite au moins un modificateur, par ex. CommandOrControl+Shift+Espace.',
       active: 'Le raccourci est actif.',
@@ -1816,10 +1816,10 @@ export const frOverrides = {
       kindRemote: 'Gateway distante',
       kindCloud: 'Hermes Cloud',
       kindSsh: 'SSH',
-      kindLocalDesc: "L'environnement Actelyo Legal Harness géré par cette application.",
-      kindRemoteDesc: "Une gateway Actelyo Legal Harness accessible en HTTP(S), par le LAN, Tailscale ou Internet.",
+      kindLocalDesc: "L'environnement Actelyo Law Harness géré par cette application.",
+      kindRemoteDesc: "Une gateway Actelyo Law Harness accessible en HTTP(S), par le LAN, Tailscale ou Internet.",
       kindCloudDesc: 'Une instance hébergée découverte via votre compte Hermes Cloud.',
-      kindSshDesc: "Une installation Actelyo Legal Harness accessible en SSH.",
+      kindSshDesc: "Une installation Actelyo Law Harness accessible en SSH.",
       labelTitle: 'Nom',
       labelDesc:
         'Obligatoire. Affiché partout où cette instance apparaît et nécessairement unique (par exemple « Homelab » ou « PC professionnel »).',
@@ -1828,7 +1828,7 @@ export const frOverrides = {
       sshHostTitle: 'Hôte SSH',
       headersTitle: 'En-têtes supplémentaires du gateway',
       headersDesc:
-        "Envoyés avec chaque requête HTTP et WebSocket vers ce gateway, notamment pour les proxys d'accès comme Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Les valeurs sont stockées chiffrées. Les en-têtes gérés par Actelyo Legal Harness (Authorization, Cookie, Host…) sont ignorés.",
+        "Envoyés avec chaque requête HTTP et WebSocket vers ce gateway, notamment pour les proxys d'accès comme Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Les valeurs sont stockées chiffrées. Les en-têtes gérés par Actelyo Law Harness (Authorization, Cookie, Host…) sont ignorés.",
       headerValuePlaceholder: 'Valeur',
       headerValueSaved: 'Enregistrée — laissez vide pour la conserver',
       headerAdd: 'Ajouter un en-tête',
@@ -1871,16 +1871,16 @@ export const frOverrides = {
       title: 'Connexion au gateway',
       envOverride: "remplacement par variable d'environnement",
       intro:
-        "Local par défaut. Utilisez distant quand cette application doit piloter un backend Actelyo Legal Harness ailleurs. Remplacements par profil ci-dessous.",
+        "Local par défaut. Utilisez distant quand cette application doit piloter un backend Actelyo Law Harness ailleurs. Remplacements par profil ci-dessous.",
       envOverrideTitle: "Des variables d'environnement contrôlent cette session desktop.",
       envOverrideDesc:
         'Supprimez les variables HERMES_DESKTOP_REMOTE_URL et HERMES_DESKTOP_REMOTE_TOKEN pour utiliser le paramètre enregistré ci-dessous.',
       modeTitle: 'Mode de connexion',
       localTitle: 'Gateway local',
       localDesc:
-        "Démarrer un backend Actelyo Legal Harness privé sur localhost. C'est la valeur par défaut et cela fonctionne hors ligne.",
+        "Démarrer un backend Actelyo Law Harness privé sur localhost. C'est la valeur par défaut et cela fonctionne hors ligne.",
       remoteTitle: 'Gateway distant',
-      remoteDesc: "Connecter ce shell desktop à un backend Actelyo Legal Harness distant.",
+      remoteDesc: "Connecter ce shell desktop à un backend Actelyo Law Harness distant.",
       remoteAuthHint:
         "Les gateways hébergés utilisent OAuth ou un nom d'utilisateur et un mot de passe ; les auto-hébergés peuvent utiliser un jeton de session.",
       cloudTitle: 'Hermes Cloud',
@@ -1971,9 +1971,9 @@ export const frOverrides = {
       enterUrlFirst: "Saisissez d'abord une URL distante.",
       restartingTitle: 'Reconnexion du gateway',
       savedTitle: 'Paramètres du gateway enregistrés',
-      restartingMessage: "Actelyo Legal Harness Desktop va se reconnecter avec les paramètres enregistrés — le shell reste ouvert.",
+      restartingMessage: "Actelyo Law Harness Desktop va se reconnecter avec les paramètres enregistrés — le shell reste ouvert.",
       savedMessage: 'Enregistré pour le prochain redémarrage.',
-      connectedTo: (baseUrl, version) => `Connecté à ${baseUrl}${version ? ` · Actelyo Legal Harness ${version}` : ''}`,
+      connectedTo: (baseUrl, version) => `Connecté à ${baseUrl}${version ? ` · Actelyo Law Harness ${version}` : ''}`,
       reachableTitle: 'Gateway distant accessible',
       signedOutTitle: 'Déconnecté',
       signedOutMessage: 'Session du gateway distant effacée.',
@@ -1985,7 +1985,7 @@ export const frOverrides = {
       saveFailed: "Impossible d'enregistrer les paramètres du gateway",
       sshTitle: 'Se connecter via SSH',
       sshDesc:
-        "Actelyo Legal Harness est lancé sur la machine distante via SSH et acheminé vers cette application — rien à démarrer ou exposer soi-même. Nécessite un accès SSH par clé fonctionnel vers l'hôte.",
+        "Actelyo Law Harness est lancé sur la machine distante via SSH et acheminé vers cette application — rien à démarrer ou exposer soi-même. Nécessite un accès SSH par clé fonctionnel vers l'hôte.",
       sshTrustHint:
         "La première clé d'hôte présentée est approuvée et fixée ; les changements ultérieurs échouent en mode fermé.",
       sshHostTitle: 'Hôte',
@@ -2001,25 +2001,25 @@ export const frOverrides = {
       sshPortDesc: 'Vide = 22 ou le port de ~/.ssh/config.',
       sshKeyTitle: "Fichier d'identité",
       sshKeyDesc: 'Chemin de la clé privée. Vide = ssh-agent ou ~/.ssh/config.',
-      sshHermesPathTitle: "Chemin Actelyo Legal Harness (facultatif)",
+      sshHermesPathTitle: "Chemin Actelyo Law Harness (facultatif)",
       sshHermesPathDesc: 'Chemin complet vers le binaire hermes distant. Vide = détection automatique.',
       sshHermesPathPlaceholder: 'détection automatique',
       sshTestConnection: 'Tester SSH',
       sshConnect: 'Se connecter',
       sshButtonsHint: "Enregistrer s'applique au prochain lancement. Connecter se reconnecte immédiatement.",
-      sshReachable: (host, platform) => `Accessible : ${host} (${platform}) — Actelyo Legal Harness trouvé`,
+      sshReachable: (host, platform) => `Accessible : ${host} (${platform}) — Actelyo Law Harness trouvé`,
       sshIncompleteHost: 'Saisissez un hôte SSH avant de vous connecter.',
       sshErrUnreachable: "Impossible d'atteindre cet hôte via SSH. Vérifiez l'hôte, le port et votre réseau.",
       sshErrAuth:
-        "Échec de l'authentification SSH. Chargez votre clé dans ssh-agent (ssh-add) ou définissez un IdentityFile dans ~/.ssh/config — Actelyo Legal Harness exécute ssh de manière non interactive.",
+        "Échec de l'authentification SSH. Chargez votre clé dans ssh-agent (ssh-add) ou définissez un IdentityFile dans ~/.ssh/config — Actelyo Law Harness exécute ssh de manière non interactive.",
       sshErrHostKey:
         "La clé de l'hôte a changé depuis votre dernière connexion. Vérifiez que ce changement est attendu, puis exécutez ssh-keygen -R <host> et reconnectez-vous.",
       sshErrNotInstalled:
         "Hermes n'est pas installé sur l'hôte distant. Installez-le là-bas (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) ou définissez le chemin Hermes.",
       sshErrPlatform:
-        "Plateforme distante non prise en charge. Le mode SSH de Actelyo Legal Harness Desktop supporte les hôtes distants Linux, macOS et Windows.",
+        "Plateforme distante non prise en charge. Le mode SSH de Actelyo Law Harness Desktop supporte les hôtes distants Linux, macOS et Windows.",
       sshErrTimeout: "Expiration de la connexion SSH. L'hôte peut être inaccessible ou en veille.",
-      sshErrUpdateRequired: "Mettez à jour Actelyo Legal Harness sur l'hôte distant avant de vous connecter avec Desktop SSH.",
+      sshErrUpdateRequired: "Mettez à jour Actelyo Law Harness sur l'hôte distant avant de vous connecter avec Desktop SSH.",
       sshErrUnknown: 'Échec de la connexion SSH.'
     },
     keys: {
@@ -2066,7 +2066,7 @@ export const frOverrides = {
       noOutput: 'Aucune sortie pour le moment.',
       deepLinkTitle: 'Ajouter un serveur MCP ?',
       deepLinkDescription:
-        "Un lien demande d'ajouter ce serveur MCP à Actelyo Legal Harness. Vérifiez attentivement la configuration ci-dessous : elle provient du lien, pas de Actelyo Legal Harness.",
+        "Un lien demande d'ajouter ce serveur MCP à Actelyo Law Harness. Vérifiez attentivement la configuration ci-dessous : elle provient du lien, pas de Actelyo Law Harness.",
       deepLinkStdioWarning:
         'Ce serveur exécute sur votre machine un processus local avec la commande affichée ci-dessous. Continuez uniquement si vous faites confiance à sa source.',
       deepLinkConfirm: 'Ajouter le serveur',
@@ -2193,7 +2193,7 @@ export const frOverrides = {
       serverRunning: 'En cours',
       runtimeInstalled: 'Moteur llama.cpp installé',
       runtimeInstalledDetail: (tag, backend) =>
-        `Build ${tag}, backend ${backend}. Actelyo Legal Harness démarre et gère le serveur pour vous.`,
+        `Build ${tag}, backend ${backend}. Actelyo Law Harness démarre et gère le serveur pour vous.`,
       installTitle: 'Installer le moteur local',
       installDetail:
         "Télécharge le moteur d'inférence llama.cpp (quelques centaines de Mo). Les modèles téléchargés s'exécutent entièrement sur cette machine : aucun compte requis et aucune donnée ne quitte votre ordinateur.",
@@ -2246,7 +2246,7 @@ export const frOverrides = {
       updating: 'Mise à jour du moteur…',
       upToDateTitle: 'Moteur à jour',
       upToDateDetail: (tag, backend) =>
-        `llama.cpp ${tag} (${backend}) est en cours d'exécution : il s'agit de la dernière build fournie par Actelyo Legal Harness.`,
+        `llama.cpp ${tag} (${backend}) est en cours d'exécution : il s'agit de la dernière build fournie par Actelyo Law Harness.`,
       activeDetail:
         "Les nouvelles conversations utilisent ce modèle. Il se charge lors de l'envoi de votre premier message.",
       activeNotLoaded: 'Se charge avec votre premier message',
@@ -2526,7 +2526,7 @@ export const frOverrides = {
         cliBillingDisabled: {
           title: 'Les dépenses à distance sont désactivées',
           message:
-            "Les dépenses à distance sont désactivées pour ce compte — un administrateur de facturation peut les activer depuis la page Actelyo Legal Harness Agent du portail."
+            "Les dépenses à distance sont désactivées pour ce compte — un administrateur de facturation peut les activer depuis la page Actelyo Law Harness Agent du portail."
         },
         roleRequired: {
           title: 'Rôle administrateur requis',
@@ -2594,7 +2594,7 @@ export const frOverrides = {
       connectAccount: 'Connecter un compte',
       haveApiKey: 'Vous avez une clé API ?',
       intro:
-        "Connectez-vous avec un abonnement — pas de clé API à copier. Actelyo Legal Harness lance la connexion navigateur pour vous, directement dans l'application.",
+        "Connectez-vous avec un abonnement — pas de clé API à copier. Actelyo Law Harness lance la connexion navigateur pour vous, directement dans l'application.",
       connected: 'Connecté',
       collapse: 'Réduire',
       connectAnother: 'Connecter un autre fournisseur',
@@ -2616,7 +2616,7 @@ export const frOverrides = {
       localEndpoint: {
         title: 'Point de terminaison local / personnalisé',
         description:
-          "Pointez Actelyo Legal Harness vers n'importe quel point de terminaison compatible OpenAI (Zyphra, vLLM, llama.cpp, Ollama, etc)."
+          "Pointez Actelyo Law Harness vers n'importe quel point de terminaison compatible OpenAI (Zyphra, vLLM, llama.cpp, Ollama, etc)."
       },
       loading: 'Chargement des fournisseurs...'
     },
@@ -2746,7 +2746,7 @@ export const frOverrides = {
         needsSetupConfirmAction: 'Sélectionner quand même',
         unavailableTitle: 'Commandes de terminal indisponibles',
         unavailableMessage: backend =>
-          `Actelyo Legal Harness ne peut pas exécuter de commandes shell pour le moment : ${backend} n'est pas prêt. Passez en Local ou terminez la configuration de ${backend}, puis réessayez.`,
+          `Actelyo Law Harness ne peut pas exécuter de commandes shell pour le moment : ${backend} n'est pas prêt. Passez en Local ou terminez la configuration de ${backend}, puis réessayez.`,
         openBackendSettings: 'Ouvrir les paramètres du terminal',
         useLocal: 'Utiliser Local',
         switchedToLocal:
@@ -2764,7 +2764,7 @@ export const frOverrides = {
         failedSave: "Impossible d'enregistrer le paramètre du profil réel",
         prompt: {
           title: 'Restez connecté à vos sites',
-          body: "Autorisez Actelyo Legal Harness à naviguer avec un instantané de votre profil de navigateur par défaut afin que les sites s'ouvrent avec vos sessions déjà connectées.",
+          body: "Autorisez Actelyo Law Harness à naviguer avec un instantané de votre profil de navigateur par défaut afin que les sites s'ouvrent avec vos sessions déjà connectées.",
           bulletSnapshot: 'Les cookies et identifiants de connexion sont copiés dans un instantané géré.',
           bulletLiveProfile: "Votre profil de navigateur actif n'est jamais ouvert directement.",
           bulletLocal: 'Rien ne quitte cet ordinateur.',
@@ -2841,7 +2841,7 @@ export const frOverrides = {
       halfDesktopHint: 'cette application, identique pour tous les profils',
       halfAgent: 'Agent',
       halfAgentIn: profile => `Agent dans ${profile}`,
-      defaultProfile: "Actelyo Legal Harness (par défaut)",
+      defaultProfile: "Actelyo Law Harness (par défaut)",
       kindAgent: 'Agent',
       kindDesktop: 'Desktop',
       kindBoth: 'Agent + Desktop',
@@ -2865,7 +2865,7 @@ export const frOverrides = {
       toolsetOff: (name: string, profile: string) => `Outils agent de ${name} désactivés pour ${profile}`,
       toolsetToggleFailed: (name: string) =>
         `Impossible de modifier les outils agent de ${name} ; le panneau Desktop reste inchangé`,
-      legacyBackend: "Ce backend est trop ancien pour gérer les plugins depuis cet écran ; mettez Actelyo Legal Harness à jour.",
+      legacyBackend: "Ce backend est trop ancien pour gérer les plugins depuis cet écran ; mettez Actelyo Law Harness à jour.",
       portableBadge: 'portable',
       serverStates: {
         connected: 'connecté',
@@ -2885,7 +2885,7 @@ export const frOverrides = {
         'Utilisez « + Ajouter à cet agent » sur un plugin : les entrées vérifiées sont installées depuis leur commit épinglé dans le profil sélectionné.',
       alreadyInstalled: (name: string) => `${name} est déjà installé dans ce profil.`,
       catalogProvenance: (sha: string) =>
-        `Installé depuis le catalogue Actelyo Legal Harness${sha ? ` au commit épinglé ${sha}` : ''}.`,
+        `Installé depuis le catalogue Actelyo Law Harness${sha ? ` au commit épinglé ${sha}` : ''}.`,
       pinnedProvenance: (sha: string) =>
         `Épinglé au commit ${sha}. Les mises à jour sont refusées tant qu’il n’est pas réinstallé avec un nouvel épinglage.`,
       pinnedBadge: (sha: string) => `épinglé @ ${sha}`,
@@ -2913,9 +2913,9 @@ export const frOverrides = {
       deepLinkErrorTitle: 'Lien d’installation de plugin refusé',
       deepLinkCatalogInvalidName: 'Le nom de catalogue du lien est manquant ou invalide.',
       deepLinkCatalogUnknown: (name: string) =>
-        `\u00AB\u00A0${name}\u00A0\u00BB ne figure pas dans le catalogue de plugins Actelyo Legal Harness. Rien n’a été installé.`,
+        `\u00AB\u00A0${name}\u00A0\u00BB ne figure pas dans le catalogue de plugins Actelyo Law Harness. Rien n’a été installé.`,
       deepLinkCatalogUnavailable:
-        "Impossible de charger le catalogue de plugins Actelyo Legal Harness. Vérifiez votre connexion et rouvrez le lien.",
+        "Impossible de charger le catalogue de plugins Actelyo Law Harness. Vérifiez votre connexion et rouvrez le lien.",
       settingsToggle: (name: string) => `Paramètres : ${name}`,
       settingsForm: {
         save: 'Enregistrer les paramètres',
@@ -3003,7 +3003,7 @@ export const frOverrides = {
     loading: 'Chargement…',
     emptyTitle: "Rien d'appris pour le moment",
     emptyDesc:
-      "Au fur et à mesure que Actelyo Legal Harness construit des skills et des mémoires pour votre travail, ils apparaissent ici.",
+      "Au fur et à mesure que Actelyo Law Harness construit des skills et des mémoires pour votre travail, ils apparaissent ici.",
     share: 'Partager la carte',
     shareHint:
       'Copiez le code pour partager cette carte, ou collez-en un pour le charger. Il inclut uniquement la disposition, pas votre texte de mémoire ou de skill.',
@@ -3083,7 +3083,7 @@ export const frOverrides = {
       placeholder: 'Rechercher des animaux…',
       loading: 'Chargement de la galerie petdex…',
       error: "Impossible d'atteindre la galerie petdex…",
-      staleBackend: "Redémarrez Actelyo Legal Harness pour utiliser les animaux — le backend précède cette fonctionnalité.",
+      staleBackend: "Redémarrez Actelyo Law Harness pour utiliser les animaux — le backend précède cette fonctionnalité.",
       empty: 'Aucun animal correspondant.',
       turnOff: 'Éteindre',
       turnOn: 'Allumer',
@@ -3110,8 +3110,8 @@ export const frOverrides = {
       hatchComposing: 'Assemblage…',
       hatchSaving: 'Presque terminé…',
       namePlaceholder: 'Nommez votre animal',
-      staleBackend: "Mettez à jour Actelyo Legal Harness pour générer des animaux…",
-      backgroundHint: "Vous pouvez fermer — Actelyo Legal Harness vous notifiera quand c'est terminé.",
+      staleBackend: "Mettez à jour Actelyo Law Harness pour générer des animaux…",
+      backgroundHint: "Vous pouvez fermer — Actelyo Law Harness vous notifiera quand c'est terminé.",
       slowProviderHint: 'Cela peut prendre plusieurs minutes',
       remix: 'Remixer',
       remixConfirmTitle: 'Remixer cette apparence ?',
@@ -3151,7 +3151,7 @@ export const frOverrides = {
       },
       settings: {
         title: 'Paramètres',
-        detail: "Configurer Actelyo Legal Harness Desktop"
+        detail: "Configurer Actelyo Law Harness Desktop"
       },
       capabilities: {
         title: 'Capacités',
@@ -3192,7 +3192,7 @@ export const frOverrides = {
     noSessions: 'Aucune session pour le moment.',
     gatewayRunning: 'Gateway de messagerie en cours',
     gatewayStopped: 'Gateway de messagerie arrêté',
-    hermesActiveSessions: (version, count) => `Actelyo Legal Harness ${version} · Sessions actives ${count}`,
+    hermesActiveSessions: (version, count) => `Actelyo Law Harness ${version} · Sessions actives ${count}`,
     restartGateway: 'Redémarrer le gateway',
     openBrowser: 'Basculer le navigateur',
     toggleBrowser: 'Basculer le navigateur',
@@ -3201,7 +3201,7 @@ export const frOverrides = {
     sharedGatewayRestartDescription: bots => `Tous les bots de cet appareil se reconnecteront : ${bots}`,
     sharedGatewayRestartConfirm: 'Tout redémarrer',
     sharedGatewayRestarted: count => `Gateway partagé redémarré (${count} ${count === 1 ? 'bot' : 'bots'})`,
-    updateHermes: "Mettre à jour Actelyo Legal Harness",
+    updateHermes: "Mettre à jour Actelyo Law Harness",
     reloadWindow: 'Recharger la fenêtre',
     actionRunning: 'en cours',
     actionDone: 'terminé',
@@ -3366,11 +3366,11 @@ export const frOverrides = {
     telegramQr: {
       title: 'Choisissez comment connecter votre bot Telegram',
       subtitle:
-        "Les deux méthodes connectent un bot que vous contrôlez et enregistrent ses identifiants uniquement dans cette installation d'Actelyo Legal Harness.",
+        "Les deux méthodes connectent un bot que vous contrôlez et enregistrent ses identifiants uniquement dans cette installation d'Actelyo Law Harness.",
       quickSetup: 'Configuration rapide',
       recommended: 'Recommandé',
       quickHelp:
-        "Scannez un code QR et confirmez dans Telegram. Actelyo Legal Harness crée le bot et détecte automatiquement votre identifiant d'utilisateur Telegram.",
+        "Scannez un code QR et confirmez dans Telegram. Actelyo Law Harness crée le bot et détecte automatiquement votre identifiant d'utilisateur Telegram.",
       createWithQr: 'Créer avec un code QR',
       starting: 'Démarrage…',
       replaceWarning:
@@ -3605,7 +3605,7 @@ export const frOverrides = {
     switchToConnection: name => `Basculer vers ${name}`,
     switchConnectionFailed: name => `Impossible de se connecter à ${name}`,
     manageProfiles: 'Gérer les profils…',
-    connectGateway: "Connecter un autre gateway Actelyo Legal Harness…",
+    connectGateway: "Connecter un autre gateway Actelyo Law Harness…",
     fleet: {
       allOnGateway: 'Tous les profils de cette gateway',
       gateway: gateway => `Profils sur ${gateway}`,
@@ -3613,14 +3613,14 @@ export const frOverrides = {
       onGateway: (name, gateway) => `${name} · ${gateway}`,
       switchTo: (name, gateway) => `Basculer vers ${name} sur ${gateway}`,
       deleteOn: gateway => ` sur ${gateway}`,
-      localDevice: "Cet appareil (backend local — installe Actelyo Legal Harness s’il manque, sinon ouvre une nouvelle session)",
+      localDevice: "Cet appareil (backend local — installe Actelyo Law Harness s’il manque, sinon ouvre une nouvelle session)",
       switchDeviceTitle: 'Basculer vers cet appareil ?',
       switchDeviceDesc:
         'Cela ouvre une nouvelle session sur cet ordinateur. La conversation en cours reste sur l’autre gateway.',
       switchDeviceConfirm: 'Basculer',
       installDeviceTitle: 'Basculer vers cet appareil ?',
       installDeviceDesc:
-        "Actelyo Legal Harness sera installé localement, puis une nouvelle session s’ouvrira sur cet ordinateur. Rien n’est installé tant que vous ne confirmez pas.",
+        "Actelyo Law Harness sera installé localement, puis une nouvelle session s’ouvrira sur cet ordinateur. Rien n’est installé tant que vous ne confirmez pas.",
       installDeviceConfirm: 'Installer localement',
       connectExistingInstead: 'Connecter un existant à la place'
     },
@@ -3635,7 +3635,7 @@ export const frOverrides = {
       badge: (host: string) => `S'exécute sur ${host}`,
       title: (profile: string) => `Connecter ${profile} à un hôte distant`,
       description:
-        "Les sessions de ce profil s'exécuteront sur le système Actelyo Legal Harness distant indiqué, plutôt que sur cet ordinateur.",
+        "Les sessions de ce profil s'exécuteront sur le système Actelyo Law Harness distant indiqué, plutôt que sur cet ordinateur.",
       urlLabel: 'Adresse distante',
       urlPlaceholder: 'https://hermes.exemple.fr',
       urlInvalid: 'Saisissez une adresse complète commençant par http:// ou https://',
@@ -3671,7 +3671,7 @@ export const frOverrides = {
     defaultProfile: 'Profil par défaut',
     defaultSet: name => `${name} est maintenant le profil par défaut`,
     defaultDescription:
-      "Utilisé à l'ouverture de Actelyo Legal Harness et pour les nouvelles conversations. Les sessions existantes restent dans leur profil.",
+      "Utilisé à l'ouverture de Actelyo Law Harness et pour les nouvelles conversations. Les sessions existantes restent dans leur profil.",
     failedSetDefault: 'Impossible de définir le profil par défaut',
     setColor: color => `Définir la couleur ${color}`,
     autoColor: 'Auto',
@@ -3708,7 +3708,7 @@ export const frOverrides = {
     deleteDescMid: ' et supprimera son ',
     deleteDescSuffix: ' répertoire. Cela ne peut pas être annulé.',
     deleting: 'Suppression...',
-    createDesc: "Les profils sont des environnements Actelyo Legal Harness indépendants : configuration, skills et SOUL.md séparés.",
+    createDesc: "Les profils sont des environnements Actelyo Law Harness indépendants : configuration, skills et SOUL.md séparés.",
     nameLabel: 'Nom',
     cloneFrom: 'Cloner depuis',
     cloneFromNone: 'Aucun (vide)',
@@ -3742,7 +3742,7 @@ export const frOverrides = {
     failedRename: 'Échec du renommage du profil'
   },
   modelAssignment: {
-    saveFailed: "Actelyo Legal Harness n’a pas enregistré ce changement de modèle.",
+    saveFailed: "Actelyo Law Harness n’a pas enregistré ce changement de modèle.",
     confirmTitle: 'Avertissement sur le choix du modèle',
     confirmDetail: 'Confirmez uniquement si vous acceptez ce compromis.',
     confirmAction: 'Confirmer',
@@ -3811,7 +3811,7 @@ export const frOverrides = {
     everyHourAt: minute => `Toutes les heures à :${minute}`,
     newCron: 'Nouveau cron',
     emptyDescNew:
-      "Planifiez une invite à exécuter selon une expression cron. Actelyo Legal Harness l'exécutera et livrera les résultats vers la destination de votre choix.",
+      "Planifiez une invite à exécuter selon une expression cron. Actelyo Law Harness l'exécutera et livrera les résultats vers la destination de votre choix.",
     emptyDescSearch: 'Essayez une requête de recherche plus large.',
     emptyTitleNew: 'Aucune tâche planifiée pour le moment',
     emptyTitleSearch: 'Aucune correspondance',
@@ -4026,8 +4026,8 @@ export const frOverrides = {
     storageCorrupt: {
       title: 'La base de données des sessions est endommagée',
       body: (profiles: string) =>
-        `Actelyo Legal Harness ne peut pas lire tout l’historique des sessions de ${profiles}. Les conversations absentes de cette liste n’ont pas été supprimées ; le fichier qui les contient est endommagé.`,
-      action: "Quittez Actelyo Legal Harness sur ce profil, puis inspectez le fichier sans le modifier, ou restaurez un instantané :",
+        `Actelyo Law Harness ne peut pas lire tout l’historique des sessions de ${profiles}. Les conversations absentes de cette liste n’ont pas été supprimées ; le fichier qui les contient est endommagé.`,
+      action: "Quittez Actelyo Law Harness sur ce profil, puis inspectez le fichier sans le modifier, ou restaurez un instantané :",
       guide: 'Guide de récupération'
     },
     noFilterMatches: 'Aucune session ne correspond à ces filtres',
@@ -4072,9 +4072,9 @@ export const frOverrides = {
         "Le projet a été créé sur la connexion ou le profil précédent. Revenez-y ; IDEA.md n'a pas été écrit.",
       createFailed: 'Impossible de créer le projet',
       staleBackend:
-        "Mettez à jour le backend Actelyo Legal Harness pour créer des projets — votre backend est plus ancien que cette application de bureau (Paramètres → Mises à jour → Backend).",
+        "Mettez à jour le backend Actelyo Law Harness pour créer des projets — votre backend est plus ancien que cette application de bureau (Paramètres → Mises à jour → Backend).",
       deleteConfirm:
-        "Cela supprime le projet enregistré de Actelyo Legal Harness. Les fichiers, dépôts git et worktrees restent inchangés.",
+        "Cela supprime le projet enregistré de Actelyo Law Harness. Les fichiers, dépôts git et worktrees restent inchangés.",
       startWork: 'Nouveau worktree',
       newWorktreeTitle: 'Nouveau worktree',
       newWorktreeDesc: 'Nommez la branche pour ce worktree.',
@@ -4084,7 +4084,7 @@ export const frOverrides = {
       baseBranchNone: 'Aucune branche trouvée',
       startWorkFailed: 'Impossible de créer le worktree',
       worktreeStaleBackend:
-        "Mettez à jour le backend Actelyo Legal Harness pour créer des worktrees depuis Desktop — votre backend est plus ancien que cette application (Paramètres → Mises à jour → Backend).",
+        "Mettez à jour le backend Actelyo Law Harness pour créer des worktrees depuis Desktop — votre backend est plus ancien que cette application (Paramètres → Mises à jour → Backend).",
       worktreeProjectLabel: 'Projet',
       worktreeProjectPlaceholder: 'Rechercher des projets…',
       worktreeProjectNone: 'Aucun projet avec un dossier',
@@ -4180,12 +4180,12 @@ export const frOverrides = {
   composer: {
     message: 'Message',
     wakingProfile: profile => `Réveil de ${profile}…`,
-    placeholderStarting: "Démarrage de Actelyo Legal Harness…",
-    placeholderReconnecting: "Reconnexion à Actelyo Legal Harness…",
+    placeholderStarting: "Démarrage de Actelyo Law Harness…",
+    placeholderReconnecting: "Reconnexion à Actelyo Law Harness…",
     placeholderFollowUp: 'Envoyer un suivi',
     newSessionPlaceholders: [
       'Sur quoi travaillons-nous ?',
-      "Donnez une tâche à Actelyo Legal Harness",
+      "Donnez une tâche à Actelyo Law Harness",
       "Qu'avez-vous en tête ?",
       'Décrivez ce dont vous avez besoin',
       "Qu'est-ce qu'on attaque ?",
@@ -4222,8 +4222,8 @@ export const frOverrides = {
     transcribingDictation: 'Transcription de la dictée',
     voiceControls: 'Voix',
     voiceEngine: 'Moteur de conversation vocale',
-    voiceEngineChained: "Reconnaissance vocale + voix Actelyo Legal Harness",
-    voiceEngineLive: "GPT-Live (duplex intégral, délègue à Actelyo Legal Harness)",
+    voiceEngineChained: "Reconnaissance vocale + voix Actelyo Law Harness",
+    voiceEngineLive: "GPT-Live (duplex intégral, délègue à Actelyo Law Harness)",
     voiceEngineLiveNeedsKey: 'Nécessite une clé API OpenAI',
     voiceEngineChangeFailed: 'Impossible de changer le moteur de conversation vocale',
     voiceEngineChainedShort: 'reconnaissance vocale',
@@ -4248,7 +4248,7 @@ export const frOverrides = {
       '/resume': 'Reprendre une session enregistrée',
       '/details': 'contrôler le niveau de détail de la transcription',
       '/copy': "copier la sélection ou le dernier message de l'assistant",
-      '/quit': "quitter Actelyo Legal Harness",
+      '/quit': "quitter Actelyo Law Harness",
       '/start': 'Accuser réception des pings de démarrage de la plateforme sans répondre',
       '/new': 'Démarrer une nouvelle conversation',
       '/topic': 'Activer ou inspecter les sessions par sujet des MP Telegram',
@@ -4275,7 +4275,7 @@ export const frOverrides = {
         'Mettre un prompt en file pour le prochain tour, ou lister/modifier/supprimer/déplacer/vider les prompts en file',
       '/steer': 'Injecter un message après le prochain appel d’outil sans interrompre',
       '/goal':
-        "Définir un objectif permanent sur lequel Actelyo Legal Harness travaille au fil des tours jusqu’à ce qu’il soit atteint",
+        "Définir un objectif permanent sur lequel Actelyo Law Harness travaille au fil des tours jusqu’à ce qu’il soit atteint",
       '/heartbeat': 'Définir un prompt récurrent qui revient dans cette session lorsqu’elle est inactive',
       '/refine': 'Passer en revue cette conversation maintenant et enregistrer les leçons en mémoire/skills',
       '/review': 'Lancer un sous-agent indépendant pour relire le travail qui vient d’être discuté (PR, code, docs)',
@@ -4288,7 +4288,7 @@ export const frOverrides = {
       '/context':
         'Afficher la vue détaillée de la fenêtre de contexte avec jauge d’utilisation, répartition par catégorie, statistiques de compression et débit',
       '/whoami': 'Afficher votre accès aux commandes slash (admin / utilisateur)',
-      '/profile': "Changer de profil Actelyo Legal Harness actif",
+      '/profile': "Changer de profil Actelyo Law Harness actif",
       '/codex-runtime': 'Activer/désactiver le runtime codex app-server pour les modèles OpenAI/Codex',
       '/personality': 'Définir une personnalité prédéfinie',
       '/battery': 'Afficher/masquer un indicateur de batterie coloré dans la barre d’état',
@@ -4317,7 +4317,7 @@ export const frOverrides = {
       '/subscription': 'Voir votre forfait Nous et le modifier dans le navigateur',
       '/topup': 'Afficher votre solde Nous et gérer la facturation sur le portail',
       '/platform': 'Suspendre, reprendre ou lister une plateforme de gateway en échec',
-      '/version': "Afficher la version de Actelyo Legal Harness Agent",
+      '/version': "Afficher la version de Actelyo Law Harness Agent",
       '/debug': 'Téléverser un rapport de débogage (infos système + journaux) et obtenir des liens partageables',
       '/model': 'Changer le modèle de cette session'
     },
@@ -4332,7 +4332,7 @@ export const frOverrides = {
       'composer.history': 'parcourir le popover / historique'
     },
     attachUrlTitle: 'Attacher une URL',
-    attachUrlDesc: "Actelyo Legal Harness récupérera la page et l'inclura comme contexte pour ce tour.",
+    attachUrlDesc: "Actelyo Law Harness récupérera la page et l'inclura comme contexte pour ce tour.",
     urlPlaceholder: 'https://example.com/post',
     urlHintPre: "Incluez l'URL complète, par ex. ",
     attach: 'Attacher',
@@ -4587,7 +4587,7 @@ export const frOverrides = {
       createPr: 'Créer une PR',
       openPr: 'Ouvrir une PR',
       ghMissing: 'Installez la CLI GitHub (gh) et connectez-vous pour ouvrir des PR',
-      agentShip: "Demander à Actelyo Legal Harness d'ouvrir une PR",
+      agentShip: "Demander à Actelyo Law Harness d'ouvrir une PR",
       agentShipUnavailable: "La conversation à l'origine de ces modifications n'est pas affichée.",
       agentShipPrompt:
         'Passez en revue les modifications actuelles, validez-les avec un message de validation conventionnel clair, poussez la branche, puis ouvrez une pull request.',
@@ -4599,23 +4599,23 @@ export const frOverrides = {
     }
   },
   updates: {
-    discontinuedTitle: "Cette version de Actelyo Legal Harness n'est plus prise en charge",
+    discontinuedTitle: "Cette version de Actelyo Law Harness n'est plus prise en charge",
     discontinuedBody:
-      "Cette version de Actelyo Legal Harness n'est plus prise en charge et risque de ne plus fonctionner — désinstallez-la. Vos données restent sur le disque.",
+      "Cette version de Actelyo Law Harness n'est plus prise en charge et risque de ne plus fonctionner — désinstallez-la. Vos données restent sur le disque.",
     channels: { stable: 'Stable', canary: 'Canary' },
-    appName: "Actelyo Legal Harness",
+    appName: "Actelyo Law Harness",
     availableBodyRelease: tag => `La version ${tag} est prête à être installée.`,
     releaseAvailable: tag => `La version ${tag} est disponible.`,
     checkingShort: 'Vérification…',
     availableBodyAppInstaller:
-      "Une nouvelle version de Actelyo Legal Harness est prête. Actelyo Legal Harness va se fermer, Windows terminera la mise à jour, puis Actelyo Legal Harness rouvrira automatiquement.",
+      "Une nouvelle version de Actelyo Law Harness est prête. Actelyo Law Harness va se fermer, Windows terminera la mise à jour, puis Actelyo Law Harness rouvrira automatiquement.",
     applyingBodyAppInstaller:
-      "Actelyo Legal Harness va se fermer et Windows terminera la mise à jour. Actelyo Legal Harness rouvrira ensuite automatiquement — vous n'avez rien à faire.",
+      "Actelyo Law Harness va se fermer et Windows terminera la mise à jour. Actelyo Law Harness rouvrira ensuite automatiquement — vous n'avez rien à faire.",
     applyingCloseAppInstaller:
-      "Cette fenêtre va se fermer, Windows terminera la mise à jour et Actelyo Legal Harness rouvrira automatiquement.",
+      "Cette fenêtre va se fermer, Windows terminera la mise à jour et Actelyo Law Harness rouvrira automatiquement.",
     checkUnknownTitleAppInstaller: 'Impossible de vérifier les mises à jour',
     checkUnknownBodyAppInstaller:
-      "Windows n'a pas pu rechercher les mises à jour. Elles s'installent également automatiquement au redémarrage de Actelyo Legal Harness.",
+      "Windows n'a pas pu rechercher les mises à jour. Elles s'installent également automatiquement au redémarrage de Actelyo Law Harness.",
     versionDetailsTitle: 'Détails de la version',
     versionDetailsBody:
       "Cette installation est gérée hors de l'application. Mettez-la à jour de la même manière que vous l'avez installée.",
@@ -4640,12 +4640,12 @@ export const frOverrides = {
     versionUnavailable: 'Version indisponible',
     bundleOutOfSync: "Version de l'application obsolète",
     bundleOutOfSyncDesc:
-      "Le runtime Actelyo Legal Harness a été mis à jour, mais l'application Desktop utilise encore une ancienne version. Les nouvelles fonctions de l'interface, comme le mode Bot, resteront absentes jusqu'à sa mise à jour. Lancez la mise à jour ci-dessous pour reconstruire l'application. Si cet avertissement persiste, réinstallez-la avec le dernier installateur Desktop.",
+      "Le runtime Actelyo Law Harness a été mis à jour, mais l'application Desktop utilise encore une ancienne version. Les nouvelles fonctions de l'interface, comme le mode Bot, resteront absentes jusqu'à sa mise à jour. Lancez la mise à jour ci-dessous pour reconstruire l'application. Si cet avertissement persiste, réinstallez-la avec le dernier installateur Desktop.",
     bundleOutOfSyncAction: "Obtenir l'installateur",
     bundleSwapPending: 'Redémarrez pour terminer la mise à jour',
     bundleSwapPendingDesc:
-      "L'application mise à jour est déjà installée — Actelyo Legal Harness doit seulement redémarrer pour la charger. Vos conversations et paramètres sont préservés.",
-    bundleSwapPendingAction: "Redémarrer Actelyo Legal Harness",
+      "L'application mise à jour est déjà installée — Actelyo Law Harness doit seulement redémarrer pour la charger. Vos conversations et paramètres sont préservés.",
+    bundleSwapPendingAction: "Redémarrer Actelyo Law Harness",
     checkNow: 'Vérifier maintenant',
     seeWhatsNew: 'Voir les nouveautés',
     releaseNotes: 'Notes de version',
@@ -4668,9 +4668,9 @@ export const frOverrides = {
       fetch: 'Téléchargement…',
       pull: 'Presque prêt…',
       pydeps: 'Finalisation…',
-      update: "Mise à jour de Actelyo Legal Harness…",
+      update: "Mise à jour de Actelyo Law Harness…",
       rebuild: "Reconstruction de l'application de bureau…",
-      restart: "Redémarrage de Actelyo Legal Harness…",
+      restart: "Redémarrage de Actelyo Law Harness…",
       done: 'Mise à jour terminée',
       manual: 'Mise à jour depuis votre terminal',
       guiSkew: "Mettre à jour l'application de bureau",
@@ -4680,18 +4680,18 @@ export const frOverrides = {
     checkFailedTitle: 'Impossible de vérifier les mises à jour',
     tryAgain: 'Réessayer',
     notAvailableTitle: 'Mise à jour indisponible',
-    unsupportedMessage: "Cette version de Actelyo Legal Harness ne peut pas se mettre à jour depuis l'application.",
+    unsupportedMessage: "Cette version de Actelyo Law Harness ne peut pas se mettre à jour depuis l'application.",
     connectionRetry: 'Vérifiez votre connexion et réessayez.',
-    gitUnusable: "Actelyo Legal Harness n’a pas pu exécuter Git sur cet ordinateur et n’a donc pas pu rechercher de mises à jour.",
+    gitUnusable: "Actelyo Law Harness n’a pas pu exécuter Git sur cet ordinateur et n’a donc pas pu rechercher de mises à jour.",
     connectionSettings: 'Paramètres de connexion',
     openDownloadPage: 'Ouvrir la page de téléchargement',
     latestBody: 'Vous utilisez la dernière version.',
     latestBodyBackend: 'Le backend utilise la dernière version.',
     allSetTitle: 'Tout est prêt',
     availableTitle: 'Nouvelle mise à jour disponible',
-    availableBody: "Une nouvelle version de Actelyo Legal Harness est prête à être installée.",
+    availableBody: "Une nouvelle version de Actelyo Law Harness est prête à être installée.",
     availableTitleBackend: 'Mise à jour du backend disponible',
-    availableBodyBackend: "Une version plus récente du backend Actelyo Legal Harness connecté est prête à être installée.",
+    availableBodyBackend: "Une version plus récente du backend Actelyo Law Harness connecté est prête à être installée.",
     availableBodyNoChangelog:
       "Une version plus récente est prête. Les notes de version ne sont pas disponibles pour ce type d'installation.",
     updateNow: 'Mettre à jour maintenant',
@@ -4702,32 +4702,32 @@ export const frOverrides = {
     manualTitle: 'Mise à jour depuis votre terminal',
     manualUnavailableTitle: 'Mise à jour impossible ici',
     manualBody:
-      "Vous avez installé Actelyo Legal Harness depuis la ligne de commande, les mises à jour s'y effectuent donc aussi. Collez ceci dans votre terminal :",
-    manualPickedUp: "Actelyo Legal Harness prendra en compte la nouvelle version au prochain lancement.",
+      "Vous avez installé Actelyo Law Harness depuis la ligne de commande, les mises à jour s'y effectuent donc aussi. Collez ceci dans votre terminal :",
+    manualPickedUp: "Actelyo Law Harness prendra en compte la nouvelle version au prochain lancement.",
     manualBodyBackend:
-      "Le backend Actelyo Legal Harness est géré en dehors de cette app. Exécutez ceci sur le serveur qui l’héberge :",
+      "Le backend Actelyo Law Harness est géré en dehors de cette app. Exécutez ceci sur le serveur qui l’héberge :",
     manualPickedUpBackend: 'Le backend chargera la nouvelle version une fois la mise à jour terminée.',
     guiSkewTitle: "Mettre à jour l'application de bureau",
     guiSkewBody:
-      "Le backend a été mis à jour, mais ce package d'application de bureau ne l'a pas été. Mettez à jour ou réinstallez l'application de bureau Actelyo Legal Harness (votre AppImage / .deb / .rpm) pour qu'elle corresponde.",
+      "Le backend a été mis à jour, mais ce package d'application de bureau ne l'a pas été. Mettez à jour ou réinstallez l'application de bureau Actelyo Law Harness (votre AppImage / .deb / .rpm) pour qu'elle corresponde.",
     copy: 'Copier',
     copied: 'Copié',
     done: 'Terminé',
     applyingBody:
-      "Le programme de mise à jour de Actelyo Legal Harness prend le relais dans sa propre fenêtre et rouvre Actelyo Legal Harness automatiquement une fois terminé. Ne rouvrez pas Actelyo Legal Harness vous-même pendant la mise à jour.",
+      "Le programme de mise à jour de Actelyo Law Harness prend le relais dans sa propre fenêtre et rouvre Actelyo Law Harness automatiquement une fois terminé. Ne rouvrez pas Actelyo Law Harness vous-même pendant la mise à jour.",
     applyingBodyBackend:
-      "Le backend distant applique la mise à jour et va redémarrer. Actelyo Legal Harness se reconnecte automatiquement à son retour.",
-    applyingClose: "Cette fenêtre se fermera pendant la mise à jour, puis Actelyo Legal Harness se rouvre seul.",
+      "Le backend distant applique la mise à jour et va redémarrer. Actelyo Law Harness se reconnecte automatiquement à son retour.",
+    applyingClose: "Cette fenêtre se fermera pendant la mise à jour, puis Actelyo Law Harness se rouvre seul.",
     errorTitle: 'Mise à jour non terminée',
     errorBody: "Pas de souci — rien n'a été perdu. Vous pouvez réessayer maintenant.",
-    blockerTitle: "Fermer les aperçus locaux pour mettre à jour Actelyo Legal Harness ?",
+    blockerTitle: "Fermer les aperçus locaux pour mettre à jour Actelyo Law Harness ?",
     blockerBody:
-      "Actelyo Legal Harness doit arrêter ces aperçus locaux avant la mise à jour. Aucun de vos fichiers ne sera modifié ni supprimé.",
-    foreignBlockerTitle: "Fermez les autres processus pour mettre à jour Actelyo Legal Harness",
+      "Actelyo Law Harness doit arrêter ces aperçus locaux avant la mise à jour. Aucun de vos fichiers ne sera modifié ni supprimé.",
+    foreignBlockerTitle: "Fermez les autres processus pour mettre à jour Actelyo Law Harness",
     foreignBlockerBody:
-      "Actelyo Legal Harness ne peut pas fermer automatiquement ces processus en toute sécurité. Fermez l'application, le terminal ou le service qui possède chacun d'eux, puis relancez la mise à jour.",
+      "Actelyo Law Harness ne peut pas fermer automatiquement ces processus en toute sécurité. Fermez l'application, le terminal ou le service qui possède chacun d'eux, puis relancez la mise à jour.",
     mixedBlockerBody:
-      "Actelyo Legal Harness peut fermer les aperçus locaux ci-dessous. Les autres processus doivent être fermés manuellement avant de poursuivre la mise à jour.",
+      "Actelyo Law Harness peut fermer les aperçus locaux ci-dessous. Les autres processus doivent être fermés manuellement avant de poursuivre la mise à jour.",
     closePreviewsAndUpdate: 'Fermer les aperçus et mettre à jour',
     closePreviewsAndCheckAgain: 'Fermer les aperçus et revérifier',
     localPreview: 'Aperçu local',
@@ -4767,12 +4767,12 @@ export const frOverrides = {
     sessionsTitle: 'Chaque profil conserve ses propres sessions',
     sessionsText:
       'Cette liste appartient au profil par défaut. Nouvelle session démarre une tâche sur le profil sélectionné. Changez de profil dans la barre et la liste change avec lui.',
-    stayTitle: "Actelyo Legal Harness reste à portée d'un clic",
+    stayTitle: "Actelyo Law Harness reste à portée d'un clic",
     stayText:
-      "Passez au profil de configuration et ouvrez Bienvenue dans Actelyo Legal Harness lorsque vous avez besoin d’aide. La conversation y reste disponible."
+      "Passez au profil de configuration et ouvrez Bienvenue dans Actelyo Law Harness lorsque vous avez besoin d’aide. La conversation y reste disponible."
   },
   guidedGreeting: {
-    line: "Salut, entrez ! Je suis Actelyo Legal Harness. Donnez-moi deux minutes pour préparer les lieux à votre façon, puis nous nous attaquerons à quelque chose que vous voulez vraiment accomplir.\n\nMais d'abord, comment dois-je vous appeler ?",
+    line: "Salut, entrez ! Je suis Actelyo Law Harness. Donnez-moi deux minutes pour préparer les lieux à votre façon, puis nous nous attaquerons à quelque chose que vous voulez vraiment accomplir.\n\nMais d'abord, comment dois-je vous appeler ?",
     nameSuggestion: name => `(Je peux aussi simplement vous appeler ${name}, si vous préférez.)`
   },
   install: {
@@ -4783,7 +4783,7 @@ export const frOverrides = {
       skipped: 'Ignoré',
       failed: 'Échoué'
     },
-    oneTimeTitle: "Actelyo Legal Harness nécessite une installation unique",
+    oneTimeTitle: "Actelyo Law Harness nécessite une installation unique",
     unsupportedDesc: platform =>
       `L'installation automatisée au premier lancement n'est pas encore disponible sur ${platform}. Ouvrez le Terminal et exécutez la commande ci-dessous, puis relancez cette application. Les lancements suivants ignoreront cette étape.`,
     installCommand: "Commande d'installation",
@@ -4791,24 +4791,24 @@ export const frOverrides = {
     viewDocs: "Voir la documentation d'installation",
     installTo: 'Sera installé dans',
     retryAfterRun: "Je l'ai exécuté — réessayer",
-    setupChoiceTitle: "Configurer Actelyo Legal Harness Desktop",
+    setupChoiceTitle: "Configurer Actelyo Law Harness Desktop",
     setupChoiceDesc:
-      "Connectez cette application à un gateway Actelyo Legal Harness que vous exécutez déjà, ou installez Actelyo Legal Harness localement sur cet ordinateur.",
-    connectExistingTitle: "Se connecter à un Actelyo Legal Harness existant",
+      "Connectez cette application à un gateway Actelyo Law Harness que vous exécutez déjà, ou installez Actelyo Law Harness localement sur cet ordinateur.",
+    connectExistingTitle: "Se connecter à un Actelyo Law Harness existant",
     connectExistingShort: 'Connecter un existant',
     connectExistingDesc:
       'Utilisez un backend distant avec un jeton de session ou une connexion par navigateur. Aucune installation locale ne démarrera.',
-    installLocalTitle: "Installer Actelyo Legal Harness localement",
-    installLocalDesc: "Téléchargez Actelyo Legal Harness, créez son environnement Python et exécutez le backend sur cet ordinateur.",
-    localStartUnavailable: "L'installation locale n'a pas pu démarrer. Redémarrez Actelyo Legal Harness Desktop et réessayez.",
-    remoteSetupTitle: "Se connecter à un Actelyo Legal Harness existant",
+    installLocalTitle: "Installer Actelyo Law Harness localement",
+    installLocalDesc: "Téléchargez Actelyo Law Harness, créez son environnement Python et exécutez le backend sur cet ordinateur.",
+    localStartUnavailable: "L'installation locale n'a pas pu démarrer. Redémarrez Actelyo Law Harness Desktop et réessayez.",
+    remoteSetupTitle: "Se connecter à un Actelyo Law Harness existant",
     remoteSetupDesc:
-      "Entrez l'URL du gateway. Actelyo Legal Harness Desktop détectera s'il a besoin d'un jeton ou d'une connexion par navigateur.",
+      "Entrez l'URL du gateway. Actelyo Law Harness Desktop détectera s'il a besoin d'un jeton ou d'une connexion par navigateur.",
     remoteUrlTitle: 'URL du gateway',
     remoteUrlDesc: "Utilisez l'URL de base du gateway Hermes, y compris https:// pour les connexions distantes.",
     remoteUrlPlaceholder: 'https://gateway.example.com/hermes',
     probing: "Détection de l'authentification du gateway...",
-    probeError: "Impossible d'atteindre ce gateway Actelyo Legal Harness.",
+    probeError: "Impossible d'atteindre ce gateway Actelyo Law Harness.",
     probeErrorDetails: 'Détails',
     identityProvider: "votre fournisseur d'identité",
     authTitle: 'Authentification',
@@ -4829,12 +4829,12 @@ export const frOverrides = {
     applyRemote: 'Appliquer et se reconnecter',
     backToSetup: 'Retour',
     failedTitle: "Échec de l'installation",
-    settingUpTitle: "Configuration de Actelyo Legal Harness Agent",
+    settingUpTitle: "Configuration de Actelyo Law Harness Agent",
     finishingTitle: 'Finalisation',
     failedDesc:
-      "L'une des étapes d'installation a échoué. Sous Windows, cela peut arriver si une autre instance Actelyo Legal Harness CLI ou desktop est en cours d'exécution. Arrêtez toutes les instances Actelyo Legal Harness en cours, puis réessayez. Consultez les détails ci-dessous ou le journal du bureau pour la transcription complète.",
+      "L'une des étapes d'installation a échoué. Sous Windows, cela peut arriver si une autre instance Actelyo Law Harness CLI ou desktop est en cours d'exécution. Arrêtez toutes les instances Actelyo Law Harness en cours, puis réessayez. Consultez les détails ci-dessous ou le journal du bureau pour la transcription complète.",
     activeDesc:
-      "Il s'agit d'une configuration unique. Le programme d'installation de Actelyo Legal Harness télécharge les dépendances et configure votre machine. Les lancements suivants ignoreront cette étape.",
+      "Il s'agit d'une configuration unique. Le programme d'installation de Actelyo Law Harness télécharge les dépendances et configure votre machine. Les lancements suivants ignoreront cette étape.",
     progress: (completed, total) => `${completed} sur ${total} étapes terminées`,
     currentStage: stage => ` -- actuellement : ${stage}`,
     fetchingManifest: "Récupération du manifeste d'installation...",
@@ -4852,12 +4852,12 @@ export const frOverrides = {
     openLogs: 'Ouvrir les journaux'
   },
   onboarding: {
-    headerTitle: "Configurons Actelyo Legal Harness Agent pour vous",
+    headerTitle: "Configurons Actelyo Law Harness Agent pour vous",
     headerDesc:
       'Connectez un fournisseur de modèles pour commencer à discuter. La plupart des options nécessitent un clic.',
     preparingInstall:
-      "Actelyo Legal Harness finalise l'installation. Cela prend généralement moins d'une minute au premier lancement.",
-    starting: "Démarrage de Actelyo Legal Harness…",
+      "Actelyo Law Harness finalise l'installation. Cela prend généralement moins d'une minute au premier lancement.",
+    starting: "Démarrage de Actelyo Law Harness…",
     lookingUpProviders: 'Recherche des fournisseurs...',
     collapse: 'Réduire',
     otherProviders: 'Autres fournisseurs',
@@ -4865,7 +4865,7 @@ export const frOverrides = {
     chooseLater: 'Je choisirai un fournisseur plus tard',
     recommended: 'Recommandé',
     connected: 'Connecté',
-    featuredPitch: "Un abonnement, 300+ modèles de pointe — la méthode recommandée pour exécuter Actelyo Legal Harness",
+    featuredPitch: "Un abonnement, 300+ modèles de pointe — la méthode recommandée pour exécuter Actelyo Law Harness",
     fireworksPitch: 'API de modèles directe — modèles de pointe hébergés par Fireworks',
     localModelsTitle: 'Exécuter des modèles en local',
     localModelsPitch: 'Aucun compte requis — téléchargez un modèle et exécutez-le sur cette machine',
@@ -4895,7 +4895,7 @@ export const frOverrides = {
       local: {
         short: 'auto-hébergé',
         description:
-          "Pointez Actelyo Legal Harness vers un point de terminaison local ou auto-hébergé compatible OpenAI (vLLM, llama.cpp, Ollama, etc)."
+          "Pointez Actelyo Law Harness vers un point de terminaison local ou auto-hébergé compatible OpenAI (vLLM, llama.cpp, Ollama, etc)."
       }
     },
     backToSignIn: 'Retour à la connexion',
@@ -4909,7 +4909,7 @@ export const frOverrides = {
     update: 'Mettre à jour',
     flowSubtitles: {
       pkce: 'Ouvre votre navigateur pour vous connecter, puis continue ici',
-      device_code: "Ouvre une page de vérification dans votre navigateur — Actelyo Legal Harness se connecte automatiquement",
+      device_code: "Ouvre une page de vérification dans votre navigateur — Actelyo Law Harness se connecte automatiquement",
       external: 'Connectez-vous une fois dans votre terminal, puis revenez discuter'
     },
     startingSignIn: provider => `Démarrage de la connexion pour ${provider}...`,
@@ -4927,12 +4927,12 @@ export const frOverrides = {
     pickDifferentProvider: 'Choisissez un autre fournisseur',
     signInWith: provider => `Se connecter avec ${provider}`,
     openedBrowser: provider => `Nous avons ouvert ${provider} dans votre navigateur.`,
-    authorizeThere: "Autorisez Actelyo Legal Harness là-bas.",
+    authorizeThere: "Autorisez Actelyo Law Harness là-bas.",
     copyAuthCode: "Copiez le code d'autorisation et collez-le ci-dessous.",
     pasteAuthCode: "Coller le code d'autorisation",
     reopenAuthPage: "Rouvrir la page d'autorisation",
     autoBrowser: provider =>
-      `Nous avons ouvert ${provider} dans votre navigateur. Autorisez Actelyo Legal Harness là-bas et vous serez connecté automatiquement — rien à copier ou coller.`,
+      `Nous avons ouvert ${provider} dans votre navigateur. Autorisez Actelyo Law Harness là-bas et vous serez connecté automatiquement — rien à copier ou coller.`,
     reopenSignInPage: 'Rouvrir la page de connexion',
     waitingAuthorize: 'En attente de votre autorisation...',
     externalPending: provider =>
@@ -4953,7 +4953,7 @@ export const frOverrides = {
   freeTier: {
     providerRowTitle: 'Nous · offre gratuite',
     providerRowPitch: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et outils.',
-    readyTitle: "Actelyo Legal Harness est prêt.",
+    readyTitle: "Actelyo Law Harness est prêt.",
     readyCaption: 'Gratuit · connecteurs inclus',
     begin: 'Commencer',
     signInInstead: 'Se connecter plutôt avec un compte Nous',
@@ -4992,20 +4992,20 @@ export const frOverrides = {
     errorBody: "La connexion n'a pas abouti ; relancez-la.",
     busyHeading: 'Presque terminé',
     busyBody: wait =>
-      `Actelyo Legal Harness n'a pas pu terminer votre connexion car le service Nous est occupé. Réessayez dans ${wait}. Votre session reste disponible entre-temps.`,
+      `Actelyo Law Harness n'a pas pu terminer votre connexion car le service Nous est occupé. Réessayez dans ${wait}. Votre session reste disponible entre-temps.`,
     unreachableBody:
-      "Actelyo Legal Harness n'a pas pu joindre le service Nous pour terminer votre connexion. Vérifiez votre connexion Internet et réessayez. Votre session reste disponible.",
+      "Actelyo Law Harness n'a pas pu joindre le service Nous pour terminer votre connexion. Vérifiez votre connexion Internet et réessayez. Votre session reste disponible.",
     alreadySignedInHeading: 'Déjà connecté.',
-    alreadySignedInBody: "Cette installation Actelyo Legal Harness est déjà connectée à un compte Nous.",
+    alreadySignedInBody: "Cette installation Actelyo Law Harness est déjà connectée à un compte Nous.",
     setupFailed: {
       gateClosed:
-        "Cette version de Actelyo Legal Harness ne peut pas démarrer sans compte Nous. Connectez-vous ou créez-en un gratuitement en une minute.",
+        "Cette version de Actelyo Law Harness ne peut pas démarrer sans compte Nous. Connectez-vous ou créez-en un gratuitement en une minute.",
       paused:
-        "L'utilisation de Actelyo Legal Harness sans connexion est momentanément suspendue. Actelyo Legal Harness continuera à vérifier. La connexion est gratuite et vous permet de continuer immédiatement.",
+        "L'utilisation de Actelyo Law Harness sans connexion est momentanément suspendue. Actelyo Law Harness continuera à vérifier. La connexion est gratuite et vous permet de continuer immédiatement.",
       rateLimited: wait =>
-        `Beaucoup de personnes démarrent en ce moment ; Actelyo Legal Harness réessaiera dans ${wait}. La connexion est gratuite et évite l'attente.`,
+        `Beaucoup de personnes démarrent en ce moment ; Actelyo Law Harness réessaiera dans ${wait}. La connexion est gratuite et évite l'attente.`,
       unreachable:
-        "Actelyo Legal Harness n'a pas pu joindre le service Nous. Vérifiez votre connexion Internet, puis appuyez sur Réessayer. Vous pouvez aussi connecter un autre fournisseur.",
+        "Actelyo Law Harness n'a pas pu joindre le service Nous. Vérifiez votre connexion Internet, puis appuyez sur Réessayer. Vous pouvez aussi connecter un autre fournisseur.",
       serverError:
         'Le service Nous a rencontré un problème. Réessayez dans un instant ou connectez un autre fournisseur.',
       powRequired:
@@ -5013,7 +5013,7 @@ export const frOverrides = {
       locked:
         'Cette session ne peut pas continuer sans connexion. Connectez-vous ou créez un compte Nous gratuit pour poursuivre.',
       generic:
-        "Actelyo Legal Harness n'a pas pu configurer l'accès gratuit sans connexion. Connectez-vous gratuitement ou choisissez un autre fournisseur.",
+        "Actelyo Law Harness n'a pas pu configurer l'accès gratuit sans connexion. Connectez-vous gratuitement ou choisissez un autre fournisseur.",
       signInBelow: 'La connexion est gratuite. Choisissez Nous ci-dessous.',
       tryAgain: 'Réessayer',
       retrying: 'Nouvelle tentative…'
@@ -5123,13 +5123,13 @@ export const frOverrides = {
       update: 'mise à jour',
       updateInProgress: 'Mise à jour en cours',
       commitsBehind: (count, branch) => `${count} commit${count === 1 ? '' : 's'} en retard sur ${branch}`,
-      desktopVersion: version => `Actelyo Legal Harness Desktop v${version}`,
+      desktopVersion: version => `Actelyo Law Harness Desktop v${version}`,
       backendVersion: version => `Backend v${version}`,
       clientLabel: version => `client v${version}`,
       connectionSsh: host => `SSH : ${host}`,
       connectionRemote: host => `Distant : ${host}`,
       connectionCloud: host => `Cloud : ${host}`,
-      connectionCloudTooltip: host => `Actelyo Legal Harness Cloud · ${host}`,
+      connectionCloudTooltip: host => `Actelyo Law Harness Cloud · ${host}`,
       connectionSshTooltip: host => `SSH · ${host}`,
       connectionRemoteTooltip: host => `Distant · ${host}`,
       backendLabel: version => `backend v${version}`,
@@ -5286,7 +5286,7 @@ export const frOverrides = {
     binaryTitle: 'Cela ressemble à un fichier binaire',
     binaryBody: label => `L'aperçu de ${label} peut afficher du texte illisible.`,
     largeTitle: 'Ce fichier est volumineux',
-    largeBody: (label, size) => `${label} fait ${size}. Actelyo Legal Harness n'affichera que les 512 Ko premiers.`,
+    largeBody: (label, size) => `${label} fait ${size}. Actelyo Law Harness n'affichera que les 512 Ko premiers.`,
     previewAnyway: 'Aperçu quand même',
     truncated: 'Affichage des 512 Ko premiers.',
     noInlineTitle: 'Aucun aperçu en ligne',
@@ -5328,11 +5328,11 @@ export const frOverrides = {
         "Cette adresse pointe vers la machine qui exécute votre agent, pas vers celle-ci. Le panneau du navigateur charge les pages localement ; un serveur de développement distant nécessite donc une redirection de port ou un nom d'hôte accessible.",
       failedToLoad: "Échec du chargement de l'aperçu",
       tryAgain: 'Réessayer',
-      restarting: "Actelyo Legal Harness redémarre...",
-      askRestart: "Demander à Actelyo Legal Harness de redémarrer le serveur",
-      lookingRestart: taskId => `Actelyo Legal Harness recherche un serveur d'aperçu à redémarrer (${taskId})`,
+      restarting: "Actelyo Law Harness redémarre...",
+      askRestart: "Demander à Actelyo Law Harness de redémarrer le serveur",
+      lookingRestart: taskId => `Actelyo Law Harness recherche un serveur d'aperçu à redémarrer (${taskId})`,
       restartingTitle: "Redémarrage du serveur d'aperçu",
-      restartingMessage: "Actelyo Legal Harness travaille en arrière-plan. Surveillez la console d'aperçu pour suivre la progression.",
+      restartingMessage: "Actelyo Law Harness travaille en arrière-plan. Surveillez la console d'aperçu pour suivre la progression.",
       startRestartFailed: message => `Impossible de démarrer le redémarrage du serveur : ${message}`,
       restartFailed: 'Échec du redémarrage du serveur',
       hideConsole: "Masquer la console d'aperçu",
@@ -5344,17 +5344,17 @@ export const frOverrides = {
       reload: 'Recharger la page',
       address: 'Adresse',
       addressPlaceholder: 'Saisir une adresse',
-      blankPageBody: "Saisissez une adresse ci-dessus pour naviguer, ou demandez à Actelyo Legal Harness d'ouvrir une page.",
+      blankPageBody: "Saisissez une adresse ci-dessus pour naviguer, ou demandez à Actelyo Law Harness d'ouvrir une page.",
       finishedRestarting: message =>
-        `Actelyo Legal Harness a terminé le redémarrage du serveur d'aperçu${message ? `: ${message}` : ''}`,
+        `Actelyo Law Harness a terminé le redémarrage du serveur d'aperçu${message ? `: ${message}` : ''}`,
       failedRestarting: message => `Échec du redémarrage du serveur : ${message}`,
       unknownError: 'erreur inconnue',
       restartedTitle: "Serveur d'aperçu redémarré",
       reloadingNow: "Rechargement de l'aperçu maintenant.",
       restartFailedTitle: "Échec du redémarrage de l'aperçu",
-      restartFailedMessage: "Actelyo Legal Harness n'a pas pu redémarrer le serveur.",
+      restartFailedMessage: "Actelyo Law Harness n'a pas pu redémarrer le serveur.",
       stillWorking:
-        "Actelyo Legal Harness travaille toujours, mais aucun résultat de redémarrage n'est arrivé. La commande du serveur peut être en cours d'exécution au premier plan.",
+        "Actelyo Law Harness travaille toujours, mais aucun résultat de redémarrage n'est arrivé. La commande du serveur peut être en cours d'exécution au premier plan.",
       workspaceReloading: "Espace de travail modifié, rechargement de l'aperçu",
       fileChanged: url => `Fichier modifié, rechargement de l'aperçu : ${url}`,
       filesChanged: (count, url) => `${count} modifications de fichier, rechargement de l'aperçu : ${url}`,
@@ -5379,13 +5379,13 @@ export const frOverrides = {
   },
   interfaceMode: {
     title: 'Mode d’interface',
-    hint: "Modifie ce qui est affiché, pas ce que Actelyo Legal Harness peut faire.",
+    hint: "Modifie ce qui est affiché, pas ce que Actelyo Law Harness peut faire.",
     sessionNote:
       'Défini par le mode Simple. Une modification ici dure le temps de cette session ; passez en mode Avancé pour la conserver.',
     simple: {
       label: 'Simple',
       description:
-        "Pour discuter avec Actelyo Legal Harness. Barre latérale et conversation ; pas de panneaux terminal, fichiers ou diff."
+        "Pour discuter avec Actelyo Law Harness. Barre latérale et conversation ; pas de panneaux terminal, fichiers ou diff."
     },
     advanced: {
       label: 'Avancé',
@@ -5471,7 +5471,7 @@ export const frOverrides = {
     thread: {
       loadingSession: 'Chargement de la session',
       showEarlier: 'Afficher les messages précédents',
-      loadingResponse: "Actelyo Legal Harness charge une réponse",
+      loadingResponse: "Actelyo Law Harness charge une réponse",
       loadingLocalModel: model => `Chargement de ${model} en mémoire`,
       processingPrompt: "Traitement de l'invite",
       resumeWhenBackgroundDone: count =>
@@ -5507,17 +5507,17 @@ export const frOverrides = {
         auth: "Le service d'IA a refusé votre connexion. Vérifiez les identifiants de ce fournisseur, puis renvoyez votre message.",
         billing:
           "Votre compte n'a plus de crédits chez ce fournisseur. Rechargez-le ou changez de fournisseur, puis réessayez.",
-        disk: "Votre disque est plein ; Actelyo Legal Harness n'a pas pu enregistrer cette conversation. Libérez de l'espace, puis réessayez.",
+        disk: "Votre disque est plein ; Actelyo Law Harness n'a pas pu enregistrer cette conversation. Libérez de l'espace, puis réessayez.",
         endpoint:
-          "Actelyo Legal Harness ne parvient pas à joindre votre serveur de modèle personnalisé. Vérifiez qu'il fonctionne, puis renvoyez votre message.",
+          "Actelyo Law Harness ne parvient pas à joindre votre serveur de modèle personnalisé. Vérifiez qu'il fonctionne, puis renvoyez votre message.",
         gateway:
-          "Actelyo Legal Harness a rencontré un problème interne au démarrage de cette réponse. Renvoyez votre message ; si cela persiste, envoyez les diagnostics.",
+          "Actelyo Law Harness a rencontré un problème interne au démarrage de cette réponse. Renvoyez votre message ; si cela persiste, envoyez les diagnostics.",
         generic:
-          "Une erreur s'est produite pendant la réponse de Actelyo Legal Harness. Réessayez ou copiez les détails si cela persiste.",
+          "Une erreur s'est produite pendant la réponse de Actelyo Law Harness. Réessayez ou copiez les détails si cela persiste.",
         provider:
           "Le service d'IA n'a pas pu traiter cette demande. Réessayez dans un instant ou changez de fournisseur.",
         runtime:
-          "Actelyo Legal Harness a rencontré un problème interne au démarrage de cette réponse. Renvoyez votre message ; si cela persiste, envoyez les diagnostics.",
+          "Actelyo Law Harness a rencontré un problème interne au démarrage de cette réponse. Renvoyez votre message ; si cela persiste, envoyez les diagnostics.",
         streaming: 'La connexion a été interrompue avant la fin de la réponse. Réessayez pour la renvoyer.'
       },
       errorCodes: {
@@ -5561,7 +5561,7 @@ export const frOverrides = {
         },
         no_reply: {
           title: "La réponse n'a pas abouti",
-          body: "Actelyo Legal Harness a terminé ce tour sans réponse. Réessayez pour la renvoyer."
+          body: "Actelyo Law Harness a terminé ce tour sans réponse. Réessayez pour la renvoyer."
         },
         stream_drop: {
           title: 'La réponse a été interrompue',
@@ -5575,7 +5575,7 @@ export const frOverrides = {
         ssl_cert_verification: {
           title: 'Échec de la connexion sécurisée',
           body: provider =>
-            `Actelyo Legal Harness n'a pas pu vérifier la connexion sécurisée à ${provider}. Vérifiez votre réseau ou votre proxy, ou changez de fournisseur.`
+            `Actelyo Law Harness n'a pas pu vérifier la connexion sécurisée à ${provider}. Vérifiez votre réseau ou votre proxy, ou changez de fournisseur.`
         },
         context_overflow: {
           title: 'Cette conversation est trop longue',
@@ -5610,26 +5610,26 @@ export const frOverrides = {
         },
         invalid_response: {
           title: "Le service d'IA a envoyé une réponse illisible",
-          body: provider => `${provider} a renvoyé une réponse que Actelyo Legal Harness n'a pas pu lire. Réessayez dans un instant.`
+          body: provider => `${provider} a renvoyé une réponse que Actelyo Law Harness n'a pas pu lire. Réessayez dans un instant.`
         },
         empty_response: {
           title: "Le service d'IA a envoyé une réponse vide",
           body: provider => `${provider} n'a rien renvoyé pour ce message. Réessayez dans un instant.`
         },
         loop_error: {
-          title: "Actelyo Legal Harness est resté bloqué dans une boucle",
-          body: "La réponse répétait les mêmes étapes ; Actelyo Legal Harness l’a donc arrêtée. Réessayez ou démarrez une nouvelle conversation."
+          title: "Actelyo Law Harness est resté bloqué dans une boucle",
+          body: "La réponse répétait les mêmes étapes ; Actelyo Law Harness l’a donc arrêtée. Réessayez ou démarrez une nouvelle conversation."
         },
         SESSION_NOT_OWNED: {
           title: 'Cette conversation est ouverte ailleurs',
-          body: "Cette conversation est déjà ouverte dans une autre fenêtre Actelyo Legal Harness ou un terminal. Fermez-la là-bas puis réessayez, ou démarrez-en une nouvelle ici."
+          body: "Cette conversation est déjà ouverte dans une autre fenêtre Actelyo Law Harness ou un terminal. Fermez-la là-bas puis réessayez, ou démarrez-en une nouvelle ici."
         },
         disk_full: {
           title: 'Disque plein',
-          body: "Votre disque est plein ; Actelyo Legal Harness n'a pas pu enregistrer cette conversation. Libérez de l'espace puis réessayez."
+          body: "Votre disque est plein ; Actelyo Law Harness n'a pas pu enregistrer cette conversation. Libérez de l'espace puis réessayez."
         },
         free_tier_disabled: {
-          title: "L'utilisation de Actelyo Legal Harness sans connexion est désactivée pour le moment",
+          title: "L'utilisation de Actelyo Law Harness sans connexion est désactivée pour le moment",
           body: 'Connectez-vous avec un compte Nous gratuit pour continuer.'
         },
         free_tier_rate_limited: {
@@ -5642,10 +5642,10 @@ export const frOverrides = {
         },
         free_tier_model_not_free: {
           title: "Ce modèle n'est pas disponible sans connexion",
-          body: "Actelyo Legal Harness utilise le modèle gratuit pour le moment. Connectez-vous avec un compte Nous gratuit pour accéder à plus de modèles."
+          body: "Actelyo Law Harness utilise le modèle gratuit pour le moment. Connectez-vous avec un compte Nous gratuit pour accéder à plus de modèles."
         },
         free_tier_route: {
-          title: "Actelyo Legal Harness n'a pas pu joindre le modèle gratuit par cette route",
+          title: "Actelyo Law Harness n'a pas pu joindre le modèle gratuit par cette route",
           body: 'Connectez-vous avec un compte Nous gratuit ou vérifiez le paramètre NOUS_INFERENCE_BASE_URL.'
         },
         free_tier_outage: {
@@ -5653,7 +5653,7 @@ export const frOverrides = {
           body: 'Renvoyez votre message dans une minute.'
         },
         free_tier_refused: {
-          title: "Actelyo Legal Harness n'a pas pu envoyer ce message sans connexion",
+          title: "Actelyo Law Harness n'a pas pu envoyer ce message sans connexion",
           body: 'La connexion avec un compte Nous est gratuite.'
         }
       },
@@ -5669,7 +5669,7 @@ export const frOverrides = {
       },
       errorDetails: 'Détails',
       errorGenericProvider: "Le service d'IA",
-      errorToastTitle: "Actelyo Legal Harness n'a pas pu terminer la réponse",
+      errorToastTitle: "Actelyo Law Harness n'a pas pu terminer la réponse",
       errorRetry: 'Réessayer',
       errorLimitResets: (time: string) => `Le quota se réinitialise à ${time}`,
       errorRetryAtReset: (time: string) => `Réessayer à la réinitialisation du quota (${time})`,
@@ -5680,8 +5680,8 @@ export const frOverrides = {
       errorChooseModel: 'Choisir un modèle',
       errorCompressConversation: 'Compresser la conversation',
       errorCompressFailed: 'Impossible de compresser la conversation',
-      errorOpenHermesFolder: "Ouvrir le dossier Actelyo Legal Harness",
-      errorOpenHermesFolderFailed: "Impossible d'ouvrir le dossier Actelyo Legal Harness",
+      errorOpenHermesFolder: "Ouvrir le dossier Actelyo Law Harness",
+      errorOpenHermesFolderFailed: "Impossible d'ouvrir le dossier Actelyo Law Harness",
       errorUpdateApiKey: 'Mettre à jour la clé API',
       errorSignInAgain: provider => `Se reconnecter à ${provider}`,
       errorSignInFreeTier: 'Se connecter avec un compte Nous',
@@ -5717,11 +5717,11 @@ export const frOverrides = {
       attachingFile: 'Ajout en cours…'
     },
     approval: {
-      gatewayDisconnected: "La Gateway Actelyo Legal Harness n'est pas connectée",
+      gatewayDisconnected: "La Gateway Actelyo Law Harness n'est pas connectée",
       sendFailed: "Impossible d'envoyer la réponse d'approbation",
       reconnect: 'Se reconnecter',
       timedOutSystemLine:
-        "Le délai d'approbation a expiré — la commande n'a pas été exécutée. Demandez à Actelyo Legal Harness de réessayer ou augmentez la limite dans Paramètres → Sécurité → Délai d'approbation.",
+        "Le délai d'approbation a expiré — la commande n'a pas été exécutée. Demandez à Actelyo Law Harness de réessayer ou augmentez la limite dans Paramètres → Sécurité → Délai d'approbation.",
       openSafetySettings: 'Ouvrir les paramètres de sécurité',
       run: 'Exécuter',
       command: 'Commande',
@@ -5732,12 +5732,12 @@ export const frOverrides = {
       reject: 'Rejeter',
       alwaysTitle: 'Toujours autoriser cette commande ?',
       alwaysDescription: pattern =>
-        `Cela ajoute le motif « ${pattern} » à votre liste d'autorisation permanente (~/.hermes/config.yaml). Actelyo Legal Harness ne redemandera plus pour ce type de commande — que ce soit dans cette session ou dans une session future.`,
+        `Cela ajoute le motif « ${pattern} » à votre liste d'autorisation permanente (~/.hermes/config.yaml). Actelyo Law Harness ne redemandera plus pour ce type de commande — que ce soit dans cette session ou dans une session future.`,
       alwaysAllow: 'Toujours autoriser'
     },
     clarify: {
       notReady: "La demande de clarification n'est pas encore prête",
-      gatewayDisconnected: "La Gateway Actelyo Legal Harness n'est pas connectée",
+      gatewayDisconnected: "La Gateway Actelyo Law Harness n'est pas connectée",
       sendFailed: "Impossible d'envoyer la réponse de clarification",
       loadingQuestion: 'Chargement de la question…',
       other: 'Autre (saisissez votre réponse)',
@@ -5801,7 +5801,7 @@ export const frOverrides = {
       sendFailed: "Impossible d'envoyer la réponse de configuration MCP",
       reloadFailed:
         'Serveur enregistré, mais le rechargement des outils MCP a échoué — ils seront chargés à la prochaine session',
-      gatewayDisconnected: "La Gateway Actelyo Legal Harness n'est pas connectée"
+      gatewayDisconnected: "La Gateway Actelyo Law Harness n'est pas connectée"
     },
     tool: {
       copyCode: 'Copier le code',
@@ -5986,20 +5986,20 @@ export const frOverrides = {
     }
   },
   prompts: {
-    gatewayDisconnected: "La Gateway Actelyo Legal Harness n'est pas connectée",
+    gatewayDisconnected: "La Gateway Actelyo Law Harness n'est pas connectée",
     reconnect: 'Se reconnecter',
     sudoSendFailed: "Impossible d'envoyer le mot de passe sudo",
     secretSendFailed: "Impossible d'envoyer le secret",
     sudoTitle: 'Mot de passe administrateur',
     sudoDesc:
-      "Actelyo Legal Harness a besoin de votre mot de passe sudo pour exécuter une commande privilégiée. Il n'est envoyé qu'à votre agent local.",
+      "Actelyo Law Harness a besoin de votre mot de passe sudo pour exécuter une commande privilégiée. Il n'est envoyé qu'à votre agent local.",
     sudoCommandUnavailable:
       "Cet agent n'a pas fourni la commande. Annulez si vous ne pouvez pas la vérifier dans la conversation.",
     sudoInstallDesc:
-      "Actelyo Legal Harness a besoin de votre mot de passe sudo pour installer les paquets de Bot Screen (TigerVNC + Xfce) sur l’hôte du gateway. Il n’est envoyé qu’à cet hôte.",
+      "Actelyo Law Harness a besoin de votre mot de passe sudo pour installer les paquets de Bot Screen (TigerVNC + Xfce) sur l’hôte du gateway. Il n’est envoyé qu’à cet hôte.",
     sudoPlaceholder: 'mot de passe sudo',
     secretTitle: 'Secret requis',
-    secretDesc: "Actelyo Legal Harness a besoin d'un identifiant pour continuer.",
+    secretDesc: "Actelyo Law Harness a besoin d'un identifiant pour continuer.",
     secretPlaceholder: 'valeur du secret',
     vaultUnlockSendFailed: "Impossible d'envoyer le mot de passe principal",
     vaultUnlockTitle: name => `Déverrouiller ${name}`,
@@ -6011,7 +6011,7 @@ export const frOverrides = {
     vaultSaveSendFailed: "Impossible d'enregistrer l'identifiant",
     vaultSaveTitle: site => `Enregistrer votre identifiant ${site} ?`,
     vaultSaveDesc: origin =>
-      `Actelyo Legal Harness a atteint une page de connexion sur ${origin} et ne possède aucun identifiant pour celle-ci. Saisissez-le une fois ici : il sera chiffré sur cet ordinateur et rempli dans la page sans que le modèle voie le mot de passe.`,
+      `Actelyo Law Harness a atteint une page de connexion sur ${origin} et ne possède aucun identifiant pour celle-ci. Saisissez-le une fois ici : il sera chiffré sur cet ordinateur et rempli dans la page sans que le modèle voie le mot de passe.`,
     vaultSaveIdentifierLabel: "Adresse e-mail ou nom d'utilisateur",
     vaultSaveIdentifierPlaceholder: 'vous@exemple.fr',
     vaultSavePasswordPlaceholder: 'Mot de passe',
@@ -6021,10 +6021,10 @@ export const frOverrides = {
     vaultCodeSendFailed: "Impossible d'envoyer le code",
     vaultCodeTitle: site => `Code de vérification pour ${site}`,
     vaultCodeDesc: site =>
-      `${site} demande un code à usage unique reçu par SMS, e-mail ou application d'authentification. Saisissez-le ici : Actelyo Legal Harness le remplira dans la page sans que le modèle le voie.`,
+      `${site} demande un code à usage unique reçu par SMS, e-mail ou application d'authentification. Saisissez-le ici : Actelyo Law Harness le remplira dans la page sans que le modèle le voie.`,
     vaultCodeLabel: 'Code',
     vaultCodeFootnote:
-      "Astuce : enregistrez la clé d'authentification avec cet identifiant dans Paramètres → Mots de passe et identifiants ; Actelyo Legal Harness saisira alors les codes pour vous.",
+      "Astuce : enregistrez la clé d'authentification avec cet identifiant dans Paramètres → Mots de passe et identifiants ; Actelyo Law Harness saisira alors les codes pour vous.",
     vaultCodeSkip: 'Ignorer',
     vaultCodeConfirm: 'Saisir le code'
   },
@@ -6098,8 +6098,8 @@ export const frOverrides = {
     sessionExportFailed: "Impossible d'exporter la session",
     imageSaved: 'Image enregistrée',
     downloadStarted: 'Téléchargement démarré',
-    restartToUseSaveImage: "Redémarrez Actelyo Legal Harness Desktop pour utiliser Enregistrer l'image.",
-    restartToSaveImages: "Redémarrez Actelyo Legal Harness Desktop pour enregistrer les images",
+    restartToUseSaveImage: "Redémarrez Actelyo Law Harness Desktop pour utiliser Enregistrer l'image.",
+    restartToSaveImages: "Redémarrez Actelyo Law Harness Desktop pour enregistrer les images",
     imageDownloadFailed: "Échec du téléchargement de l'image",
     openImage: "Ouvrir l'image",
     downloadImage: "Télécharger l'image",
@@ -6133,14 +6133,14 @@ export const frOverrides = {
       },
       skills: {
         title: 'Apprenez-lui une seule fois',
-        text: "Les compétences sont des dossiers d'instructions que Actelyo Legal Harness charge lorsque le travail le nécessite."
+        text: "Les compétences sont des dossiers d'instructions que Actelyo Law Harness charge lorsque le travail le nécessite."
       },
       messaging: {
-        title: "Actelyo Legal Harness loin de votre bureau",
+        title: "Actelyo Law Harness loin de votre bureau",
         text: 'Connectez Telegram, Discord, Slack et plus encore : même agent, même mémoire.'
       },
       artifacts: {
-        title: "Tout ce que Actelyo Legal Harness a créé",
+        title: "Tout ce que Actelyo Law Harness a créé",
         text: 'Images, fichiers et liens de chaque session, indexés au même endroit.'
       },
       cron: {
@@ -6153,7 +6153,7 @@ export const frOverrides = {
       },
       profiles: {
         title: 'Les profils sont séparés',
-        text: "Chacun possède son propre Actelyo Legal Harness, avec ses clés, sa mémoire et ses sessions."
+        text: "Chacun possède son propre Actelyo Law Harness, avec ses clés, sa mémoire et ses sessions."
       },
       'composer-mentions': {
         title: 'Joindre et commander',

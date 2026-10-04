@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Hermes güncellemesi 30 dakika sonra zaman aşımına uğradı."
     finished_success: "✅ Hermes güncellemesi başarıyla tamamlandı."
     last_lines: "{msg}\n\nSon satırlar:\n```\n{tail}\n```"
-    managed_action: "Hermes Agent'ı güncelle"
+    managed_action: "Actelyo Law Harness'ı güncelle"
     not_applicable: "✗ `hermes update` bu kuruluma uygulanamaz ({method}).\nŞununla güncelleyin: {command}"
   usage:
     rate_limits: "⏱️ **Hız Sınırları:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ Yetkisiz Discord slash komutu denemesi\nKullanıcı: {user_name} ({user_id})\nKanal: {chan_id} (sunucu {guild_id})\nKomut: {command_text}\nNeden: {reason}"
     thread:
       seed_message: "🧵 Hermes tarafından oluşturulan konu: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Hermes devri: **{name}**"
       auto_create_failed: "⚠️ Hermes bu mesaj için bir Discord konusu oluşturamadı, bu yüzden istek işlenmedi. Lütfen yeniden deneyin."
       auto_create_failed_generic: "İstek işlenmedi. Lütfen yeniden deneyin."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label} boyutu ({size_mb}MB) {cap} sınırını aşıyor; bunun yerine dosya olarak gönderildi."
   email:
     image_line: "Görüntü: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔Düşünüyor"
       done: "🥳Tamamlandı"
   irc:
-    quit_message: "Hermes Agent kapatılıyor"
+    quit_message: "Actelyo Law Harness kapatılıyor"
     standalone_quit: "teslim edildi"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "Bir Kez Onayla"
     confirm_always_approve: "Her Zaman Onayla"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "Bu sohbeti ana kanal olarak ayarla"
   update:
-    description: "Hermes Agent'ı en son sürüme güncelle"
+    description: "Actelyo Law Harness'ı en son sürüme güncelle"
   category:
     session: "Oturum"
     configuration: "Yapılandırma"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "Sonraki isteminiz için yerel bir görsel dosyası ekle"
   version:
-    description: "Hermes Agent sürümünü göster"
+    description: "Actelyo Law Harness sürümünü göster"
   debug:
     description: "Hata ayıklama raporunu (sistem bilgisi + günlükler) yükle ve paylaşılabilir bağlantılar al"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "Kayıtlı kart yok — “Para ekle” seçeneği kart ekleme adımlarında size yol gösterir."
     actions_require_admin: "Faturalandırma işlemleri için kuruluş yöneticisi/sahibi olmanız gerekir."
     remote_spending_off_for_org: "Uzaktan harcama bu kuruluş için kapalı."
-    killswitch_reason_overview: "Bir faturalandırma yöneticisi, burada para ekleyebilmeniz için portaldaki Hermes Agent sayfasından bunu açabilir."
-    killswitch_reason_buy: "Bir faturalandırma yöneticisi, para eklemeden önce portaldaki Hermes Agent sayfasından bunu açabilir."
+    killswitch_reason_overview: "Bir faturalandırma yöneticisi, burada para ekleyebilmeniz için portaldaki Actelyo Law Harness sayfasından bunu açabilir."
+    killswitch_reason_buy: "Bir faturalandırma yöneticisi, para eklemeden önce portaldaki Actelyo Law Harness sayfasından bunu açabilir."
     add_funds_now_hint: "Şimdi para ekle — tek seferlik bir ücret, bugün bakiyenize eklenir."
     refill_when_low_amounts: "Azaldığında doldur — bakiyeniz {threshold} altına düştüğünde otomatik olarak {reload_to} tahsil edilir."
     refill_when_low_generic: "Azaldığında doldur — bakiyeniz belirlediğiniz tutarın altına düştüğünde kartınızdan otomatik olarak ücret alınır."
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 Kartınız reddedildi. Portalda başka bir kart deneyin."
     charge_failed_generic: "🔴 Ücret tahsil edilemedi ({reason})."
     charge_error_no_payment_method: "💳 Kayıtlı kart yok — bakiye yükleme ve faturalandırma işlemlerini portalda yapın."
-    charge_error_remote_spending_disabled: "Uzaktan harcama bu hesap için kapalı — bir faturalandırma yöneticisi portaldaki Hermes Agent sayfasından açabilir."
+    charge_error_remote_spending_disabled: "Uzaktan harcama bu hesap için kapalı — bir faturalandırma yöneticisi portaldaki Actelyo Law Harness sayfasından açabilir."
     charge_error_role_required: "Para eklemek için kuruluş yöneticisi/sahibi olmanız gerekir. Bir yöneticiye başvurun veya portalda yönetin."
     charge_error_idempotency_conflict: "🔴 Bu ücret anahtarı farklı bir tutar için zaten kullanıldı. Yeni bir bakiye yükleme başlatın."
     revoked_by_admin: "Bir yönetici bu terminalin harcamasını durdurdu."
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "`hermes portal` komutunu çalıştırıp Uzaktan Harcamaya izin verin, ardından yeniden deneyin."
     charge_stepup_declined: "Ücret alınmadı. Uzaktan Harcamaya izin vermek istediğinizde /topup komutunu çalıştırın."
     charge_stepup_not_granted: "Uzaktan Harcamaya izin verilemedi — bir kuruluş yöneticisi veya sahibinin onaylaması gerekir. Kartınızdan ücret alınmadı."
-    allowed_but_org_off: "Uzaktan Harcama bu terminal için izinli ancak bu kuruluş için hâlâ kapalı. Bir faturalandırma yöneticisi portaldaki Hermes Agent sayfasından açabilir; ardından /topup komutunu yeniden çalıştırın."
+    allowed_but_org_off: "Uzaktan Harcama bu terminal için izinli ancak bu kuruluş için hâlâ kapalı. Bir faturalandırma yöneticisi portaldaki Actelyo Law Harness sayfasından açabilir; ardından /topup komutunu yeniden çalıştırın."
     allowed_no_card: "Uzaktan Harcamaya izin verildi — ancak henüz kayıtlı kart yok."
     topup_on_portal_to_continue: "Devam etmek için bakiye yükleme ve faturalandırma işlemlerini portalda yapın."
     allowed_run_topup: "Uzaktan Harcamaya izin verildi. Devam etmek için /topup komutunu çalıştırın."
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} görsel eklendi"
     images_attached_other: "📎 {count} görsel eklendi"
     command_interrupted: "Komut kesildi."
-    welcome: "Hermes Agent'a hoş geldiniz! Mesajınızı yazın veya komutlar için /help kullanın."
+    welcome: "Actelyo Law Harness'a hoş geldiniz! Mesajınızı yazın veya komutlar için /help kullanın."
     activated_skills_label: "Etkinleştirilen skill'ler:"
     redaction_disabled_title: "⚠  Gizli anahtar maskeleme DEVRE DIŞI"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). API anahtarları ve token'lar sohbet çıktısında, oturum JSON'larında ve günlüklerde açık biçimde görünebilir. Yeniden etkinleştirmek için config.yaml içinde {setting} ayarlayın."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[Yanıt akıştan sonra dönüştürüldü]"
     banner_tagline: "{name} - Yapay Zekâ Ajan Çerçevesi"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "Arka plan süreçleri yönlendirilemez; durdurun veya günlüğü okuyun."
     count_live: "{count} canlı"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "Mesaj zaman damgaları"
     update:
-      managed_action: "Hermes Agent'ı güncelle"
+      managed_action: "Actelyo Law Harness'ı güncelle"
       choice_update: "Şimdi Güncelle"
-      choice_update_desc: "geçerli oturumdan çıkıp Hermes Agent'ı güncelle"
+      choice_update_desc: "geçerli oturumdan çıkıp Actelyo Law Harness'ı güncelle"
       choice_cancel: "İptal"
       choice_cancel_desc: "geçerli oturumu koru"
-      title: "☤  Hermes Agent'ı Güncelle"
+      title: "☤  Actelyo Law Harness'ı Güncelle"
       detail: "Bu işlem geçerli oturumdan çıkar ve `hermes update` komutunu çalıştırır."
       cancelled: "🟡 /update iptal edildi."
       launching: "☤ Güncelleme başlatılıyor..."

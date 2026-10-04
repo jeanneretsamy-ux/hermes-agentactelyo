@@ -252,7 +252,7 @@ export function themeToneHex(tone: string): string {
 // ── Defaults ─────────────────────────────────────────────────────────
 
 const BRAND: ThemeBrand = {
-  name: 'Hermes Agent',
+  name: 'Actelyo Law Harness',
   icon: '☤',
   prompt: '❯',
   welcome: 'Type your message or /help for commands.',

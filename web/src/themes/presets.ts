@@ -67,8 +67,8 @@ export function webPresetFromShared(
 
 export const defaultTheme: DashboardTheme = {
   name: "default",
-  label: "Actelyo Legal Harness Teal",
-  description: "Classic dark teal — the canonical Actelyo Legal Harness look",
+  label: "Actelyo Law Harness Teal",
+  description: "Classic dark teal — the canonical Actelyo Law Harness look",
   palette: {
     background: { hex: "#041c1c", alpha: 1 },
     midground: { hex: "#ffe6cb", alpha: 1 },
@@ -229,8 +229,8 @@ export const nousBlueTheme: DashboardTheme = {
  */
 export const defaultLargeTheme: DashboardTheme = {
   name: "default-large",
-  label: "Actelyo Legal Harness Teal (Large)",
-  description: "Actelyo Legal Harness Teal with bigger fonts and roomier spacing",
+  label: "Actelyo Law Harness Teal (Large)",
+  description: "Actelyo Law Harness Teal with bigger fonts and roomier spacing",
   palette: defaultTheme.palette,
   typography: {
     ...DEFAULT_TYPOGRAPHY,

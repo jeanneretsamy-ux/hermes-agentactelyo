@@ -448,7 +448,7 @@ export default function ChannelsPage() {
                     </a>
                   </div>
                   <p className="text-xs">
-                    You can leave allowed users blank. Actelyo Legal Harness will then send new DM
+                    You can leave allowed users blank. Actelyo Law Harness will then send new DM
                     users a code that you approve from the Pairing page.
                   </p>
                 </div>
@@ -861,7 +861,7 @@ function WhatsAppOnboardingPanel({
         : "waiting";
   const setupHelp =
     phase === "connected" || phase === "applying"
-      ? "WhatsApp is linked but Actelyo Legal Harness is not listening yet. Save and restart the gateway to finish setup."
+      ? "WhatsApp is linked but Actelyo Law Harness is not listening yet. Save and restart the gateway to finish setup."
       : setup?.status === "installing"
         ? "Preparing the WhatsApp bridge. The QR code will appear here when it is ready."
         : setup?.status === "starting"
@@ -872,24 +872,24 @@ function WhatsAppOnboardingPanel({
     : setup?.account_name || setup?.account_id || "";
   const linkedAccountDetail =
     setup?.account_phone || setup?.account_id
-      ? "This is the WhatsApp account Actelyo Legal Harness is now logged into."
-      : "Actelyo Legal Harness is logged into the WhatsApp account that scanned the QR code.";
+      ? "This is the WhatsApp account Actelyo Law Harness is now logged into."
+      : "Actelyo Law Harness is logged into the WhatsApp account that scanned the QR code.";
   const linkedAccountChatUrl = setup?.account_phone
     ? `https://wa.me/${setup.account_phone}`
     : "";
   const messageInstruction =
     mode === "self-chat"
-      ? "After the restart, open Message Yourself on the linked account and send Actelyo Legal Harness a message."
-      : "After the restart, start a chat from another WhatsApp account with the linked account and send Actelyo Legal Harness a message.";
+      ? "After the restart, open Message Yourself on the linked account and send Actelyo Law Harness a message."
+      : "After the restart, start a chat from another WhatsApp account with the linked account and send Actelyo Law Harness a message.";
   const hasSavedAllowedUsers = Boolean(platform.whatsapp_setup?.allowed_users_set);
   const pairingInstruction =
     mode === "self-chat" && !allowedUsers.trim()
       ? hasSavedAllowedUsers
-        ? "Actelyo Legal Harness will keep the saved WhatsApp allowlist."
+        ? "Actelyo Law Harness will keep the saved WhatsApp allowlist."
         : "Self-chat mode will allow the linked account automatically when you save."
       : !allowedUsers.trim() && hasSavedAllowedUsers
-        ? "Actelyo Legal Harness will keep the saved WhatsApp allowlist."
-        : "If no allowed numbers were entered, Actelyo Legal Harness replies with a pairing code. Approve it from the dashboard Pairing page.";
+        ? "Actelyo Law Harness will keep the saved WhatsApp allowlist."
+        : "If no allowed numbers were entered, Actelyo Law Harness replies with a pairing code. Approve it from the dashboard Pairing page.";
 
   return (
     <div className="rounded-sm border border-border bg-background/35 p-4">
@@ -971,7 +971,7 @@ function WhatsAppOnboardingPanel({
 
               {phase === "waiting" && (
                 <div className="text-xs text-muted-foreground">
-                  After saving, unknown DMs use Actelyo Legal Harness pairing codes unless their
+                  After saving, unknown DMs use Actelyo Law Harness pairing codes unless their
                   number is already allowed.
                 </div>
               )}
@@ -1162,7 +1162,7 @@ function TelegramOnboardingPanel({
     setDetectedOwnerId(null);
     setNewAllowedId("");
     try {
-      const res = await api.startTelegramOnboarding({ bot_name: "Actelyo Legal Harness Agent" });
+      const res = await api.startTelegramOnboarding({ bot_name: "Actelyo Law Harness Agent" });
       const dataUrl = await QRCode.toDataURL(res.qr_payload, {
         errorCorrectionLevel: "M",
         margin: 1,
@@ -1280,7 +1280,7 @@ function TelegramOnboardingPanel({
         </span>
         <span className="text-xs text-muted-foreground">
           Both options connect a bot you control and save its credentials only to
-          this Actelyo Legal Harness installation.
+          this Actelyo Law Harness installation.
         </span>
       </div>
 
@@ -1293,7 +1293,7 @@ function TelegramOnboardingPanel({
             <Badge tone="success">recommended</Badge>
           </div>
           <p className="text-xs text-muted-foreground">
-            Scan a QR code and confirm in Telegram. Actelyo Legal Harness creates the bot and
+            Scan a QR code and confirm in Telegram. Actelyo Law Harness creates the bot and
             detects your Telegram user ID automatically.
           </p>
           <Button

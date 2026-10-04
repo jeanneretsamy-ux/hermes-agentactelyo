@@ -1,4 +1,4 @@
-# Actelyo Legal Harness
+# Actelyo Law Harness
 
 Agent, outils, mémoire, tâches et interface locale.
 

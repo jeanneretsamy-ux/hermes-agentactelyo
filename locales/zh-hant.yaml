@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Hermes 更新已逾時（30 分鐘）。"
     finished_success: "✅ Hermes 更新已成功完成。"
     last_lines: "{msg}\n\n最後幾行：\n```\n{tail}\n```"
-    managed_action: "更新 Hermes Agent"
+    managed_action: "更新 Actelyo Law Harness"
     not_applicable: "✗ `hermes update` 不適用於此安裝方式（{method}）。\n請改用：{command}"
   usage:
     rate_limits: "⏱️ **速率限制：** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ 未授權的 Discord 斜線指令嘗試\n使用者：{user_name}（{user_id}）\n頻道：{chan_id}（guild {guild_id}）\n指令：{command_text}\n原因：{reason}"
     thread:
       seed_message: "🧵 Hermes 建立的討論串：**{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Hermes 交接：**{name}**"
       auto_create_failed: "⚠️ Hermes 無法為這則訊息建立 Discord 討論串，因此未處理此請求。請重試。"
       auto_create_failed_generic: "此請求未處理。請重試。"
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label}大小 {size_mb}MB 超過 {cap} 上限；已改以檔案傳送。"
   email:
     image_line: "圖片：{url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔思考中"
       done: "🥳完成"
   irc:
-    quit_message: "Hermes Agent 正在關閉"
+    quit_message: "Actelyo Law Harness 正在關閉"
     standalone_quit: "已傳送"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "批准一次"
     confirm_always_approve: "永遠批准"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "將此聊天設為主頻道"
   update:
-    description: "將 Hermes Agent 更新到最新版本"
+    description: "將 Actelyo Law Harness 更新到最新版本"
   category:
     session: "工作階段"
     configuration: "設定"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "為下一則提示附加本機圖片檔案"
   version:
-    description: "顯示 Hermes Agent 版本"
+    description: "顯示 Actelyo Law Harness 版本"
   debug:
     description: "上傳除錯報告（系統資訊 + 日誌）並取得可分享的連結"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "尚未儲存任何卡片 — 「加值」會引導你新增一張。"
     actions_require_admin: "帳務操作需要組織管理員或擁有者權限。"
     remote_spending_off_for_org: "此組織已關閉遠端消費。"
-    killswitch_reason_overview: "帳務管理員可在 Portal 的 Hermes Agent 頁面開啟，之後就能在這裡加值。"
-    killswitch_reason_buy: "加值前，需由帳務管理員在 Portal 的 Hermes Agent 頁面開啟。"
+    killswitch_reason_overview: "帳務管理員可在 Portal 的 Actelyo Law Harness 頁面開啟，之後就能在這裡加值。"
+    killswitch_reason_buy: "加值前，需由帳務管理員在 Portal 的 Actelyo Law Harness 頁面開啟。"
     add_funds_now_hint: "立即加值 — 單次扣款，今天就加進你的餘額。"
     refill_when_low_amounts: "餘額不足時補充 — 當餘額低於 {threshold} 時自動扣款 {reload_to}。"
     refill_when_low_generic: "餘額不足時補充 — 當餘額低於你設定的金額時，自動從你的卡片扣款。"
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 你的卡片被拒絕。請在 Portal 改用其他卡片。"
     charge_failed_generic: "🔴 扣款未成功（{reason}）。"
     charge_error_no_payment_method: "💳 沒有卡片 — 請在 Portal 儲值並管理帳務。"
-    charge_error_remote_spending_disabled: "此帳戶已關閉遠端消費 — 帳務管理員可在 Portal 的 Hermes Agent 頁面開啟。"
+    charge_error_remote_spending_disabled: "此帳戶已關閉遠端消費 — 帳務管理員可在 Portal 的 Actelyo Law Harness 頁面開啟。"
     charge_error_role_required: "加值需要組織管理員或擁有者權限。請聯絡管理員，或在 Portal 上管理。"
     charge_error_idempotency_conflict: "🔴 這個扣款金鑰已用於不同金額。請重新開始一次儲值。"
     revoked_by_admin: "管理員已停止這台終端機的消費。"
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "請執行 `hermes portal` 並允許遠端消費，然後重試。"
     charge_stepup_declined: "未進行扣款。想允許遠端消費時，請執行 /topup。"
     charge_stepup_not_granted: "無法允許遠端消費 — 必須由組織管理員或擁有者批准。你的卡片未被扣款。"
-    allowed_but_org_off: "這台終端機已允許遠端消費，但此組織仍為關閉狀態。帳務管理員可在 Portal 的 Hermes Agent 頁面開啟，之後再執行一次 /topup。"
+    allowed_but_org_off: "這台終端機已允許遠端消費，但此組織仍為關閉狀態。帳務管理員可在 Portal 的 Actelyo Law Harness 頁面開啟，之後再執行一次 /topup。"
     allowed_no_card: "已允許遠端消費 — 但目前還沒有卡片。"
     topup_on_portal_to_continue: "請在 Portal 儲值並管理帳務以繼續。"
     allowed_run_topup: "已允許遠端消費。執行 /topup 以繼續。"
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 已附加 {count} 張圖片"
     images_attached_other: "📎 已附加 {count} 張圖片"
     command_interrupted: "指令已中斷。"
-    welcome: "歡迎使用 Hermes Agent！輸入訊息開始，或輸入 /help 查看指令。"
+    welcome: "歡迎使用 Actelyo Law Harness！輸入訊息開始，或輸入 /help 查看指令。"
     activated_skills_label: "已啟用的技能："
     redaction_disabled_title: "⚠  機密遮蔽已停用"
     redaction_disabled_body: "（HERMES_REDACT_SECRETS={value}）。API 金鑰與 token 可能會原文出現在聊天輸出、工作階段 JSON 和日誌中。在 config.yaml 中設定 {setting} 可重新啟用。"
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[回應在串流結束後已轉換]"
     banner_tagline: "{name} - AI 代理框架"
-    banner_version: "Hermes Agent v{version}（{date}）"
+    banner_version: "Actelyo Law Harness v{version}（{date}）"
   subagents:
     cannot_steer_process: "背景程序無法引導；請停止它或查看日誌。"
     count_live: "{count} 個進行中"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "訊息時間戳記"
     update:
-      managed_action: "更新 Hermes Agent"
+      managed_action: "更新 Actelyo Law Harness"
       choice_update: "立即更新"
-      choice_update_desc: "離開目前的工作階段並更新 Hermes Agent"
+      choice_update_desc: "離開目前的工作階段並更新 Actelyo Law Harness"
       choice_cancel: "取消"
       choice_cancel_desc: "保留目前的工作階段"
-      title: "☤  更新 Hermes Agent"
+      title: "☤  更新 Actelyo Law Harness"
       detail: "這會離開目前的工作階段並執行 `hermes update`。"
       cancelled: "🟡 /update 已取消。"
       launching: "☤ 正在啟動更新…"

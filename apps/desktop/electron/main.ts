@@ -1246,7 +1246,7 @@ function acquireSingleInstanceLock(): boolean {
 const isPrimaryInstance: boolean = acquireSingleInstanceLock()
 
 if (!isPrimaryInstance) {
-  console.error('[hermes] another Hermes Desktop instance holds the single-instance lock; exiting')
+  console.error("[hermes] another Actelyo Law Harness instance holds the single-instance lock; exiting")
   app.exit(0)
 }
 
@@ -1404,7 +1404,7 @@ const BOOT_FAKE_STEP_MS = (() => {
   return Math.max(120, raw)
 })()
 
-const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Hermes'
+const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || "Actelyo Law Harness"
 const HUD_WINDOW_TITLE = `${APP_NAME} HUD`
 const TITLEBAR_HEIGHT = 34
 const MACOS_TRAFFIC_LIGHTS_HEIGHT = 14
@@ -2230,7 +2230,7 @@ let bootProgressState = {
   error: null,
   fakeMode: BOOT_FAKE_MODE,
   isCloudBackendDown: false,
-  message: 'Waiting to start Hermes backend',
+  message: "Waiting to start Actelyo Law Harness backend",
   phase: 'idle',
   progress: 0,
   retryable: false,
@@ -3092,7 +3092,7 @@ async function waitForUpdateToFinish() {
 
       await advanceBootProgress(
         'backend.update-wait',
-        'An update is finishing — Hermes will start automatically when it completes…',
+        "An update is finishing — Actelyo Law Harness will start automatically when it completes…",
         12
       )
     },
@@ -3116,7 +3116,7 @@ async function waitForUpdateToFinish() {
       rememberLog(`[updates] detached update finished with manual action (branch ${result.branch}): ${result.message}`)
       dialog.showMessageBox({
         type: 'warning',
-        title: 'Hermes update',
+        title: "Actelyo Law Harness update",
         message: 'The update finished, but needs one more step',
         detail: result.message
       })
@@ -3132,8 +3132,8 @@ async function waitForUpdateToFinish() {
       void dialog
         .showMessageBox({
           type: 'error',
-          title: 'Hermes update',
-          message: "Hermes couldn't finish updating",
+          title: "Actelyo Law Harness update",
+          message: "Actelyo Law Harness couldn't finish updating",
           detail:
             "You're still on the previous version and can keep using it. Try the update again, or open the update log to report the problem.\n\n" +
             `Details: ${result.message}`,
@@ -3170,7 +3170,7 @@ async function waitForUpdateToFinish() {
     // and let the failure dialog above carry the recovery guidance.
     rememberLog('[updates] proceeding with backend start despite the failed update receipt')
   } else if (relaunchIntoSwappedBundle()) {
-    await advanceBootProgress('backend.update-restart', 'Restarting Hermes to load the updated app…', 14)
+    await advanceBootProgress('backend.update-restart', "Restarting Actelyo Law Harness to load the updated app…", 14)
     // Park while the scheduled exit lands so this stale build never starts a
     // backend; the failsafe below only runs if the exit somehow does not.
     await new Promise(resolve => setTimeout(resolve, BUNDLE_SWAP_RELAUNCH_FAILSAFE_MS))
@@ -5478,7 +5478,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   //    is a recoverable state the GUI can drive through.
   return {
     kind: 'bootstrap-needed',
-    label: 'Hermes Agent not installed yet; bootstrap required',
+    label: "Actelyo Law Harness not installed yet; bootstrap required",
     command: null,
     args: backendArgs,
     bootstrap: true,
@@ -5538,7 +5538,7 @@ async function ensureRuntime(
     rememberLog('[bootstrap] REFUSING installer on a bundled install; payload missing or damaged — reinstall the app')
 
     const bundledError: Error & { isBootstrapFailure?: boolean } = new Error(
-      'This app bundles its own Hermes runtime, but the runtime files are missing or damaged. Reinstall Hermes Desktop to restore it.'
+      "This app bundles its own Actelyo Law Harness runtime, but the runtime files are missing or damaged. Reinstall Actelyo Law Harness to restore it."
     )
 
     bundledError.isBootstrapFailure = true
@@ -5547,11 +5547,11 @@ async function ensureRuntime(
   }
 
   if (backend.kind === 'bootstrap-needed') {
-    rememberLog('[bootstrap] no Hermes install found; starting first-launch bootstrap')
+    rememberLog("[bootstrap] no Actelyo Law Harness install found; starting first-launch bootstrap")
 
     if (await handOffWindowsBootstrapRecovery('bootstrap-needed')) {
       const handoffError: Error & { isBootstrapFailure?: boolean; bootstrapHandedOff?: boolean } = new Error(
-        'Hermes recovery was handed off to Hermes Setup. The desktop will restart when recovery completes.'
+        "Actelyo Law Harness recovery was handed off to Actelyo Law Harness Setup. The desktop will restart when recovery completes."
       )
 
       handoffError.isBootstrapFailure = true
@@ -5615,7 +5615,7 @@ async function ensureRuntime(
     bootstrapAbortController = null
 
     if (bootstrapResult.cancelled) {
-      const cancelledError = new Error('Hermes install was cancelled.') as any
+      const cancelledError = new Error("Actelyo Law Harness install was cancelled.") as any
       cancelledError.isBootstrapFailure = true
       cancelledError.bootstrapCancelled = true
       bootstrapFailure = cancelledError
@@ -7689,7 +7689,7 @@ function openOauthLoginWindow(
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: silent ? 'Connecting to Hermes Cloud agent…' : 'Sign in to Hermes gateway',
+        title: silent ? 'Connecting to Hermes Cloud agent…' : "Sign in to Actelyo Law Harness gateway",
         autoHideMenuBar: true,
         // Silent cascade: start HIDDEN. The auto-SSO 302 chain completes in
         // well under a second, so the window normally never needs to show. We
@@ -9679,7 +9679,7 @@ async function buildRemoteConnection(
 
   if (!token) {
     throw new Error(
-      'Remote Hermes gateway is selected, but no session token is saved. ' +
+      "Remote Actelyo Law Harness gateway is selected, but no session token is saved. " +
         'Open Settings → Gateway and save a token, or switch back to Local.'
     )
   }
@@ -10776,7 +10776,7 @@ async function testDesktopConnectionConfig(input: any = {}) {
             return {
               reachable: false,
               sshError: 'update-required',
-              error: 'Update Hermes on the remote host before connecting with Desktop SSH.'
+              error: "Update Actelyo Law Harness on the remote host before connecting with Desktop SSH."
             }
           }
 
@@ -12762,7 +12762,7 @@ function startAttachedBackendMonitor(attached: AttachedBackend) {
         stopAttachedBackendMonitor()
         rememberLog(`[attach] attached backend on ${attached.baseUrl} (pid ${attached.pid}) is gone; recovering`)
         backendConnectionState.invalidate()
-        scheduleUnexpectedPrimaryRecovery({ error: 'The Hermes backend this app attached to exited.', ready: true })
+        scheduleUnexpectedPrimaryRecovery({ error: "The Actelyo Law Harness backend this app attached to exited.", ready: true })
       })
   }, ATTACHED_LIVENESS_POLL_MS)
 
@@ -12918,7 +12918,7 @@ function reportPrimaryRecoveryCrashLoop(code: number | null, signal: string | nu
   }
 
   const message =
-    'Hermes backend keeps crashing right after it restarts; not restarting it again. Relaunch Hermes Desktop.'
+    "Actelyo Law Harness backend keeps crashing right after it restarts; not restarting it again. Relaunch Actelyo Law Harness."
 
   rememberLog(`[supervisor] ${message}`)
   sendBackendExit({ code, signal, error: message })
@@ -13005,7 +13005,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
   // otherwise SIGTERMs the running instance's live backend (#87295).
   if (!isPrimaryInstance) {
     rememberLog('[boot] non-primary instance: skipping backend machinery')
-    throw new Error('Hermes Desktop is already running in another window.')
+    throw new Error("Actelyo Law Harness is already running in another window.")
   }
 
   await reapOrphanedBackendsOnce()
@@ -13035,7 +13035,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
   // E2E: simulate a boot failure without breaking the real backend. The boot
   // progresses a few steps, then fails with the given error message.
   if (BOOT_FAKE_ERROR) {
-    await advanceBootProgress('backend.resolve', 'Resolving Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', "Resolving Actelyo Law Harness backend", 8)
     const error = new Error(BOOT_FAKE_ERROR) as any
     error.isBootstrapFailure = true
     bootstrapFailure = error
@@ -13096,7 +13096,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Remote Hermes backend is ready',
+        message: "Remote Actelyo Law Harness backend is ready",
         progress: 94,
         running: true,
         error: null
@@ -13105,7 +13105,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       return createPrimaryRemoteConnection(remote, hermesLog.slice(-80), getWindowState())
     }
 
-    await advanceBootProgress('backend.resolve', 'Resolving Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', "Resolving Actelyo Law Harness backend", 8)
     // Resolve for the desktop's primary profile so a per-profile remote
     // override on the active profile is honored (falls back to env / global).
 
@@ -13143,7 +13143,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       ensureLocalRuntime: backend =>
         ensureRuntime(backend, () => backendConnectionState.assertCurrentAttempt(connectionAttempt)),
       prepareLocalBackend: async () => {
-        await advanceBootProgress('backend.runtime', 'Resolving Hermes runtime', 28)
+        await advanceBootProgress('backend.runtime', "Resolving Actelyo Law Harness runtime", 28)
 
         return resolveHermesBackend(backendArgs)
       },
@@ -13193,7 +13193,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Attached to the running Hermes backend',
+        message: "Attached to the running Actelyo Law Harness backend",
         progress: 94,
         running: true,
         error: null
@@ -13321,7 +13321,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     if (!processOwner) {
       await localBackendLifecycle.stop(hermesProcess)
       releaseBackendChild(hermesProcess)
-      throw new Error('Hermes backend start was superseded by a newer connection attempt.')
+      throw new Error("Actelyo Law Harness backend start was superseded by a newer connection attempt.")
     }
 
     hermesProcess.stdout.on('data', rememberLog)
@@ -13339,7 +13339,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       if (!backendConnectionState.clearForCurrentProcess(processOwner)) {
         rememberLog(`Ignoring stale Hermes backend error: ${error.message}`)
         scheduleUnexpectedPrimaryRecovery({ error: error.message, ready: backendReady })
-        rejectBackendStart?.(new Error('Hermes backend start was superseded by a newer connection attempt.'))
+        rejectBackendStart?.(new Error("Actelyo Law Harness backend start was superseded by a newer connection attempt."))
 
         return
       }
@@ -13366,18 +13366,18 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       releaseBackendChild(hermesProcess)
 
       if (!backendConnectionState.clearForCurrentProcess(processOwner)) {
-        rememberLog(formatBackendExitLine('Ignoring stale Hermes backend exit', code, signal, primaryOutputTail))
+        rememberLog(formatBackendExitLine("Ignoring stale Actelyo Law Harness backend exit", code, signal, primaryOutputTail))
 
         scheduleUnexpectedPrimaryRecovery({ code, signal, ready: backendReady })
 
         if (!backendReady) {
-          rejectBackendStart?.(new Error('Hermes backend start was superseded by a newer connection attempt.'))
+          rejectBackendStart?.(new Error("Actelyo Law Harness backend start was superseded by a newer connection attempt."))
         }
 
         return
       }
 
-      rememberLog(formatBackendExitLine('Hermes backend exited', code, signal, primaryOutputTail))
+      rememberLog(formatBackendExitLine("Actelyo Law Harness backend exited", code, signal, primaryOutputTail))
 
       // The current primary child is gone; release its routing pin so the
       // next startHermes() re-reads active-profile.json instead of re-pinning
@@ -13409,7 +13409,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       }
     })
 
-    await advanceBootProgress('backend.port', 'Waiting for Hermes backend to launch', 86)
+    await advanceBootProgress('backend.port', "Waiting for Actelyo Law Harness backend to launch", 86)
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
     // Discover the ephemeral port the child bound to
@@ -13421,7 +13421,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     }
 
     const baseUrl = `http://127.0.0.1:${port}`
-    await advanceBootProgress('backend.wait', 'Waiting for Hermes backend to become ready', 90)
+    await advanceBootProgress('backend.wait', "Waiting for Actelyo Law Harness backend to become ready", 90)
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
     await Promise.race([waitForHermes(baseUrl, token), backendStartFailed])
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
@@ -13460,7 +13460,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     updateBootProgress({
       phase: 'backend.ready',
-      message: 'Hermes backend is ready. Finalizing desktop startup',
+      message: "Actelyo Law Harness backend is ready. Finalizing desktop startup",
       progress: 94,
       running: true,
       error: null
@@ -13825,7 +13825,7 @@ function spawnSecondaryWindow({
     height: SESSION_WINDOW_MIN_HEIGHT,
     minWidth: SESSION_WINDOW_MIN_WIDTH,
     minHeight: SESSION_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: "Actelyo Law Harness",
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13930,7 +13930,7 @@ function spawnBrowserWindow(tabId) {
     height: BROWSER_WINDOW_HEIGHT,
     minWidth: BROWSER_WINDOW_MIN_WIDTH,
     minHeight: BROWSER_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: "Actelyo Law Harness",
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -14042,7 +14042,7 @@ function createInstanceWindow(
     ...nextInstanceBounds(source),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: "Actelyo Law Harness",
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -15127,7 +15127,7 @@ function createWindow() {
     ),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: "Actelyo Law Harness",
     // Frameless title bar on every platform so the renderer can paint the
     // "hide sidebar" button (and other left-side titlebar tools) flush with
     // the top edge — matching the macOS layout where the traffic lights sit
@@ -15507,7 +15507,7 @@ function createWindow() {
         const exit = details?.exitCode === undefined ? '' : `, exit code ${String(details.exitCode)}`
         rememberLog(`[renderer:main] renderer terminated while live (reason=${reason}${exit}); surfacing recovery page`)
         void loadRendererLoadErrorPage(mainWindow, {
-          title: 'Hermes desktop UI was terminated',
+          title: "Actelyo Law Harness desktop UI was terminated",
           errorDescription:
             `The desktop UI process was terminated unexpectedly (reason: ${reason}${exit}). ` +
             'Your sessions and the background gateway are unaffected — reload to continue.',
@@ -15873,7 +15873,7 @@ ipcMain.handle('hermes:window:openInTerminal', async (_event, sessionId, opts) =
     const backend = await resolveHermesBackend(tuiResumeArgs(sessionId.trim(), profile || undefined))
 
     if (!backend.command) {
-      return { ok: false, error: 'Hermes is not installed yet' }
+      return { ok: false, error: "Actelyo Law Harness is not installed yet" }
     }
 
     const { cwd } = sanitizeWorkspaceCwd(opts?.cwd)
@@ -18462,7 +18462,7 @@ ipcMain.handle('hermes:quick-entry:submit', (event, payload) => {
   }
 
   if (!mainWindow || mainWindow.isDestroyed()) {
-    return { code: 'no-primary', message: 'The primary Hermes window is unavailable.', ok: false, retryable: true }
+    return { code: 'no-primary', message: "The primary Actelyo Law Harness window is unavailable.", ok: false, retryable: true }
   }
 
   const target =

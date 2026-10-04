@@ -61,7 +61,7 @@ function bridge() {
   const desktop = window.hermesDesktop
 
   if (!desktop) {
-    throw new Error("Actelyo Legal Harness Desktop bridge is unavailable")
+    throw new Error("Actelyo Law Harness Desktop bridge is unavailable")
   }
 
   return desktop

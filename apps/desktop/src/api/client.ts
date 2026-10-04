@@ -26,13 +26,13 @@ const DEFAULT_GATEWAY_REQUEST_TIMEOUT_MS = 30_000
 // ever fires when the turn itself would have been abandoned server-side.
 export const PROMPT_SUBMIT_REQUEST_TIMEOUT_MS = 1_800_000
 
-export const GATEWAY_NOT_CONNECTED_MESSAGE = "Actelyo Legal Harness gateway is not connected"
+export const GATEWAY_NOT_CONNECTED_MESSAGE = "Actelyo Law Harness gateway is not connected"
 
 export class HermesGateway extends JsonRpcGatewayClient {
   constructor() {
     super({
-      closedErrorMessage: "Actelyo Legal Harness gateway connection closed",
-      connectErrorMessage: "Could not connect to Actelyo Legal Harness gateway",
+      closedErrorMessage: "Actelyo Law Harness gateway connection closed",
+      connectErrorMessage: "Could not connect to Actelyo Law Harness gateway",
       createRequestId: nextId => nextId,
       notConnectedErrorMessage: GATEWAY_NOT_CONNECTED_MESSAGE,
       // The channel already answered -32603; surface the crash in devtools like the dial-failure sink.
@@ -40,7 +40,7 @@ export class HermesGateway extends JsonRpcGatewayClient {
         console.error(`[gateway] server request handler crashed for ${request.method} (${request.id}):`, error),
       // The channel already answered -32601; note the missing registry in devtools.
       onUnhandledRequest: request =>
-        console.warn(`[gateway] Actelyo Legal Harness Desktop has no server-request registry for ${request.method} (${request.id})`),
+        console.warn(`[gateway] Actelyo Law Harness Desktop has no server-request registry for ${request.method} (${request.id})`),
       requestTimeoutMs: DEFAULT_GATEWAY_REQUEST_TIMEOUT_MS
     })
   }

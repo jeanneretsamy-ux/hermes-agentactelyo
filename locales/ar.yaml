@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ انتهت مهلة تحديث Hermes بعد 30 دقيقة."
     finished_success: "✅ انتهى تحديث Hermes بنجاح."
     last_lines: "{msg}\n\nآخر الأسطر:\n```\n{tail}\n```"
-    managed_action: "تحديث Hermes Agent"
+    managed_action: "تحديث Actelyo Law Harness"
     not_applicable: "✗ لا ينطبق `hermes update` على هذا التثبيت ({method}).\nحدّث باستخدام: {command}"
   usage:
     rate_limits: "⏱️ **حدود المعدّل:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ محاولة أمر مائل غير مصرّح بها على Discord\nالمستخدم: {user_name} ({user_id})\nالقناة: {chan_id} (الخادم {guild_id})\nالأمر: {command_text}\nالسبب: {reason}"
     thread:
       seed_message: "🧵 سلسلة أنشأها Hermes: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 تسليم Hermes: **{name}**"
       auto_create_failed: "⚠️ تعذّر على Hermes إنشاء سلسلة Discord لهذه الرسالة، لذا لم تتم معالجة الطلب. يرجى إعادة المحاولة."
       auto_create_failed_generic: "لم تتم معالجة الطلب. يرجى إعادة المحاولة."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "حجم {label} البالغ {size_mb} ميغابايت يتجاوز حد {cap}؛ أُرسل كملف بدلًا من ذلك."
   email:
     image_line: "صورة: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔يفكّر"
       done: "🥳تم"
   irc:
-    quit_message: "جارٍ إيقاف تشغيل Hermes Agent"
+    quit_message: "جارٍ إيقاف تشغيل Actelyo Law Harness"
     standalone_quit: "تم التسليم"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "الموافقة مرة"
     confirm_always_approve: "الموافقة دائمًا"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "تعيين هذه المحادثة كقناة رئيسية"
   update:
-    description: "تحديث Hermes Agent إلى أحدث إصدار"
+    description: "تحديث Actelyo Law Harness إلى أحدث إصدار"
   category:
     session: "الجلسة"
     configuration: "الإعدادات"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "إرفاق ملف صورة محلي لمطالبتك التالية"
   version:
-    description: "عرض إصدار Hermes Agent"
+    description: "عرض إصدار Actelyo Law Harness"
   debug:
     description: "رفع تقرير تصحيح الأخطاء (معلومات النظام والسجلات) والحصول على روابط قابلة للمشاركة"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "لا توجد بطاقة محفوظة — «إضافة أموال» يرشدك خطوة بخطوة لإضافة واحدة."
     actions_require_admin: "تتطلب إجراءات الفوترة مشرفًا أو مالكًا للمؤسسة."
     remote_spending_off_for_org: "الإنفاق عن بُعد معطّل لهذه المؤسسة."
-    killswitch_reason_overview: "يمكن لمشرف الفوترة تفعيله من صفحة Hermes Agent في البوابة لإضافة أموال من هنا."
-    killswitch_reason_buy: "يمكن لمشرف الفوترة تفعيله من صفحة Hermes Agent في البوابة قبل إضافة الأموال."
+    killswitch_reason_overview: "يمكن لمشرف الفوترة تفعيله من صفحة Actelyo Law Harness في البوابة لإضافة أموال من هنا."
+    killswitch_reason_buy: "يمكن لمشرف الفوترة تفعيله من صفحة Actelyo Law Harness في البوابة قبل إضافة الأموال."
     add_funds_now_hint: "أضف أموالًا الآن — خصم واحد يُضاف إلى رصيدك اليوم."
     refill_when_low_amounts: "إعادة التعبئة عند الانخفاض — يُخصم {reload_to} تلقائيًا عندما ينخفض رصيدك إلى أقل من {threshold}."
     refill_when_low_generic: "إعادة التعبئة عند الانخفاض — يُخصم من بطاقتك تلقائيًا عندما ينخفض رصيدك إلى أقل من المبلغ الذي تحدده."
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 رُفضت بطاقتك. جرّب بطاقة أخرى في البوابة."
     charge_failed_generic: "🔴 لم تنجح عملية الخصم ({reason})."
     charge_error_no_payment_method: "💳 لا توجد بطاقة محفوظة — أعد تعبئة الرصيد وأدِر الفوترة من البوابة."
-    charge_error_remote_spending_disabled: "الإنفاق عن بُعد معطّل لهذا الحساب — يمكن لمشرف الفوترة تفعيله من صفحة Hermes Agent في البوابة."
+    charge_error_remote_spending_disabled: "الإنفاق عن بُعد معطّل لهذا الحساب — يمكن لمشرف الفوترة تفعيله من صفحة Actelyo Law Harness في البوابة."
     charge_error_role_required: "تتطلب إضافة الأموال مشرفًا أو مالكًا للمؤسسة. اطلب من مشرف، أو أدِرها من البوابة."
     charge_error_idempotency_conflict: "🔴 استُخدم مفتاح الخصم هذا من قبل لمبلغ مختلف. ابدأ عملية إعادة تعبئة جديدة."
     revoked_by_admin: "أوقف مشرف الإنفاق من هذه الطرفية."
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "شغّل `hermes portal` واسمح بالإنفاق عن بُعد، ثم أعد المحاولة."
     charge_stepup_declined: "لم تُجرَ أي عملية خصم. شغّل /topup عندما تريد السماح بالإنفاق عن بُعد."
     charge_stepup_not_granted: "تعذّر السماح بالإنفاق عن بُعد — يجب أن يوافق عليه مشرف أو مالك للمؤسسة. لم يُخصم من بطاقتك."
-    allowed_but_org_off: "الإنفاق عن بُعد مسموح لهذه الطرفية، لكنه ما زال معطّلًا لهذه المؤسسة. يمكن لمشرف الفوترة تفعيله من صفحة Hermes Agent في البوابة، ثم شغّل /topup مرة أخرى."
+    allowed_but_org_off: "الإنفاق عن بُعد مسموح لهذه الطرفية، لكنه ما زال معطّلًا لهذه المؤسسة. يمكن لمشرف الفوترة تفعيله من صفحة Actelyo Law Harness في البوابة، ثم شغّل /topup مرة أخرى."
     allowed_no_card: "تم السماح بالإنفاق عن بُعد — لكن لا توجد بطاقة محفوظة بعد."
     topup_on_portal_to_continue: "أعد تعبئة الرصيد وأدِر الفوترة من البوابة للمتابعة."
     allowed_run_topup: "تم السماح بالإنفاق عن بُعد. شغّل /topup للمتابعة."
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} صورة مرفقة"
     images_attached_other: "📎 {count} صور مرفقة"
     command_interrupted: "قُطع الأمر."
-    welcome: "مرحبًا بك في Hermes Agent! اكتب رسالتك أو /help لعرض الأوامر."
+    welcome: "مرحبًا بك في Actelyo Law Harness! اكتب رسالتك أو /help لعرض الأوامر."
     activated_skills_label: "المهارات المفعّلة:"
     redaction_disabled_title: "⚠  إخفاء الأسرار معطّل"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). قد تظهر مفاتيح API ورموز الوصول حرفيًا في مخرجات المحادثة وملفات JSON للجلسات والسجلات. اضبط {setting} في config.yaml لإعادة التفعيل."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[تم تحويل الرد بعد البث]"
     banner_tagline: "{name} - إطار عمل وكلاء الذكاء الاصطناعي"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "لا يمكن توجيه عمليات الخلفية؛ أوقفها أو اقرأ السجل."
     count_live: "{count} نشطة"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "الطوابع الزمنية للرسائل"
     update:
-      managed_action: "تحديث Hermes Agent"
+      managed_action: "تحديث Actelyo Law Harness"
       choice_update: "حدّث الآن"
-      choice_update_desc: "الخروج من الجلسة الحالية وتحديث Hermes Agent"
+      choice_update_desc: "الخروج من الجلسة الحالية وتحديث Actelyo Law Harness"
       choice_cancel: "إلغاء"
       choice_cancel_desc: "الإبقاء على الجلسة الحالية"
-      title: "☤  تحديث Hermes Agent"
+      title: "☤  تحديث Actelyo Law Harness"
       detail: "سيؤدي هذا إلى الخروج من الجلسة الحالية وتشغيل `hermes update`."
       cancelled: "🟡 أُلغي /update."
       launching: "☤ جارٍ بدء التحديث..."

@@ -682,7 +682,7 @@ async function readPluginSourceText(file: string): Promise<string> {
 
   if (result.truncated) {
     throw new PluginSourceOversizeError(
-      "plugin.js exceeds this shell's 512 KiB read limit — update Actelyo Legal Harness Desktop to load larger plugins"
+      "plugin.js exceeds this shell's 512 KiB read limit — update Actelyo Law Harness Desktop to load larger plugins"
     )
   }
 
@@ -938,7 +938,7 @@ export async function uninstallDiskPlugin(pluginId: string): Promise<{ ok: boole
   const remove = window.hermesDesktop?.removeDesktopPlugin
 
   if (!remove) {
-    return { ok: false, error: "this Actelyo Legal Harness Desktop build cannot remove desktop plugins — delete the folder by hand" }
+    return { ok: false, error: "this Actelyo Law Harness Desktop build cannot remove desktop plugins — delete the folder by hand" }
   }
 
   const result = await remove({ name: record.origin })

@@ -1,9 +1,9 @@
 {
   "name": "hermes",
-  "productName": "Actelyo Legal Harness",
+  "productName": "Actelyo Law Harness",
   "private": true,
   "version": "0.0.0",
-  "description": "Interface PC Actelyo Legal Harness.",
+  "description": "Interface PC Actelyo Law Harness.",
   "author": "Actelyo",
   "repository": {
     "type": "git",

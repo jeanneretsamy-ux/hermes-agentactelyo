@@ -152,7 +152,7 @@ export function activeProfileKey(): string {
 // item all funnel here). Toasts via the shared notification store; strings via
 // translateNow so the flows stay callable from non-React surfaces.
 
-const ARCHIVE_FILTERS = [{ extensions: ['tar.gz', 'tgz'], name: "Actelyo Legal Harness profile" }]
+const ARCHIVE_FILTERS = [{ extensions: ['tar.gz', 'tgz'], name: "Actelyo Law Harness profile" }]
 
 /** Pick a save location and export `profile` (default: the active one).
  *  Returns the archive path, or null when the user cancelled. */

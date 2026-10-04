@@ -403,7 +403,7 @@ export function HermesConsoleModal({ open, onClose }: HermesConsoleModalProps) {
     setConnectionState("connecting");
     setConsoleProfile(profile || "current");
     hasReadyFrameRef.current = false;
-    writeLine(term, "\u001b[2mConnecting to Actelyo Legal Harness Console...\u001b[0m");
+    writeLine(term, "\u001b[2mConnecting to Actelyo Law Harness Console...\u001b[0m");
 
     void (async () => {
       try {
@@ -523,7 +523,7 @@ export function HermesConsoleModal({ open, onClose }: HermesConsoleModalProps) {
               id="hermes-console-title"
               className="font-mondwest text-display text-base tracking-wider"
             >
-              Actelyo Legal Harness Console
+              Actelyo Law Harness Console
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <Badge tone={statusTone}>{connectionState}</Badge>
