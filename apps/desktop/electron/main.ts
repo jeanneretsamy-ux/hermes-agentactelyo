@@ -1828,7 +1828,7 @@ if (IS_WINDOWS) {
 app.setAboutPanelOptions({
   applicationName: APP_NAME,
   applicationVersion: nativeAboutVersion(appVersionInfo(INSTALL_STAMP, '', app.getVersion())),
-  copyright: 'Copyright © 2026 Nous Research'
+  copyright: "Copyright © 2026 service externe"
 })
 
 // Custom scheme for streaming audio/video into the renderer. Local paths read
@@ -2074,7 +2074,7 @@ function logPoolSpawnFailure(label: string, error: unknown): void {
     rememberLog(`Profile backend ${label} slot wait timed out (background); retry is backing off`)
   } else {
     rememberLog(
-      `Hermes backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
+      `Actelyo Law Harness backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
     )
   }
 }
@@ -4212,7 +4212,7 @@ function killHermesOwnedVenvDaemons(updateRoot) {
     const pid = Number(holder?.ProcessId)
 
     if (Number.isInteger(pid) && pid > 0) {
-      rememberLog(`[updates] stopping Hermes-owned venv daemon (hindsight) PID ${pid} before hand-off`)
+      rememberLog(`[updates] stopping Actelyo Law Harness-owned venv daemon (hindsight) PID ${pid} before hand-off`)
 
       try {
         forceKillProcessTree(pid)
@@ -4257,7 +4257,7 @@ function killExternalVenvHolders(updateRoot) {
 
     if (Number.isInteger(pid) && pid > 0) {
       rememberLog(
-        `[updates] stopping external Hermes venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
+        `[updates] stopping external Actelyo Law Harness venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
       )
 
       try {
@@ -4619,7 +4619,7 @@ async function claimBackendChild(
   if (decision.action === 'fail') {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Hermes backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
+      `Actelyo Law Harness backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
     )
   }
 
@@ -4628,7 +4628,7 @@ async function claimBackendChild(
   if (decision.action === 'degrade') {
     startMarker = pidOnlyStartMarker(child.pid)
     rememberLog(
-      `WARNING: process start marker probe failed for live Hermes backend PID ${child.pid}; ` +
+      `WARNING: process start marker probe failed for live Actelyo Law Harness backend PID ${child.pid}; ` +
         `claiming with PID-only identity instead of stopping it: ${decision.reason}`
     )
   } else {
@@ -4655,7 +4655,7 @@ async function claimBackendChild(
   } catch (error) {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Could not persist ownership for the Hermes backend: ${error.message}${outputTail?.describe() ?? ''}`
+      `Could not persist ownership for the Actelyo Law Harness backend: ${error.message}${outputTail?.describe() ?? ''}`
     )
   }
 }
@@ -5374,12 +5374,12 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
     } else if (!isWindowsBinaryPathInWsl(hermesOverride, { isWsl: IS_WSL })) {
       hermesCommand = hermesOverride
     } else {
-      rememberLog(`Ignoring Windows Hermes override under WSL: ${hermesOverride}`)
+      rememberLog(`Ignoring Windows Actelyo Law Harness override under WSL: ${hermesOverride}`)
     }
 
     if (hermesCommand) {
       if (looksLikeDesktopAppBinary(hermesCommand)) {
-        rememberLog(`Ignoring desktop app executable on PATH while resolving Hermes CLI: ${hermesCommand}`)
+        rememberLog(`Ignoring desktop app executable on PATH while resolving Actelyo Law Harness CLI: ${hermesCommand}`)
         hermesCommand = null
       } else {
         const unwrapped: Awaited<ReturnType<typeof unwrapWindowsVenvHermesCommand>> =
@@ -5396,7 +5396,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
           (await verifyHermesCli(hermesCommand, { shell: shellForProbe }))
         ) {
           return {
-            label: `existing Hermes CLI at ${hermesCommand}`,
+            label: `existing Actelyo Law Harness CLI at ${hermesCommand}`,
             command: hermesCommand,
             args: backendArgs,
             bootstrap: false,
@@ -5408,7 +5408,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
         }
 
         rememberLog(
-          `Ignoring existing Hermes CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
+          `Ignoring existing Actelyo Law Harness CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
         )
       }
     }
@@ -5432,7 +5432,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   if (activeBackend && !bootstrapRepairRequested) {
     if (!activeRuntime.hasValidMarker) {
       rememberLog(
-        `[bootstrap] Active Hermes runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
+        `[bootstrap] Active Actelyo Law Harness runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
       )
     }
 
@@ -5455,14 +5455,14 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
       )
 
       if (userBackend) {
-        rememberLog(`[boot] Using Hermes install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
+        rememberLog(`[boot] Using Actelyo Law Harness install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
 
         return userBackend
       }
 
-      rememberLog(`[bootstrap] Hermes install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
+      rememberLog(`[bootstrap] Actelyo Law Harness install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
     } else {
-      rememberLog(`[bootstrap] no usable Hermes install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
+      rememberLog(`[bootstrap] no usable Actelyo Law Harness install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
     }
   }
 
@@ -5690,7 +5690,7 @@ function fetchJson(url, token, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Actelyo Law Harness backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5766,7 +5766,7 @@ function fetchJson(url, token, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Actelyo Law Harness backend after ${timeoutMs}ms`))
         })
 
         // From here the request goes on the wire: a later transport error can no
@@ -5809,7 +5809,7 @@ function fetchPublicJson(url, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Actelyo Law Harness backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5870,7 +5870,7 @@ function fetchPublicJson(url, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Actelyo Law Harness backend after ${timeoutMs}ms`))
         })
 
         // Past this point the request is on the wire — see fetchJson.
@@ -7689,7 +7689,7 @@ function openOauthLoginWindow(
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: silent ? 'Connecting to Hermes Cloud agent…' : "Sign in to Actelyo Law Harness gateway",
+        title: silent ? "Connecting to Cloud externe agent…" : "Sign in to Actelyo Law Harness gateway",
         autoHideMenuBar: true,
         // Silent cascade: start HIDDEN. The auto-SSO 302 chain completes in
         // well under a second, so the window normally never needs to show. We
@@ -7820,7 +7820,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
       }
 
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+        reject(new Error(`Unsupported Actelyo Law Harness backend URL protocol: ${parsed.protocol}`))
 
         return
       }
@@ -7863,7 +7863,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
           // already finished
         }
 
-        reject(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+        reject(new Error(`Timed out connecting to Actelyo Law Harness backend after ${timeoutMs}ms`))
       }, timeoutMs)
 
       request.on('response', (res: Electron.IncomingMessage): void => {
@@ -8234,7 +8234,7 @@ async function discoverCloudAgents(org?: string) {
 
   if (!(await hasLivePortalSession())) {
     const err = new Error(
-      'You are not signed in to Hermes Cloud. Open Settings → Gateway, choose Hermes Cloud, and sign in.'
+      "You are not signed in to Cloud externe. Open Settings → Gateway, choose Cloud externe, and sign in."
     ) as any
 
     err.needsCloudLogin = true
@@ -8285,7 +8285,7 @@ async function discoverCloudAgents(org?: string) {
       // recover it) — surface it as a re-login, not a generic failure.
       if (error && error.statusCode === 401) {
         const err = new Error(
-          'Your Hermes Cloud session has expired. Open Settings → Gateway and sign in again.'
+          "Your Cloud externe session has expired. Open Settings → Gateway and sign in again."
         ) as any
 
         err.needsCloudLogin = true
@@ -8380,7 +8380,7 @@ async function cloudAgentSilentSignIn(dashboardUrl) {
   // interactive prompt rather than a silent cascade. Discovery already gates on
   // this, but a selection can arrive after the session lapsed.
   if (!(await hasLivePortalSession())) {
-    const err = new Error('Your Hermes Cloud session has expired. Sign in to Hermes Cloud again.') as any
+    const err = new Error("Your Cloud externe session has expired. Sign in to Cloud externe again.") as any
     err.needsCloudLogin = true
     throw err
   }
@@ -12326,7 +12326,7 @@ async function runPoolBackendStart(
   assertLocalProfileCanStart(profile, profileDeletionGate, key =>
     directoryExists(path.join(HERMES_HOME, 'profiles', key))
   )
-  rememberLog(`Starting Hermes backend for profile "${profile}" via ${backend.label}`)
+  rememberLog(`Starting Actelyo Law Harness backend for profile "${profile}" via ${backend.label}`)
 
   const parentStartMarker = await desktopParentStartMarker()
   const backendNonce = crypto.randomBytes(16).toString('hex')
@@ -12387,22 +12387,22 @@ async function runPoolBackendStart(
   startFailed.catch(() => {})
 
   child.once('error', error => {
-    rememberLog(`Hermes backend for profile "${profile}" failed to start: ${error.message}`)
+    rememberLog(`Actelyo Law Harness backend for profile "${profile}" failed to start: ${error.message}`)
     void teardownFailedLocalBackend(poolKey, entry).catch(cleanupError => {
       rememberLog(
-        `Hermes backend for profile "${profile}" cleanup failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
+        `Actelyo Law Harness backend for profile "${profile}" cleanup failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
       )
     })
     rejectStart?.(error)
   })
   child.once('exit', (code, signal) => {
-    rememberLog(formatBackendExitLine(`Hermes backend for profile "${profile}" exited`, code, signal, outputTail))
+    rememberLog(formatBackendExitLine(`Actelyo Law Harness backend for profile "${profile}" exited`, code, signal, outputTail))
     releaseBackendChild(child)
 
     if (!ready) {
       rejectStart?.(
         new Error(
-          `Hermes backend for profile "${profile}" exited before it became ready (${signal || code}).${outputTail.describe()}`
+          `Actelyo Law Harness backend for profile "${profile}" exited before it became ready (${signal || code}).${outputTail.describe()}`
         )
       )
     }
@@ -12444,7 +12444,7 @@ async function runPoolBackendStart(
 
   const authToken = await adoptServedDashboardToken(baseUrl, token, {
     childAlive,
-    label: `Hermes backend for profile "${profile}"`,
+    label: `Actelyo Law Harness backend for profile "${profile}"`,
     rememberLog
   })
 
@@ -12466,7 +12466,7 @@ async function runPoolBackendStart(
 
   if (!wsProbe.ok) {
     throw new Error(
-      `Hermes backend for profile "${profile}" is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
+      `Actelyo Law Harness backend for profile "${profile}" is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
     )
   }
 
@@ -13087,7 +13087,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       // remotes and Apply invalidated this attempt), bail before probing.
       backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
-      await advanceBootProgress('backend.remote', `Connecting to remote Hermes backend at ${remote.baseUrl}`, 24)
+      await advanceBootProgress('backend.remote', `Connecting to remote Actelyo Law Harness backend at ${remote.baseUrl}`, 24)
       await waitForRemoteHermes(remote)
 
       // Second async boundary: the health probe itself can outlive the
@@ -13232,8 +13232,8 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     const readyFile = backend.readyFile ? makeDashboardReadyFile() : null
 
-    await advanceBootProgress('backend.spawn', `Starting Hermes backend via ${backend.label}`, 84)
-    rememberLog(`Starting Hermes backend via ${backend.label}`)
+    await advanceBootProgress('backend.spawn', `Starting Actelyo Law Harness backend via ${backend.label}`, 84)
+    rememberLog(`Starting Actelyo Law Harness backend via ${backend.label}`)
 
     const profile = primaryProfile
     const parentStartMarker = await desktopParentStartMarker()
@@ -13337,7 +13337,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       releaseBackendChild(hermesProcess)
 
       if (!backendConnectionState.clearForCurrentProcess(processOwner)) {
-        rememberLog(`Ignoring stale Hermes backend error: ${error.message}`)
+        rememberLog(`Ignoring stale Actelyo Law Harness backend error: ${error.message}`)
         scheduleUnexpectedPrimaryRecovery({ error: error.message, ready: backendReady })
         rejectBackendStart?.(new Error("Actelyo Law Harness backend start was superseded by a newer connection attempt."))
 
@@ -13349,11 +13349,11 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       // (#108417), and the stale branch above never reaches this clear.
       primaryProfilePin.clear()
 
-      rememberLog(`Hermes backend failed to start: ${error.message}`)
+      rememberLog(`Actelyo Law Harness backend failed to start: ${error.message}`)
       updateBootProgress(
         {
           error: error.message,
-          message: `Hermes backend failed to start: ${error.message}`,
+          message: `Actelyo Law Harness backend failed to start: ${error.message}`,
           phase: 'backend.error',
           running: false
         },
@@ -13391,7 +13391,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       }
 
       if (!backendReady) {
-        const message = `Hermes backend exited before it became ready (${signal || code}).${primaryOutputTail.describe()}`
+        const message = `Actelyo Law Harness backend exited before it became ready (${signal || code}).${primaryOutputTail.describe()}`
         updateBootProgress(
           {
             error: message,
@@ -13403,7 +13403,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
         )
         rejectBackendStart?.(
           new Error(
-            `Hermes backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}\n${recentHermesLog()}`
+            `Actelyo Law Harness backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}\n${recentHermesLog()}`
           )
         )
       }
@@ -13454,7 +13454,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     if (!wsProbe.ok) {
       throw new Error(
-        `Local Hermes backend is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
+        `Local Actelyo Law Harness backend is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
       )
     }
 
@@ -18794,7 +18794,7 @@ function showAboutPanelFresh(): void {
     app.setAboutPanelOptions({
       applicationName: APP_NAME,
       applicationVersion: skew.outOfSync ? `${display} — app build out of date, update the desktop app` : display,
-      copyright: 'Copyright © 2026 Nous Research'
+      copyright: "Copyright © 2026 service externe"
     })
     app.showAboutPanel()
   })
@@ -19048,7 +19048,7 @@ async function runDesktopUninstall(mode: string): Promise<DesktopUninstallResult
     return {
       ok: false,
       error: 'agent-missing',
-      message: `Can't run the uninstaller: no Hermes agent venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Actelyo Law Harness agent venv at ${VENV_ROOT}.`
     }
   }
 

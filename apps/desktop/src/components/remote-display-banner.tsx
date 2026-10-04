@@ -14,7 +14,7 @@ export function RemoteDisplayBanner() {
         notify({
           durationMs: 0,
           kind: 'info',
-          message: translateNow('remoteDisplayBanner.message', reason),
+          message: translateNow('remoteDisplayBanner.message', reason.replace(/\s*\(HERMES_[^)]+\)/g, '')),
           placement: 'default'
         })
       }

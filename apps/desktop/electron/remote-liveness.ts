@@ -469,7 +469,7 @@ export async function revalidateRemoteConnection<TConnection extends RemoteConne
 
     if (!failure.shouldReset) {
       log(
-        `Cached remote Hermes backend failed liveness probe (${failure.failures}/${REMOTE_LIVENESS_FAILURE_LIMIT}); keeping connection for retry.`
+        `Cached remote Actelyo Law Harness backend failed liveness probe (${failure.failures}/${REMOTE_LIVENESS_FAILURE_LIMIT}); keeping connection for retry.`
       )
 
       return { ok: true, rebuilt: false }

@@ -7,7 +7,7 @@ export const frOverrides = {
   sharedMetrics: {
     consentTitle: "Aider à améliorer Actelyo Law Harness ?",
     consentBody:
-      'Les métriques partagées ne contiennent que des compteurs bornés. Jamais de prompts, fichiers, chemins ni textes d’erreur. La collecte reste locale. Les envoyer à Nous est un consentement distinct.',
+      "Les métriques partagées ne contiennent que des compteurs bornés. Jamais de prompts, fichiers, chemins ni textes d’erreur. La collecte reste locale. Les envoyer à fournisseur externe est un consentement distinct.",
     whatIsCollected: 'Ce qui est collecté',
     collectedIntro: 'Uniquement des compteurs bornés :',
     collectedActivity: 'Activité, durée des sessions, résultats et classes d’erreur',
@@ -21,11 +21,11 @@ export const frOverrides = {
     collectedMachine:
       "Données générales de la machine : plage de RAM, type de GPU, âge et canal de la version de Actelyo Law Harness, mises à jour en retard, utilisation d'un serveur de modèles local",
     installId:
-      'L’envoi transmet chaque paquet quotidien au service de télémétrie de Nous. Les paquets portent l’identifiant d’installation de ce profil : un UUID aléatoire stable sans information personnelle, réinitialisé en supprimant le dossier des métriques partagées.',
+      "L’envoi transmet chaque paquet quotidien au service de télémétrie de fournisseur externe. Les paquets portent l’identifiant d’installation de ce profil : un UUID aléatoire stable sans information personnelle, réinitialisé en supprimant le dossier des métriques partagées.",
     consentWindow:
       'Seuls les paquets dont toute la période de collecte tombe dans une fenêtre de consentement enregistrée sont envoyés — les données d’avant votre accord, ou de toute période où l’envoi était désactivé, restent sur cette machine. L’envoi peut être désactivé à tout moment.',
     readDocs: 'Lire tous les détails',
-    share: 'Collecter et envoyer à Nous',
+    share: "Collecter et envoyer à fournisseur externe",
     local: 'Collecter en local uniquement',
     off: 'Non merci',
     changeLater: 'Vous pouvez changer cela à tout moment dans Réglages → Sécurité.',
@@ -33,12 +33,12 @@ export const frOverrides = {
     collectLabel: 'Collecter les statistiques d’utilisation',
     collectDesc:
       'Compteurs bornés conservés sur cet appareil. Jamais de prompts, fichiers, chemins ni textes d’erreur.',
-    sendLabel: 'Envoyer les statistiques d’utilisation à Nous',
+    sendLabel: "Envoyer les statistiques d’utilisation à fournisseur externe",
     sendDesc:
-      'Envoyer chaque paquet quotidien au service de télémétrie de Nous. Seules les données d’une fenêtre de consentement sont envoyées. Nécessite la collecte activée.',
+      "Envoyer chaque paquet quotidien au service de télémétrie de fournisseur externe. Seules les données d’une fenêtre de consentement sont envoyées. Nécessite la collecte activée.",
     unavailable: "Mettez à jour le backend Actelyo Law Harness pour modifier ce réglage.",
     stripBody: 'Uniquement des compteurs bornés, jamais de prompts ni de fichiers.',
-    stripChoices: { share: 'Envoyer à Nous', local: 'Local uniquement', off: 'Non merci' },
+    stripChoices: { share: "Envoyer à fournisseur externe", local: 'Local uniquement', off: 'Non merci' },
     stripDetails: 'Détails'
   },
   intro: introFr,
@@ -159,14 +159,14 @@ export const frOverrides = {
       showAllMatches: 'Afficher tous les résultats',
       segmentNoMatch: (segment: string) => `Aucun résultat dans ${segment} : tous les résultats sont affichés.`,
       freeTierNote: 'Les connexions restent sur cet ordinateur jusqu’à ce que vous vous connectiez.',
-      signInLine: 'Connectez-vous à Nous pour utiliser les applications gérées.',
+      signInLine: "Connectez-vous à fournisseur externe pour utiliser les applications gérées.",
       signIn: 'Se connecter',
       managedUnavailable: 'Les applications gérées ne sont pas encore disponibles pour ce compte.',
       writeFailed: 'Cette modification n’a pas été enregistrée.',
       refreshFailed: 'La liste des outils n’a pas été actualisée.',
       disconnectNoAccount: "Actelyo Law Harness n’a aucun compte à déconnecter ici. Actualisez la page et réessayez.",
       disconnectRefused:
-        'Nous ne peut pas supprimer cette connexion pour le moment. Désactivez plutôt l’application avec l’interrupteur, ou réessayez plus tard.'
+        "fournisseur externe ne peut pas supprimer cette connexion pour le moment. Désactivez plutôt l’application avec l’interrupteur, ou réessayez plus tard."
     },
     add: {
       action: 'Ajouter le vôtre',
@@ -217,7 +217,7 @@ export const frOverrides = {
       turnOffLocal: 'Désactiver le serveur local',
       providedByPlugin: (plugin: string) => `Fourni par le plugin ${plugin}`,
       openPlugins: "Ouvrir l'onglet Plugins",
-      nousLine: 'Les applications Nous suivent votre compte, pas le profil.',
+      nousLine: "Les applications fournisseur externe suivent votre compte, pas le profil.",
       rulesReadOnly: 'Les règles ne peuvent pas être modifiées pour le moment.',
       rulesAppOff: (name: string) => `Activez ${name} pour modifier ses outils.`,
       rulesSignIn: "Connectez-vous pour modifier ce que Actelyo Law Harness peut faire ici.",
@@ -271,7 +271,7 @@ export const frOverrides = {
       remove: 'Supprimer',
       offTitle: (name: string) => `${name} est désactivé.`,
       offBody: "Activez-le avec l'interrupteur ci-dessus pour lire les outils qu'il apporte.",
-      signedOutTitle: 'Connectez-vous à Nous pour lire la liste des outils.',
+      signedOutTitle: "Connectez-vous à fournisseur externe pour lire la liste des outils.",
       signedOutBody: 'Vos serveurs sur cet ordinateur ne sont pas affectés.',
       conflictTitle: "Quelqu'un a modifié cette règle pendant que vous l'éditiez.",
       conflictBody: (theyOff: number, theyOn: number) => {
@@ -497,11 +497,11 @@ export const frOverrides = {
       signOutAndSignIn: 'Se déconnecter et se reconnecter',
       remoteFailureHint:
         "Vérifiez l'URL du gateway et la connexion dans les paramètres du gateway, ou passez au gateway local.",
-      cloudDownTitle: "L'agent Nous Cloud est indisponible",
+      cloudDownTitle: "L'agent fournisseur externe Cloud est indisponible",
       cloudDownDescription:
-        "L'agent cloud géré par Nous auquel ce gateway se connecte renvoie une erreur serveur. Il ne peut pas être redémarré depuis ici — vérifiez son état, passez au gateway local ou contactez l'assistance.",
+        "L'agent cloud géré par fournisseur externe auquel ce gateway se connecte renvoie une erreur serveur. Il ne peut pas être redémarré depuis ici — vérifiez son état, passez au gateway local ou contactez l'assistance.",
       cloudDownHint:
-        "Les boutons ci-dessous ouvrent le portail Nous, pour consulter et contrôler l'instance, ainsi que notre Discord pour obtenir de l'aide.",
+        "Les boutons ci-dessous ouvrent le portail fournisseur externe, pour consulter et contrôler l'instance, ainsi que notre Discord pour obtenir de l'aide.",
       cloudDownCheckPortal: "Vérifier l'état sur le portail",
       cloudDownDiscord: "Obtenir de l'aide sur Discord",
       hideRecentLogs: 'Masquer les journaux récents',
@@ -622,7 +622,7 @@ export const frOverrides = {
       `Rendu logiciel actif — affichage distant détecté (${reason}). L'accélération GPU est désactivée pour éviter les scintillements.`
   },
   billingBlock: {
-    titleNous: 'Plus de crédits Nous',
+    titleNous: "Plus de crédits fournisseur externe",
     titleProvider: provider => `Plus de crédits — ${provider}`,
     fallbackMessage: 'Votre compte est à court de crédits. Ajoutez-en pour continuer.',
     openBilling: 'Ouvrir la facturation',
@@ -630,9 +630,9 @@ export const frOverrides = {
     dismiss: 'Fermer'
   },
   sendDiagnostics: {
-    title: 'Envoyer les diagnostics à Nous',
+    title: "Envoyer les diagnostics à fournisseur externe",
     privacyNotice:
-      "Cela téléverse un paquet de débogage vers un stockage interne de Nous, et non vers un service de partage public. Il contient des informations système (système d'exploitation, versions, fournisseur et clés API configurées — jamais les clés elles-mêmes) ainsi que les journaux complets de l'agent, du gateway et du Desktop (jusqu'à 512 Ko chacun), susceptibles de contenir des conversations, des résultats d'outils et des chemins de fichiers. Les secrets sont expurgés avant l'envoi. Seuls le personnel de Nous et les modérateurs Discord autorisés peuvent consulter le paquet, qui est automatiquement supprimé après 14 jours.",
+      "Cela téléverse un paquet de débogage vers un stockage interne de fournisseur externe, et non vers un service de partage public. Il contient des informations système (système d'exploitation, versions, fournisseur et clés API configurées — jamais les clés elles-mêmes) ainsi que les journaux complets de l'agent, du gateway et du Desktop (jusqu'à 512 Ko chacun), susceptibles de contenir des conversations, des résultats d'outils et des chemins de fichiers. Les secrets sont expurgés avant l'envoi. Seuls le personnel de fournisseur externe et les modérateurs Discord autorisés peuvent consulter le paquet, qui est automatiquement supprimé après 14 jours.",
     upload: 'Envoyer',
     uploading: 'Envoi en cours…',
     cancel: 'Annuler',
@@ -648,7 +648,7 @@ export const frOverrides = {
     handoffLead: 'Poursuivez la discussion sur :',
     links: {
       github: 'Issues GitHub',
-      portal: 'Assistance du portail Nous',
+      portal: "Assistance du portail fournisseur externe",
       discord: 'Discord'
     }
   },
@@ -1784,7 +1784,7 @@ export const frOverrides = {
     connections: {
       title: 'Connexions',
       intro:
-        'Enregistrez tous les emplacements où vivent vos agents : cet appareil, les gateways distantes de votre réseau et les instances Hermes Cloud. Ils sont tous conservés ici.',
+        "Enregistrez tous les emplacements où vivent vos agents : cet appareil, les gateways distantes de votre réseau et les instances Cloud externe. Ils sont tous conservés ici.",
       stagedNote:
         "Les conversations et la liste des agents suivent la source choisie ; le backend de fenêtre géré par l'application reste sélectionné dans Paramètres → Gateway.",
       launchModeTitle: 'Au démarrage, revenir aux sessions de la dernière gateway utilisée',
@@ -1811,14 +1811,14 @@ export const frOverrides = {
       updateAllRunning: 'Mise à jour de toutes les instances…',
       updateAllDone: 'Mises à jour envoyées',
       updateAllFailed: "L'envoi groupé des mises à jour a échoué",
-      updateSkippedCloud: 'Gérée par Hermes Cloud',
+      updateSkippedCloud: "Gérée par Cloud externe",
       kindLocal: 'Locale',
       kindRemote: 'Gateway distante',
-      kindCloud: 'Hermes Cloud',
+      kindCloud: "Cloud externe",
       kindSsh: 'SSH',
       kindLocalDesc: "L'environnement Actelyo Law Harness géré par cette application.",
       kindRemoteDesc: "Une gateway Actelyo Law Harness accessible en HTTP(S), par le LAN, Tailscale ou Internet.",
-      kindCloudDesc: 'Une instance hébergée découverte via votre compte Hermes Cloud.',
+      kindCloudDesc: "Une instance hébergée découverte via votre compte Cloud externe.",
       kindSshDesc: "Une installation Actelyo Law Harness accessible en SSH.",
       labelTitle: 'Nom',
       labelDesc:
@@ -1840,7 +1840,7 @@ export const frOverrides = {
       localAddHint:
         "La connexion locale est indisponible : la connexion gérée existe déjà (il ne peut y en avoir qu'une).",
       cloudAddHint:
-        "Astuce : connectez-vous à Hermes Cloud ci-dessus pour découvrir automatiquement vos agents — utilisez ce formulaire uniquement pour enregistrer manuellement l'URL d'une instance connue.",
+        "Astuce : connectez-vous à Cloud externe ci-dessus pour découvrir automatiquement vos agents — utilisez ce formulaire uniquement pour enregistrer manuellement l'URL d'une instance connue.",
       save: 'Enregistrer la connexion',
       saving: 'Enregistrement…',
       cancel: 'Annuler',
@@ -1883,13 +1883,13 @@ export const frOverrides = {
       remoteDesc: "Connecter ce shell desktop à un backend Actelyo Law Harness distant.",
       remoteAuthHint:
         "Les gateways hébergés utilisent OAuth ou un nom d'utilisateur et un mot de passe ; les auto-hébergés peuvent utiliser un jeton de session.",
-      cloudTitle: 'Hermes Cloud',
+      cloudTitle: "Cloud externe",
       cloudDesc:
-        "Connectez-vous une fois à Hermes Cloud et choisissez parmi les agents de votre compte — pas d'URL à coller.",
-      cloudSignInTitle: 'Hermes Cloud',
-      cloudSignIn: 'Se connecter à Hermes Cloud',
-      cloudSignedIn: 'Connecté à Hermes Cloud',
-      cloudNeedsSignIn: 'Connectez-vous à Hermes Cloud pour découvrir les agents de votre compte.',
+        "Connectez-vous une fois à Cloud externe et choisissez parmi les agents de votre compte — pas d'URL à coller.",
+      cloudSignInTitle: "Cloud externe",
+      cloudSignIn: "Se connecter à Cloud externe",
+      cloudSignedIn: "Connecté à Cloud externe",
+      cloudNeedsSignIn: "Connectez-vous à Cloud externe pour découvrir les agents de votre compte.",
       cloudSignedInDesc:
         'Vous êtes connecté. Choisissez un agent ci-dessous ; la session se rafraîchit automatiquement.',
       cloudAgentsTitle: 'Vos agents',
@@ -1900,7 +1900,7 @@ export const frOverrides = {
       cloudLoadingAgents: 'Chargement de vos agents…',
       cloudNoAgents: {
         before: 'Aucun agent trouvé sur ce compte… Créez-en un dans le ',
-        linkText: 'portail Nous',
+        linkText: "portail fournisseur externe",
         after: ', puis actualisez.'
       },
       cloudRefresh: 'Actualiser',
@@ -1911,11 +1911,11 @@ export const frOverrides = {
       cloudUseSaved: 'Utiliser le gateway',
       cloudActive: 'Actif dans cette fenêtre',
       cloudConnecting: 'Connexion…',
-      cloudDiscoverFailed: 'Impossible de charger vos agents Hermes Cloud',
+      cloudDiscoverFailed: "Impossible de charger vos agents Cloud externe",
       cloudConnectFailed: 'Impossible de se connecter à cet agent',
-      cloudSignInFailed: 'Échec de la connexion à Hermes Cloud',
-      cloudSignedOutTitle: 'Déconnecté de Hermes Cloud',
-      cloudSignedOutMessage: 'Session Hermes Cloud effacée.',
+      cloudSignInFailed: "Échec de la connexion à Cloud externe",
+      cloudSignedOutTitle: "Déconnecté de Cloud externe",
+      cloudSignedOutMessage: "Session Cloud externe effacée.",
       cloudConnectedTitle: 'Connecté',
       cloudConnectedPill: 'Connecté',
       cloudConnectedTo: name => `Connecté à ${name}.`,
@@ -2313,13 +2313,13 @@ export const frOverrides = {
       usageLabel: (label: string) => `Utilisation ${label}`,
       freeTier: {
         signIn: 'Se connecter',
-        title: 'Vous utilisez l’offre gratuite Nous',
-        message: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et d’outils.',
+        title: "Vous utilisez l’offre gratuite fournisseur externe",
+        message: "Connectez-vous avec un compte fournisseur externe pour débloquer davantage de modèles et d’outils.",
         caption:
           'Fonctionne avec nous/welcome, connecteurs inclus. La connexion conserve vos connecteurs et ajoute les outils qui nécessitent un compte ainsi que tous les autres modèles.',
-        name: 'Nous · offre gratuite',
+        name: "fournisseur externe · offre gratuite",
         footnote:
-          'L’offre gratuite n’a ni solde ni rien à payer. Le paiement et l’utilisation apparaissent une fois connecté avec un compte Nous.',
+          "L’offre gratuite n’a ni solde ni rien à payer. Le paiement et l’utilisation apparaissent une fois connecté avec un compte fournisseur externe.",
         plan: 'Offre gratuite',
         model: 'Modèle',
         connectors: 'Connecteurs',
@@ -2426,9 +2426,9 @@ export const frOverrides = {
       state: {
         notice: {
           loggedOut: {
-            title: 'Connectez votre compte Nous',
+            title: "Connectez votre compte fournisseur externe",
             message:
-              'Connectez-vous avec votre compte Nous pour voir ici votre solde, votre offre et votre utilisation.',
+              "Connectez-vous avec votre compte fournisseur externe pour voir ici votre solde, votre offre et votre utilisation.",
             action: 'Se connecter'
           },
           openPortal: 'Ouvrir le portail ↗',
@@ -2679,14 +2679,14 @@ export const frOverrides = {
       activeBackend: 'Actif',
       activeBackendHint: "Il s'agit de votre backend actif",
       useBackend: 'Utiliser ce backend',
-      nousIncluded: 'Inclus avec un abonnement Nous — connectez-vous au portail Nous pour activer.',
-      nousAuthNeededTitle: 'Se connecter au portail Nous',
+      nousIncluded: "Inclus avec un abonnement fournisseur externe — connectez-vous au portail fournisseur externe pour activer.",
+      nousAuthNeededTitle: "Se connecter au portail fournisseur externe",
       nousAuthNeededMessage: provider =>
-        `${provider} est enregistré mais ne s'activera pas tant que vous ne vous serez pas connecté au portail Nous.`,
+        `${provider} est enregistré mais ne s'activera pas tant que vous ne vous serez pas connecté au portail fournisseur externe.`,
       nousAuthSignIn: 'Se connecter',
-      nousAuthDoneTitle: 'Portail Nous connecté',
+      nousAuthDoneTitle: "Portail fournisseur externe connecté",
       nousAuthDoneMessage: "Vos backends d'abonnement sont maintenant actifs.",
-      nousAuthFailed: "La connexion au portail Nous n'a pas été terminée",
+      nousAuthFailed: "La connexion au portail fournisseur externe n'a pas été terminée",
       nousAuthFailedMessage: 'Réessayez.',
       nousAuthTryAgain: 'Réessayer',
       noApiKeyRequired: 'Aucune clé API requise.',
@@ -4314,8 +4314,8 @@ export const frOverrides = {
       '/palette': 'Ouvrir la palette de commandes floue (aussi Ctrl+P)',
       '/usage':
         'Afficher l’utilisation des jetons et les limites de débit ; `reset` utilise une réinitialisation de limite Codex en réserve',
-      '/subscription': 'Voir votre forfait Nous et le modifier dans le navigateur',
-      '/topup': 'Afficher votre solde Nous et gérer la facturation sur le portail',
+      '/subscription': "Voir votre forfait fournisseur externe et le modifier dans le navigateur",
+      '/topup': "Afficher votre solde fournisseur externe et gérer la facturation sur le portail",
       '/platform': 'Suspendre, reprendre ou lister une plateforme de gateway en échec',
       '/version': "Afficher la version de Actelyo Law Harness Agent",
       '/debug': 'Téléverser un rapport de débogage (infos système + journaux) et obtenir des liens partageables',
@@ -4926,19 +4926,19 @@ export const frOverrides = {
     errorDetails: 'Détails',
     pickDifferentProvider: 'Choisissez un autre fournisseur',
     signInWith: provider => `Se connecter avec ${provider}`,
-    openedBrowser: provider => `Nous avons ouvert ${provider} dans votre navigateur.`,
+    openedBrowser: provider => `fournisseur externe avons ouvert ${provider} dans votre navigateur.`,
     authorizeThere: "Autorisez Actelyo Law Harness là-bas.",
     copyAuthCode: "Copiez le code d'autorisation et collez-le ci-dessous.",
     pasteAuthCode: "Coller le code d'autorisation",
     reopenAuthPage: "Rouvrir la page d'autorisation",
     autoBrowser: provider =>
-      `Nous avons ouvert ${provider} dans votre navigateur. Autorisez Actelyo Law Harness là-bas et vous serez connecté automatiquement — rien à copier ou coller.`,
+      `fournisseur externe avons ouvert ${provider} dans votre navigateur. Autorisez Actelyo Law Harness là-bas et vous serez connecté automatiquement — rien à copier ou coller.`,
     reopenSignInPage: 'Rouvrir la page de connexion',
     waitingAuthorize: 'En attente de votre autorisation...',
     externalPending: provider =>
       `${provider} se connecte via sa propre CLI. Exécutez cette commande dans un terminal, puis revenez et choisissez « Je me suis connecté » :`,
     signedIn: 'Je me suis connecté',
-    deviceCodeOpened: provider => `Nous avons ouvert ${provider} dans votre navigateur. Entrez ce code là-bas :`,
+    deviceCodeOpened: provider => `fournisseur externe avons ouvert ${provider} dans votre navigateur. Entrez ce code là-bas :`,
     reopenVerification: 'Rouvrir la page de vérification',
     copy: 'Copier',
     defaultModel: 'Modèle par défaut',
@@ -4951,21 +4951,21 @@ export const frOverrides = {
     docs: provider => `Documentation ${provider}`
   },
   freeTier: {
-    providerRowTitle: 'Nous · offre gratuite',
-    providerRowPitch: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et outils.',
+    providerRowTitle: "fournisseur externe · offre gratuite",
+    providerRowPitch: "Connectez-vous avec un compte fournisseur externe pour débloquer davantage de modèles et outils.",
     readyTitle: "Actelyo Law Harness est prêt.",
     readyCaption: 'Gratuit · connecteurs inclus',
     begin: 'Commencer',
-    signInInstead: 'Se connecter plutôt avec un compte Nous',
+    signInInstead: "Se connecter plutôt avec un compte fournisseur externe",
     otherProviders: 'Autres fournisseurs',
-    stripTitle: "L'inférence Nous gratuite et les connecteurs sont maintenant disponibles.",
-    stripBody: 'Ouvrez le sélecteur de modèle pour les essayer ou connectez-vous avec un compte Nous.',
+    stripTitle: "L'inférence fournisseur externe gratuite et les connecteurs sont maintenant disponibles.",
+    stripBody: "Ouvrez le sélecteur de modèle pour les essayer ou connectez-vous avec un compte fournisseur externe.",
     openModelPicker: 'Ouvrir le sélecteur de modèle',
     dismiss: 'Fermer',
-    providerName: 'Nous',
-    statusLabel: model => `Nous · ${model}`,
+    providerName: "fournisseur externe",
+    statusLabel: model => `fournisseur externe · ${model}`,
     signIn: 'Se connecter',
-    signInHeading: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et outils.',
+    signInHeading: "Connectez-vous avec un compte fournisseur externe pour débloquer davantage de modèles et outils.",
     settingUp: "Configuration de l'inférence gratuite…",
     codeBody: 'Saisissez ce code dans votre navigateur pour terminer la connexion.',
     copyLink: 'Copier le lien',
@@ -4992,29 +4992,29 @@ export const frOverrides = {
     errorBody: "La connexion n'a pas abouti ; relancez-la.",
     busyHeading: 'Presque terminé',
     busyBody: wait =>
-      `Actelyo Law Harness n'a pas pu terminer votre connexion car le service Nous est occupé. Réessayez dans ${wait}. Votre session reste disponible entre-temps.`,
+      `Actelyo Law Harness n'a pas pu terminer votre connexion car le service fournisseur externe est occupé. Réessayez dans ${wait}. Votre session reste disponible entre-temps.`,
     unreachableBody:
-      "Actelyo Law Harness n'a pas pu joindre le service Nous pour terminer votre connexion. Vérifiez votre connexion Internet et réessayez. Votre session reste disponible.",
+      "Actelyo Law Harness n'a pas pu joindre le service fournisseur externe pour terminer votre connexion. Vérifiez votre connexion Internet et réessayez. Votre session reste disponible.",
     alreadySignedInHeading: 'Déjà connecté.',
-    alreadySignedInBody: "Cette installation Actelyo Law Harness est déjà connectée à un compte Nous.",
+    alreadySignedInBody: "Cette installation Actelyo Law Harness est déjà connectée à un compte fournisseur externe.",
     setupFailed: {
       gateClosed:
-        "Cette version de Actelyo Law Harness ne peut pas démarrer sans compte Nous. Connectez-vous ou créez-en un gratuitement en une minute.",
+        "Cette version de Actelyo Law Harness ne peut pas démarrer sans compte fournisseur externe. Connectez-vous ou créez-en un gratuitement en une minute.",
       paused:
         "L'utilisation de Actelyo Law Harness sans connexion est momentanément suspendue. Actelyo Law Harness continuera à vérifier. La connexion est gratuite et vous permet de continuer immédiatement.",
       rateLimited: wait =>
         `Beaucoup de personnes démarrent en ce moment ; Actelyo Law Harness réessaiera dans ${wait}. La connexion est gratuite et évite l'attente.`,
       unreachable:
-        "Actelyo Law Harness n'a pas pu joindre le service Nous. Vérifiez votre connexion Internet, puis appuyez sur Réessayer. Vous pouvez aussi connecter un autre fournisseur.",
+        "Actelyo Law Harness n'a pas pu joindre le service fournisseur externe. Vérifiez votre connexion Internet, puis appuyez sur Réessayer. Vous pouvez aussi connecter un autre fournisseur.",
       serverError:
-        'Le service Nous a rencontré un problème. Réessayez dans un instant ou connectez un autre fournisseur.',
+        "Le service fournisseur externe a rencontré un problème. Réessayez dans un instant ou connectez un autre fournisseur.",
       powRequired:
-        "Le serveur Nous a demandé une preuve de travail qui n'est pas encore gérée par votre Agent. Connectez-vous ou créez un compte Nous gratuit pour continuer.",
+        "Le serveur fournisseur externe a demandé une preuve de travail qui n'est pas encore gérée par votre Agent. Connectez-vous ou créez un compte fournisseur externe gratuit pour continuer.",
       locked:
-        'Cette session ne peut pas continuer sans connexion. Connectez-vous ou créez un compte Nous gratuit pour poursuivre.',
+        "Cette session ne peut pas continuer sans connexion. Connectez-vous ou créez un compte fournisseur externe gratuit pour poursuivre.",
       generic:
         "Actelyo Law Harness n'a pas pu configurer l'accès gratuit sans connexion. Connectez-vous gratuitement ou choisissez un autre fournisseur.",
-      signInBelow: 'La connexion est gratuite. Choisissez Nous ci-dessous.',
+      signInBelow: "La connexion est gratuite. Choisissez fournisseur externe ci-dessous.",
       tryAgain: 'Réessayer',
       retrying: 'Nouvelle tentative…'
     }
@@ -5032,7 +5032,7 @@ export const frOverrides = {
     localDownloadsHeading: 'Local',
     noAuthenticatedProviders: 'Aucun fournisseur authentifié.',
     pro: 'Pro',
-    proNeedsSubscription: 'Les modèles Pro nécessitent un abonnement payant Nous.',
+    proNeedsSubscription: "Les modèles Pro nécessitent un abonnement payant fournisseur externe.",
     free: 'Gratuit',
     freeTier: 'Gratuit',
     priceTitle: 'Prix entrant / sortant par million de jetons',
@@ -5630,11 +5630,11 @@ export const frOverrides = {
         },
         free_tier_disabled: {
           title: "L'utilisation de Actelyo Law Harness sans connexion est désactivée pour le moment",
-          body: 'Connectez-vous avec un compte Nous gratuit pour continuer.'
+          body: "Connectez-vous avec un compte fournisseur externe gratuit pour continuer."
         },
         free_tier_rate_limited: {
           title: 'Vous avez épuisé le quota sans connexion',
-          body: 'Il sera bientôt renouvelé. Connectez-vous avec un compte Nous gratuit pour obtenir un quota plus élevé.'
+          body: "Il sera bientôt renouvelé. Connectez-vous avec un compte fournisseur externe gratuit pour obtenir un quota plus élevé."
         },
         free_tier_at_capacity: {
           title: 'Le service sans connexion est très sollicité',
@@ -5642,11 +5642,11 @@ export const frOverrides = {
         },
         free_tier_model_not_free: {
           title: "Ce modèle n'est pas disponible sans connexion",
-          body: "Actelyo Law Harness utilise le modèle gratuit pour le moment. Connectez-vous avec un compte Nous gratuit pour accéder à plus de modèles."
+          body: "Actelyo Law Harness utilise le modèle gratuit pour le moment. Connectez-vous avec un compte fournisseur externe gratuit pour accéder à plus de modèles."
         },
         free_tier_route: {
           title: "Actelyo Law Harness n'a pas pu joindre le modèle gratuit par cette route",
-          body: 'Connectez-vous avec un compte Nous gratuit ou vérifiez le paramètre NOUS_INFERENCE_BASE_URL.'
+          body: "Connectez-vous avec un compte fournisseur externe gratuit ou vérifiez le paramètre NOUS_INFERENCE_BASE_URL."
         },
         free_tier_outage: {
           title: 'Le modèle gratuit rencontre des difficultés',
@@ -5654,7 +5654,7 @@ export const frOverrides = {
         },
         free_tier_refused: {
           title: "Actelyo Law Harness n'a pas pu envoyer ce message sans connexion",
-          body: 'La connexion avec un compte Nous est gratuite.'
+          body: "La connexion avec un compte fournisseur externe est gratuite."
         }
       },
       errorAuthKinds: {
@@ -5684,7 +5684,7 @@ export const frOverrides = {
       errorOpenHermesFolderFailed: "Impossible d'ouvrir le dossier Actelyo Law Harness",
       errorUpdateApiKey: 'Mettre à jour la clé API',
       errorSignInAgain: provider => `Se reconnecter à ${provider}`,
-      errorSignInFreeTier: 'Se connecter avec un compte Nous',
+      errorSignInFreeTier: "Se connecter avec un compte fournisseur externe",
       errorOauthExpired: provider =>
         `Votre connexion à ${provider} a expiré ou a été révoquée. Reconnectez-vous pour continuer la conversation.`,
       errorOpenLogs: 'Ouvrir les journaux',

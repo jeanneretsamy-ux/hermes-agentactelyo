@@ -47,8 +47,8 @@ export const CONTROL_TEXT = 'text-xs'
 export const PROVIDER_GROUPS: ProviderPrefix[] = [
   {
     prefix: 'NOUS_',
-    name: 'Nous Portal',
-    description: "Hosted Actelyo Law Harness & Nous-trained models",
+    name: "fournisseur externe Portal",
+    description: "Hosted Actelyo Law Harness & fournisseur externe-trained models",
     docsUrl: 'https://portal.nousresearch.com',
     priority: 0
   },

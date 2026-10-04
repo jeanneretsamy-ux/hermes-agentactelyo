@@ -115,8 +115,8 @@ export const en: Translations = {
     dismiss: "Dismiss",
     sharedMetricsTitle: "Help improve Actelyo Law Harness?",
     sharedMetricsBody:
-      "Shared metrics are bounded counters, never prompts, files, paths or error text. Collection stays on this machine; sending to Nous is a separate choice.",
-    sharedMetricsShare: "Send to Nous",
+      "Shared metrics are bounded counters, never prompts, files, paths or error text. Collection stays on this machine; sending to fournisseur externe is a separate choice.",
+    sharedMetricsShare: "Send to fournisseur externe",
     sharedMetricsLocal: "Local only",
     sharedMetricsOff: "No thanks",
     sharedMetricsDetails: "Details",
@@ -453,7 +453,7 @@ export const en: Translations = {
     hideFromSidebar: "Hide from sidebar",
     catalogHeading: "Plugin catalog",
     catalogHint:
-      "Curated, Nous-reviewed plugins pinned to exact commits. Install from here for supply-chain-safe versions.",
+      "Curated, fournisseur externe-reviewed plugins pinned to exact commits. Install from here for supply-chain-safe versions.",
     catalogSearchPlaceholder: "Search catalog...",
     catalogEmpty: "No catalog entries match.",
     catalogEmptyDocsLink: "Learn about Actelyo Law Harness plugins",

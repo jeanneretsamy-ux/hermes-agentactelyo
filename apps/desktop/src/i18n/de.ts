@@ -7,7 +7,7 @@ export const deOverrides = {
   sharedMetrics: {
     consentTitle: "Actelyo Law Harness verbessern helfen?",
     consentBody:
-      'Geteilte Metriken enthalten nur begrenzte Zähler. Niemals Prompts, Dateien, Pfade oder Fehlertexte. Die Erfassung bleibt lokal. Das Senden an Nous ist eine separate Zustimmung.',
+      "Geteilte Metriken enthalten nur begrenzte Zähler. Niemals Prompts, Dateien, Pfade oder Fehlertexte. Die Erfassung bleibt lokal. Das Senden an fournisseur externe ist eine separate Zustimmung.",
     whatIsCollected: 'Was erfasst wird',
     collectedIntro: 'Nur begrenzte Zähler:',
     collectedActivity: 'Aktivität, Session-Länge, Ergebnisse und Fehlerklassen',
@@ -21,23 +21,23 @@ export const deOverrides = {
     collectedMachine:
       "Grobe Gerätedaten: RAM-Bereich, GPU-Typ, Alter und Kanal der Actelyo Law Harness-Version, Anzahl ausstehender Updates, ob ein lokaler Modellserver genutzt wird",
     installId:
-      'Beim Senden wird jedes Tagespaket an den Nous-Telemetriedienst hochgeladen. Pakete tragen die Installations-ID dieses Profils: eine feste zufällige UUID ohne persönliche Daten, zurückgesetzt durch Löschen des Shared-Metrics-Ordners.',
+      "Beim Senden wird jedes Tagespaket an den fournisseur externe-Telemetriedienst hochgeladen. Pakete tragen die Installations-ID dieses Profils: eine feste zufällige UUID ohne persönliche Daten, zurückgesetzt durch Löschen des Shared-Metrics-Ordners.",
     consentWindow:
       'Gesendet werden nur Pakete, deren gesamter Erfassungszeitraum in ein erfasstes Zustimmungsfenster fällt – Daten von vor Ihrer Zustimmung oder aus Lücken, in denen das Senden aus war, bleiben auf diesem Rechner. Das Senden lässt sich jederzeit wieder abschalten.',
     readDocs: 'Alle Details lesen',
-    share: 'Erfassen und an Nous senden',
+    share: "Erfassen und an fournisseur externe senden",
     local: 'Nur lokal erfassen',
     off: 'Nein, danke',
     changeLater: 'Sie können das jederzeit unter Einstellungen → Sicherheit ändern.',
     saveFailed: 'Ihre Auswahl konnte nicht gespeichert werden',
     collectLabel: 'Nutzungsstatistiken erfassen',
     collectDesc: 'Begrenzte Zähler auf diesem Gerät. Niemals Prompts, Dateien, Pfade oder Fehlertexte.',
-    sendLabel: 'Nutzungsstatistiken an Nous senden',
+    sendLabel: "Nutzungsstatistiken an fournisseur externe senden",
     sendDesc:
-      'Jedes Tagespaket an den Nous-Telemetriedienst hochladen. Nur Daten aus einem Zustimmungsfenster werden gesendet. Erfordert aktive Erfassung.',
+      "Jedes Tagespaket an den fournisseur externe-Telemetriedienst hochladen. Nur Daten aus einem Zustimmungsfenster werden gesendet. Erfordert aktive Erfassung.",
     unavailable: "Aktualisieren Sie das Actelyo Law Harness-Backend, um diese Einstellung zu ändern.",
     stripBody: 'Nur begrenzte Zähler, niemals Prompts oder Dateien.',
-    stripChoices: { share: 'An Nous senden', local: 'Nur lokal', off: 'Nein danke' },
+    stripChoices: { share: "An fournisseur externe senden", local: 'Nur lokal', off: 'Nein danke' },
     stripDetails: 'Details'
   },
   intro: introDe,
@@ -157,7 +157,7 @@ export const deOverrides = {
       showAllMatches: 'Alle Treffer anzeigen',
       segmentNoMatch: (segment: string) => `Kein Treffer in ${segment}, daher werden alle Treffer angezeigt.`,
       freeTierNote: 'Verbindungen bleiben auf diesem Computer, bis Sie sich anmelden.',
-      signInLine: 'Melden Sie sich bei Nous an, um verwaltete Apps zu nutzen.',
+      signInLine: "Melden Sie sich bei fournisseur externe an, um verwaltete Apps zu nutzen.",
       signIn: 'Anmelden',
       managedUnavailable: 'Verwaltete Apps sind für dieses Konto noch nicht verfügbar.',
       writeFailed: 'Diese Änderung wurde nicht gespeichert.',
@@ -165,7 +165,7 @@ export const deOverrides = {
       disconnectNoAccount:
         "Actelyo Law Harness hat hier kein Konto zum Trennen. Aktualisieren Sie die Seite und versuchen Sie es erneut.",
       disconnectRefused:
-        'Nous kann diese Anmeldung gerade nicht entfernen. Schalten Sie die App stattdessen mit dem Schalter aus oder versuchen Sie es später erneut.'
+        "fournisseur externe kann diese Anmeldung gerade nicht entfernen. Schalten Sie die App stattdessen mit dem Schalter aus oder versuchen Sie es später erneut."
     },
     add: {
       action: 'Eigenen hinzufügen',
@@ -216,7 +216,7 @@ export const deOverrides = {
       turnOffLocal: 'Lokalen Server ausschalten',
       providedByPlugin: (plugin: string) => `Bereitgestellt vom Plugin ${plugin}`,
       openPlugins: 'Tab „Plugins“ öffnen',
-      nousLine: 'Nous-Apps folgen Ihrem Konto, nicht dem Profil.',
+      nousLine: "fournisseur externe-Apps folgen Ihrem Konto, nicht dem Profil.",
       rulesReadOnly: 'Die Regeln können gerade nicht geändert werden.',
       rulesAppOff: (name: string) => `Schalten Sie ${name} ein, um die Tools zu ändern.`,
       rulesSignIn: "Melden Sie sich an, um festzulegen, was Actelyo Law Harness hier darf.",
@@ -271,7 +271,7 @@ export const deOverrides = {
       remove: 'Entfernen',
       offTitle: (name: string) => `${name} ist aus.`,
       offBody: 'Schalten Sie ihn mit dem Schalter oben ein, um seine Tools zu laden.',
-      signedOutTitle: 'Melden Sie sich bei Nous an, um die Tool-Liste zu laden.',
+      signedOutTitle: "Melden Sie sich bei fournisseur externe an, um die Tool-Liste zu laden.",
       signedOutBody: 'Ihre Server auf diesem Computer sind nicht betroffen.',
       conflictTitle: 'Jemand hat diese Regel geändert, während Sie sie bearbeitet haben.',
       conflictBody: (theyOff: number, theyOn: number) => {
@@ -496,11 +496,11 @@ export const deOverrides = {
       signOutAndSignIn: 'Abmelden & anmelden',
       remoteFailureHint:
         'Überprüfen Sie die Gateway-URL und die Anmeldung in den Gateway-Einstellungen, oder wechseln Sie zum lokalen Gateway.',
-      cloudDownTitle: 'Nous Cloud Agent ist down',
+      cloudDownTitle: "fournisseur externe Cloud Agent ist down",
       cloudDownDescription:
-        'Der von Nous verwaltete Cloud-Agent, mit dem sich dieses Gateway verbindet, meldet einen Serverfehler. Er kann von hier aus nicht neu gestartet werden – prüfen Sie seinen Status, wechseln Sie zum lokalen Gateway oder wenden Sie sich an den Support.',
+        "Der von fournisseur externe verwaltete Cloud-Agent, mit dem sich dieses Gateway verbindet, meldet einen Serverfehler. Er kann von hier aus nicht neu gestartet werden – prüfen Sie seinen Status, wechseln Sie zum lokalen Gateway oder wenden Sie sich an den Support.",
       cloudDownHint:
-        'Die Schaltflächen unten öffnen das Nous Portal (Instanzstatus und Steuerung) und unseren Discord für Support.',
+        "Die Schaltflächen unten öffnen das fournisseur externe Portal (Instanzstatus und Steuerung) und unseren Discord für Support.",
       cloudDownCheckPortal: 'Portal-Status prüfen',
       cloudDownDiscord: 'Hilfe auf Discord holen',
       hideRecentLogs: 'Neueste Logs ausblenden',
@@ -622,7 +622,7 @@ export const deOverrides = {
       `Software-Rendering aktiv — Remote-Display erkannt (${reason}). GPU-Beschleunigung ist deaktiviert, um Flackern zu verhindern.`
   },
   billingBlock: {
-    titleNous: 'Keine Nous-Credits mehr',
+    titleNous: "Keine fournisseur externe-Credits mehr",
     titleProvider: provider => `Keine Credits mehr — ${provider}`,
     fallbackMessage: 'Auf Ihrem Konto sind keine Credits mehr übrig. Fügen Sie Credits hinzu, um fortzufahren.',
     openBilling: 'Billing öffnen',
@@ -630,9 +630,9 @@ export const deOverrides = {
     dismiss: 'Schließen'
   },
   sendDiagnostics: {
-    title: 'Diagnosedaten an Nous senden',
+    title: "Diagnosedaten an fournisseur externe senden",
     privacyNotice:
-      'Damit laden Sie ein Debug-Paket in den internen Nous-Speicher hoch (kein öffentliches Paste). Es enthält Systeminfos (Betriebssystem, Versionen, Provider, welche API-Keys konfiguriert sind – niemals die Keys selbst) sowie vollständige Agent-, Gateway- und Desktop-Logs (bis zu 512 KB je Datei), die sehr wahrscheinlich Gesprächsinhalte, Tool-Ausgaben und Dateipfade enthalten. Geheimnisse werden vor dem Upload geschwärzt. Das Paket ist nur für Nous-Mitarbeitende und freigeschaltete Discord-Moderatoren einsehbar und wird nach 14 Tagen automatisch gelöscht.',
+      "Damit laden Sie ein Debug-Paket in den internen fournisseur externe-Speicher hoch (kein öffentliches Paste). Es enthält Systeminfos (Betriebssystem, Versionen, Provider, welche API-Keys konfiguriert sind – niemals die Keys selbst) sowie vollständige Agent-, Gateway- und Desktop-Logs (bis zu 512 KB je Datei), die sehr wahrscheinlich Gesprächsinhalte, Tool-Ausgaben und Dateipfade enthalten. Geheimnisse werden vor dem Upload geschwärzt. Das Paket ist nur für fournisseur externe-Mitarbeitende und freigeschaltete Discord-Moderatoren einsehbar und wird nach 14 Tagen automatisch gelöscht.",
     upload: 'Hochladen',
     uploading: 'Wird hochgeladen…',
     cancel: 'Abbrechen',
@@ -648,7 +648,7 @@ export const deOverrides = {
     handoffLead: 'Diskussion hier fortsetzen:',
     links: {
       github: 'GitHub Issues',
-      portal: 'Nous-Portal-Support',
+      portal: "fournisseur externe-Portal-Support",
       discord: 'Discord'
     }
   },
@@ -1808,10 +1808,10 @@ export const deOverrides = {
       updateAllRunning: 'Alle Instanzen werden aktualisiert…',
       updateAllDone: 'Updates versendet',
       updateAllFailed: 'Update-Verteilung fehlgeschlagen',
-      updateSkippedCloud: 'Wird von Hermes Cloud verwaltet',
+      updateSkippedCloud: "Wird von Cloud externe verwaltet",
       kindLocal: 'Lokal',
       kindRemote: 'Remote-Gateway',
-      kindCloud: 'Hermes Cloud',
+      kindCloud: "Cloud externe",
       kindSsh: 'SSH',
       kindLocalDesc: "Die Actelyo Law Harness-Laufzeitumgebung, die von dieser App verwaltet wird.",
       kindRemoteDesc: "Ein Actelyo Law Harness Gateway, das über HTTP(S) erreichbar ist – LAN, Tailscale oder das Internet.",
@@ -1836,7 +1836,7 @@ export const deOverrides = {
       sameBackendHint: (label: string) => `Gleiches Backend wie „${label}“`,
       localAddHint: 'Lokal ist nicht verfügbar: Die verwaltete lokale Verbindung existiert bereits (es gibt nur eine).',
       cloudAddHint:
-        'Tipp: Die Anmeldung unter Hermes Cloud oben erkennt Ihre Agents automatisch – verwenden Sie dieses Formular nur, um eine bekannte Instanz-URL manuell zu registrieren.',
+        "Tipp: Die Anmeldung unter Cloud externe oben erkennt Ihre Agents automatisch – verwenden Sie dieses Formular nur, um eine bekannte Instanz-URL manuell zu registrieren.",
       save: 'Verbindung speichern',
       saving: 'Wird gespeichert…',
       cancel: 'Abbrechen',
@@ -1879,13 +1879,13 @@ export const deOverrides = {
       remoteDesc: "Verbindet diese Desktop-Shell mit einem entfernten Actelyo Law Harness-Backend.",
       remoteAuthHint:
         'Gehostete Gateways verwenden OAuth oder Benutzername und Passwort; selbst gehostete können ein Session-Token verwenden.',
-      cloudTitle: 'Hermes Cloud',
+      cloudTitle: "Cloud externe",
       cloudDesc:
-        'Melden Sie sich einmal bei Hermes Cloud an und wählen Sie aus den Agents in Ihrem Konto – ohne eine URL einzufügen.',
-      cloudSignInTitle: 'Hermes Cloud',
-      cloudSignIn: 'Bei Hermes Cloud anmelden',
-      cloudSignedIn: 'Bei Hermes Cloud angemeldet',
-      cloudNeedsSignIn: 'Melden Sie sich bei Hermes Cloud an, um die Agents in Ihrem Konto zu finden.',
+        "Melden Sie sich einmal bei Cloud externe an und wählen Sie aus den Agents in Ihrem Konto – ohne eine URL einzufügen.",
+      cloudSignInTitle: "Cloud externe",
+      cloudSignIn: "Bei Cloud externe anmelden",
+      cloudSignedIn: "Bei Cloud externe angemeldet",
+      cloudNeedsSignIn: "Melden Sie sich bei Cloud externe an, um die Agents in Ihrem Konto zu finden.",
       cloudSignedInDesc:
         'Sie sind angemeldet. Wählen Sie unten einen Agent; die Session wird automatisch aktualisiert.',
       cloudAgentsTitle: 'Ihre Agents',
@@ -1896,7 +1896,7 @@ export const deOverrides = {
       cloudLoadingAgents: 'Ihre Agents werden geladen…',
       cloudNoAgents: {
         before: 'Keine Agents in diesem Konto gefunden. Legen Sie einen im ',
-        linkText: 'Nous-Portal',
+        linkText: "fournisseur externe-Portal",
         after: ' an und aktualisieren Sie dann.'
       },
       cloudRefresh: 'Aktualisieren',
@@ -1909,8 +1909,8 @@ export const deOverrides = {
       cloudConnecting: 'Verbindung wird hergestellt…',
       cloudDiscoverFailed: "Ihre Actelyo Law Harness-Cloud-Agents konnten nicht geladen werden",
       cloudConnectFailed: 'Keine Verbindung zu diesem Agent möglich',
-      cloudSignInFailed: 'Anmeldung bei Hermes Cloud fehlgeschlagen',
-      cloudSignedOutTitle: 'Von Hermes Cloud abgemeldet',
+      cloudSignInFailed: "Anmeldung bei Cloud externe fehlgeschlagen",
+      cloudSignedOutTitle: "Von Cloud externe abgemeldet",
       cloudSignedOutMessage: "Die Actelyo Law Harness-Cloud-Session wurde geleert.",
       cloudConnectedTitle: 'Verbunden',
       cloudConnectedPill: 'Verbunden',
@@ -2304,13 +2304,13 @@ export const deOverrides = {
       usageLabel: (label: string) => `${label}-Nutzung`,
       freeTier: {
         signIn: 'Anmelden',
-        title: 'Sie nutzen den kostenlosen Nous-Tarif',
-        message: 'Melden Sie sich mit einem Nous-Konto an, um weitere Modelle und Tools freizuschalten.',
+        title: "Sie nutzen den kostenlosen fournisseur externe-Tarif",
+        message: "Melden Sie sich mit einem fournisseur externe-Konto an, um weitere Modelle und Tools freizuschalten.",
         caption:
           'Läuft mit nous/welcome, Konnektoren inklusive. Nach der Anmeldung bleiben Ihre Konnektoren erhalten, und Sie erhalten die kontopflichtigen Tools sowie alle weiteren Modelle.',
-        name: 'Nous · kostenloser Tarif',
+        name: "fournisseur externe · kostenloser Tarif",
         footnote:
-          'Der kostenlose Tarif hat kein Guthaben und nichts zu bezahlen. Zahlung und Nutzung werden angezeigt, sobald Sie sich mit einem Nous-Konto anmelden.',
+          "Der kostenlose Tarif hat kein Guthaben und nichts zu bezahlen. Zahlung und Nutzung werden angezeigt, sobald Sie sich mit einem fournisseur externe-Konto anmelden.",
         plan: 'Kostenloser Tarif',
         model: 'Modell',
         connectors: 'Konnektoren',
@@ -2418,8 +2418,8 @@ export const deOverrides = {
       state: {
         notice: {
           loggedOut: {
-            title: 'Nous-Konto verbinden',
-            message: 'Melden Sie sich mit Ihrem Nous-Konto an, um hier Guthaben, Tarif und Nutzung zu sehen.',
+            title: "fournisseur externe-Konto verbinden",
+            message: "Melden Sie sich mit Ihrem fournisseur externe-Konto an, um hier Guthaben, Tarif und Nutzung zu sehen.",
             action: 'Anmelden'
           },
           openPortal: 'Portal öffnen ↗',
@@ -2671,14 +2671,14 @@ export const deOverrides = {
       activeBackend: 'Aktiv',
       activeBackendHint: 'Das ist Ihr aktives Backend',
       useBackend: 'Dieses Backend verwenden',
-      nousIncluded: 'In einem Nous-Abo enthalten – melden Sie sich im Nous Portal an, um es zu aktivieren.',
-      nousAuthNeededTitle: 'Im Nous Portal anmelden',
+      nousIncluded: "In einem fournisseur externe-Abo enthalten – melden Sie sich im fournisseur externe Portal an, um es zu aktivieren.",
+      nousAuthNeededTitle: "Im fournisseur externe Portal anmelden",
       nousAuthNeededMessage: provider =>
-        `${provider} ist gespeichert, wird aber erst aktiviert, wenn Sie sich im Nous Portal anmelden.`,
+        `${provider} ist gespeichert, wird aber erst aktiviert, wenn Sie sich im fournisseur externe Portal anmelden.`,
       nousAuthSignIn: 'Anmelden',
-      nousAuthDoneTitle: 'Nous Portal verbunden',
+      nousAuthDoneTitle: "fournisseur externe Portal verbunden",
       nousAuthDoneMessage: 'Ihre Abo-Backends sind jetzt aktiv.',
-      nousAuthFailed: 'Die Nous-Portal-Anmeldung wurde nicht abgeschlossen',
+      nousAuthFailed: "Die fournisseur externe-Portal-Anmeldung wurde nicht abgeschlossen",
       nousAuthFailedMessage: 'Versuchen Sie es erneut.',
       nousAuthTryAgain: 'Erneut versuchen',
       noApiKeyRequired: 'Kein API-Key erforderlich.',
@@ -4301,8 +4301,8 @@ export const deOverrides = {
       '/browser': 'Browser des Agenten verwalten [connect|disconnect|status|use]',
       '/palette': 'Die unscharfe Befehlspalette öffnen (auch Strg+P)',
       '/usage': 'Token-Nutzung und Ratenlimits anzeigen; `reset` löst ein angespartes Codex-Limit-Reset ein',
-      '/subscription': 'Ihren Nous-Tarif ansehen und im Browser ändern',
-      '/topup': 'Ihr Nous-Guthaben anzeigen und die Abrechnung im Portal verwalten',
+      '/subscription': "Ihren fournisseur externe-Tarif ansehen und im Browser ändern",
+      '/topup': "Ihr fournisseur externe-Guthaben anzeigen und die Abrechnung im Portal verwalten",
       '/platform': 'Eine fehlerhafte Gateway-Plattform pausieren, fortsetzen oder auflisten',
       '/version': "Actelyo Law Harness-Agent-Version anzeigen",
       '/debug': 'Debug-Bericht (Systeminfos + Logs) hochladen und teilbare Links erhalten',
@@ -4937,21 +4937,21 @@ export const deOverrides = {
     docs: provider => `${provider}-Doku`
   },
   freeTier: {
-    providerRowTitle: 'Nous · Gratis-Tarif',
-    providerRowPitch: 'Melden Sie sich mit einem Nous-Konto an, um mehr Modelle und Tools freizuschalten.',
+    providerRowTitle: "fournisseur externe · Gratis-Tarif",
+    providerRowPitch: "Melden Sie sich mit einem fournisseur externe-Konto an, um mehr Modelle und Tools freizuschalten.",
     readyTitle: "Actelyo Law Harness ist bereit.",
     readyCaption: 'Kostenlos · Verbindungen inklusive',
     begin: 'Loslegen',
-    signInInstead: 'Stattdessen mit einem Nous-Konto anmelden',
+    signInInstead: "Stattdessen mit einem fournisseur externe-Konto anmelden",
     otherProviders: 'Andere Anbieter',
-    stripTitle: 'Kostenlose Nous-Inferenz und Verbindungen sind jetzt verfügbar.',
-    stripBody: 'Öffnen Sie die Modellauswahl, um sie auszuprobieren, oder melden Sie sich mit einem Nous-Konto an.',
+    stripTitle: "Kostenlose fournisseur externe-Inferenz und Verbindungen sind jetzt verfügbar.",
+    stripBody: "Öffnen Sie die Modellauswahl, um sie auszuprobieren, oder melden Sie sich mit einem fournisseur externe-Konto an.",
     openModelPicker: 'Modellauswahl öffnen',
     dismiss: 'Ausblenden',
-    providerName: 'Nous',
-    statusLabel: model => `Nous · ${model}`,
+    providerName: "fournisseur externe",
+    statusLabel: model => `fournisseur externe · ${model}`,
     signIn: 'Anmelden',
-    signInHeading: 'Melden Sie sich mit einem Nous-Konto an, um mehr Modelle und Tools freizuschalten.',
+    signInHeading: "Melden Sie sich mit einem fournisseur externe-Konto an, um mehr Modelle und Tools freizuschalten.",
     settingUp: 'Kostenlose Inferenz wird eingerichtet…',
     codeBody: 'Geben Sie diesen Code in Ihrem Browser ein, um die Anmeldung abzuschließen.',
     copyLink: 'Link kopieren',
@@ -4978,29 +4978,29 @@ export const deOverrides = {
     errorBody: 'Die Anmeldung wurde nicht abgeschlossen; starten Sie sie erneut.',
     busyHeading: 'Fast geschafft',
     busyBody: wait =>
-      `Actelyo Law Harness konnte Ihre Anmeldung nicht abschließen, weil der Nous-Dienst ausgelastet ist. Versuchen Sie es in ${wait} erneut. Ihre Session bleibt so lange erhalten.`,
+      `Actelyo Law Harness konnte Ihre Anmeldung nicht abschließen, weil der fournisseur externe-Dienst ausgelastet ist. Versuchen Sie es in ${wait} erneut. Ihre Session bleibt so lange erhalten.`,
     unreachableBody:
-      "Actelyo Law Harness konnte den Nous-Dienst nicht erreichen, um Ihre Anmeldung abzuschließen. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut. Ihre Session bleibt erhalten.",
+      "Actelyo Law Harness konnte den fournisseur externe-Dienst nicht erreichen, um Ihre Anmeldung abzuschließen. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut. Ihre Session bleibt erhalten.",
     alreadySignedInHeading: 'Bereits angemeldet.',
-    alreadySignedInBody: "Dieses Actelyo Law Harness ist bereits mit einem Nous-Konto angemeldet.",
+    alreadySignedInBody: "Dieses Actelyo Law Harness ist bereits mit einem fournisseur externe-Konto angemeldet.",
     setupFailed: {
       gateClosed:
-        "Diese Actelyo Law Harness-Version kann ohne Nous-Konto nicht starten. Melden Sie sich an oder legen Sie eines an – kostenlos und in einer Minute erledigt.",
+        "Diese Actelyo Law Harness-Version kann ohne fournisseur externe-Konto nicht starten. Melden Sie sich an oder legen Sie eines an – kostenlos und in einer Minute erledigt.",
       paused:
         "Chatten ohne Anmeldung ist vorübergehend pausiert. Actelyo Law Harness prüft weiter. Die Anmeldung ist kostenlos, und Sie können sofort weitermachen.",
       rateLimited: wait =>
         `Gerade starten sehr viele Leute, deshalb versucht Actelyo Law Harness es in ${wait} erneut. Die Anmeldung ist kostenlos und überspringt das Warten.`,
       unreachable:
-        "Actelyo Law Harness konnte den Nous-Dienst nicht erreichen. Prüfen Sie Ihre Internetverbindung und tippen Sie dann auf „Erneut versuchen“. Oder verbinden Sie vorerst einen anderen Anbieter.",
+        "Actelyo Law Harness konnte den fournisseur externe-Dienst nicht erreichen. Prüfen Sie Ihre Internetverbindung und tippen Sie dann auf „Erneut versuchen“. Oder verbinden Sie vorerst einen anderen Anbieter.",
       serverError:
-        'Beim Nous-Dienst ist ein Fehler aufgetreten. Tippen Sie gleich auf „Erneut versuchen“ oder verbinden Sie vorerst einen anderen Anbieter.',
+        "Beim fournisseur externe-Dienst ist ein Fehler aufgetreten. Tippen Sie gleich auf „Erneut versuchen“ oder verbinden Sie vorerst einen anderen Anbieter.",
       powRequired:
-        'Der Nous-Server verlangt einen Proof of Work, den Ihr Agent noch nicht unterstützt. Melden Sie sich an oder legen Sie ein kostenloses Nous-Konto an, um fortzufahren.',
+        "Der fournisseur externe-Server verlangt einen Proof of Work, den Ihr Agent noch nicht unterstützt. Melden Sie sich an oder legen Sie ein kostenloses fournisseur externe-Konto an, um fortzufahren.",
       locked:
-        'Diese Session kann ohne Anmeldung nicht fortgesetzt werden. Melden Sie sich an oder legen Sie ein kostenloses Nous-Konto an, um weiterzumachen.',
+        "Diese Session kann ohne Anmeldung nicht fortgesetzt werden. Melden Sie sich an oder legen Sie ein kostenloses fournisseur externe-Konto an, um weiterzumachen.",
       generic:
         "Actelyo Law Harness konnte den kostenlosen Zugang ohne Anmeldung nicht einrichten. Die Anmeldung ist kostenlos — oder verbinden Sie einen anderen Anbieter.",
-      signInBelow: 'Die Anmeldung ist kostenlos. Wählen Sie unten Nous.',
+      signInBelow: "Die Anmeldung ist kostenlos. Wählen Sie unten fournisseur externe.",
       tryAgain: 'Erneut versuchen',
       retrying: 'Wird erneut versucht…'
     }
@@ -5018,7 +5018,7 @@ export const deOverrides = {
     localDownloadsHeading: 'Lokal',
     noAuthenticatedProviders: 'Keine authentifizierten Anbieter.',
     pro: 'Pro',
-    proNeedsSubscription: 'Pro-Modelle benötigen ein bezahltes Nous-Abo.',
+    proNeedsSubscription: "Pro-Modelle benötigen ein bezahltes fournisseur externe-Abo.",
     free: 'Kostenlos',
     freeTier: 'Kostenlose Stufe',
     priceTitle: 'Eingabe-/Ausgabepreis pro Million Tokens',
@@ -5618,11 +5618,11 @@ export const deOverrides = {
         },
         free_tier_disabled: {
           title: 'Chatten ohne Anmeldung ist gerade abgeschaltet',
-          body: 'Melden Sie sich mit einem Nous-Konto an, um weiterzuschreiben – es ist kostenlos.'
+          body: "Melden Sie sich mit einem fournisseur externe-Konto an, um weiterzuschreiben – es ist kostenlos."
         },
         free_tier_rate_limited: {
           title: 'Sie haben das Kontingent für Chats ohne Anmeldung aufgebraucht',
-          body: 'Es wird bald wieder aufgefüllt. Melden Sie sich mit einem Nous-Konto an, um ein größeres Kontingent zu erhalten – es ist kostenlos.'
+          body: "Es wird bald wieder aufgefüllt. Melden Sie sich mit einem fournisseur externe-Konto an, um ein größeres Kontingent zu erhalten – es ist kostenlos."
         },
         free_tier_at_capacity: {
           title: 'Chatten ohne Anmeldung ist gerade sehr stark ausgelastet',
@@ -5630,11 +5630,11 @@ export const deOverrides = {
         },
         free_tier_model_not_free: {
           title: 'Dieses Modell gibt es ohne Anmeldung nicht',
-          body: "Actelyo Law Harness verwendet vorerst das kostenlose Modell. Melden Sie sich mit einem Nous-Konto an, um mehr Modelle zu nutzen – es ist kostenlos."
+          body: "Actelyo Law Harness verwendet vorerst das kostenlose Modell. Melden Sie sich mit einem fournisseur externe-Konto an, um mehr Modelle zu nutzen – es ist kostenlos."
         },
         free_tier_route: {
           title: "Actelyo Law Harness hat das kostenlose Modell über diese Route nicht erreicht",
-          body: 'Melden Sie sich mit einem Nous-Konto an – es ist kostenlos – oder prüfen Sie die Einstellung NOUS_INFERENCE_BASE_URL.'
+          body: "Melden Sie sich mit einem fournisseur externe-Konto an – es ist kostenlos – oder prüfen Sie die Einstellung NOUS_INFERENCE_BASE_URL."
         },
         free_tier_outage: {
           title: 'Das kostenlose Modell antwortet gerade schlecht',
@@ -5642,7 +5642,7 @@ export const deOverrides = {
         },
         free_tier_refused: {
           title: "Actelyo Law Harness konnte das ohne Anmeldung nicht senden",
-          body: 'Eine Anmeldung mit einem Nous-Konto ist kostenlos.'
+          body: "Eine Anmeldung mit einem fournisseur externe-Konto ist kostenlos."
         }
       },
       errorAuthKinds: {
@@ -5672,7 +5672,7 @@ export const deOverrides = {
       errorOpenHermesFolderFailed: "Der Actelyo Law Harness-Ordner konnte nicht geöffnet werden",
       errorUpdateApiKey: 'API-Key aktualisieren',
       errorSignInAgain: provider => `Erneut bei ${provider} anmelden`,
-      errorSignInFreeTier: 'Mit einem Nous-Konto anmelden',
+      errorSignInFreeTier: "Mit einem fournisseur externe-Konto anmelden",
       errorOauthExpired: provider =>
         `Ihre Anmeldung bei ${provider} ist abgelaufen oder wurde widerrufen. Melden Sie sich erneut an, um weiterzuchatten.`,
       errorOpenLogs: 'Logs öffnen',

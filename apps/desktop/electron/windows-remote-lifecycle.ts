@@ -164,7 +164,7 @@ async function assertWindowsRemoteInstallUpdateClear(ssh, hermesHome) {
 
   const error: any = new Error(
     live
-      ? `Remote Hermes update process ${live[1]} is still running; SSH startup is paused.`
+      ? `Remote Actelyo Law Harness update process ${live[1]} is still running; SSH startup is paused.`
       : "The remote Actelyo Law Harness update marker is unreadable or malformed; refusing SSH startup."
   )
 

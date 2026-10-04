@@ -13,7 +13,7 @@ export const ja = defineLocale({
   sharedMetrics: {
     consentTitle: "Actelyo Law Harness の改善に協力しますか？",
     consentBody:
-      '共有メトリクスは上限付きのカウンターだけです。プロンプト、ファイル、パス、エラーテキストは含みません。収集はローカルで行われ、Nous への送信は別途オプトインです。',
+      "共有メトリクスは上限付きのカウンターだけです。プロンプト、ファイル、パス、エラーテキストは含みません。収集はローカルで行われ、fournisseur externe への送信は別途オプトインです。",
     whatIsCollected: '収集される内容',
     collectedIntro: '上限付きのカウンターのみ：',
     collectedActivity: 'アクティビティ、セッションの長さ、結果、エラーの分類',
@@ -27,11 +27,11 @@ export const ja = defineLocale({
     collectedMachine:
       "大まかなマシン情報：RAM の範囲、GPU の種類、Actelyo Law Harness バージョンの古さとリリースチャネル、未適用の更新数、ローカルモデルサーバーの使用有無",
     installId:
-      '送信すると、日次パッケージが Nous のテレメトリサービスにアップロードされます。パッケージにはこのプロファイルのインストール ID（個人情報を含まない固定のランダム UUID。共有メトリクスのディレクトリを削除するとリセット）が付きます。',
+      "送信すると、日次パッケージが fournisseur externe のテレメトリサービスにアップロードされます。パッケージにはこのプロファイルのインストール ID（個人情報を含まない固定のランダム UUID。共有メトリクスのディレクトリを削除するとリセット）が付きます。",
     consentWindow:
       '収集期間全体が記録済みの同意期間内に収まるパッケージだけが送信されます。オプトイン前のデータや、送信オフ中のデータはこのマシンに残ります。送信はいつでもオフに戻せます。',
     readDocs: '詳細を読む',
-    share: '収集して Nous に送信する',
+    share: "収集して fournisseur externe に送信する",
     local: 'ローカルでのみ収集する',
     off: '共有しない',
     changeLater: '設定 → 安全性 からいつでも変更できます。',
@@ -39,12 +39,12 @@ export const ja = defineLocale({
     collectLabel: '利用統計を収集する',
     collectDesc:
       '上限付きのカウンターをこのデバイスに保存します。プロンプト、ファイル、パス、エラーテキストは含みません。',
-    sendLabel: '利用統計を Nous に送信する',
+    sendLabel: "利用統計を fournisseur externe に送信する",
     sendDesc:
-      '日次パッケージを Nous のテレメトリサービスにアップロードします。同意期間内のデータだけが送信されます。収集がオンである必要があります。',
+      "日次パッケージを fournisseur externe のテレメトリサービスにアップロードします。同意期間内のデータだけが送信されます。収集がオンである必要があります。",
     unavailable: "この設定を変更するには Actelyo Law Harness バックエンドを更新してください。",
     stripBody: '上限付きのカウンターのみ。プロンプトやファイルは含みません。',
-    stripChoices: { share: 'Nous に送信', local: 'ローカルのみ', off: '今はしない' },
+    stripChoices: { share: "fournisseur externe に送信", local: 'ローカルのみ', off: '今はしない' },
     stripDetails: '詳細'
   },
   intro: introJa,
@@ -185,11 +185,11 @@ export const ja = defineLocale({
       signOutAndSignIn: 'サインアウトして再サインイン',
       remoteFailureHint:
         '「ゲートウェイ設定」でゲートウェイの URL とサインインを確認するか、ローカルゲートウェイに切り替えてください。',
-      cloudDownTitle: 'Nous Cloud エージェントが停止しています',
+      cloudDownTitle: "fournisseur externe Cloud エージェントが停止しています",
       cloudDownDescription:
-        'このゲートウェイが接続している Nous 管理のクラウドエージェントがサーバーエラーを返しています。ここから再起動することはできません。ステータスを確認するか、ローカルゲートウェイに切り替えるか、サポートに連絡してください。',
+        "このゲートウェイが接続している fournisseur externe 管理のクラウドエージェントがサーバーエラーを返しています。ここから再起動することはできません。ステータスを確認するか、ローカルゲートウェイに切り替えるか、サポートに連絡してください。",
       cloudDownHint:
-        '下のボタンから Nous Portal（インスタンスの状態と操作）を開くか、Discord でサポートを受けられます。',
+        "下のボタンから fournisseur externe Portal（インスタンスの状態と操作）を開くか、Discord でサポートを受けられます。",
       cloudDownCheckPortal: 'Portal のステータスを確認',
       cloudDownDiscord: 'Discord でサポートを受ける',
       hideRecentLogs: '最近のログを非表示',
@@ -297,7 +297,7 @@ export const ja = defineLocale({
   },
 
   billingBlock: {
-    titleNous: 'Nous クレジットが不足しています',
+    titleNous: "fournisseur externe クレジットが不足しています",
     titleProvider: provider => `クレジット不足 — ${provider}`,
     fallbackMessage: 'アカウントのクレジットが不足しています。続行するにはクレジットを追加してください。',
     openBilling: '請求を開く',
@@ -306,9 +306,9 @@ export const ja = defineLocale({
   },
 
   sendDiagnostics: {
-    title: 'Nous に診断情報を送信',
+    title: "fournisseur externe に診断情報を送信",
     privacyNotice:
-      'デバッグバンドルを Nous 内部ストレージにアップロードします（公開ペーストではありません）。システム情報（OS、バージョン、プロバイダー、設定済み API キーの種類 — キー自体は含まれません）と、エージェント/ゲートウェイ/デスクトップの完全なログ（各最大 512 KB。会話内容、ツール出力、ファイルパスを含む可能性が高い）が含まれます。シークレットはアップロード前にマスクされます。閲覧できるのは Nous スタッフと許可された Discord モデレーターのみで、14 日後に自動削除されます。',
+      "デバッグバンドルを fournisseur externe 内部ストレージにアップロードします（公開ペーストではありません）。システム情報（OS、バージョン、プロバイダー、設定済み API キーの種類 — キー自体は含まれません）と、エージェント/ゲートウェイ/デスクトップの完全なログ（各最大 512 KB。会話内容、ツール出力、ファイルパスを含む可能性が高い）が含まれます。シークレットはアップロード前にマスクされます。閲覧できるのは fournisseur externe スタッフと許可された Discord モデレーターのみで、14 日後に自動削除されます。",
     upload: 'アップロード',
     uploading: 'アップロード中…',
     cancel: 'キャンセル',
@@ -324,7 +324,7 @@ export const ja = defineLocale({
     handoffLead: '続きは次の場所で:',
     links: {
       github: 'GitHub Issues',
-      portal: 'Nous Portal サポート',
+      portal: "fournisseur externe Portal サポート",
       discord: 'Discord'
     }
   },
@@ -1553,14 +1553,14 @@ export const ja = defineLocale({
       activeBackend: '使用中',
       activeBackendHint: 'これが現在アクティブなバックエンドです',
       useBackend: 'このバックエンドを使う',
-      nousIncluded: 'Nous サブスクリプションに含まれています。有効にするには Nous Portal にサインインしてください。',
-      nousAuthNeededTitle: 'Nous Portal にサインイン',
+      nousIncluded: "fournisseur externe サブスクリプションに含まれています。有効にするには fournisseur externe Portal にサインインしてください。",
+      nousAuthNeededTitle: "fournisseur externe Portal にサインイン",
       nousAuthNeededMessage: provider =>
-        `${provider} は保存されましたが、Nous Portal にサインインするまで有効になりません。`,
+        `${provider} は保存されましたが、fournisseur externe Portal にサインインするまで有効になりません。`,
       nousAuthSignIn: 'サインイン',
-      nousAuthDoneTitle: 'Nous Portal に接続しました',
+      nousAuthDoneTitle: "fournisseur externe Portal に接続しました",
       nousAuthDoneMessage: 'サブスクリプションのバックエンドが有効になりました。',
-      nousAuthFailed: 'Nous Portal のサインインが完了しませんでした',
+      nousAuthFailed: "fournisseur externe Portal のサインインが完了しませんでした",
       noApiKeyRequired: 'API キーは不要です。',
       postSetupHint: step =>
         `このバックエンドは一度だけインストールが必要です (${step})。このマシン上で実行され、数分かかる場合があります。`,
@@ -2766,8 +2766,8 @@ export const ja = defineLocale({
       '/browser': 'エージェントのブラウザーを管理 [connect|disconnect|status|use]',
       '/palette': 'コマンドパレットを開く',
       '/usage': 'このセッションのトークン使用量を表示',
-      '/subscription': 'Nous のプランを確認し、ブラウザーで変更',
-      '/topup': 'Nous の残高を表示し、請求を管理',
+      '/subscription': "fournisseur externe のプランを確認し、ブラウザーで変更",
+      '/topup': "fournisseur externe の残高を表示し、請求を管理",
       '/platform': '問題のあるゲートウェイプラットフォームを一時停止、再開、一覧表示',
       '/version': "Actelyo Law Harness Agent のバージョンを表示",
       '/debug': 'デバッグレポートを作成',
@@ -3319,7 +3319,7 @@ export const ja = defineLocale({
     localDownloadsHeading: 'ローカル',
     noAuthenticatedProviders: '認証済みプロバイダーがありません。',
     pro: 'Pro',
-    proNeedsSubscription: 'Pro モデルには有料の Nous サブスクリプションが必要です。',
+    proNeedsSubscription: "Pro モデルには有料の fournisseur externe サブスクリプションが必要です。",
     free: '無料',
     freeTier: '無料プラン',
     priceTitle: '100 万トークンあたりの入力/出力価格',

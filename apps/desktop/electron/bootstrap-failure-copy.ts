@@ -65,7 +65,7 @@ export function describeBootstrapFailure(failedStage: string | null | undefined,
   const label = bootstrapStageLabel(failedStage)
 
   const lead = label
-    ? `Setting up Hermes stopped during the '${label}' step.`
+    ? `Setting up Actelyo Law Harness stopped during the '${label}' step.`
     : "Setting up Actelyo Law Harness stopped before it could finish."
 
   const details = typeof rawError === 'string' && rawError.trim() ? rawError.trim() : 'unknown error'

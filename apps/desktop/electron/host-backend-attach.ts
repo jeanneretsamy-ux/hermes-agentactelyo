@@ -149,7 +149,7 @@ export async function attachToHostBackend(
 
     if (attached) {
       deps.log(
-        `[attach] attached to the running Hermes backend on ${attached.baseUrl} ` +
+        `[attach] attached to the running Actelyo Law Harness backend on ${attached.baseUrl} ` +
           `(pid ${attached.pid}, registered by profile "${record.profile || 'default'}"); spawning nothing`
       )
 
