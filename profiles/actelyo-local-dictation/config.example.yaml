@@ -1,0 +1,11 @@
+# Sections à fusionner dans le config.yaml du profil Actelyo/Hermes.
+# Sélection explicite locale : aucune transcription cloud de secours.
+stt:
+  enabled: true
+  provider: local
+  local:
+    model: base
+    language: fr
+
+voice:
+  auto_tts: false

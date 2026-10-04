@@ -24,12 +24,14 @@ const app = await _electron.launch({
 })
 try {
   const page = await app.firstWindow({ timeout: 180000 })
-  await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
+  // Exercise the visible first-run choice; never force clicks through onboarding.
   const chooseLater = page.getByRole('button', { name: /choose a provider later|choisirai.*fournisseur.*plus tard/i })
-  await chooseLater.waitFor({ timeout: 90000 })
+  await chooseLater.waitFor({ timeout: 300000 })
   assert(!/\bHermes\b/i.test(await page.locator('body').innerText()), 'Legacy product name on fresh-install screen')
   await page.screenshot({ path: path.join(proof, 'installed-onboarding.png') })
   await chooseLater.click()
+  await chooseLater.waitFor({ state: 'hidden', timeout: 30000 })
+  await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)

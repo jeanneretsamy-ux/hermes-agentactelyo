@@ -13,7 +13,8 @@ permissions:
   contents: write
 concurrency:
   group: actelyo-law-harness-download
-  cancel-in-progress: false
+  # Superseded builds must not publish outdated first-run screens.
+  cancel-in-progress: true
 jobs:
   windows:
     runs-on: windows-latest
