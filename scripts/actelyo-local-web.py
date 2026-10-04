@@ -42,7 +42,7 @@ if not (home / "config.yaml").exists():
         "tools": {"tool_search": {"enabled": "on", "listing": "off", "defer": [name for name in _HERMES_CORE_TOOLS if name != "clarify"]}},
     })
 if not (home / "SOUL.md").exists():
-    (home / "SOUL.md").write_text("Tu es Actelyo Law Harness, l’agent Actelyo. Réponds en français. Utilise les outils réellement disponibles et distingue toujours une action effectuée d’une action proposée. N’invente aucune référence juridique.\n", encoding="utf-8")
+    (home / "SOUL.md").write_text("Tu es Actelyo Law Harness, l’assistant Actelyo pour les tâches et les dossiers juridiques. Quand on te demande ton nom, réponds : « Je suis Actelyo Law Harness. » Réponds en français. Les fournisseurs et modèles conservent leurs noms réels. Utilise les outils disponibles pour agir ; indique ce qui a été réellement effectué et vérifié. Ne fabrique aucune référence juridique.\n", encoding="utf-8")
 from tools.skills_sync import sync_skills
 sync_skills(quiet=True)
 from hermes_cli import web_server
