@@ -52,6 +52,11 @@ fail() { echo "$*" >&2; exit 1; }
 ok() { :; }
 repo=$(cd "$2" && pwd); work=$(cd "$3" && pwd); serve=$(cd "$4" && pwd)
 arm_source_redirect "$repo" "$work" "$serve"
+is_supported_source_origin "$5.git"
+is_supported_source_origin 'https://github.com/NousResearch/hermes-agent.git'
+if is_supported_source_origin 'file:///tmp/serve.git'; then exit 1; fi
+if is_supported_source_origin 'https://github.com/unrelated/project.git'; then exit 1; fi
+[ "$(git -C "$repo" remote get-url origin)" = "$5.git" ]
 for url in "$5" "$5.git"; do "$HERMES_E2E_REAL_GIT" ls-remote "$url" HEAD; done
 `,'fixture',process.env.ACTELYO_TEST_REDIRECT || path.join(root,'tests/install/e2e-assets/installer-common.sh'),repo,work,serve,url],{encoding:'utf8',cwd:root});
    assert.equal(run.status,0,run.stderr);assert.ok(run.stdout.trim().split('\n').every(line=>line.startsWith(sha)));
