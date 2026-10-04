@@ -21,7 +21,7 @@ jobs:
     env:
       HERMES_DESKTOP_VARIANT: bundled
       # Pin the complete product source; packaging fixes may reuse these exact inputs.
-      ACTELYO_SOURCE_SHA: 8a7c8e98fa5e9461e07d004cfd867a654619e52c
+      ACTELYO_SOURCE_SHA: ebccffe2
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Install pinned compiler supporting extended paths
@@ -55,9 +55,25 @@ jobs:
         with:
           path: apps/desktop/build/agent-payload
           key: actelyo-payload-${{ runner.os }}-${{ env.ACTELYO_SOURCE_SHA }}
+          restore-keys: |
+            actelyo-payload-${{ runner.os }}-8a7c8e98fa5e9461e07d004cfd867a654619e52c
+      - name: Reuse dependency cache while rebuilding the actual source
+        if: steps.payload.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $workspaceRoot = (Resolve-Path $env:GITHUB_WORKSPACE).Path
+          $seedCache = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'apps/desktop/build/agent-payload/uv-cache'))
+          $tempRoot = (Resolve-Path $env:RUNNER_TEMP).Path
+          $cache = [IO.Path]::GetFullPath((Join-Path $tempRoot 'actelyo-runtime-rebuild-cache'))
+          if (-not $seedCache.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar) -or -not $cache.StartsWith($tempRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Cache paths escaped owned job directories' }
+          if (Test-Path -LiteralPath $cache) { throw 'Rebuild cache directory already exists' }
+          if (Test-Path -LiteralPath $seedCache) { Move-Item -LiteralPath $seedCache -Destination $cache }
+          else { New-Item -ItemType Directory -Path $cache | Out-Null }
+          "ACTELYO_REBUILD_CACHE=$cache" >> $env:GITHUB_ENV
       - name: Stage the local agent runtime
         if: steps.payload.outputs.cache-hit != 'true'
-        run: node scripts/build/python.mjs scripts/bundles/stage.py --out apps/desktop/build/agent-payload --icons .
+        run: node scripts/build/python.mjs scripts/bundles/stage.py --out apps/desktop/build/agent-payload --icons . --cache "$env:ACTELYO_REBUILD_CACHE"
       - name: Save complete runtime inputs before packaging
         if: steps.payload.outputs.cache-hit != 'true'
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -139,4 +155,3 @@ jobs:
           $tag = "actelyo-law-harness-$($env:ACTELYO_SOURCE_SHA.Substring(0,7))-$($env:GITHUB_SHA.Substring(0,7))"
           gh release create $tag actelyo-release/Actelyo-Law-Harness-Setup-x64.exe actelyo-release/SHA256SUMS.txt actelyo-release/build-manifest.json --target $env:GITHUB_SHA --title 'Actelyo Law Harness — Windows' --notes 'Installateur Windows x64 vérifié sur un profil neuf. Icône et catalogue Actelyo. Moteur agent local inclus ; modèle à configurer séparément. Binaire non signé. Le manifeste donne le commit exact et le SHA-256.' --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
-
