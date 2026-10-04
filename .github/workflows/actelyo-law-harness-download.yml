@@ -13,7 +13,8 @@ permissions:
   contents: write
 concurrency:
   group: actelyo-law-harness-download
-  cancel-in-progress: false
+  # A superseded verifier cannot publish a valid release; build the newest commit.
+  cancel-in-progress: true
 jobs:
   windows:
     runs-on: windows-latest
@@ -139,4 +140,5 @@ jobs:
           $tag = "actelyo-law-harness-$($env:ACTELYO_SOURCE_SHA.Substring(0,7))-$($env:GITHUB_SHA.Substring(0,7))"
           gh release create $tag actelyo-release/Actelyo-Law-Harness-Setup-x64.exe actelyo-release/SHA256SUMS.txt actelyo-release/build-manifest.json --target $env:GITHUB_SHA --title 'Actelyo Law Harness — Windows' --notes 'Installateur Windows x64 vérifié sur un profil neuf. Icône et catalogue Actelyo. Moteur agent local inclus ; modèle à configurer séparément. Binaire non signé. Le manifeste donne le commit exact et le SHA-256.' --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
+
 
