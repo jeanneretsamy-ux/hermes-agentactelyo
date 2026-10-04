@@ -27,13 +27,16 @@ if (repo / "ui-tui" / "dist" / "entry.js").exists():
 sys.path.insert(0, str(repo))
 os.chdir(home)
 from hermes_cli.config import atomic_config_write
+from toolsets import _HERMES_CORE_TOOLS
 if not (home / "config.yaml").exists():
     atomic_config_write(home / "config.yaml", {
-        "model": {"default": "legalya-v30", "provider": "lmstudio", "base_url": "http://127.0.0.1:1234/v1", "context_length": 65536},
-        "providers": {"lmstudio": {"request_timeout_seconds": 180}},
+        "model": {"default": "legalya-v30", "provider": "lmstudio", "base_url": "http://127.0.0.1:1234/v1", "context_length": 16384},
+        "providers": {"lmstudio": {"request_timeout_seconds": 600}},
         "display": {"language": "fr"},
         "terminal": {"backend": "local", "cwd": str(home)},
-        "shared_metrics": {"enabled": False},
+        "telemetry": {"shared_metrics": {"enabled": False, "send": False}},
+        # All tools remain discoverable without sending every schema each turn.
+        "tools": {"tool_search": {"enabled": "on", "listing": "off", "defer": [name for name in _HERMES_CORE_TOOLS if name != "clarify"]}},
     })
 if not (home / "SOUL.md").exists():
     (home / "SOUL.md").write_text("Tu es Actelyo Law Harness, l’agent Actelyo. Réponds en français. Utilise les outils réellement disponibles et distingue toujours une action effectuée d’une action proposée. N’invente aucune référence juridique.\n", encoding="utf-8")
