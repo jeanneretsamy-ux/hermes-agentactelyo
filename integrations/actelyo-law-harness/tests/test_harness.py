@@ -126,6 +126,10 @@ class HarnessTests(unittest.TestCase):
                          {d["id"] for d in review_payload["documents"]})
         self.assertEqual(set(risk["citations"]["items"]["properties"]["evidence_id"]["enum"]),
                          {e["evidence_id"] for e in result["evidence"]})
+        clauses = risk["clause"]["properties"]["quote"]["enum"]
+        quotations = risk["citations"]["items"]["properties"]["quote"]["enum"]
+        self.assertTrue(clauses and all(q in CLAUSE for q in clauses))
+        self.assertTrue(quotations and all(q in LAW for q in quotations))
 
     def test_semantic_audit_blocks_contradiction_or_unavailable_audit(self):
         output = analysis()
@@ -144,6 +148,20 @@ class HarnessTests(unittest.TestCase):
                 result = self.harness(model=AuditModel(output)).review(request())
                 self.assertEqual(result["status"], "blocked_validation")
                 self.assertTrue(result["validation_errors"])
+
+    def test_new_court_reference_in_narrative_requires_supplied_evidence(self):
+        output = analysis()
+        output["risks"][0]["analysis"] = "La Cour de cassation, pourvoi n° 27-45.678, confirme cette règle."
+        result = self.harness(model=FakeModel(output)).review(request())
+        self.assertEqual(result["status"], "blocked_validation")
+        item = evidence()
+        item.text += "\n" + output["risks"][0]["analysis"]
+        result = self.harness(model=FakeModel(output), connector=FakeConnector(item)).review(request())
+        self.assertEqual(result["status"], "draft")
+        output["risks"][0]["analysis"] = "L'article 2.1 du contrat définit cette obligation."
+        data = request()
+        data["documents"][0]["text"] += "\nArticle 2.1 : obligation de disponibilité."
+        self.assertEqual(self.harness(model=FakeModel(output)).review(data)["status"], "draft")
 
     def test_wrong_principal_matter_prevents_model_call(self):
         model = FakeModel()
