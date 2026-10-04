@@ -22,7 +22,7 @@ jobs:
     env:
       HERMES_DESKTOP_VARIANT: bundled
       # Pin the complete product source; packaging fixes may reuse these exact inputs.
-      ACTELYO_SOURCE_SHA: ebccffe2ee39e13f799b3a99dd6c58e924a55a2e
+      ACTELYO_SOURCE_SHA: d9d470130a58e39693af50e63bdb98c37ec5bcd6
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Install pinned compiler supporting extended paths
