@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 # Driver-only setup; these helpers never install into the caller's real HOME.
+is_supported_source_origin() {
+  case "${1%.git}" in
+    https://github.com/NousResearch/hermes-agent|git@github.com:NousResearch/hermes-agent|https://github.com/jeanneretsamy-ux/hermes-agentactelyo|git@github.com:jeanneretsamy-ux/hermes-agentactelyo) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 arm_source_redirect() {
   local repo="$1" work="$2" serve="$3"
   local https='https://github.com/NousResearch/hermes-agent.git'
   local ssh='git@github.com:NousResearch/hermes-agent.git'
   local actual real_git quoted_git cfg="$work/gitconfig" shim="$work/shim"
   actual="$(git -C "$repo" remote get-url origin)"
+  case "${actual%.git}" in
+    https://github.com/jeanneretsamy-ux/hermes-agentactelyo|git@github.com:jeanneretsamy-ux/hermes-agentactelyo)
+      https='https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git'
+      ssh='git@github.com:jeanneretsamy-ux/hermes-agentactelyo.git'
+      ;;
+  esac
   real_git="$(command -v git)"
   quoted_git="$(printf '%q' "$real_git")"
   # Export the real git so later checks can observe the TRANSPORT url. After

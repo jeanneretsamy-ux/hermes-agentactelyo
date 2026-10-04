@@ -284,14 +284,10 @@ assert_redirect_is_transport_only() {
   # Either official form is valid: the installer clones over SSH or HTTPS
   # depending on the environment, and both are "the official URL" as far as
   # channel resolution is concerned.
-  local official_https='https://github.com/NousResearch/hermes-agent.git'
-  local official_ssh='git@github.com:NousResearch/hermes-agent.git'
   local configured observed
   configured="$(git -C "$INSTALL_DIR" config --get remote.origin.url)"
-  case "$configured" in
-    "$official_https"|"$official_ssh") ;;
-    *) fail "origin is configured as '$configured', not an official URL — the redirect is not transport-only" ;;
-  esac
+  is_supported_source_origin "$configured" \
+    || fail "origin is configured as '$configured', not an official URL — the redirect is not transport-only"
   # `git` on PATH is the shim here (it reports the official origin so fork
   # detection sees it), so read the TRANSPORT url through the real git that
   # arm_source_redirect exported — otherwise `remote get-url origin` returns
