@@ -40,6 +40,12 @@ try {
     localPayloadPresent: true, nativeCatalogVerified: true, logos,
     modelIncluded: false, codeSigned: false
   }, null, 2))
+} catch (error) {
+  for (const [index, page] of app.windows().entries()) {
+    await page.screenshot({ path: path.join(proof, `failure-window-${index}.png`) }).catch(() => {})
+    console.error('Installed window:', await page.locator('body').innerText().catch(() => 'unavailable'))
+  }
+  throw error
 } finally {
   await app.close()
 }
