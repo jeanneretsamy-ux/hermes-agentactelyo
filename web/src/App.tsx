@@ -620,7 +620,7 @@ export default function App() {
 
                 <Typography className="font-bold text-[1.125rem] leading-[0.95] tracking-[0.0525rem] text-midground uppercase">
                   <img src="/actelyo-logo.png" alt="Actelyo" className="h-8 w-auto rounded-lg p-1" style={{ backgroundColor: "var(--actelyo-brand-tile)" }} />
-                  Legal Harness
+                  Actelyo Law Harness
                 </Typography>
               </div>
 
