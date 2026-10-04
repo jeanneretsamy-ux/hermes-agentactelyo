@@ -58,7 +58,10 @@ jobs:
         run: npm run build --workspace apps/desktop
       - name: Package Windows bundled application
         working-directory: apps/desktop
-        run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never
+        run: |
+          node -e "if (process.arch !== 'x64') throw new Error('Windows x64 runner required')"
+          if ($LASTEXITCODE -ne 0) { throw 'Wrong runner architecture' }
+          node scripts/run-electron-builder.mjs --win zip --publish never
       - name: Build and install Actelyo installer
         shell: pwsh
         run: |
