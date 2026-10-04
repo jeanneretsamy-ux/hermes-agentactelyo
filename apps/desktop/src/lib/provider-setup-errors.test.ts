@@ -21,6 +21,12 @@ describe('isProviderSetupErrorMessage', () => {
     ).toBe(true)
   })
 
+  it('recognizes the missing-provider reason shown on the installed first-run screen', () => {
+    expect(isProviderSetupErrorMessage('Hermes is not connected to any AI provider yet. Run `hermes model` to pick one.')).toBe(true)
+    expect(isProviderSetupErrorMessage('Actelyo Law Harness is not connected to any AI provider yet.')).toBe(true)
+    expect(isProviderSetupErrorMessage('The auxiliary provider is not connected.')).toBe(false)
+  })
+
   it('matches an explicit provider that has no credentials', () => {
     // agent/auxiliary_unavailable.py::missing_provider_credentials_message, both shapes.
     expect(
