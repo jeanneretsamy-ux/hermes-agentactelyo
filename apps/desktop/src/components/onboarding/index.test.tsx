@@ -50,9 +50,9 @@ afterEach(() => {
 })
 
 describe('onboarding Picker', () => {
-  it.each([[], [makeOAuthProvider('nous', 'Nous Portal')]])(
+  it.each([{ providers: [] }, { providers: [makeOAuthProvider('nous', 'Nous Portal')] }])(
     'offers OpenRouter without expanding other providers (%j)',
-    providers => {
+    ({ providers }) => {
       setProviders(providers)
       render(<Picker ctx={ctx} />)
 
@@ -69,9 +69,9 @@ describe('onboarding Picker', () => {
     }
   )
 
-  it.each([[], [makeOAuthProvider('nous', 'Nous Portal')]])(
+  it.each([{ providers: [] }, { providers: [makeOAuthProvider('nous', 'Nous Portal')] }])(
     'offers a local endpoint without the managed-runtime flag (%j)',
-    providers => {
+    ({ providers }) => {
       $localModelsEnabled.set(false)
       setProviders(providers)
       render(<Picker ctx={ctx} />)

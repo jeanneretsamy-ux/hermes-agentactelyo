@@ -29,6 +29,19 @@ try {
   await chooseLater.waitFor({ timeout: 300000 })
   assert(!/\bHermes\b/i.test(await page.locator('body').innerText()), 'Legacy product name on fresh-install screen')
   await page.screenshot({ path: path.join(proof, 'installed-onboarding.png') })
+  // Both inference choices must be reachable without a key, model download,
+  // or forcing a click through the first-run overlay.
+  const backToChoices = () => page.getByRole('button', { name: /back to sign in|retour à la connexion/i }).click()
+  await page.getByRole('button', { name: /^OpenRouter / }).click()
+  const cloudKey = page.getByPlaceholder(/paste api key|collez votre clé api/i)
+  await cloudKey.waitFor()
+  assert.equal(await cloudKey.getAttribute('type'), 'password')
+  await backToChoices()
+  await page.getByRole('button', { name: /LM Studio \/ Ollama/ }).click()
+  await page.getByPlaceholder('http://127.0.0.1:1234/v1').waitFor()
+  await page.getByPlaceholder(/API key \(optional|Clé API \(facultatif/i).waitFor()
+  await page.screenshot({ path: path.join(proof, 'installed-local-provider.png') })
+  await backToChoices()
   await chooseLater.click()
   await chooseLater.waitFor({ state: 'hidden', timeout: 30000 })
   await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
@@ -45,7 +58,7 @@ try {
   await page.screenshot({ path: path.join(proof, 'installed-skills.png') })
   fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
-    localPayloadPresent: true, nativeCatalogVerified: true, logos,
+    localPayloadPresent: true, nativeCatalogVerified: true, providerChoicesVerified: ['openrouter', 'local_endpoint'], logos,
     modelIncluded: false, codeSigned: false
   }, null, 2))
 } catch (error) {
