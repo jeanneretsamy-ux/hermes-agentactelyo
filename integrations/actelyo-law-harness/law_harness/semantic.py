@@ -2,6 +2,7 @@
 import json
 
 from .core import HarnessError, normalized
+from .schemas import quote_choices
 
 
 AUDIT_PROMPT = """Tu contrôles les contradictions factuelles d'un brouillon de revue.
@@ -20,7 +21,9 @@ Réponds seulement en JSON selon le schéma fourni. Aucun outil ni nouvelle réf
 """
 
 
-def audit_schema(documents):
+def audit_schema(documents, analysis):
+    document_quotes = list(dict.fromkeys(q for d in documents for q in quote_choices(d["text"], 10)))
+    claims = list(dict.fromkeys(q for text in narrative_strings(analysis) for q in quote_choices(text, 10)))
     return {"type": "object", "additionalProperties": False,
             "required": ["status", "findings"], "properties": {
                 "status": {"type": "string", "enum": ["clear", "contradiction", "uncertain"]},
@@ -28,9 +31,16 @@ def audit_schema(documents):
                     "type": "object", "additionalProperties": False,
                     "required": ["claim", "document_id", "document_quote", "reason"],
                     "properties": {
-                        "claim": {"type": "string"}, "reason": {"type": "string"},
-                        "document_quote": {"type": "string"},
+                        "claim": {"type": "string", **({"enum": claims} if claims else {})}, "reason": {"type": "string"},
+                        "document_quote": {"type": "string", "enum": document_quotes},
                         "document_id": {"type": "string", "enum": [d["id"] for d in documents]}}}}}}
+
+
+def narrative_strings(analysis):
+    strings = [analysis["summary"], *analysis["open_questions"]]
+    for risk in analysis["risks"]:
+        strings.extend([risk["issue"], risk["analysis"], *risk["limitations"]])
+    return strings
 
 
 def audit_analysis(model, analysis, documents, max_context_chars):
@@ -38,7 +48,7 @@ def audit_analysis(model, analysis, documents, max_context_chars):
     if len(json.dumps(payload, ensure_ascii=False)) > max_context_chars:
         return {"status": "unavailable", "findings": []}, ["Audit factuel : contexte trop volumineux"]
     try:
-        audit = model.complete(AUDIT_PROMPT, payload, schema=audit_schema(documents))
+        audit = model.complete(AUDIT_PROMPT, payload, schema=audit_schema(documents, analysis))
     except HarnessError as exc:
         return {"status": "unavailable", "findings": []}, [f"Audit factuel non terminé : {exc}"]
     status, findings = audit.get("status"), audit.get("findings")
@@ -52,9 +62,7 @@ def audit_analysis(model, analysis, documents, max_context_chars):
         return audit, ["Audit factuel : comparaison incertaine, validation humaine requise"]
     docs = {d["id"]: normalized(d["text"]) for d in documents}
     # The auditor must anchor each claim to narrative, not echoed source/contract quotes.
-    narrative = [analysis.get("summary", ""), *analysis.get("open_questions", [])]
-    for risk in analysis.get("risks", []):
-        narrative.extend([risk["issue"], risk["analysis"], *risk["limitations"]])
+    narrative = narrative_strings(analysis)
     if not findings:
         return audit, ["Audit factuel : contradiction sans constat"]
     for item in findings:

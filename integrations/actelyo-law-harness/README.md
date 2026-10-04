@@ -143,7 +143,8 @@ La connexion effective depuis LM Studio reste à vérifier sur l'application ins
 | `blocked_validation` | Sortie/citations invalides, contradiction signalée ou audit factuel non concluant ; ne pas accepter le livrable |
 
 La génération contraint `document_id` et `evidence_id` aux identifiants réellement
-fournis. Les extraits restent vérifiés exactement après génération ; aucun identifiant
+fournis. Les extraits sont eux aussi limités à des passages littéraux liés à leur
+document/source, puis vérifiés exactement après génération ; aucun identifiant
 inconnu n'est réparé automatiquement. Une seconde lecture par le même modèle compare
 les affirmations factuelles du brouillon aux contrats. Un conflit, une incertitude ou
 un échec de cet audit bloque la sortie. Les constats doivent citer une affirmation
@@ -151,6 +152,26 @@ du brouillon et un passage exact du document. Ce contrôle peut manquer une cont
 ou en signaler une à tort ; il ne certifie ni l'interprétation juridique ni l'absence
 d'hallucination. `human_validation_required` reste toujours vrai. L'API conserve le
 brouillon brut des rapports bloqués : chaque consommateur doit respecter leur statut.
+
+Les passages citables sont les lignes et fenêtres de 800 caractères maximum,
+découpées aux espaces si possible, du texte fourni. La source complète et le contrat
+complet restent dans le contexte : ces fenêtres ne constituent pas une nouvelle
+recherche ni une validation de pertinence juridique. Au-delà de 256 passages par
+texte, le service exige un découpage explicite. Un fournisseur qui ignore le schéma
+reste soumis aux contrôles exacts après génération.
+
+Le texte affirmatif du brouillon (synthèse, problèmes, analyses, propositions) est
+aussi contrôlé pour les numéros d'articles et numéros de pourvoi/RG identifiables.
+Une référence absente des titres et textes des preuves fournies bloque la sortie.
+Ce détecteur n'est pas exhaustif : il ne vérifie pas toutes les références sans
+numéro, les affirmations implicites, les questions ouvertes ni les limites. La
+présence d'un numéro dans une preuve ne certifie pas le raisonnement ni la décision.
+
+La santé du service annonce `recommended_review_timeout_seconds` : budget conseillé
+du client pour trois appels au modèle et une marge documentaire, borné entre 5 et
+30 minutes. Le pont ERP utilise ce budget pour la revue et conserve 5 secondes pour
+les appels de santé. C'est un délai client conseillé, pas une garantie de durée du
+service. Le modèle d'exemple dispose de 180 secondes par appel d'inférence.
 | `draft_incomplete` | Brouillon avec source en échec ou date inconnue |
 | `draft` | Contrôles techniques passés ; validation juridique humaine requise |
 

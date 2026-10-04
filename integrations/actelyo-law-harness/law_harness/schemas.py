@@ -1,5 +1,6 @@
 """Schemas shared by prompts and constrained model generation."""
 import copy
+from .core import require
 STRING = {"type": "string"}
 STRINGS = {"type": "array", "items": STRING}
 
@@ -28,11 +29,45 @@ REVIEW_SCHEMA = {
                     "properties": {"evidence_id": STRING, "quote": STRING}}}}}}}}
 
 
+def quote_choices(text, minimum):
+    """Literal windows only; full source text remains available in the model context."""
+    passages = []
+    for line in text.splitlines():
+        line = line.strip()
+        start = 0
+        while start < len(line):
+            end = min(start + 800, len(line))
+            if end < len(line):
+                boundary = line.rfind(" ", start, end)
+                if boundary > start:
+                    end = boundary
+            passage = line[start:end].strip()
+            if len(passage) >= minimum:
+                passages.append(passage)
+            start = end
+            while start < len(line) and line[start].isspace():
+                start += 1
+    passages = list(dict.fromkeys(passages))
+    require(len(passages) <= 256, "Trop de passages citables ; découpage explicite requis")
+    return passages
+
+
+def reference_schema(references, identifier, minimum):
+    branches = []
+    for key, text in references:
+        choices = quote_choices(text, minimum)
+        if choices:
+            branches.append({"type": "object", "additionalProperties": False,
+                             "required": [identifier, "quote"], "properties": {
+                                 identifier: {"type": "string", "enum": [key]},
+                                 "quote": {"type": "string", "enum": choices}}})
+    require(bool(branches), "Aucun passage suffisamment long à citer")
+    return branches[0] if len(branches) == 1 else {"anyOf": branches}
+
+
 def review_schema(documents, evidence):
     schema = copy.deepcopy(REVIEW_SCHEMA)
     fields = schema["properties"]["risks"]["items"]["properties"]
-    fields["clause"]["properties"]["document_id"] = {
-        "type": "string", "enum": [d["id"] for d in documents]}
-    fields["citations"]["items"]["properties"]["evidence_id"] = {
-        "type": "string", "enum": list(evidence)}
+    fields["clause"] = reference_schema([(d["id"], d["text"]) for d in documents], "document_id", 10)
+    fields["citations"]["items"] = reference_schema([(key, e.text) for key, e in evidence.items()], "evidence_id", 20)
     return schema

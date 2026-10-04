@@ -17,6 +17,7 @@ from law_harness.connectors import Model
 from law_harness.core import Evidence, HarnessError, Http, check_temporal, load_config
 from law_harness.harness import Harness, REVIEW_PROMPT, validate_analysis
 from law_harness.schemas import REVIEW_SCHEMA
+from law_harness.references import validate_narrative_references
 
 def digest(value):
     return hashlib.sha256(value).hexdigest()
@@ -59,11 +60,13 @@ class SnapshotConnector:
 def diagnostics(analysis, documents, evidence):
     if analysis is None:
         return {"generated": False, "citation_count": 0, "citation_defect": None,
-                "errors": [], "missing_reference_signal": False}
+                "errors": [], "narrative_reference_defect": None, "missing_reference_signal": False}
     if not isinstance(analysis, dict):
         return {"generated": True, "citation_count": 0, "citation_defect": None,
-                "errors": ["Non-object output"], "missing_reference_signal": False}
+                "errors": ["Non-object output"], "narrative_reference_defect": None, "missing_reference_signal": False}
     errors = validate_analysis(analysis, documents, evidence)
+    narrative_errors = validate_narrative_references(analysis, evidence, documents)
+    errors.extend(narrative_errors)
     risks = analysis.get("risks", [])
     risks = risks if isinstance(risks, list) else []
     count = sum(len(r.get("citations", [])) for r in risks if isinstance(r, dict)
@@ -78,7 +81,7 @@ def diagnostics(analysis, documents, evidence):
     citation_defect = any("preuve inconnue" in e or "citation introuvable" in e
                           or "citation invalide" in e or "aucune preuve citée" in e for e in errors)
     return {"generated": True, "citation_count": count, "citation_defect": citation_defect,
-            "errors": errors, "missing_reference_signal": gap}
+            "errors": errors, "narrative_reference_defect": bool(narrative_errors), "missing_reference_signal": gap}
 
 def delivered_analysis(record):
     return record.get("analysis") if record.get("status") in {"draft", "draft_incomplete"} else None
@@ -116,6 +119,8 @@ def summarize(records, cases):
             "delivery_coverage": len(delivered) / len(rows) if rows else None,
             "generated_citation_defect_responses": sum(r["checks"]["citation_defect"] is True for r in generated),
             "generated_responses": len(generated),
+            "generated_narrative_reference_defect_responses": sum(r["checks"].get("narrative_reference_defect") is True for r in generated),
+            "delivered_narrative_reference_defect_responses": sum(r["checks"].get("narrative_reference_defect") is True for r in delivered),
             "delivered_citation_defect_responses": sum(r["checks"]["citation_defect"] is True for r in delivered),
             "delivered_responses_denominator": len(delivered),
             "blocked_validation": sum(r["status"] == "blocked_validation" for r in rows),
@@ -212,7 +217,8 @@ def run(args):
         "contracts": "synthetic", "rubric_author": "internal agent, not independently lawyer validated",
         "model_weights_sha256": None, "baseline": "frozen baseline prompt when supplied; same sources; no planner, no date exclusion, no hard gates",
         "differences": ["harness planning call", "date exclusion", "scope refusal", "exact quotation/identity validation",
-                        "identifier-bound schema and prompt", "same-model factual consistency audit"],
+                        "identifier-and-literal-passage-bound schema and prompt", "numbered references in assertions",
+                        "same-model factual consistency audit"],
         "judges": "mechanical checks only; jurist annotations not yet supplied", "justinian_comparable": False}
     write_json(args.out / "manifest.json", manifest)  # Frozen BEFORE any model call.
     write_json(args.out / "dataset.snapshot.json", {**dataset, "cases": cases})

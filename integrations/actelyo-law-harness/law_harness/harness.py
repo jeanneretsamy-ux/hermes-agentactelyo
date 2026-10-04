@@ -8,6 +8,7 @@ from .connectors import Legifrance, LegalDataHunter, Model
 from .core import Evidence, HarnessError, Http, iso_date, normalized, policy, require
 from .schemas import PLAN_SCHEMA, review_schema
 from .semantic import audit_analysis
+from .references import validate_narrative_references
 
 
 PLAN_PROMPT = """Tu prépares une revue contractuelle en droit français.
@@ -29,6 +30,9 @@ document_id doit reprendre documents[].id ; evidence_id doit reprendre
 evidence[].evidence_id EN ENTIER (source:source_id). Ces deux espaces sont distincts.
 Un identifiant de contrat n'est jamais une preuve juridique. Les identifiants autorisés
 sont fournis dans identifiers et contraints par le schéma. Ne crée aucun alias.
+Les quote sont aussi contraints à des passages exacts des documents ou preuves.
+Choisis un passage pertinent dans ces choix ; n'en réécris pas les mots. Lis toujours
+la source complète pour interpréter un passage, qui peut être une fenêtre partielle.
 Une citation textuelle n'établit pas à elle seule la pertinence juridique : indique
 les limites, notamment la portée des décisions et les dates non vérifiées.
 Si les preuves manquent, ajoute une question ouverte plutôt qu'une affirmation.
@@ -62,6 +66,10 @@ class Harness:
                              "process": item.get("allow_process") is True,
                              "display": item.get("allow_display") is True}
         result = {"principal": self.cfg["principal"], "sources": sources,
+                  "recommended_review_timeout_seconds": min(1800, max(300,
+                    3 * int(self.cfg.get("model", {}).get("timeout_seconds", 120))
+                    + 30 * (4 * sum(s["enabled"] and s["connector_implemented"] for s in sources.values())
+                            + min(20, max(1, int(self.cfg.get("max_sources", 8))))) + 60)),
                   "allowed_matters": self.cfg.get("allowed_matters", []),
                   "model_configured": bool(self.cfg.get("model", {}).get("name")),
                   "documents_authorized": self.cfg.get("allow_documents_to_model") is True
@@ -191,6 +199,8 @@ class Harness:
                 "Contexte trop volumineux ; réduire le nombre de sources ou découper les documents")
         analysis = self.model.complete(REVIEW_PROMPT, context, schema=review_schema(docs, evidence))
         errors = validate_analysis(analysis, docs, evidence)
+        if not errors:
+            errors.extend(validate_narrative_references(analysis, evidence, docs))
         audit = {"status": "not_run", "findings": []}
         if not errors:
             audit, audit_errors = audit_analysis(self.model, analysis, docs,
