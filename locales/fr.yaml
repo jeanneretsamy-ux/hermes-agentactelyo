@@ -1806,7 +1806,7 @@ slash:
   loop:
     description: "Relancer un prompt à intervalle régulier dans cette session"
   plan:
-    description: "Rédiger un plan d'implémentation markdown dans .hermes/plans/ sans rien exécuter"
+    description: "Rédiger un plan d'implémentation markdown sans rien exécuter"
   moa:
     description: "Exécuter un prompt via le preset Mixture of Agents par défaut, puis restaurer votre modèle"
   subgoal:
@@ -3947,7 +3947,7 @@ tips:
   t143: "Les skills peuvent être limitées à certains systèmes — certaines ne se chargent que sous macOS ou Linux."
   t144: "skills.external_dirs dans config.yaml permet de charger des skills depuis des répertoires personnalisés."
   t145: "L'agent peut créer ses propres skills comme mémoire procédurale grâce à skill_manage."
-  t146: "/plan écrit un plan d'implémentation en markdown dans .hermes/plans/ sans rien exécuter."
+  t146: "/plan écrit un plan d'implémentation en markdown sans rien exécuter."
   t147: "Les tâches cron peuvent embarquer une skill : hermes cron add --skill blogwatcher \"Vérifie les nouveaux articles\"."
   t148: "Les cibles de livraison cron incluent telegram, discord, slack, email, sms et plus de 12 autres plateformes."
   t149: "Si une réponse cron commence par [SILENT], la livraison est supprimée — pratique pour les tâches de simple surveillance."

@@ -1625,7 +1625,7 @@ slash:
   loop:
     description: "Re-run a prompt on a recurring interval in this session"
   plan:
-    description: "Write a markdown implementation plan to .hermes/plans/ without executing anything"
+    description: "Write a markdown implementation plan without executing anything"
   moa:
     description: "Run one prompt through the default Mixture of Agents preset, then restore your model"
   subgoal:
