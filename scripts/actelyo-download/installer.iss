@@ -7,6 +7,9 @@
 #ifndef BuildVersion
   #define BuildVersion "2026.10.4"
 #endif
+#ifndef RepoRoot
+  #define RepoRoot "..\.."
+#endif
 [Setup]
 AppId={{4B617AF4-6EA4-4220-849A-8044F224B92C}
 AppName=Actelyo Law Harness
@@ -20,11 +23,12 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#ReleaseDir}
 OutputBaseFilename=Actelyo-Law-Harness-Setup-x64
-SetupIconFile=..\..\apps\desktop\assets\icon.ico
-LicenseFile=..\..\LICENSE
+SetupIconFile={#RepoRoot}\apps\desktop\assets\icon.ico
+LicenseFile={#RepoRoot}\LICENSE
 UninstallDisplayIcon={app}\Actelyo Law Harness.exe
-Compression=lzma2/fast
+Compression=lzma2/max
 SolidCompression=yes
+MinVersion=10.0
 WizardStyle=modern
 CloseApplications=yes
 [Tasks]

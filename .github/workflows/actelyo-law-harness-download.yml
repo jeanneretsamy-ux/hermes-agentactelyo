@@ -27,6 +27,8 @@ jobs:
         shell: pwsh
         run: |
           Copy-Item scripts/actelyo-download/verify-installed.mjs "$env:RUNNER_TEMP/verify-actelyo-installed.mjs"
+          Copy-Item scripts/actelyo-download/prepare-installer.mjs "$env:RUNNER_TEMP/prepare-actelyo-installer.mjs"
+          Copy-Item scripts/actelyo-download/installer.iss "$env:RUNNER_TEMP/actelyo-installer.iss"
           git fetch origin $env:ACTELYO_SOURCE_SHA --depth=1
           if ($LASTEXITCODE -ne 0) { throw 'Product source unavailable' }
           git checkout --detach $env:ACTELYO_SOURCE_SHA
@@ -61,22 +63,26 @@ jobs:
         run: |
           node -e "if (process.arch !== 'x64') throw new Error('Windows x64 runner required')"
           if ($LASTEXITCODE -ne 0) { throw 'Wrong runner architecture' }
-          node scripts/run-electron-builder.mjs --win zip --publish never
+          node scripts/run-electron-builder.mjs --win --dir --publish never
+      - name: Prepare native Windows installer inputs
+        run: node "$env:RUNNER_TEMP/prepare-actelyo-installer.mjs" apps/desktop/release/win-unpacked
       - name: Build and install Actelyo installer
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
-          if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-          $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
-          Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+          $appSource = (Resolve-Path apps/desktop/release/win-unpacked).Path
           if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
           $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
           if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
           $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
           New-Item -ItemType Directory $releaseDir -Force | Out-Null
-          & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss
+          & $compiler "/DRepoRoot=$env:GITHUB_WORKSPACE" "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" "$env:RUNNER_TEMP/actelyo-installer.iss"
           if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
+          # The completed installer owns all bytes; free the generated application
+          # before exercising installation on the same runner.
+          $workspaceRoot = (Resolve-Path $env:GITHUB_WORKSPACE).Path
+          if (-not $appSource.StartsWith($workspaceRoot + [IO.Path]::DirectorySeparatorChar)) { throw 'Generated app outside workspace' }
+          Remove-Item -LiteralPath $appSource -Recurse -Force
           $installed = Join-Path $env:RUNNER_TEMP 'actelyo-installed'
           $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
           $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
