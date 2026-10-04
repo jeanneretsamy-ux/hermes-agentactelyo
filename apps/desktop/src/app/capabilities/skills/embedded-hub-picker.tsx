@@ -1,8 +1,11 @@
 import { useStore } from '@nanostores/react'
-import { memo, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { memo, type PointerEvent as ReactPointerEvent, useMemo, useRef, useState } from 'react'
 
+import { BrandMark } from '@/components/brand-mark'
 import { Button } from '@/components/ui/button'
-import type { ProfileScope } from '@/hermes'
+import { Input } from '@/components/ui/input'
+import { getOfficialSkills, profileScopeKey, type ProfileScope } from '@/hermes'
 import { useI18n } from '@/i18n'
 import { Loader2 } from '@/lib/icons'
 import { useStoreSelector } from '@/lib/use-session-slice'
@@ -11,22 +14,15 @@ import {
   $hubActions,
   installHubSkill,
   notifyHubActionFailed,
+  OFFICIAL_SKILLS_KEY,
   UPDATE_ALL_KEY,
   updateHubSkills
 } from '@/store/hub-actions'
 import { notify, notifyError } from '@/store/notifications'
 import { $paneHeightOverride, setPaneHeightOverride } from '@/store/panes'
 
-// The REAL Skills Hub page (docs site) embedded as a one-click picker — the
-// same trick the Bot Mode agent editor uses. `?embed=picker` hides the docs
-// chrome and adds a "+ Add to this Agent" button per card, which posts
-//   { type: 'hermes-skill-pick', name, identifier, installCmd, source }
-// to the parent window. We validate the origin and route the install through
-// the standard hub action pipeline (background action + tailed log + Skills
-// list invalidation), scoped to the Capabilities profile selector.
-const HUB_ORIGIN = 'https://hermes-agent.nousresearch.com'
-const HUB_PICKER_URL = `${HUB_ORIGIN}/docs/skills?embed=picker`
-
+// Native Actelyo catalog: metadata and installs come from the scoped backend.
+// No remote documentation page or cross-origin picker messages are loaded.
 // Hub viewport height: persisted through the shared pane store (same one the
 // terminal/editor panes use), dragged from the section's TOP edge — "pull the
 // hub up" — clamped so neither the hub nor the skills list above vanishes.
@@ -42,18 +38,10 @@ const HUB_COLLAPSED_PX = 4
 // crush the list to zero and shove its chrome under the hub header.
 const HUB_LIST_RESERVED_PX = 176
 
-interface SkillPickMessage {
-  identifier?: string
-  installCmd?: string
-  name?: string
-  source?: string
-  type?: string
-}
-
 interface EmbeddedHubPickerProps {
   /** Kept mounted but fully hidden (display:none). The Capabilities view uses
-   *  this to preserve the loaded hub iframe across tab switches — a plain
-   *  unmount would reload the whole docs site on every return to Skills. */
+   *  this to preserve the loaded hub catalog across tab switches — a plain
+   *  unmount would reload the whole catalog on every return to Skills. */
   hidden?: boolean
   /** Names of skills already installed in the scoped profile — a pick that
    *  matches is refused with a toast instead of re-running the install. */
@@ -63,10 +51,10 @@ interface EmbeddedHubPickerProps {
   profile?: ProfileScope
 }
 
-/** The Skills Hub browser for the Skills tab: a resizable iframe of the live
+/** The Skills Hub browser for the Skills tab: a resizable catalog of the live
  *  hub where every card installs with one click. Expanded by default —
  *  discovery IS the point — with a collapse toggle (persisted, like every
- *  other pane) and an update-all action. Memoized: the iframe must not sit in
+ *  other pane) and an update-all action. Memoized: the catalog must not sit in
  *  the parent's keystroke/re-render path. */
 export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
   hidden = false,
@@ -80,8 +68,8 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
   const updating = useStoreSelector($hubActions, actions => actions[UPDATE_ALL_KEY]?.running ?? false)
   // Collapse state rides the same persisted height override the sash writes
   // (0 = collapsed to the header), so "Hide the hub browser" survives tab
-  // switches and restarts instead of re-expanding — and re-loading the docs
-  // site — on every visit. Same contract as DetailPane.
+  // switches and restarts instead of re-expanding the catalog
+  // on every visit. Same contract as DetailPane.
   const heightOverride = useStore($paneHeightOverride(HUB_PANE_ID))
   const height = heightOverride ?? HUB_DEFAULT_PX
   const open = height > HUB_COLLAPSED_PX
@@ -90,7 +78,7 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
 
   // Top-edge sash: dragging UP grows the hub (shrinking the skills list above,
   // which is the flex-1 sibling). Same gesture as DetailPane / the shell's
-  // bottom panes; double-click resets to the default height. The iframe gets
+  // bottom panes; double-click resets to the default height. The catalog gets
   // pointer-events disabled for the duration or it swallows the pointermoves.
   const startDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) {
@@ -125,43 +113,35 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
     window.addEventListener('pointerup', onUp, { once: true })
   }
 
-  // Picker messages from the embedded hub page. Origin-checked; installs route
-  // through the same store pipeline the hub rows use, so the action log,
-  // optimistic flips, and Skills-list refresh all come for free.
-  useEffect(() => {
-    if (!open) {
-      return undefined
-    }
+  const [query, setQuery] = useState('')
+  const catalog = useQuery({
+    queryKey: [...OFFICIAL_SKILLS_KEY, profileScopeKey(profile)],
+    queryFn: () => getOfficialSkills(profile),
+    enabled: open && !hidden,
+    staleTime: 60_000,
+    retry: false
+  })
+  const runningKeys = useStoreSelector($hubActions, actions =>
+    Object.keys(actions)
+      .filter(key => actions[key]?.running)
+      .sort()
+      .join('|')
+  )
+  const running = useMemo(() => new Set(runningKeys.split('|')), [runningKeys])
+  const skills = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+    return (catalog.data?.skills ?? []).filter(
+      skill =>
+        !needle ||
+        [skill.name, skill.description, skill.category, ...(skill.tags ?? [])].join(' ').toLowerCase().includes(needle)
+    )
+  }, [catalog.data, query])
 
-    const onMessage = (event: MessageEvent) => {
-      if (event.origin !== HUB_ORIGIN) {
-        return
-      }
-
-      const data = event.data as SkillPickMessage | null
-
-      if (!data || data.type !== 'hermes-skill-pick' || !data.name) {
-        return
-      }
-
-      const target = String(data.identifier || data.name)
-      const label = String(data.name)
-
-      // Already installed in this scope → tell the user, don't reinstall.
-      if (installedNames.has(label) || installedNames.has(target)) {
-        notify({ kind: 'success', title: h.alreadyInstalled(label), message: '' })
-
-        return
-      }
-
-      notify({ kind: 'success', title: h.installStarted(label), message: h.actionLog })
-      void installHubSkill(target, profile).catch(err => notifyHubActionFailed(err, h.actionFailed, label, profile))
-    }
-
-    window.addEventListener('message', onMessage)
-
-    return () => window.removeEventListener('message', onMessage)
-  }, [h, installedNames, open, profile])
+  const install = (identifier: string, name: string) => {
+    if (installedNames.has(name) || installedNames.has(identifier) || running.has(identifier)) return
+    notify({ kind: 'success', title: h.installStarted(name), message: h.actionLog })
+    void installHubSkill(identifier, profile).catch(err => notifyHubActionFailed(err, h.actionFailed, name, profile))
+  }
 
   const updateAll = () => {
     notify({ kind: 'success', title: h.updateStarted, message: h.actionLog })
@@ -197,7 +177,10 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
         />
       </div>
       <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
-        <span className="text-[0.7rem] font-medium text-(--ui-text-tertiary)">{h.pickerTitle}</span>
+        <span className="flex items-center gap-2 text-[0.7rem] font-medium text-(--ui-text-tertiary)">
+          <BrandMark className="size-7" />
+          Actelyo · {h.pickerTitle}
+        </span>
         <div className="flex items-center gap-1">
           <Button disabled={updating} onClick={updateAll} size="xs" variant="text">
             {updating && <Loader2 className="size-3 animate-spin" />}
@@ -209,45 +192,55 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
         </div>
       </div>
       {open && (
-        <div className="flex min-h-0 flex-col gap-1 px-3 pb-2">
-          {/* Resizable viewport: height comes from the top-edge drag sash
-              above (persisted; double-click resets). flex-basis instead of a
-              hard height so a short window shrinks the hub viewport rather
-              than letting it spill over the list. The iframe is rendered
-              oversized and scaled DOWN (133% × 0.75) so the hub page starts
-              zoomed out — the cross-origin page itself can't be styled, but
-              scaling the frame is ours. */}
+        <div className="flex min-h-0 flex-col gap-2 px-3 pb-2" style={{ flex: `0 1 ${height}px` }}>
+          <Input
+            aria-label={t.skills.searchSkills}
+            placeholder={t.skills.searchSkills}
+            value={query}
+            onChange={event => setQuery(event.target.value)}
+          />
           <div
-            style={{
-              border: '1px solid var(--ui-stroke-secondary)',
-              borderRadius: 8,
-              flex: `0 1 ${height}px`,
-              maxWidth: '100%',
-              minHeight: 0,
-              minWidth: 320,
-              overflow: 'hidden',
-              position: 'relative',
-              width: '100%'
-            }}
+            role="region"
+            aria-label={`Actelyo · ${h.pickerTitle}`}
+            className="min-h-0 flex-1 overflow-auto rounded-lg border border-(--ui-stroke-secondary)"
           >
-            <iframe
-              sandbox="allow-scripts allow-same-origin"
-              src={HUB_PICKER_URL}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                height: '133.34%',
-                // While the sash drags, the cross-origin iframe must not eat
-                // the pointermove stream.
-                pointerEvents: dragging ? 'none' : 'auto',
-                transform: 'scale(0.75)',
-                transformOrigin: 'top left',
-                width: '133.34%'
-              }}
-              title={h.pickerTitle}
-            />
+            {catalog.isPending && <p className="p-3 text-sm">{t.skills.loading}</p>}
+            {catalog.isError && (
+              <div role="alert" className="p-3 text-sm">
+                {h.loadFailed}
+                <Button onClick={() => void catalog.refetch()} size="xs" variant="text">
+                  {t.skills.refresh}
+                </Button>
+              </div>
+            )}
+            {skills.map(skill => {
+              const installed =
+                skill.installed || installedNames.has(skill.name) || installedNames.has(skill.identifier)
+              const installing = running.has(skill.identifier)
+              return (
+                <div
+                  className="flex items-center gap-3 border-b border-(--ui-stroke-secondary) p-3 last:border-b-0"
+                  key={skill.identifier}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">{skill.name}</p>
+                    <p className="text-xs text-(--ui-text-tertiary)">{skill.description}</p>
+                  </div>
+                  <Button
+                    disabled={installed || installing}
+                    onClick={() => install(skill.identifier, skill.name)}
+                    size="xs"
+                    variant="textStrong"
+                  >
+                    {installed ? h.installed : installing ? h.installing : h.install}
+                  </Button>
+                </div>
+              )
+            })}
+            {!catalog.isPending && !catalog.isError && skills.length === 0 && (
+              <p className="p-3 text-sm">{h.noResults}</p>
+            )}
           </div>
-          <p className="shrink-0 px-1 text-[0.65rem] leading-4 text-(--ui-text-quaternary)">{h.pickerHint}</p>
         </div>
       )}
     </section>
