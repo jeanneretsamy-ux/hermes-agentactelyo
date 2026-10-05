@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { QueryClientProvider } from '@tanstack/react-query'
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type * as ReactRouterDom from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -261,42 +261,79 @@ describe('CapabilitiesView toolset management', { timeout: 60_000 }, () => {
     expect(await screen.findByText(/Deep research steps/)).toBeTruthy()
   })
 
-  it('hub picker refuses to reinstall an already-installed skill', async () => {
-    const { notify } = await import('@/store/notifications')
+  it('native catalog refuses duplicate installs and ignores external picker messages', async () => {
     const { EmbeddedHubPicker } = await import('./skills/embedded-hub-picker')
-
-    render(<EmbeddedHubPicker installedNames={new Set(['web-research'])} profile={null} />)
-
-    // The picker is expanded by default — the hub iframe is live on mount.
-    expect(document.querySelector('iframe')).toBeTruthy()
-
-    await act(async () => {
-      window.dispatchEvent(
-        new MessageEvent('message', {
-          data: { type: 'hermes-skill-pick', name: 'web-research', identifier: 'web-research' },
-          origin: 'https://hermes-agent.nousresearch.com'
-        })
-      )
+    const { installHubSkill } = await import('@/store/hub-actions')
+    getOfficialSkills.mockResolvedValue({
+      skills: [
+        {
+          name: 'web-research',
+          identifier: 'builtin:web-research',
+          description: 'Research the web',
+          category: 'research',
+          tags: [],
+          installed: false
+        }
+      ]
     })
-
-    // Refused with an informational toast, no install action spawned.
-    await waitFor(() =>
-      expect(vi.mocked(notify)).toHaveBeenCalledWith(
-        expect.objectContaining({ title: expect.stringContaining('web-research') })
-      )
+    render(
+      <QueryClientProvider client={queryClient}>
+        <EmbeddedHubPicker installedNames={new Set(['web-research'])} profile="coder" />
+      </QueryClientProvider>
     )
+    const installed = await screen.findByRole('button', { name: 'Installed' })
+    expect(installed.hasAttribute('disabled')).toBe(true)
+    expect(document.querySelector('iframe')).toBeNull()
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: { type: 'hermes-skill-pick', name: 'other', identifier: 'untrusted:other' },
+        origin: 'https://hermes-agent.nousresearch.com'
+      })
+    )
+    expect(installHubSkill).not.toHaveBeenCalled()
+    expect(getOfficialSkills).toHaveBeenCalledWith('coder')
   })
 
-  it('mounts the hub iframe lazily and keeps it (hidden) across tab switches', async () => {
-    // On a non-Skills tab the docs-site iframe must not exist at all — an
-    // eagerly mounted hub is exactly the Capabilities lag bug.
-    await renderSkills() // ?tab=toolsets
-    await screen.findByRole('switch', { name: 'Turn Web Search toolset off' })
-    expect(document.querySelector('iframe')).toBeNull()
-    cleanup()
+  it('native catalog searches skills and installs into the selected profile', async () => {
+    const { EmbeddedHubPicker } = await import('./skills/embedded-hub-picker')
+    const { installHubSkill } = await import('@/store/hub-actions')
+    getOfficialSkills.mockResolvedValue({
+      skills: [
+        {
+          name: 'web-research',
+          identifier: 'builtin:web-research',
+          description: 'Web research',
+          category: 'research',
+          tags: [],
+          installed: false
+        },
+        {
+          name: 'spreadsheet',
+          identifier: 'builtin:spreadsheet',
+          description: 'Read spreadsheets',
+          category: 'office',
+          tags: ['excel'],
+          installed: false
+        }
+      ]
+    })
+    render(
+      <QueryClientProvider client={queryClient}>
+        <EmbeddedHubPicker installedNames={new Set()} profile="coder" />
+      </QueryClientProvider>
+    )
+    await screen.findByText('web-research')
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'excel' } })
+    expect(screen.queryByText('web-research')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Install' }))
+    await waitFor(() => expect(installHubSkill).toHaveBeenCalledWith('builtin:spreadsheet', 'coder'))
+  })
 
-    // Embedded mode drives tabs through local state (the route hooks are
-    // mocked here), starting on Skills: the picker mounts with the tab.
+  it('mounts the native catalog lazily and keeps it hidden across tab switches', async () => {
+    await renderSkills()
+    await screen.findByRole('switch', { name: 'Turn Web Search toolset off' })
+    expect(screen.queryByRole('region', { name: 'Actelyo · Skills Hub' })).toBeNull()
+    cleanup()
     await act(async () => {
       render(
         <QueryClientProvider client={queryClient}>
@@ -306,20 +343,13 @@ describe('CapabilitiesView toolset management', { timeout: 60_000 }, () => {
         </QueryClientProvider>
       )
     })
-
-    const iframe = document.querySelector('iframe')
-    expect(iframe).toBeTruthy()
-    expect(iframe!.closest('section')!.classList.contains('hidden')).toBe(false)
-
-    // Switch to Tools → the iframe STAYS mounted (no docs-site reload on the
-    // next visit) but its section is fully hidden, so nothing from the hub
-    // can paint over the toolsets UI.
+    const catalog = screen.getByRole('region', { name: 'Actelyo · Skills Hub' })
+    expect(catalog.closest('section')!.classList.contains('hidden')).toBe(false)
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Tools/ }))
     })
-    const kept = document.querySelector('iframe')
-    expect(kept).toBeTruthy()
-    expect(kept!.closest('section')!.classList.contains('hidden')).toBe(true)
+    expect(catalog.closest('section')!.classList.contains('hidden')).toBe(true)
+    expect(document.querySelector('iframe')).toBeNull()
   })
 
   it('shows a vision explainer that deep-links to Settings → Models', async () => {
@@ -477,15 +507,21 @@ describe('CapabilitiesView toolset management', { timeout: 60_000 }, () => {
       )
     })
 
-    // Catalog section header + the one genuinely-available row. Rows already
-    // installed (lock flag OR name collision with the installed list) are gone.
-    expect(await screen.findByText('gif-search')).toBeTruthy()
-    expect(screen.queryByText('ascii-art')).toBeNull()
+    // The native hub includes installed entries with disabled actions.
+    // A name collision and a backend installed flag both prevent reinstalling.
+    const catalog = screen.getByRole('region', { name: 'Actelyo · Skills Hub' })
+    expect(await within(catalog).findByText('gif-search')).toBeTruthy()
+    expect(within(catalog).getByText('ascii-art')).toBeTruthy()
+    expect(
+      within(catalog)
+        .getAllByRole('button', { name: 'Installed' })
+        .every(button => button.hasAttribute('disabled'))
+    ).toBe(true)
 
     // The installed skill still shows its toggle; the catalog row shows
     // Install instead of a switch.
     expect(screen.getByRole('switch', { name: 'web-research' })).toBeTruthy()
-    const install = screen.getByRole('button', { name: 'Install' })
+    const install = within(catalog).getByRole('button', { name: 'Install' })
 
     await act(async () => {
       fireEvent.click(install)

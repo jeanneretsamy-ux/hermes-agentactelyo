@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Hermes の更新は 30 分でタイムアウトしました。"
     finished_success: "✅ Hermes の更新が正常に完了しました。"
     last_lines: "{msg}\n\n最後の行:\n```\n{tail}\n```"
-    managed_action: "Hermes Agent の更新"
+    managed_action: "Actelyo Law Harness の更新"
     not_applicable: "✗ `hermes update` はこのインストール方法 ({method}) には適用できません。\n更新方法: {command}"
   usage:
     rate_limits: "⏱️ **レート制限:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ 未承認の Discord スラッシュコマンド試行\nユーザー: {user_name} ({user_id})\nチャンネル: {chan_id} (ギルド {guild_id})\nコマンド: {command_text}\n理由: {reason}"
     thread:
       seed_message: "🧵 Hermes がスレッドを作成しました: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Hermes のハンドオフ: **{name}**"
       auto_create_failed: "⚠️ Hermes はこのメッセージ用の Discord スレッドを作成できなかったため、リクエストは処理されませんでした。もう一度お試しください。"
       auto_create_failed_generic: "リクエストは処理されませんでした。もう一度お試しください。"
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label}のサイズ {size_mb}MB が上限 {cap} を超えています。代わりにファイルとして送信しました。"
   email:
     image_line: "画像: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔考え中"
       done: "🥳完了"
   irc:
-    quit_message: "Hermes Agent をシャットダウンしています"
+    quit_message: "Actelyo Law Harness をシャットダウンしています"
     standalone_quit: "配信済み"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "一度だけ承認"
     confirm_always_approve: "常に承認"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "このチャットをホームチャンネルに設定"
   update:
-    description: "Hermes Agent を最新バージョンに更新"
+    description: "Actelyo Law Harness を最新バージョンに更新"
   category:
     session: "セッション"
     configuration: "設定"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "次のプロンプト用にローカル画像ファイルを添付"
   version:
-    description: "Hermes Agent のバージョンを表示"
+    description: "Actelyo Law Harness のバージョンを表示"
   debug:
     description: "デバッグレポート（システム情報 + ログ）をアップロードして共有リンクを取得"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "保存済みのカードがありません — 「資金を追加」から登録手順に進めます。"
     actions_require_admin: "請求操作には組織の管理者/オーナー権限が必要です。"
     remote_spending_off_for_org: "この組織ではリモート支出がオフになっています。"
-    killswitch_reason_overview: "請求管理者がポータルの Hermes Agent ページでオンにすると、ここから資金を追加できます。"
-    killswitch_reason_buy: "資金を追加する前に、請求管理者がポータルの Hermes Agent ページでオンにする必要があります。"
+    killswitch_reason_overview: "請求管理者がポータルの Actelyo Law Harness ページでオンにすると、ここから資金を追加できます。"
+    killswitch_reason_buy: "資金を追加する前に、請求管理者がポータルの Actelyo Law Harness ページでオンにする必要があります。"
     add_funds_now_hint: "今すぐ資金を追加 — 1 回限りの課金で、本日中に残高へ追加されます。"
     refill_when_low_amounts: "残高が少なくなったら補充 — 残高が {threshold} を下回ると自動的に {reload_to} を課金します。"
     refill_when_low_generic: "残高が少なくなったら補充 — 残高が設定した金額を下回ると、カードに自動的に課金します。"
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 カードが拒否されました。ポータルで別のカードをお試しください。"
     charge_failed_generic: "🔴 課金が完了しませんでした ({reason})。"
     charge_error_no_payment_method: "💳 カードが登録されていません — チャージと請求の管理はポータルで行ってください。"
-    charge_error_remote_spending_disabled: "このアカウントではリモート支出がオフになっています — 請求管理者がポータルの Hermes Agent ページでオンにできます。"
+    charge_error_remote_spending_disabled: "このアカウントではリモート支出がオフになっています — 請求管理者がポータルの Actelyo Law Harness ページでオンにできます。"
     charge_error_role_required: "資金の追加には組織の管理者/オーナー権限が必要です。管理者に依頼するか、ポータルで管理してください。"
     charge_error_idempotency_conflict: "🔴 この課金キーは別の金額ですでに使用されています。新しいチャージを開始してください。"
     revoked_by_admin: "管理者がこのターミナルの支出を停止しました。"
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "`hermes portal` を実行してリモート支出を許可し、その後再試行してください。"
     charge_stepup_declined: "課金は行われていません。リモート支出を許可するときは /topup を実行してください。"
     charge_stepup_not_granted: "リモート支出を許可できませんでした — 組織の管理者またはオーナーの承認が必要です。カードには課金されていません。"
-    allowed_but_org_off: "このターミナルではリモート支出が許可されていますが、この組織ではまだオフになっています。請求管理者がポータルの Hermes Agent ページでオンにしてから、再度 /topup を実行してください。"
+    allowed_but_org_off: "このターミナルではリモート支出が許可されていますが、この組織ではまだオフになっています。請求管理者がポータルの Actelyo Law Harness ページでオンにしてから、再度 /topup を実行してください。"
     allowed_no_card: "リモート支出を許可しました — ただし、カードがまだ登録されていません。"
     topup_on_portal_to_continue: "続行するには、ポータルでチャージと請求の管理を行ってください。"
     allowed_run_topup: "リモート支出を許可しました。続行するには /topup を実行してください。"
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 画像 {count} 件を添付しました"
     images_attached_other: "📎 画像 {count} 件を添付しました"
     command_interrupted: "コマンドを中断しました。"
-    welcome: "Hermes Agent へようこそ！メッセージを入力するか、/help でコマンド一覧を表示します。"
+    welcome: "Actelyo Law Harness へようこそ！メッセージを入力するか、/help でコマンド一覧を表示します。"
     activated_skills_label: "有効化されたスキル:"
     redaction_disabled_title: "⚠  シークレットの秘匿化が無効です"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value})。API キーやトークンがチャット出力、セッション JSON、ログにそのまま表示される可能性があります。再度有効にするには config.yaml で {setting} を設定してください。"
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[ストリーミング後に応答が変換されました]"
     banner_tagline: "{name} - AI エージェントフレームワーク"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "バックグラウンドプロセスはステアできません。停止するか、ログを確認してください。"
     count_live: "{count} 件稼働中"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "メッセージのタイムスタンプ"
     update:
-      managed_action: "Hermes Agent を更新"
+      managed_action: "Actelyo Law Harness を更新"
       choice_update: "今すぐ更新"
-      choice_update_desc: "現在のセッションを終了して Hermes Agent を更新します"
+      choice_update_desc: "現在のセッションを終了して Actelyo Law Harness を更新します"
       choice_cancel: "キャンセル"
       choice_cancel_desc: "現在のセッションを維持します"
-      title: "☤  Hermes Agent を更新"
+      title: "☤  Actelyo Law Harness を更新"
       detail: "現在のセッションを終了し、`hermes update` を実行します。"
       cancelled: "🟡 /update をキャンセルしました。"
       launching: "☤ 更新を開始しています..."

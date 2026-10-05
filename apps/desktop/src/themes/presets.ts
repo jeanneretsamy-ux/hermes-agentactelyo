@@ -129,8 +129,8 @@ export const githubTheme: DesktopTheme = {
  */
 export const nousTheme: DesktopTheme = {
   name: 'nous',
-  label: 'Nous',
-  description: 'GitHub chrome, Nous blue accent',
+  label: "fournisseur externe",
+  description: "GitHub chrome, fournisseur externe blue accent",
   ...THEME_PRESET_PALETTES.nous,
   typography: {
     fontSans: SYSTEM_SANS,
@@ -329,7 +329,7 @@ export const solarizedTheme: DesktopTheme = {
  */
 export const nousAltTheme: DesktopTheme = {
   name: 'nous-alt',
-  label: 'Nous Alt',
+  label: "fournisseur externe Alt",
   description: 'Glass neutrals, cream on mission-blue',
   ...THEME_PRESET_PALETTES['nous-alt'],
   typography: {
@@ -378,7 +378,7 @@ const classicPalette = (colors: Record<string, string>) => skinToDesktopTheme({ 
  */
 export const classicTheme: DesktopTheme = {
   name: 'classic',
-  label: 'Classic Hermes',
+  label: "Classic Actelyo Law Harness",
   description: "Gold on navy, the CLI's original look",
   colors: classicPalette(CLASSIC_LIGHT_SKIN_COLORS),
   darkColors: classicPalette(CLASSIC_DARK_SKIN_COLORS)

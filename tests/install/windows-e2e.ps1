@@ -246,10 +246,16 @@ function Set-GitRedirect {
     }
     # first, get the set origin url
     $actualGitUrl = Invoke-Git @("-C", $RepoRoot, "remote", "get-url", "origin")
+    $actualGitBase = $actualGitUrl -replace '\.git$', ''
+    if ($actualGitBase -in @('https://github.com/jeanneretsamy-ux/hermes-agentactelyo', 'git@github.com:jeanneretsamy-ux/hermes-agentactelyo')) {
+        $script:RepoUrlHttps = 'https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git'
+        $script:RepoUrlSsh = 'git@github.com:jeanneretsamy-ux/hermes-agentactelyo.git'
+    }
     # then override it
     @"
 [url "$fileUrl"]
-	insteadOf = $actualGitUrl
+    insteadOf = $actualGitBase.git
+    insteadOf = $actualGitBase
     insteadOf = $RepoUrlHttps
     insteadOf = $RepoUrlSsh
 "@ | Set-Content -LiteralPath $gitCfg -Encoding ASCII
@@ -1474,7 +1480,9 @@ function Assert-RedirectIsTransportOnly {
     # like the rehearsal source, channel resolution would fail and this leg
     # would be testing a fork install rather than the real user path.
     $official = @('https://github.com/NousResearch/hermes-agent.git',
-                  'git@github.com:NousResearch/hermes-agent.git')
+                  'git@github.com:NousResearch/hermes-agent.git',
+                  'https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git',
+                  'git@github.com:jeanneretsamy-ux/hermes-agentactelyo.git')
     $configured = (Invoke-Git @('-C', $InstallDir, 'config', '--get', 'remote.origin.url') | Out-String).Trim()
     Assert-True ($official -contains $configured) "origin stays configured as an official URL (got '$configured')"
     $real = if ($env:HERMES_E2E_REAL_GIT) { $env:HERMES_E2E_REAL_GIT } else { 'git' }

@@ -174,7 +174,7 @@ function allowedUninstallModes(kind: InstallKind): string[] {
 function nativeRemovalInstructions(kind, platform, appPath = null) {
   if (kind === 'nix') {
     return (
-      'This Hermes desktop app was installed by Nix. Uninstall it the same way you installed it: ' +
+      "This Actelyo Law Harness desktop app was installed by Nix. Uninstall it the same way you installed it: " +
       'remove hermes-agent from your flake or profile, then rebuild.'
     )
   }
@@ -184,7 +184,7 @@ function nativeRemovalInstructions(kind, platform, appPath = null) {
   }
 
   if (platform === 'darwin') {
-    return 'Quit the app and drag Hermes.app from Applications to the Trash.'
+    return "Quit the app and drag Actelyo Law Harness.app from Applications to the Trash."
   }
 
   if (appPath && /\.appimage$/i.test(String(appPath))) {
@@ -195,7 +195,7 @@ function nativeRemovalInstructions(kind, platform, appPath = null) {
     return `Delete the app directory at ${appPath}.`
   }
 
-  return 'Delete the Hermes AppImage (or app directory) from wherever you saved it.'
+  return "Delete the Actelyo Law Harness AppImage (or app directory) from wherever you saved it."
 }
 
 /**

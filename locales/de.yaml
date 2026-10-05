@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ Zeitüberschreitung des Hermes-Updates nach 30 Minuten."
     finished_success: "✅ Hermes-Update erfolgreich abgeschlossen."
     last_lines: "{msg}\n\nLetzte Zeilen:\n```\n{tail}\n```"
-    managed_action: "Hermes Agent aktualisieren"
+    managed_action: "Actelyo Law Harness aktualisieren"
     not_applicable: "✗ `hermes update` gilt nicht für diese Installation ({method}).\nAktualisieren Sie mit: {command}"
   usage:
     rate_limits: "⏱️ **Ratenlimits:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ Nicht autorisierter Discord-Slash-Versuch\nBenutzer: {user_name} ({user_id})\nKanal: {chan_id} (Guild {guild_id})\nBefehl: {command_text}\nGrund: {reason}"
     thread:
       seed_message: "🧵 Von Hermes erstellter Thread: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Hermes-Übergabe: **{name}**"
       auto_create_failed: "⚠️ Hermes konnte für diese Nachricht keinen Discord-Thread erstellen, daher wurde die Anfrage nicht verarbeitet. Bitte versuchen Sie es erneut."
       auto_create_failed_generic: "Die Anfrage wurde nicht verarbeitet. Bitte versuchen Sie es erneut."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label}-Größe von {size_mb}MB überschreitet das Limit von {cap}; stattdessen als Datei gesendet."
   email:
     image_line: "Bild: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔Denke nach"
       done: "🥳Fertig"
   irc:
-    quit_message: "Hermes Agent wird heruntergefahren"
+    quit_message: "Actelyo Law Harness wird heruntergefahren"
     standalone_quit: "zugestellt"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "Einmalig genehmigen"
     confirm_always_approve: "Immer genehmigen"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "Diesen Chat als Home-Kanal festlegen"
   update:
-    description: "Hermes Agent auf die neueste Version aktualisieren"
+    description: "Actelyo Law Harness auf die neueste Version aktualisieren"
   category:
     session: "Sitzung"
     configuration: "Konfiguration"
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} Bild angehängt"
     images_attached_other: "📎 {count} Bilder angehängt"
     command_interrupted: "Befehl unterbrochen."
-    welcome: "Willkommen bei Hermes Agent! Geben Sie Ihre Nachricht ein oder /help für Befehle."
+    welcome: "Willkommen bei Actelyo Law Harness! Geben Sie Ihre Nachricht ein oder /help für Befehle."
     activated_skills_label: "Aktivierte Skills:"
     redaction_disabled_title: "⚠  Schwärzung von Geheimnissen ist DEAKTIVIERT"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). API-Schlüssel und Tokens können im Klartext in der Chat-Ausgabe, in Sitzungs-JSONs und in Logs erscheinen. Setzen Sie {setting} in config.yaml, um sie wieder zu aktivieren."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[Antwort nach dem Streaming umgewandelt]"
     banner_tagline: "{name} - KI-Agenten-Framework"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "Hintergrundprozesse können nicht gesteuert werden; stoppen Sie sie oder lesen Sie das Log."
     count_live: "{count} aktiv"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "Nachrichten-Zeitstempel"
     update:
-      managed_action: "Hermes Agent aktualisieren"
+      managed_action: "Actelyo Law Harness aktualisieren"
       choice_update: "Jetzt aktualisieren"
-      choice_update_desc: "aktuelle Sitzung beenden und Hermes Agent aktualisieren"
+      choice_update_desc: "aktuelle Sitzung beenden und Actelyo Law Harness aktualisieren"
       choice_cancel: "Abbrechen"
       choice_cancel_desc: "aktuelle Sitzung beibehalten"
-      title: "☤  Hermes Agent aktualisieren"
+      title: "☤  Actelyo Law Harness aktualisieren"
       detail: "Dies beendet die aktuelle Sitzung und führt `hermes update` aus."
       cancelled: "🟡 /update abgebrochen."
       launching: "☤ Update wird gestartet..."

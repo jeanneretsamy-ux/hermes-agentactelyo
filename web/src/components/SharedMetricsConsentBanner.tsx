@@ -70,23 +70,23 @@ export function SharedMetricsConsentBanner() {
   return (
     <div
       role="region"
-      aria-label={t.app.sharedMetricsTitle ?? "Help improve Hermes?"}
+      aria-label={t.app.sharedMetricsTitle ?? "Help improve Actelyo Law Harness?"}
       data-testid="shared-metrics-consent-banner"
       className="flex flex-wrap items-center gap-2 border-b border-current/20 bg-current/5 px-4 py-1.5 text-xs text-midground"
     >
       <BarChart3 className="h-3.5 w-3.5 shrink-0" />
-      <span className="font-semibold">{t.app.sharedMetricsTitle ?? "Help improve Hermes?"}</span>
+      <span className="font-semibold">{t.app.sharedMetricsTitle ?? "Help improve Actelyo Law Harness?"}</span>
       <span className="min-w-0 flex-1 opacity-80">
         {failed
           ? (t.app.sharedMetricsSaveFailed ?? "Couldn't save your choice")
           : (t.app.sharedMetricsBody ??
-            "Shared metrics are bounded counters, never prompts, files, paths or error text. Collection stays on this machine; sending to Nous is a separate choice.")}{" "}
+            "Shared metrics are bounded counters, never prompts, files, paths or error text. Collection stays on this machine; sending to fournisseur externe is a separate choice.")}{" "}
         <a href={DOCS_URL} target="_blank" rel="noreferrer" className="underline">
           {t.app.sharedMetricsDetails ?? "Details"}
         </a>
       </span>
       <button type="button" disabled={saving} className={choice} onClick={() => answer(true, true)}>
-        {t.app.sharedMetricsShare ?? "Send to Nous"}
+        {t.app.sharedMetricsShare ?? "Send to fournisseur externe"}
       </button>
       <button type="button" disabled={saving} className={choice} onClick={() => answer(true, false)}>
         {t.app.sharedMetricsLocal ?? "Local only"}

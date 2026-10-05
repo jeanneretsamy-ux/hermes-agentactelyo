@@ -1,0 +1,113 @@
+name: Actelyo Law Harness Windows download
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/actelyo-local-modules-20261003]
+    paths:
+      - .github/workflows/actelyo-law-harness-download.yml
+      - scripts/actelyo-download/**
+      - scripts/bundles/stage.py
+      - agent/prompt_builder.py
+permissions:
+  contents: write
+concurrency:
+  group: actelyo-law-harness-download
+  cancel-in-progress: false
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    env:
+      HERMES_DESKTOP_VARIANT: bundled
+      # Pin the complete product source; packaging fixes may reuse these exact inputs.
+      ACTELYO_SOURCE_SHA: 8a7c8e98fa5e9461e07d004cfd867a654619e52c
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep verifier and select exact product source
+        shell: pwsh
+        run: |
+          Copy-Item scripts/actelyo-download/verify-installed.mjs "$env:RUNNER_TEMP/verify-actelyo-installed.mjs"
+          git fetch origin $env:ACTELYO_SOURCE_SHA --depth=1
+          if ($LASTEXITCODE -ne 0) { throw 'Product source unavailable' }
+          git checkout --detach $env:ACTELYO_SOURCE_SHA
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot select product source' }
+      - name: Prepare locked Python and Node toolchain
+        uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'true'
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Restore verified local runtime inputs
+        uses: actions/cache@v4
+        id: payload
+        with:
+          path: apps/desktop/build/agent-payload
+          key: actelyo-payload-${{ runner.os }}-${{ env.ACTELYO_SOURCE_SHA }}
+      - name: Stage the local agent runtime
+        if: steps.payload.outputs.cache-hit != 'true'
+        run: node scripts/build/python.mjs scripts/bundles/stage.py --out apps/desktop/build/agent-payload --icons .
+      - name: Save complete runtime inputs before packaging
+        if: steps.payload.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: apps/desktop/build/agent-payload
+          key: actelyo-payload-${{ runner.os }}-${{ env.ACTELYO_SOURCE_SHA }}
+      - name: Build current desktop
+        run: npm run build --workspace apps/desktop
+      - name: Package Windows bundled application
+        working-directory: apps/desktop
+        run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never
+      - name: Build and install Actelyo installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
+          if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
+          $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
+          Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+          if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
+          $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+          if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
+          New-Item -ItemType Directory $releaseDir -Force | Out-Null
+          & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
+          $installed = Join-Path $env:RUNNER_TEMP 'actelyo-installed'
+          $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
+          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+          $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
+          $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
+          if ($link.TargetPath -ne (Join-Path $installed 'Actelyo Law Harness.exe')) { throw 'Desktop shortcut target mismatch' }
+          if ($link.IconLocation -notlike '*Actelyo Law Harness.exe*') { throw 'Desktop shortcut icon mismatch' }
+          "ACTELYO_INSTALLED=$installed" >> $env:GITHUB_ENV
+      - name: Verify actual installed application
+        run: node "$env:RUNNER_TEMP/verify-actelyo-installed.mjs" "$env:ACTELYO_INSTALLED" actelyo-release/proof
+      - name: Record checksum and exact source
+        shell: pwsh
+        run: |
+          $file = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
+          $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  Actelyo-Law-Harness-Setup-x64.exe" | Set-Content actelyo-release/SHA256SUMS.txt
+          @{ product='Actelyo Law Harness'; source_commit=$env:ACTELYO_SOURCE_SHA; packaging_commit=$env:GITHUB_SHA; artifact='Actelyo-Law-Harness-Setup-x64.exe'; sha256=$hash; bytes=(Get-Item $file).Length; signed=$false; model_included=$false; windows='10/11 x64'; verified_installed=$true } | ConvertTo-Json | Set-Content actelyo-release/build-manifest.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actelyo-law-harness-windows-verification
+          path: |
+            actelyo-release/*.exe
+            actelyo-release/*.txt
+            actelyo-release/*.json
+            actelyo-release/proof/*.png
+            actelyo-release/proof/*.json
+          if-no-files-found: ignore
+      - name: Publish verified download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "actelyo-law-harness-$($env:ACTELYO_SOURCE_SHA.Substring(0,7))"
+          gh release create $tag actelyo-release/Actelyo-Law-Harness-Setup-x64.exe actelyo-release/SHA256SUMS.txt actelyo-release/build-manifest.json --target $env:ACTELYO_SOURCE_SHA --title 'Actelyo Law Harness — Windows' --notes 'Installateur Windows x64 vérifié sur un profil neuf. Icône et catalogue Actelyo. Moteur agent local inclus ; modèle à configurer séparément. Binaire non signé. Le manifeste donne le commit exact et le SHA-256.' --prerelease
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }

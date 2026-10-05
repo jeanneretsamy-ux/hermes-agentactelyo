@@ -58,11 +58,13 @@ def _wings(*glyphs) -> List[List[str]]:
 
 # Branding shared by every Hermes-named built-in (mono/daylight override help_header).
 _HERMES_BRANDING: Dict[str, str] = _branding(
-    "Hermes", "☤", "Goodbye! ☤", prompt="❯", help_header="(^_^)? Available Commands")
+    "Actelyo Law Harness", "⚖", "Goodbye! ⚖", prompt="❯", help_header="(^_^)? Available Commands")
+
+_HERMES_BRANDING.update(agent_name="Actelyo Law Harness", welcome="Welcome to Actelyo Law Harness! Type your message or /help for commands.")
 
 _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
     "default": {
-        "name": "default", "description": "Classic Hermes — gold and kawaii",
+        "name": "default", "description": "Actelyo Law Harness — classic",
         # Dark-authored; values match the TUI's DARK_THEME so both render the same gold.
         "colors": {
             "banner_border": "#CD7F32", "banner_title": "#FFD700", "banner_accent": "#FFBF00",

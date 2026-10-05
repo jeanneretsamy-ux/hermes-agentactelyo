@@ -489,8 +489,9 @@ GATEWAY_SECRET_CAPTURE_UNSUPPORTED_MESSAGE = (
 # ``hermes pairing approve`` command (hermes_cli/subcommands/pairing.py) that lets the owner fix it.
 # Kept under 200 chars: Telegram's answerCallbackQuery truncates longer text.
 UNAUTHORIZED_ACTION_NOTICE = (
-    "This bot is private and you're not on its allowed list. If you own it, run "
-    "`hermes pairing approve {platform} <request-id>` on the host (`hermes pairing list` shows the id).")
+    "This Actelyo Law Harness bot is private. Ask its owner to run "
+    "`actelyo-law-harness pairing approve {platform} <request-id>` on the host; "
+    "`actelyo-law-harness pairing list` shows the id.")
 
 
 def unauthorized_action_notice(platform: Any) -> str:

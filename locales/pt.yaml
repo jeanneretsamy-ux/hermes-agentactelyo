@@ -514,7 +514,7 @@ gateway:
     timed_out: "❌ A atualização do Hermes excedeu o tempo limite após 30 minutos."
     finished_success: "✅ Atualização do Hermes finalizada com sucesso."
     last_lines: "{msg}\n\nÚltimas linhas:\n```\n{tail}\n```"
-    managed_action: "atualizar o Hermes Agent"
+    managed_action: "atualizar o Actelyo Law Harness"
     not_applicable: "✗ `hermes update` não se aplica a esta instalação ({method}).\nAtualize com: {command}"
   usage:
     rate_limits: "⏱️ **Limites de taxa:** {state}"
@@ -1164,7 +1164,7 @@ platform:
       unauthorized_slash_alert: "⚠️ Tentativa não autorizada de comando slash no Discord\nUsuário: {user_name} ({user_id})\nCanal: {chan_id} (guild {guild_id})\nComando: {command_text}\nMotivo: {reason}"
     thread:
       seed_message: "🧵 Tópico criado pelo Hermes: **{name}**"
-      default_name: "Hermes"
+      default_name: "Actelyo Law Harness"
       handoff_seed: "🧵 Transferência do Hermes: **{name}**"
       auto_create_failed: "⚠️ O Hermes não conseguiu criar um tópico do Discord para esta mensagem, então a solicitação não foi processada. Tente novamente."
       auto_create_failed_generic: "A solicitação não foi processada. Tente novamente."
@@ -1440,16 +1440,16 @@ platform:
       size_downgraded: "{label} com {size_mb}MB excede o limite de {cap}; enviado como arquivo."
   email:
     image_line: "Imagem: {url}"
-    standalone_subject: "Hermes Agent"
+    standalone_subject: "Actelyo Law Harness"
   dingtalk:
     emotion:
       thinking: "🤔Pensando"
       done: "🥳Concluído"
   irc:
-    quit_message: "Hermes Agent encerrando"
+    quit_message: "Actelyo Law Harness encerrando"
     standalone_quit: "entregue"
   homeassistant:
-    notification_title: "Hermes Agent"
+    notification_title: "Actelyo Law Harness"
   relay:
     confirm_approve_once: "Aprovar uma vez"
     confirm_always_approve: "Aprovar sempre"
@@ -1470,7 +1470,7 @@ slash:
   sethome:
     description: "Definir este chat como canal inicial"
   update:
-    description: "Atualizar o Hermes Agent para a versão mais recente"
+    description: "Atualizar o Actelyo Law Harness para a versão mais recente"
   category:
     session: "Sessão"
     configuration: "Configuração"
@@ -1676,7 +1676,7 @@ slash:
   image:
     description: "Anexar um arquivo de imagem local ao seu próximo prompt"
   version:
-    description: "Mostrar a versão do Hermes Agent"
+    description: "Mostrar a versão do Actelyo Law Harness"
   debug:
     description: "Enviar relatório de depuração (informações do sistema + logs) e obter links compartilháveis"
   quit:
@@ -1734,8 +1734,8 @@ cli:
     no_saved_card_add_funds_hint: "Nenhum cartão salvo — “Adicionar fundos” orienta você a cadastrar um."
     actions_require_admin: "Ações de cobrança exigem um administrador/proprietário da org."
     remote_spending_off_for_org: "Gastos remotos estão desativados para esta org."
-    killswitch_reason_overview: "Um administrador de cobrança pode ativá-los na página Hermes Agent do portal para adicionar fundos aqui."
-    killswitch_reason_buy: "Um administrador de cobrança pode ativá-los na página Hermes Agent do portal antes de adicionar fundos."
+    killswitch_reason_overview: "Um administrador de cobrança pode ativá-los na página Actelyo Law Harness do portal para adicionar fundos aqui."
+    killswitch_reason_buy: "Um administrador de cobrança pode ativá-los na página Actelyo Law Harness do portal antes de adicionar fundos."
     add_funds_now_hint: "Adicionar fundos agora — uma única cobrança, adicionada ao seu saldo hoje."
     refill_when_low_amounts: "Recarregar quando baixo — cobra {reload_to} automaticamente quando seu saldo cai abaixo de {threshold}."
     refill_when_low_generic: "Recarregar quando baixo — cobra seu cartão automaticamente quando seu saldo cai abaixo do valor definido."
@@ -1791,7 +1791,7 @@ cli:
     charge_failed_card_declined: "🔴 Seu cartão foi recusado. Tente outro cartão no portal."
     charge_failed_generic: "🔴 A cobrança não foi concluída ({reason})."
     charge_error_no_payment_method: "💳 Nenhum cartão salvo — recarregue e gerencie a cobrança no portal."
-    charge_error_remote_spending_disabled: "Gastos remotos estão desativados para esta conta — um administrador de cobrança pode ativá-los na página Hermes Agent do portal."
+    charge_error_remote_spending_disabled: "Gastos remotos estão desativados para esta conta — um administrador de cobrança pode ativá-los na página Actelyo Law Harness do portal."
     charge_error_role_required: "Adicionar fundos exige um administrador/proprietário da org. Peça a um administrador ou gerencie no portal."
     charge_error_idempotency_conflict: "🔴 Essa chave de cobrança já foi usada para um valor diferente. Inicie uma nova recarga."
     revoked_by_admin: "Um administrador interrompeu os gastos deste terminal."
@@ -1808,7 +1808,7 @@ cli:
     charge_stepup_noninteractive: "Execute `hermes portal` e permita Gastos Remotos; depois, tente novamente."
     charge_stepup_declined: "Nenhuma cobrança feita. Execute /topup quando quiser permitir Gastos Remotos."
     charge_stepup_not_granted: "Não foi possível permitir Gastos Remotos — um administrador ou proprietário da org precisa aprovar. Seu cartão não foi cobrado."
-    allowed_but_org_off: "Gastos Remotos estão permitidos para este terminal, mas ainda estão desativados para esta org. Um administrador de cobrança pode ativá-los na página Hermes Agent do portal; depois, execute /topup novamente."
+    allowed_but_org_off: "Gastos Remotos estão permitidos para este terminal, mas ainda estão desativados para esta org. Um administrador de cobrança pode ativá-los na página Actelyo Law Harness do portal; depois, execute /topup novamente."
     allowed_no_card: "Gastos Remotos permitidos — mas ainda não há cartão salvo."
     topup_on_portal_to_continue: "Recarregue e gerencie a cobrança no portal para continuar."
     allowed_run_topup: "Gastos Remotos permitidos. Execute /topup para continuar."
@@ -2112,7 +2112,7 @@ cli:
     images_attached_one: "📎 {count} imagem anexada"
     images_attached_other: "📎 {count} imagens anexadas"
     command_interrupted: "Comando interrompido."
-    welcome: "Bem-vindo ao Hermes Agent! Digite sua mensagem ou /help para ver os comandos."
+    welcome: "Bem-vindo ao Actelyo Law Harness! Digite sua mensagem ou /help para ver os comandos."
     activated_skills_label: "Skills ativadas:"
     redaction_disabled_title: "⚠  A redação de segredos está DESATIVADA"
     redaction_disabled_body: "(HERMES_REDACT_SECRETS={value}). Chaves de API e tokens podem aparecer sem máscara na saída do chat, nos JSONs de sessão e nos logs. Defina {setting} em config.yaml para reativar."
@@ -2192,7 +2192,7 @@ cli:
   render:
     response_transformed: "[Resposta transformada após o streaming]"
     banner_tagline: "{name} - Framework de Agentes de IA"
-    banner_version: "Hermes Agent v{version} ({date})"
+    banner_version: "Actelyo Law Harness v{version} ({date})"
   subagents:
     cannot_steer_process: "Processos em segundo plano não podem ser redirecionados; pare-os ou leia o log."
     count_live: "{count} ativos"
@@ -3068,12 +3068,12 @@ cli:
       usage: "/timestamps [on|off|status]"
       label: "Carimbos de hora das mensagens"
     update:
-      managed_action: "atualizar o Hermes Agent"
+      managed_action: "atualizar o Actelyo Law Harness"
       choice_update: "Atualizar Agora"
-      choice_update_desc: "sair da sessão atual e atualizar o Hermes Agent"
+      choice_update_desc: "sair da sessão atual e atualizar o Actelyo Law Harness"
       choice_cancel: "Cancelar"
       choice_cancel_desc: "manter a sessão atual"
-      title: "☤  Atualizar o Hermes Agent"
+      title: "☤  Atualizar o Actelyo Law Harness"
       detail: "Isto encerrará a sessão atual e executará `hermes update`."
       cancelled: "🟡 /update cancelado."
       launching: "☤ Iniciando atualização..."
