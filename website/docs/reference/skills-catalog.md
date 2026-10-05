@@ -59,6 +59,13 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 | [`email-inbox-triage`](../user-guide/skills/bundled/email/email-email-inbox-triage.md) | Triage an inbox: prioritize threads, draft replies safely. | `email/email-inbox-triage` |
 | [`himalaya`](../user-guide/skills/bundled/email/email-himalaya.md) | Himalaya CLI: IMAP/SMTP email from terminal. | `email/himalaya` |
 
+## legal
+
+| Skill | Description | Path |
+|-------|-------------|------|
+| [`legal-data-hunter`](../user-guide/skills/bundled/legal/legal-legal-data-hunter.md) | Research legal sources through the authenticated Legal Data Hunter MCP connector. | `legal/legal-data-hunter` |
+| [`openlegi-official-sources`](../user-guide/skills/bundled/legal/legal-openlegi-official-sources.md) | Research French official legal sources through the authenticated OpenLegi MCP services. | `legal/openlegi-official-sources` |
+
 ## media
 
 | Skill | Description | Path |

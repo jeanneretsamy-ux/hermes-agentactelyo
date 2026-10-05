@@ -226,6 +226,16 @@ const sidebars: SidebarsConfig = {
                 },
                 {
                   type: 'category',
+                  label: 'legal',
+                  key: 'skills-bundled-legal',
+                  collapsed: true,
+                  items: [
+                    'user-guide/skills/bundled/legal/legal-legal-data-hunter',
+                    'user-guide/skills/bundled/legal/legal-openlegi-official-sources',
+                  ],
+                },
+                {
+                  type: 'category',
                   label: 'media',
                   key: 'skills-bundled-media',
                   collapsed: true,
