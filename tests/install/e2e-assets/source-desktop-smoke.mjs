@@ -27,10 +27,12 @@ if (values.desktop === 'absent') {
 } else try {
   fs.rmSync(path.join(values.out, `desktop-chat-${values.phase}.json`), { force: true });
   const release = path.join(values.root, 'apps', 'desktop', 'release');
+  const { productName } = JSON.parse(fs.readFileSync(path.join(values.root, 'apps', 'desktop', 'package.json'), 'utf8'));
+  const names = [...new Set([productName, 'Hermes'])];
   const candidates = {
-    linux: ['linux-unpacked/Hermes', 'linux-unpacked/hermes'],
-    darwin: [process.arch === 'arm64' ? 'mac-arm64/Hermes.app/Contents/MacOS/Hermes' : 'mac/Hermes.app/Contents/MacOS/Hermes'],
-    win32: [process.arch === 'arm64' ? 'win-arm64-unpacked/Hermes.exe' : 'win-unpacked/Hermes.exe'],
+    linux: [...names, 'hermes'].map(name => `${process.arch === 'arm64' ? 'linux-arm64-unpacked' : 'linux-unpacked'}/${name}`),
+    darwin: names.map(name => `${process.arch === 'arm64' ? 'mac-arm64' : 'mac'}/${name}.app/Contents/MacOS/${name}`),
+    win32: names.map(name => `${process.arch === 'arm64' ? 'win-arm64-unpacked' : 'win-unpacked'}/${name}.exe`),
   }[process.platform];
   if (!candidates) throw new Error(`unsupported source smoke host: ${process.platform}`);
   const executables = candidates.map(p => path.join(release, p)).filter(p => fs.existsSync(p));

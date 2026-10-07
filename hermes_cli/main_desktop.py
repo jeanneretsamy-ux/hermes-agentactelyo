@@ -159,15 +159,22 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
     *release_dir* is electron-builder's ``directories.output`` — the live ``apps/desktop/release`` or a
     stage-and-swap staging dir (#86443).
     """
+    package = release_dir.parent / "package.json"
+    product_name = (
+        json.loads(package.read_text(encoding="utf-8")).get("productName", "Hermes")
+        if package.is_file() else "Hermes"
+    )
+    names = tuple(dict.fromkeys((product_name, "Hermes")))
     if sys.platform == "darwin":
-        candidates = list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
+        candidates = [p for name in names for p in release_dir.glob(f"mac*/{name}.app/Contents/MacOS/{name}")]
     elif sys.platform == "win32":
         candidates = [
-            release_dir / d / "Hermes.exe" for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked")
+            release_dir / d / f"{name}.exe"
+            for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked") for name in names
         ]
     else:
         candidates = [
-            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in ("hermes", "Hermes")
+            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in (*names, "hermes")
         ]
 
     existing = [p for p in candidates if p.exists()]
@@ -2065,5 +2072,3 @@ def _launch_bundled_desktop(
     pid = launch_detached(launch_command, env=env, cwd=layout.app_root)
     print(f"→ Launched Hermes Desktop: {' '.join(launch_command)} (pid {pid})")
     sys.exit(0)
-
-

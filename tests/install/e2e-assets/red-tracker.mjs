@@ -15,6 +15,7 @@
  * Needs GH_TOKEN (issues: write, actions: read) and GITHUB_REPOSITORY.
  */
 import { execFileSync } from 'node:child_process';
+import { appendFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -30,9 +31,9 @@ const MAX_ROWS = 60;
  * @param {{conclusion: string | null, html_url: string, head_sha: string, created_at: string}} run
  * @param {{name: string, conclusion: string | null, html_url: string, steps?: {name: string, conclusion: string | null}[]}[]} jobs
  * @param {{number: number} | null} openIssue
- * @returns {{action: 'open' | 'update' | 'close' | 'none', title?: string, body?: string}}
+ * @returns {{action: 'open' | 'update' | 'close' | 'none' | 'report', title?: string, body?: string}}
  */
-export function planTracker(run, jobs, openIssue) {
+export function planTracker(run, jobs, openIssue, issuesEnabled = true) {
   const red = jobs.filter((j) => RED.has(String(j.conclusion)));
   const runRed = RED.has(String(run.conclusion)) || red.length > 0;
   if (!runRed) {
@@ -72,7 +73,7 @@ export function planTracker(run, jobs, openIssue) {
   }
   if (red.length > rows) lines.push('', `…and ${red.length - rows} more; see the run's jobs list.`);
   const title = `Install & Update E2E matrix is red (${red.length} leg${red.length === 1 ? '' : 's'})`;
-  return { action: openIssue ? 'update' : 'open', title, body: lines.join('\n') };
+  return { action: !issuesEnabled ? 'report' : openIssue ? 'update' : 'open', title, body: lines.join('\n') };
 }
 
 /** @param {string[]} args @returns {string} */
@@ -86,15 +87,20 @@ async function main() {
   const runId = values['run-id'];
   if (!repo || !runId || !/^\d+$/.test(runId)) throw new Error('need GITHUB_REPOSITORY and a numeric --run-id');
   const run = JSON.parse(gh(['api', `repos/${repo}/actions/runs/${runId}`]));
+  const issuesEnabled = JSON.parse(gh(['api', `repos/${repo}`])).has_issues;
   const jobs = gh(['api', '--paginate', `repos/${repo}/actions/runs/${runId}/jobs?per_page=100`,
     '--jq', '.jobs[] | {name, conclusion, html_url, steps: [.steps[]? | {name, conclusion}]}'])
     .split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
-  const open = JSON.parse(gh(['api', `repos/${repo}/issues?labels=${LABEL}&state=open&per_page=5`]))
-    .filter((/** @type {any} */ i) => !i.pull_request);
+  const open = issuesEnabled ? JSON.parse(gh(['api', `repos/${repo}/issues?labels=${LABEL}&state=open&per_page=5`]))
+    .filter((/** @type {any} */ i) => !i.pull_request) : [];
   const openIssue = open.length ? { number: open[0].number } : null;
-  const plan = planTracker(run, jobs, openIssue);
+  const plan = planTracker(run, jobs, openIssue, issuesEnabled);
   console.log(`run ${runId}: conclusion=${run.conclusion} red-legs=${jobs.filter((j) => RED.has(String(j.conclusion))).length} open-tracker=${openIssue ? `#${openIssue.number}` : 'none'} -> ${plan.action}`);
-  if (values['dry-run'] || plan.action === 'none') {
+  if (plan.body && process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## ${plan.title || 'Install & Update E2E'}\n\n${plan.body}\n`);
+  }
+  if (values['dry-run'] || plan.action === 'none' || plan.action === 'report') {
+    if (plan.action === 'report') console.log('Issues are disabled; failure details are preserved in the run summary.');
     if (plan.body) console.log(`\n--- ${plan.title || 'comment'} ---\n${plan.body}`);
     return;
   }

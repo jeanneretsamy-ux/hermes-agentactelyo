@@ -447,7 +447,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: write
     timeout-minutes: 900
     strategy: &win32-strategy
       fail-fast: false
@@ -745,7 +744,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: write
     timeout-minutes: 900
     strategy: &win32-strategy-arm64
       fail-fast: false
@@ -766,7 +764,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 900
     strategy: *win32-strategy
     env: *win32-env
@@ -782,7 +779,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 900
     strategy: *win32-strategy-arm64
     env: *win32-env
@@ -855,7 +851,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: write
     timeout-minutes: 360
     strategy: &darwin-strategy
       fail-fast: false
@@ -1161,7 +1156,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: write
     timeout-minutes: 360
     strategy: &darwin-strategy-x64
       fail-fast: false
@@ -1182,7 +1176,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 360
     strategy: *darwin-strategy
     env: *darwin-env
@@ -1198,7 +1191,6 @@ jobs:
     needs: [validate]
     runs-on: ${{ matrix.target.runner }}
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 360
     strategy: *darwin-strategy-x64
     env: *darwin-env
@@ -1477,7 +1469,6 @@ jobs:
       && (inputs.upload_release == true || inputs.release-phase == 'candidate' || inputs.build_commit != '' || inputs.channel != '')
     runs-on: windows-latest-32-core
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 45
     outputs:
       receipt-url: ${{ steps.receipt.outputs.receipt-url }}
@@ -1680,7 +1671,6 @@ jobs:
       && needs.smoke-win32-arm64.result == 'success' && needs.smoke-win32-x64.result == 'success'
     runs-on: ubuntu-24.04
     environment: release-signing
-    cache-mode: read
     timeout-minutes: 45
     permissions:
       contents: write
