@@ -19,6 +19,15 @@ The test family has four layers. Each layer has one job.
 
 To declare a new method, edit the generator. To implement a method, flip the gate in the run workflow and extend a driver.
 
+The website `desktop-installer@latest` routes exercise Nous Research's published
+bootstrap installers and run only in `NousResearch/hermes-agent`. Forks continue
+to test their own script and packaged-app routes. Source Desktop probes accept
+the checkout's `package.json` product name and historical Hermes builds.
+
+The red tracker writes failure details to the Actions run summary when Issues
+are disabled. Canary publication requires `CLOUDFLARE_R2_BUCKET` to be configured;
+the Actelyo Windows download workflow remains available independently.
+
 ## The isolation trick
 
 Source drivers redirect canonical Hermes Git URLs to a local bare clone at

@@ -363,6 +363,8 @@ function Get-InstalledHead {
 
 function Get-DesktopExe {
     foreach ($c in @(
+        (Join-Path $InstallDir "apps\desktop\release\win-unpacked\Actelyo Law Harness.exe"),
+        (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\Actelyo Law Harness.exe"),
         (Join-Path $InstallDir "apps\desktop\release\win-unpacked\Hermes.exe"),
         (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\Hermes.exe")
     )) {
@@ -852,7 +854,7 @@ function Stop-DesktopRecorder($proc, [string]$OutDir) {
 function Stop-HermesAppProcesses([string]$Label) {
     # Close the desktop app the blunt way between phases (a user quitting).
     # Only Hermes.exe (Electron) -- never hermes.exe (the venv CLI shim).
-    $procs = @(Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)
+    $procs = @(Get-Process -Name @("Hermes", "Actelyo Law Harness") -ErrorAction SilentlyContinue)
     foreach ($p in $procs) {
         try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
     }
@@ -1061,7 +1063,7 @@ function Invoke-PhaseInstallGui {
 
         # The Launch hand-off under test: the app the installer spawned must
         # actually be running.
-        Assert-True ($null -ne (Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)) "Hermes.exe process is running (installer Launch hand-off worked)"
+        Assert-True ($null -ne (Get-Process -Name @("Hermes", "Actelyo Law Harness") -ErrorAction SilentlyContinue)) "Hermes.exe process is running (installer Launch hand-off worked)"
 
         # Installer should have exited after Launch.
         if (-not $installer.HasExited) {
@@ -1225,7 +1227,7 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
         $rDeadline = (Get-Date).AddMinutes(5)
         $relaunched = $null
         while ((Get-Date) -lt $rDeadline) {
-            $relaunched = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue
+            $relaunched = Get-Process -Name @("Hermes", "Actelyo Law Harness") -ErrorAction SilentlyContinue
             if ($relaunched) { break }
             Start-Sleep -Seconds 5
         }
@@ -1236,7 +1238,7 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
         # otherwise at the mercy of z-order -- an earlier run caught VS Code).
         $mainProc = $null
         try {
-            $mainProc = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue |
+            $mainProc = Get-Process -Name @("Hermes", "Actelyo Law Harness") -ErrorAction SilentlyContinue |
                 Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
             if ($mainProc) {
                 Add-Type -Namespace HdE2E -Name Win -MemberDefinition @'

@@ -1122,6 +1122,9 @@ function Confirm-DesktopArtifact {
     try {
         $desktopDir = Join-Path $InstallDir "apps\desktop"
         $candidates = @(
+            (Join-Path $desktopDir "release\win-unpacked\Actelyo Law Harness.exe"),
+            (Join-Path $desktopDir "release\win-ia32-unpacked\Actelyo Law Harness.exe"),
+            (Join-Path $desktopDir "release\win-arm64-unpacked\Actelyo Law Harness.exe"),
             (Join-Path $desktopDir "release\win-unpacked\Hermes.exe"),
             (Join-Path $desktopDir "release\win-ia32-unpacked\Hermes.exe"),
             (Join-Path $desktopDir "release\win-arm64-unpacked\Hermes.exe")
@@ -1131,7 +1134,7 @@ function Confirm-DesktopArtifact {
             if (Test-Path $cand) { $desktopExe = $cand; break }
         }
         if (-not $desktopExe) {
-            Fail "desktop build produced no Hermes.exe under $desktopDir\release\*-unpacked"
+            Fail "desktop build produced no application executable under $desktopDir\release\*-unpacked"
         }
         Write-Ok "Desktop ready: $desktopExe"
 

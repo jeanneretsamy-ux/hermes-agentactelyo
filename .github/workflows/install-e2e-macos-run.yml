@@ -102,6 +102,7 @@ jobs:
     name: Hermes-Setup.dmg
     if: >-
       inputs.install-method == 'desktop-installer@latest' && inputs.tag-has-desktop
+      && github.repository == 'NousResearch/hermes-agent'
       && contains(fromJSON('["open-app-update", "hermes-desktop-app-update", "hermes-update", "installer-script", "installer-script+desktop"]'), inputs.update-method)
     runs-on: macos-latest
     timeout-minutes: ${{ inputs.timeout-minutes }}

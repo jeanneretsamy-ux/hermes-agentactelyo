@@ -207,6 +207,10 @@ assert_desktop_artifact() {
   local found=""
   local cand
   for cand in \
+    "$release_dir/linux-unpacked/Actelyo Law Harness" \
+    "$release_dir/linux-arm64-unpacked/Actelyo Law Harness" \
+    "$release_dir/mac-arm64/Actelyo Law Harness.app" \
+    "$release_dir/mac/Actelyo Law Harness.app" \
     "$release_dir/linux-unpacked/Hermes" \
     "$release_dir/linux-unpacked/hermes" \
     "$release_dir/mac-arm64/Hermes.app" \

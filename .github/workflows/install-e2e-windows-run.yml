@@ -176,6 +176,8 @@ jobs:
         || (contains(fromJSON('["installer-script+desktop", "hermes-desktop-app-update", "desktop-installer@latest"]'), inputs.update-method) && inputs.tag-has-desktop)
         || (inputs.update-method == 'open-app-update' && inputs.tag-has-desktop
             && contains(fromJSON('["desktop-installer@latest", "installer-script+desktop"]'), inputs.install-method)))
+      && (github.repository == 'NousResearch/hermes-agent'
+        || (inputs.install-method != 'desktop-installer@latest' && inputs.update-method != 'desktop-installer@latest'))
     runs-on: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && 'windows-latest' || 'windows-latest-32-core' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
 
