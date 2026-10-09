@@ -84,6 +84,7 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 
 | Skill | Description | Path |
 |-------|-------------|------|
+| [`actelyo-applications`](../user-guide/skills/bundled/productivity/productivity-actelyo-applications.md) | Operate Actelyo web and desktop applications. | `productivity/actelyo-applications` |
 | [`airtable`](../user-guide/skills/bundled/productivity/productivity-airtable.md) | Airtable REST API via curl. Records CRUD, filters, upserts. | `productivity/airtable` |
 | [`box`](../user-guide/skills/bundled/productivity/productivity-box.md) | Box manages cloud files, sharing, search, and metadata. | `productivity/box` |
 | [`document-to-action-items`](../user-guide/skills/bundled/productivity/productivity-document-to-action-items.md) | Extract cited obligations, deadlines, tasks from documents. | `productivity/document-to-action-items` |
