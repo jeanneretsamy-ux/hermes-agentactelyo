@@ -206,7 +206,7 @@ def test_canary_publisher_consumes_staged_bytes_and_writes_pointer_last(tmp_path
     bundle = release / filename
     with zipfile.ZipFile(bundle, 'w') as archive:
         archive.writestr('AppxMetadata/AppxBundleManifest.xml',
-                         '<Bundle><Identity Name="NousResearch.HermesBundledCanary" '
+                         f'<Bundle><Identity Name="{assembled["identity"]["msixAppIdWithOrg"]}" '
                          'Publisher="CN=Nous Research Inc., O=Nous Research Inc., L=Austin, S=Texas, C=US" '
                          f'Version="{version}"/></Bundle>')
     tested_bytes = bundle.read_bytes()
@@ -234,13 +234,14 @@ def test_canary_publisher_consumes_staged_bytes_and_writes_pointer_last(tmp_path
 
     # The publication job must refuse an ambiguous envelope, even when a
     # caller accidentally broadens the receipt selector in future.
-    (tmp_path / 'staged/HermesBundled-0.29.0.0-win.msixbundle').write_bytes(tested_bytes)
+    ambiguous_bundle = tmp_path / 'staged' / f"{assembled['name']}-0.29.0.0-win.msixbundle"
+    ambiguous_bundle.write_bytes(tested_bytes)
     before = len(writes)
     refused = shell_step(tmp_path, r2_server, publisher,
                          'Publish identical tested bytes without rebuilding', env)
     assert refused.returncode != 0
     assert len([row for row in r2_server.requests if row[0] == 'PUT']) == before
-    (tmp_path / 'staged/HermesBundled-0.29.0.0-win.msixbundle').unlink()
+    ambiguous_bundle.unlink()
 
     # Filename, tag base, and baked identity must still agree. Reading the
     # accepted assembly version is not permission to trust arbitrary metadata.
@@ -258,8 +259,8 @@ def test_canary_publisher_consumes_staged_bytes_and_writes_pointer_last(tmp_path
         assert refused.returncode != 0, field
         assert len([row for row in r2_server.requests if row[0] == 'PUT']) == before
     staged_bundle.write_bytes(tested_bytes)
-    for wrong in ['HermesBundled-0.29.0.0-win.msixbundle', 'HermesBundled-0.28.1.65536-win.msixbundle',
-                  'HermesBundled-0.28.1-canary.20260818101010-win.msixbundle']:
+    for suffix in ['0.29.0.0', '0.28.1.65536', '0.28.1-canary.20260818101010']:
+        wrong = f"{assembled['name']}-{suffix}-win.msixbundle"
         renamed = staged_bundle.rename(staged_bundle.with_name(wrong))
         refused = shell_step(tmp_path, r2_server, publisher,
                              'Publish identical tested bytes without rebuilding', env)
