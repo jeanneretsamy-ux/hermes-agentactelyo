@@ -1,6 +1,6 @@
 ---
 name: openlegi-official-sources
-description: Research French official legal sources through the authenticated OpenLegi MCP services.
+description: Research official French legal sources via MCP.
 version: 1.0.0
 author: Actelyo
 license: MIT

@@ -230,6 +230,7 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-bundled-legal',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/bundled/legal/legal-actelyo-rag-backend',
                     'user-guide/skills/bundled/legal/legal-legal-data-hunter',
                     'user-guide/skills/bundled/legal/legal-openlegi-official-sources',
                   ],
@@ -260,6 +261,7 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-bundled-productivity',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/bundled/productivity/productivity-actelyo-applications',
                     'user-guide/skills/bundled/productivity/productivity-airtable',
                     'user-guide/skills/bundled/productivity/productivity-box',
                     'user-guide/skills/bundled/productivity/productivity-document-to-action-items',

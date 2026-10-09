@@ -84,7 +84,8 @@ def test_exec_approval_contract_keys_exist_in_english():
 def test_unauthorized_notice_is_resolved_per_call_not_at_import(module):
     assert not hasattr(module, "_UNAUTHORIZED"), "import-bound notice would freeze the language"
     assert callable(module._unauthorized)
-    assert "allowed list" in module._unauthorized()
+    platform = "telegram" if module is telegram_adapter else "discord"
+    assert f"actelyo-law-harness pairing approve {platform}" in module._unauthorized()
 
 
 # ── Telegram ─────────────────────────────────────────────────────────────────

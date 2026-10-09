@@ -1,6 +1,6 @@
 ---
 name: legal-data-hunter
-description: Research legal sources through the authenticated Legal Data Hunter MCP connector.
+description: Research legal sources through authenticated MCP access.
 version: 1.0.0
 author: Actelyo
 license: MIT

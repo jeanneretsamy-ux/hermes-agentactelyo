@@ -63,8 +63,9 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 
 | Skill | Description | Path |
 |-------|-------------|------|
-| [`legal-data-hunter`](../user-guide/skills/bundled/legal/legal-legal-data-hunter.md) | Research legal sources through the authenticated Legal Data Hunter MCP connector. | `legal/legal-data-hunter` |
-| [`openlegi-official-sources`](../user-guide/skills/bundled/legal/legal-openlegi-official-sources.md) | Research French official legal sources through the authenticated OpenLegi MCP services. | `legal/openlegi-official-sources` |
+| [`actelyo-rag-backend`](../user-guide/skills/bundled/legal/legal-actelyo-rag-backend.md) | Search, question and cite locally indexed documents. | `legal/actelyo-rag-backend` |
+| [`legal-data-hunter`](../user-guide/skills/bundled/legal/legal-legal-data-hunter.md) | Research legal sources through authenticated MCP access. | `legal/legal-data-hunter` |
+| [`openlegi-official-sources`](../user-guide/skills/bundled/legal/legal-openlegi-official-sources.md) | Research official French legal sources via MCP. | `legal/openlegi-official-sources` |
 
 ## media
 
@@ -84,6 +85,7 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 
 | Skill | Description | Path |
 |-------|-------------|------|
+| [`actelyo-applications`](../user-guide/skills/bundled/productivity/productivity-actelyo-applications.md) | Operate Actelyo web and desktop applications. | `productivity/actelyo-applications` |
 | [`airtable`](../user-guide/skills/bundled/productivity/productivity-airtable.md) | Airtable REST API via curl. Records CRUD, filters, upserts. | `productivity/airtable` |
 | [`box`](../user-guide/skills/bundled/productivity/productivity-box.md) | Box manages cloud files, sharing, search, and metadata. | `productivity/box` |
 | [`document-to-action-items`](../user-guide/skills/bundled/productivity/productivity-document-to-action-items.md) | Extract cited obligations, deadlines, tasks from documents. | `productivity/document-to-action-items` |

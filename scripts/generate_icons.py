@@ -102,7 +102,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 try:
     import resvg_py
@@ -322,8 +322,17 @@ def girl_path(art: IconArt, girl: str) -> str:
     if girl not in art.paths:
         src = art.girls[girl].read_text(encoding="utf-8-sig")
         m = re.search(r"<path\b.*?/>", src, re.S)
-        assert m, f"no <path> found in {art.girls[girl].name}"
-        path = re.sub(r'\s+(inkscape|sodipodi):[a-zA-Z-]+="[^"]*"', "", m.group(0))
+        if m and "<image" not in src:
+            path = re.sub(r'\s+(inkscape|sodipodi):[a-zA-Z-]+="[^"]*"', "", m.group(0))
+        else:
+            # Brand assets can combine a background and an embedded logo. Keep
+            # the whole SVG and normalize its canvas to the portrait coordinates.
+            assert "<image" in src, f"no <path> or <image> found in {art.girls[girl].name}"
+            root = ET.fromstring(src)
+            assert root.get("viewBox"), f"missing viewBox in {art.girls[girl].name}"
+            root.set("width", str(GIRL_VIEWBOX))
+            root.set("height", str(GIRL_VIEWBOX))
+            path = ET.tostring(root, encoding="unicode")
         art.paths[girl] = path
     return art.paths[girl]
 
@@ -465,10 +474,11 @@ def portrait_layer(art: IconArt, girl: str, bg: str, join_bottom: float) -> ET.E
     _, y, portrait_width, portrait_height = box
     _, by, bw, bh = girl_bbox(art, girl)
     scale = min(portrait_width / bw, portrait_height / bh)
-    drag_bottom_nodes(
-        portrait[0], cutoff=by + bh * 0.97, band=bh * 0.02,
-        distance=max(0.0, join_bottom - (y + portrait_height)) / scale,
-    )
+    if portrait[0].tag.rsplit("}", 1)[-1] == "path":
+        drag_bottom_nodes(
+            portrait[0], cutoff=by + bh * 0.97, band=bh * 0.02,
+            distance=max(0.0, join_bottom - (y + portrait_height)) / scale,
+        )
     # Keep the fitted viewBox fixed, but let edited nodes reach into the border.
     portrait.set("overflow", "visible")
     return portrait
@@ -663,6 +673,14 @@ def icon_mono_image(art: IconArt) -> Image.Image:
     """The single grayscale layer behind Clear light/dark and Tinted light/dark
     (Apple's "tinted" specialization). One image, each pixel painted once, so
     translucent materials never stack where the girl meets the ring."""
+    if ET.fromstring(girl_path(art, "black")).tag.rsplit("}", 1)[-1] != "path":
+        # Composite logos carry their detail in colour, not only in alpha.
+        # Using their opaque tile as a silhouette would erase the brand mark.
+        image = render_svg(icon_art_svg(art, "black"), ICON_CANVAS).convert("RGBA")
+        mono = ImageOps.grayscale(image).convert("RGBA")
+        mono.putalpha(image.getchannel("A"))
+        return mono
+
     def coverage(svg: str) -> Image.Image:
         return render_svg(svg, ICON_CANVAS).convert("RGBA").getchannel("A")
 

@@ -199,13 +199,15 @@ ensure_install_launchers(root, root / '.hermes/bin')
     record = '''import { mkdirSync, writeFileSync } from 'node:fs';
 import { buildInputs, recordProduct } from './scripts/build/freshness.mjs';
 const source = process.cwd();
+mkdirSync('apps/desktop', { recursive: true });
+writeFileSync('apps/desktop/package.json', JSON.stringify({ productName: 'Actelyo Law Harness' }));
 for (const [product, out] of [['tui', 'ui-tui/dist'], ['web', 'hermes_cli/web_dist'], ['desktop', 'apps/desktop/release/linux-unpacked/resources/app.asar.unpacked/dist']]) {
   mkdirSync(out, { recursive: true }); writeFileSync(out + '/index.html', 'fixture product');
   recordProduct({source, product, out, inputs: buildInputs(source, product)});
 }
 '''
     subprocess.run([node, "--input-type=module", "-e", record], cwd=root, env=env, check=True, timeout=30)
-    (root / "apps/desktop/release/linux-unpacked/hermes").write_bytes(b"fixture executable")
+    (root / "apps/desktop/release/linux-unpacked/Actelyo Law Harness").write_bytes(b"fixture executable")
     command = [sys.executable, "-B", str(ASSETS / "source_driver.py"), "--root", str(root),
                "--launcher", str(root / ".hermes/bin/hermes"), "--desktop", "present"]
     if fault == "no-desktop":
