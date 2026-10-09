@@ -7,7 +7,7 @@ export function BrandMark({ className, ...props }: React.ComponentProps<'span'>)
 
   return (
     <span className={cn('inline-flex size-14 shrink-0 items-center justify-center', className)} {...props}>
-      <img alt="Actelyo" className="size-full object-contain rounded-lg p-1" style={{ backgroundColor: 'var(--actelyo-brand-tile)' }} src={assetPath('actelyo-logo.png')} />
+      <img alt="Actelyo" className="size-full object-contain rounded-lg p-1" src={assetPath('actelyo-logo.png')} style={{ backgroundColor: 'var(--actelyo-brand-tile)' }} />
     </span>
   )
 }
