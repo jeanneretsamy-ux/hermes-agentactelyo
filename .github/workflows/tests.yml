@@ -34,7 +34,7 @@ jobs:
     # both slices agree on the split without a planning job.
     name: Run tests (${{ matrix.slice }}/2)
     runs-on: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && 'ubuntu-latest' || 'ubuntu-latest-32-core' }}
-    timeout-minutes: 30
+    timeout-minutes: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && 120 || 30 }}
     strategy:
       fail-fast: false
       matrix:
@@ -101,7 +101,7 @@ jobs:
           scripts/run_tests.sh
         env:
           HERMES_TEST_SLICE: ${{ matrix.slice }}/2
-          HERMES_TEST_WORKERS: 32
+          HERMES_TEST_WORKERS: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && 4 || 32 }}
           HERMES_TEST_FILE_TIMEOUT: 600
           # Ensure tests don't accidentally call real APIs
           OPENROUTER_API_KEY: ""
