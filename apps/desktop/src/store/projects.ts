@@ -291,7 +291,7 @@ async function gatewayRequest<T>(method: string, params: Record<string, unknown>
   }
 
   if (!gateway) {
-    throw new Error("Actelyo Law Harness gateway is not connected")
+    throw new Error('Actelyo Law Harness gateway is not connected')
   }
 
   return gateway.request<T>(method, params)
@@ -366,7 +366,7 @@ async function activeProjectsContext(profile = projectProfile()): Promise<Active
   }
 
   if (!gateway || !stillOnWritableProjectOwner({ gateway, profile })) {
-    throw new Error("Active Actelyo Law Harness profile changed while connecting")
+    throw new Error('Active Actelyo Law Harness profile changed while connecting')
   }
 
   return { gateway, profile }

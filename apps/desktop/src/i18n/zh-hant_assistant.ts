@@ -28,7 +28,7 @@ export const zhHantAssistant = {
     thread: {
       loadingSession: '正在載入工作階段',
       showEarlier: '顯示較早的訊息',
-      loadingResponse: "Actelyo Law Harness 正在載入回覆",
+      loadingResponse: 'Actelyo Law Harness 正在載入回覆',
       resumeWhenBackgroundDone: count =>
         count === 1 ? '背景工作完成後將自動繼續' : `${count} 個背景工作完成後將自動繼續`,
       thinking: '思考中',
@@ -46,9 +46,9 @@ export const zhHantAssistant = {
       dismissError: '关闭错误',
       errorGenericProvider: 'AI 服務',
       errorLayerBodies: {
-        generic: "Actelyo Law Harness 回覆時發生問題。請重試；若問題持續，請複製錯誤詳細資訊。",
+        generic: 'Actelyo Law Harness 回覆時發生問題。請重試；若問題持續，請複製錯誤詳細資訊。',
         provider: 'AI 服務無法完成此請求。請稍後重試或切換服務商。',
-        endpoint: "Actelyo Law Harness 無法連線至你的自訂模型伺服器。請確認它正在執行，然後重新傳送訊息。",
+        endpoint: 'Actelyo Law Harness 無法連線至你的自訂模型伺服器。請確認它正在執行，然後重新傳送訊息。',
         streaming: '回覆完成前連線已中斷。請重試以重新傳送。'
       },
       errorCodes: {
@@ -94,7 +94,8 @@ export const zhHantAssistant = {
         },
         ssl_cert_verification: {
           title: '安全連線失敗',
-          body: provider => `Actelyo Law Harness 無法驗證與 ${provider} 的安全連線。請檢查網路或代理設定，或切換服務商後重新傳送。`
+          body: provider =>
+            `Actelyo Law Harness 無法驗證與 ${provider} 的安全連線。請檢查網路或代理設定，或切換服務商後重新傳送。`
         }
       },
       errorLayers: {
@@ -144,7 +145,7 @@ export const zhHantAssistant = {
       attachingFile: '正在附加…'
     },
     approval: {
-      gatewayDisconnected: "Actelyo Law Harness 閘道未連線",
+      gatewayDisconnected: 'Actelyo Law Harness 閘道未連線',
       sendFailed: '無法傳送核准回應',
       run: '執行',
       command: '指令',
@@ -160,7 +161,7 @@ export const zhHantAssistant = {
     },
     clarify: {
       notReady: '澄清請求尚未就緒',
-      gatewayDisconnected: "Actelyo Law Harness 閘道未連線",
+      gatewayDisconnected: 'Actelyo Law Harness 閘道未連線',
       sendFailed: '無法傳送澄清回應',
       loadingQuestion: '正在載入問題…',
       other: '其他（輸入您的答案）',

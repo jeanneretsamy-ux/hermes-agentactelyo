@@ -938,7 +938,10 @@ export async function uninstallDiskPlugin(pluginId: string): Promise<{ ok: boole
   const remove = window.hermesDesktop?.removeDesktopPlugin
 
   if (!remove) {
-    return { ok: false, error: "this Actelyo Law Harness Desktop build cannot remove desktop plugins — delete the folder by hand" }
+    return {
+      ok: false,
+      error: 'this Actelyo Law Harness Desktop build cannot remove desktop plugins — delete the folder by hand'
+    }
   }
 
   const result = await remove({ name: record.origin })

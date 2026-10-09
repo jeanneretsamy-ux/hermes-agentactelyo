@@ -66,7 +66,7 @@ export const arSettings = {
     exportConfig: 'تصدير الإعدادات',
     importConfig: 'استيراد الإعدادات',
     resetToDefaults: 'إعادة الافتراضيات',
-    resetConfirm: "هل تريد إعادة كل الإعدادات إلى افتراضيات Actelyo Law Harness؟",
+    resetConfirm: 'هل تريد إعادة كل الإعدادات إلى افتراضيات Actelyo Law Harness؟',
     exportFailed: 'فشل التصدير',
     resetFailed: 'فشلت إعادة الضبط',
     nav: {
@@ -131,7 +131,8 @@ export const arSettings = {
       deleteAction: 'إزالة العنصر المحفوظ',
       otpField: 'مفتاح المصادقة',
       otpPlaceholder: 'سر Base32 أو رابط otpauth://',
-      otpHint: "«مفتاح الإعداد» الذي يعرضه الموقع عند تفعيل المصادقة الثنائية. بحفظه يولّد Actelyo Law Harness الرموز بنفسه.",
+      otpHint:
+        '«مفتاح الإعداد» الذي يعرضه الموقع عند تفعيل المصادقة الثنائية. بحفظه يولّد Actelyo Law Harness الرموز بنفسه.',
       twoFactorBadge: '2FA تلقائي',
       deleteTitle: 'حذف هذا العنصر؟',
       deleteDescription: label => `سيُزال "${label}" من الخزنة المشفّرة. لا يمكن التراجع عن هذا.`,
@@ -141,10 +142,11 @@ export const arSettings = {
         blurb:
           'تُكتشف مديري كلمات المرور المثبّتة تلقائيًا. يطلب منك الوكيل فتح أحدها في أول مرة يحتاج فيها إلى بيانات دخول منه (مرة واحدة لكل جلسة)؛ يبقى في الذاكرة رمز الجلسة فقط، ولا يرى الوكيل كلمة المرور الرئيسية أو أي بيانات دخول.',
         toggleFailed: 'تعذر تحديث مدير كلمات المرور',
-        notInstalled: name => `غير مكتشف. ثبّت أداة سطر الأوامر ${name} وسجّل الدخول إليها؛ سيكتشفها Actelyo Law Harness تلقائيًا.`,
-        disabledDesc: "مكتشف لكنه معطّل لـ Actelyo Law Harness.",
+        notInstalled: name =>
+          `غير مكتشف. ثبّت أداة سطر الأوامر ${name} وسجّل الدخول إليها؛ سيكتشفها Actelyo Law Harness تلقائيًا.`,
+        disabledDesc: 'مكتشف لكنه معطّل لـ Actelyo Law Harness.',
         lockedDesc: 'مكتشف. سيطلب منك الوكيل فتحه عند الحاجة إلى بيانات دخول، أو افتحه الآن.',
-        unlockedDesc: "مفتوح لهذه الجلسة. يُقفل تلقائيًا بعد 30 دقيقة من الخمول أو عند إغلاق Actelyo Law Harness.",
+        unlockedDesc: 'مفتوح لهذه الجلسة. يُقفل تلقائيًا بعد 30 دقيقة من الخمول أو عند إغلاق Actelyo Law Harness.',
         statusLocked: 'مقفل',
         statusNotDetected: 'غير مكتشف',
         statusOff: 'متوقف',
@@ -162,7 +164,7 @@ export const arSettings = {
     plugins: {
       title: 'إضافات سطح المكتب',
       blurb:
-        "امتدادات واجهة تُحمّل داخل هذا التطبيق — إما مضمّنة مع البناء، أو موضوعة في مجلد desktop-plugins (بما فيها التي يكتبها Actelyo Law Harness). تعطيل الإضافة يفرغها مباشرة ويبقى بعد إعادة التشغيل.",
+        'امتدادات واجهة تُحمّل داخل هذا التطبيق — إما مضمّنة مع البناء، أو موضوعة في مجلد desktop-plugins (بما فيها التي يكتبها Actelyo Law Harness). تعطيل الإضافة يفرغها مباشرة ويبقى بعد إعادة التشغيل.',
       count: n => `${n} مثبتة`,
       openFolder: 'فتح مجلد إضافات سطح المكتب',
       rescan: 'إعادة الفحص',
@@ -174,7 +176,7 @@ export const arSettings = {
       kinds: { bundled: 'مضمّنة', disk: 'على القرص', runtime: 'وقت التشغيل' },
       installModal: {
         installUncertain:
-          "توقف Actelyo Law Harness عن انتظار نتيجة التثبيت، لكن قد يستمر تثبيت المكوّن الإضافي. أغلق هذه النافذة وأعد فحص قائمة المكوّنات الإضافية قبل محاولة التثبيت مرة أخرى.",
+          'توقف Actelyo Law Harness عن انتظار نتيجة التثبيت، لكن قد يستمر تثبيت المكوّن الإضافي. أغلق هذه النافذة وأعد فحص قائمة المكوّنات الإضافية قبل محاولة التثبيت مرة أخرى.',
         toolsConnected: n => `تم توصيل ${n} من الأدوات`,
         skillsReady: names => (names.length === 1 ? `المهارة ${names[0]} جاهزة` : `${names.length} من المهارات جاهزة`),
         nextChat: 'أدوات أخرى متاحة في دردشتك التالية',
@@ -187,7 +189,7 @@ export const arSettings = {
         'إشعارات سطح المكتب الأصلية، منفصلة عن التنبيهات داخل التطبيق. هذه محلية على الجهاز — كل حاسوب يحتفظ بإعداداته الخاصة.',
       enableAll: 'تفعيل الإشعارات',
       enableAllDesc: 'إيقافه يصمت كل الإشعارات أدناه.',
-      focusedHint: "تنبيهات الاكتمال تظهر فقط عندما يكون Actelyo Law Harness في الخلفية.",
+      focusedHint: 'تنبيهات الاكتمال تظهر فقط عندما يكون Actelyo Law Harness في الخلفية.',
       kinds: {
         approval: {
           label: 'يلزم الموافقة',
@@ -195,11 +197,11 @@ export const arSettings = {
         },
         input: {
           label: 'يلزم إدخال',
-          description: "طرح Actelyo Law Harness سؤالا أو يحتاج إلى كلمة مرور أو سر."
+          description: 'طرح Actelyo Law Harness سؤالا أو يحتاج إلى كلمة مرور أو سر.'
         },
         turnDone: {
           label: 'الرد جاهز',
-          description: "انتهى دور بينما كان Actelyo Law Harness في الخلفية."
+          description: 'انتهى دور بينما كان Actelyo Law Harness في الخلفية.'
         },
         turnError: {
           label: 'فشل الدور',
@@ -211,7 +213,7 @@ export const arSettings = {
         }
       },
       test: 'إرسال إشعار تجريبي',
-      testTitle: "Actelyo Law Harness",
+      testTitle: 'Actelyo Law Harness',
       testBody: 'الإشعارات تعمل.',
       testSent: 'تم إرسال التجربة. إذا لم يظهر شيء، تحقق من أذونات الإشعارات في نظام التشغيل ووضع التركيز/عدم الإزعاج.',
       testUnsupported: 'هذا النظام لا يدعم الإشعارات الأصلية.',
@@ -230,7 +232,7 @@ export const arSettings = {
       advanced: 'متقدم'
     },
     searchPlaceholder: {
-      about: "حول Actelyo Law Harness Desktop",
+      about: 'حول Actelyo Law Harness Desktop',
       config: 'ابحث في الإعدادات...',
       gateway: 'اتصال البوابة...',
       keys: 'ابحث في مفاتيح API...',
@@ -256,7 +258,7 @@ export const arSettings = {
       chatTextScaleDesc:
         'يضبط حجم نص المحادثة ومحرر الرسائل نسبةً إلى مقياس الواجهة. يبقى حجم الأشرطة الجانبية وعناصر التحكم كما هو.',
       title: 'المظهر',
-      intro: "خصص مظهر Actelyo Law Harness Desktop.",
+      intro: 'خصص مظهر Actelyo Law Harness Desktop.',
       colorMode: 'نمط الألوان',
       colorModeDesc: 'اختر الوضع الفاتح أو الداكن أو اتبع النظام.',
       toolViewTitle: 'عرض الأدوات',
@@ -287,7 +289,7 @@ export const arSettings = {
         sidebar: 'الشريط الجانبي فقط'
       },
       backdropTitle: 'خلفية النافذة',
-      backdropDesc: "اختيار مقدار مزج خلفية سطح المكتب مع سطح Actelyo Law Harness.",
+      backdropDesc: 'اختيار مقدار مزج خلفية سطح المكتب مع سطح Actelyo Law Harness.',
       userBubbleTitle: 'فقاعة الرسالة',
       userBubbleDesc: 'مدى شفافية رسائلك. معتمة عند 0؛ يبقى الإطار فقط عند 100.',
       textDirectionTitle: 'اتجاه النص',
@@ -299,14 +301,15 @@ export const arSettings = {
       modelPricingTitle: 'أسعار النماذج',
       modelPricingDesc: 'عرض أسعار الإدخال والإخراج وقراءة ذاكرة التخزين المؤقت لكل مليون رمز في منتقي النماذج.',
       reactionsTitle: 'تفاعلات الرسائل',
-      reactionsDesc: "تفاعلات إيموجي بأسلوب iMessage — تفاعل مع الرسائل، ويمكن لـ Actelyo Law Harness التفاعل مع رسائلك.",
+      reactionsDesc:
+        'تفاعلات إيموجي بأسلوب iMessage — تفاعل مع الرسائل، ويمكن لـ Actelyo Law Harness التفاعل مع رسائلك.',
       tipsTitle: 'نصائح داخل التطبيق',
       tipsDesc:
-        "نصائح تظهر أحيانًا من التطبيق وActelyo Law Harness. تظهر كل نصيحة مرة واحدة. تُعطّل تلقائيًا بعد أول 30 يومًا من الاستخدام، ويمكنك تفعيلها مجددًا.",
+        'نصائح تظهر أحيانًا من التطبيق وActelyo Law Harness. تظهر كل نصيحة مرة واحدة. تُعطّل تلقائيًا بعد أول 30 يومًا من الاستخدام، ويمكنك تفعيلها مجددًا.',
       tipsReset: count => `إظهار ${count} نصيحة مرة أخرى`,
       toursTitle: 'جولات إرشادية',
       toursDesc:
-        "دع Actelyo Law Harness يرشدك في التطبيق مع إبراز كل خطوة. تُعطّل الجولات تلقائيًا بعد أول 30 يومًا من الاستخدام، ويمكنك تفعيلها مجددًا.",
+        'دع Actelyo Law Harness يرشدك في التطبيق مع إبراز كل خطوة. تُعطّل الجولات تلقائيًا بعد أول 30 يومًا من الاستخدام، ويمكنك تفعيلها مجددًا.',
       composerPopoutTitle: 'محرر عائم',
       composerPopoutDesc: 'السماح بسحب محرر الرسائل خارج موضعه. عند إيقاف الخيار، يبقى مثبتًا في الأسفل.',
       fileBrowserTitle: 'مستعرض الملفات',
@@ -341,9 +344,9 @@ export const arSettings = {
       pet: {
         title: 'حيوان أليف',
         intro:
-          "تبنَّ تعويذة petdex متحركة تطفو فوق التطبيق وتتفاعل مع ما يفعله Actelyo Law Harness — تجري أثناء تنفيذ الأدوات، وتحتفل عند النجاح، وتعبس عند الأخطاء.",
+          'تبنَّ تعويذة petdex متحركة تطفو فوق التطبيق وتتفاعل مع ما يفعله Actelyo Law Harness — تجري أثناء تنفيذ الأدوات، وتحتفل عند النجاح، وتعبس عند الأخطاء.',
         restartHint:
-          "تحتاج الحيوانات الأليفة إلى إعادة تشغيل سريعة — بدأ التطبيق العامل قبل إضافة هذه الميزة. أغلق Actelyo Law Harness وأعد فتحه، ثم ارجع إلى هنا.",
+          'تحتاج الحيوانات الأليفة إلى إعادة تشغيل سريعة — بدأ التطبيق العامل قبل إضافة هذه الميزة. أغلق Actelyo Law Harness وأعد فتحه، ثم ارجع إلى هنا.',
         scaleTitle: 'الحجم',
         scaleDesc: 'غيّر حجم التعويذة الطافية. يُطبّق في كل مكان فورا.',
         chooseTitle: 'اختر حيوانا أليفا',
@@ -470,9 +473,9 @@ export const arSettings = {
       fallbackProviders: 'إدخالات احتياطية بصيغة provider:model لتجربتها إذا فشل النموذج الافتراضي.',
       'display.personality': 'أسلوب المساعد الافتراضي للجلسات الجديدة.',
       'display.showReasoning': 'يعرض أقسام التفكير عندما توفرها الخلفية.',
-      timezone: "تستخدم عندما يحتاج Actelyo Law Harness إلى سياق الوقت المحلي. اتركها فارغة لاستخدام منطقة النظام.",
+      timezone: 'تستخدم عندما يحتاج Actelyo Law Harness إلى سياق الوقت المحلي. اتركها فارغة لاستخدام منطقة النظام.',
       'agent.imageInputMode': 'يتحكم في طريقة إرسال مرفقات الصور إلى النموذج.',
-      'agent.maxTurns': "الحد الأعلى لدورات استدعاء الأدوات قبل أن يوقف Actelyo Law Harness التشغيل.",
+      'agent.maxTurns': 'الحد الأعلى لدورات استدعاء الأدوات قبل أن يوقف Actelyo Law Harness التشغيل.',
       'terminal.cwd': 'مجلد المشروع الافتراضي لعمل الأدوات والطرفية.',
       'terminal.persistentShell': 'يحافظ على حالة الصدفة بين الأوامر عندما تدعمها الخلفية.',
       'terminal.envPassthrough': 'متغيرات البيئة التي تمرر إلى تنفيذ الأدوات.',
@@ -481,8 +484,8 @@ export const arSettings = {
       'terminal.modalImage': 'الصورة المستخدمة عند اختيار Modal.',
       'terminal.daytonaImage': 'الصورة المستخدمة عند اختيار Daytona.',
       'codeExecution.mode': 'مدى تقييد تنفيذ الكود بالمشروع الحالي.',
-      fileReadMaxChars: "أقصى عدد أحرف يستطيع Actelyo Law Harness قراءته من ملف واحد في الطلب.",
-      'approvals.mode': "كيف يتعامل Actelyo Law Harness مع الأوامر التي تحتاج موافقة صريحة.",
+      fileReadMaxChars: 'أقصى عدد أحرف يستطيع Actelyo Law Harness قراءته من ملف واحد في الطلب.',
+      'approvals.mode': 'كيف يتعامل Actelyo Law Harness مع الأوامر التي تحتاج موافقة صريحة.',
       'approvals.timeout': 'مدة انتظار طلبات الموافقة قبل انتهاء المهلة.',
       'security.redactSecrets': 'يخفي الأسرار المكتشفة من المحتوى المرئي للنموذج قدر الإمكان.',
       'checkpoints.enabled': 'ينشئ لقطات رجوع قبل تعديلات الملفات.',
@@ -500,7 +503,7 @@ export const arSettings = {
       'stt.enabled': 'يفعل التفريغ الصوتي المحلي أو عبر مزود.',
       'stt.elevenlabs.languageCode': 'رمز لغة ISO-639-3 اختياري. اتركه فارغاً للاكتشاف التلقائي.',
       'updates.nonInteractiveLocalChanges':
-        "عندما يحدّث Actelyo Law Harness نفسه من التطبيق دون موجه طرفية، احتفظ بتعديلات المصدر المحلية أو تجاهلها."
+        'عندما يحدّث Actelyo Law Harness نفسه من التطبيق دون موجه طرفية، احتفظ بتعديلات المصدر المحلية أو تجاهلها.'
     },
     about: {
       updates: 'التحديثات'
@@ -509,7 +512,7 @@ export const arSettings = {
     config: {
       minimizeToTrayTitle: 'التصغير إلى علبة النظام',
       minimizeToTrayDesc:
-        "تصغير النوافذ أو إغلاق النافذة الرئيسية يخفيها في علبة النظام (شريط القوائم على macOS) مع استمرار Actelyo Law Harness في العمل. استخدم إنهاء Actelyo Law Harness من قائمة العلبة أو Cmd+Q للخروج. معطّل افتراضيًا ويُطبّق على هذا الجهاز فقط.",
+        'تصغير النوافذ أو إغلاق النافذة الرئيسية يخفيها في علبة النظام (شريط القوائم على macOS) مع استمرار Actelyo Law Harness في العمل. استخدم إنهاء Actelyo Law Harness من قائمة العلبة أو Cmd+Q للخروج. معطّل افتراضيًا ويُطبّق على هذا الجهاز فقط.',
       minimizeToTrayUnavailable:
         'علبة النظام غير متاحة. ستُصغّر النوافذ وتُغلق كالمعتاد. أوقف هذا الخيار ثم فعّله لإعادة المحاولة.',
       none: 'لا شيء',
@@ -519,7 +522,7 @@ export const arSettings = {
       searchPlaceholder: 'بحث…',
       noResults: 'لا توجد نتائج',
       systemDefault: 'إعداد النظام الافتراضي',
-      loading: "جار تحميل إعدادات Actelyo Law Harness...",
+      loading: 'جار تحميل إعدادات Actelyo Law Harness...',
       emptyTitle: 'لا توجد إعدادات',
       emptyDesc: 'لا يحتوي هذا القسم على إعدادات قابلة للتعديل.',
       failedLoad: 'فشل تحميل الإعدادات',
@@ -535,26 +538,27 @@ export const arSettings = {
       description:
         'اضغط ثم حرّر ⌘ + Option على Mac، أو Ctrl + Alt على Windows/Linux، لإظهار HUD من أي تطبيق. معطّل افتراضيًا ويُطبّق على هذا الجهاز فقط.',
       permission:
-        "اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← مراقبة الإدخال، ثم أعد المحاولة. لا تسجّل هذه الإيماءة ضغطات المفاتيح ولا تلتقط الشاشة.",
+        'اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← مراقبة الإدخال، ثم أعد المحاولة. لا تسجّل هذه الإيماءة ضغطات المفاتيح ولا تلتقط الشاشة.',
       unavailable:
-        "تعذّر تشغيل مساعد إيماءة HUD أو توقف بشكل غير متوقع. أعد المحاولة أو أعد تشغيل Actelyo Law Harness. يظل اختصار HUD الحالي يعمل داخل Actelyo Law Harness.",
-      missingHelper: "مساعد إيماءة HUD غير موجود في تثبيت Actelyo Law Harness هذا. حدّث Actelyo Law Harness أو أعد تثبيته، ثم أعد المحاولة.",
+        'تعذّر تشغيل مساعد إيماءة HUD أو توقف بشكل غير متوقع. أعد المحاولة أو أعد تشغيل Actelyo Law Harness. يظل اختصار HUD الحالي يعمل داخل Actelyo Law Harness.',
+      missingHelper:
+        'مساعد إيماءة HUD غير موجود في تثبيت Actelyo Law Harness هذا. حدّث Actelyo Law Harness أو أعد تثبيته، ثم أعد المحاولة.',
       unsupportedSession:
         'جلسة سطح المكتب هذه لا تدعم ضغطات مفاتيح التعديل على مستوى النظام. يتطلب Linux جلسة X11؛ Wayland غير مدعوم.'
     },
     screenshot: {
       enabledTitle: 'اختصار لقطة الشاشة',
       enabledDesc:
-        "اضغط مفتاحَي Command معًا من أي تطبيق لالتقاط النافذة الأمامية وإرفاقها بمسودة Actelyo Law Harness الحالية. لا يُرسل أي شيء تلقائيًا. معطّل افتراضيًا ويُطبَّق على جهاز Mac هذا فقط. قد تتضمن النافذة محتوى حساسًا، لذا راجع المرفق قبل الإرسال.",
+        'اضغط مفتاحَي Command معًا من أي تطبيق لالتقاط النافذة الأمامية وإرفاقها بمسودة Actelyo Law Harness الحالية. لا يُرسل أي شيء تلقائيًا. معطّل افتراضيًا ويُطبَّق على جهاز Mac هذا فقط. قد تتضمن النافذة محتوى حساسًا، لذا راجع المرفق قبل الإرسال.',
       statusTitle: 'حالة اختصار لقطة الشاشة',
       checking: 'جارٍ التحقق من اختصار لقطة الشاشة…',
       disabled: 'اختصار لقطة الشاشة معطّل.',
       starting: 'جارٍ بدء رصد الاختصار. لم يصبح جاهزًا بعد.',
       ready: 'الاختصار جاهز. تُرفق اللقطات بالمسودة الحالية دون إرسالها.',
       inputPermission:
-        "يتيح إذن مراقبة الإدخال لـ Actelyo Law Harness رصد مفتاحَي Command أثناء استخدام تطبيق آخر. اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← مراقبة الإدخال، ثم عُد إلى هنا وأعد المحاولة.",
+        'يتيح إذن مراقبة الإدخال لـ Actelyo Law Harness رصد مفتاحَي Command أثناء استخدام تطبيق آخر. اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← مراقبة الإدخال، ثم عُد إلى هنا وأعد المحاولة.',
       screenPermission:
-        "يتيح إذن تسجيل الشاشة لـ Actelyo Law Harness التقاط نافذة التطبيق الأمامية عند استخدام هذا الاختصار. اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← تسجيل الشاشة، ثم عُد إلى هنا وأعد المحاولة. أعد تشغيل Actelyo Law Harness إذا طلب macOS ذلك.",
+        'يتيح إذن تسجيل الشاشة لـ Actelyo Law Harness التقاط نافذة التطبيق الأمامية عند استخدام هذا الاختصار. اسمح لـ Actelyo Law Harness في إعدادات النظام ← الخصوصية والأمان ← تسجيل الشاشة، ثم عُد إلى هنا وأعد المحاولة. أعد تشغيل Actelyo Law Harness إذا طلب macOS ذلك.',
       openSettings: 'فتح إعدادات النظام',
       retry: 'إعادة المحاولة',
       unavailable: 'اختصار لقطة الشاشة غير متاح. أعد المحاولة أو عطّله.',
@@ -567,7 +571,7 @@ export const arSettings = {
     },
     quickEntry: {
       enabledTitle: 'الإدخال السريع',
-      enabledDesc: "استدعِ محرّرا صغيرا من أي مكان باختصار عام وأرسل طلبا دون فتح Actelyo Law Harness.",
+      enabledDesc: 'استدعِ محرّرا صغيرا من أي مكان باختصار عام وأرسل طلبا دون فتح Actelyo Law Harness.',
       shortcutTitle: 'اختصار الإدخال السريع',
       shortcutDesc: 'يحتاج إلى مفتاح تعديل واحد على الأقل، مثل CommandOrControl+Shift+Space.',
       active: 'الاختصار مفعّل.',
@@ -600,14 +604,14 @@ export const arSettings = {
       title: 'اتصال البوابة',
       envOverride: 'تجاوز من البيئة',
       intro:
-        "يشغّل Actelyo Law Harness Desktop بوابة محلية خاصة افتراضياً. استخدم بوابة بعيدة عندما تريد أن يتحكم هذا التطبيق بخلفية Actelyo Law Harness تعمل مسبقاً على جهاز آخر أو خلف وكيل موثوق. اتصالات البوابة إعداد على مستوى الجهاز؛ ويتم اكتشاف الملفات الشخصية من البوابات المتصلة.",
+        'يشغّل Actelyo Law Harness Desktop بوابة محلية خاصة افتراضياً. استخدم بوابة بعيدة عندما تريد أن يتحكم هذا التطبيق بخلفية Actelyo Law Harness تعمل مسبقاً على جهاز آخر أو خلف وكيل موثوق. اتصالات البوابة إعداد على مستوى الجهاز؛ ويتم اكتشاف الملفات الشخصية من البوابات المتصلة.',
       envOverrideTitle: 'متغيرات البيئة تتحكم في جلسة سطح المكتب هذه.',
       envOverrideDesc: 'أزل HERMES_DESKTOP_REMOTE_URL و HERMES_DESKTOP_REMOTE_TOKEN لاستخدام الإعداد المحفوظ أدناه.',
       localTitle: 'بوابة محلية',
-      localDesc: "تشغيل خلفية Actelyo Law Harness خاصة على localhost. هذا هو الافتراضي ويعمل دون اتصال.",
+      localDesc: 'تشغيل خلفية Actelyo Law Harness خاصة على localhost. هذا هو الافتراضي ويعمل دون اتصال.',
       remoteTitle: 'بوابة بعيدة',
       remoteDesc:
-        "صل واجهة سطح المكتب هذه بخلفية Actelyo Law Harness بعيدة. البوابات المستضافة تستخدم OAuth أو اسم مستخدم وكلمة مرور، والبوابات الذاتية قد تستخدم رمز جلسة.",
+        'صل واجهة سطح المكتب هذه بخلفية Actelyo Law Harness بعيدة. البوابات المستضافة تستخدم OAuth أو اسم مستخدم وكلمة مرور، والبوابات الذاتية قد تستخدم رمز جلسة.',
       remoteUrlTitle: 'رابط البوابة البعيدة',
       remoteUrlDesc: 'الرابط الأساسي لخلفية لوحة التحكم البعيدة. يمكن استخدام بادئات مسار مثل /hermes.',
       probing: 'جار فحص طريقة مصادقة هذه البوابة...',
@@ -644,7 +648,7 @@ export const arSettings = {
       enterUrlFirst: 'أدخل رابط البوابة البعيدة أولاً.',
       restartingTitle: 'جار إعادة تشغيل اتصال البوابة',
       savedTitle: 'تم حفظ إعدادات البوابة',
-      restartingMessage: "سيعيد Actelyo Law Harness Desktop الاتصال باستخدام الإعدادات المحفوظة.",
+      restartingMessage: 'سيعيد Actelyo Law Harness Desktop الاتصال باستخدام الإعدادات المحفوظة.',
       savedMessage: 'تم الحفظ للتشغيل القادم.',
       connectedTo: (baseUrl, version) => `متصل بـ ${baseUrl}${version ? ` · Actelyo Law Harness ${version}` : ''}`,
       reachableTitle: 'البوابة البعيدة قابلة للوصول',
@@ -680,7 +684,7 @@ export const arSettings = {
       remove: 'إزالة',
       deepLinkTitle: 'إضافة خادم MCP؟',
       deepLinkDescription:
-        "طلب رابط إضافة خادم MCP هذا إلى Actelyo Law Harness. راجع الإعدادات الكاملة أدناه — فهي قادمة من الرابط وليست من Actelyo Law Harness.",
+        'طلب رابط إضافة خادم MCP هذا إلى Actelyo Law Harness. راجع الإعدادات الكاملة أدناه — فهي قادمة من الرابط وليست من Actelyo Law Harness.',
       deepLinkStdioWarning:
         'سيشغّل هذا الخادم عملية محلية على جهازك بالأمر الموضح أدناه. لا تتابع إلا إذا كنت تثق بمصدره.',
       deepLinkConfirm: 'إضافة الخادم',
@@ -790,7 +794,8 @@ export const arSettings = {
     providers: {
       connectAccount: 'ربط حساب',
       haveApiKey: 'لديك مفتاح API بدلاً من ذلك؟',
-      intro: "سجل الدخول باشتراكك دون نسخ مفتاح API. يشغّل Actelyo Law Harness تسجيل الدخول من المتصفح لك داخل التطبيق.",
+      intro:
+        'سجل الدخول باشتراكك دون نسخ مفتاح API. يشغّل Actelyo Law Harness تسجيل الدخول من المتصفح لك داخل التطبيق.',
       connected: 'متصل',
       collapse: 'طي',
       connectAnother: 'ربط مزود آخر',
@@ -860,7 +865,7 @@ export const arSettings = {
       noProviderOptions: 'لا تحتوي مجموعة الأدوات هذه على خيارات مزوّد — فعّلها لتعمل مع إعدادك الحالي.',
       noProviders: 'لا يوجد مزوّدون متاحون لمجموعة الأدوات هذه الآن.',
       ready: 'جاهز',
-      nousIncluded: "مُضمّن مع اشتراك fournisseur externe — سجّل الدخول إلى fournisseur externe Portal للتفعيل.",
+      nousIncluded: 'مُضمّن مع اشتراك fournisseur externe — سجّل الدخول إلى fournisseur externe Portal للتفعيل.',
       noApiKeyRequired: 'لا يلزم مفتاح API.',
       postSetupHint: step =>
         `تحتاج هذه الخلفية إلى تثبيت لمرة واحدة (${step}). يعمل على هذا الجهاز — قد يستغرق بضع دقائق.`,
@@ -875,7 +880,7 @@ export const arSettings = {
     }
   },
   modelAssignment: {
-    saveFailed: "لم يحفظ Actelyo Law Harness تغيير النموذج هذا.",
+    saveFailed: 'لم يحفظ Actelyo Law Harness تغيير النموذج هذا.',
     confirmTitle: 'تحذير اختيار النموذج',
     confirmDetail: 'أكّد فقط إذا كنت تقبل هذه المقايضة.',
     confirmAction: 'تأكيد',
@@ -914,11 +919,11 @@ export const arSettings = {
   },
   interfaceMode: {
     title: 'وضع الواجهة',
-    hint: "يغيّر ما يظهر، وليس ما يستطيع Actelyo Law Harness فعله.",
+    hint: 'يغيّر ما يظهر، وليس ما يستطيع Actelyo Law Harness فعله.',
     sessionNote: 'يحدده الوضع البسيط. التغيير هنا يستمر لهذه الجلسة فقط؛ بدّل إلى المتقدم لجعله خيارك.',
     simple: {
       label: 'بسيط',
-      description: "للتحدث مع Actelyo Law Harness. الشريط الجانبي والدردشة؛ بلا طرفية أو لوحات ملفات أو فروقات."
+      description: 'للتحدث مع Actelyo Law Harness. الشريط الجانبي والدردشة؛ بلا طرفية أو لوحات ملفات أو فروقات.'
     },
     advanced: {
       label: 'متقدم',

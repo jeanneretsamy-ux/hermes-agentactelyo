@@ -5,7 +5,7 @@ import { memo, type PointerEvent as ReactPointerEvent, useMemo, useRef, useState
 import { BrandMark } from '@/components/brand-mark'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { getOfficialSkills, profileScopeKey, type ProfileScope } from '@/hermes'
+import { getOfficialSkills, type ProfileScope, profileScopeKey } from '@/hermes'
 import { useI18n } from '@/i18n'
 import { Loader2 } from '@/lib/icons'
 import { useStoreSelector } from '@/lib/use-session-slice'
@@ -114,6 +114,7 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
   }
 
   const [query, setQuery] = useState('')
+
   const catalog = useQuery({
     queryKey: [...OFFICIAL_SKILLS_KEY, profileScopeKey(profile)],
     queryFn: () => getOfficialSkills(profile),
@@ -121,15 +122,19 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
     staleTime: 60_000,
     retry: false
   })
+
   const runningKeys = useStoreSelector($hubActions, actions =>
     Object.keys(actions)
       .filter(key => actions[key]?.running)
       .sort()
       .join('|')
   )
+
   const running = useMemo(() => new Set(runningKeys.split('|')), [runningKeys])
+
   const skills = useMemo(() => {
     const needle = query.trim().toLowerCase()
+
     return (catalog.data?.skills ?? []).filter(
       skill =>
         !needle ||
@@ -138,7 +143,9 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
   }, [catalog.data, query])
 
   const install = (identifier: string, name: string) => {
-    if (installedNames.has(name) || installedNames.has(identifier) || running.has(identifier)) return
+    if (installedNames.has(name) || installedNames.has(identifier) || running.has(identifier)) {
+      return
+    }
     notify({ kind: 'success', title: h.installStarted(name), message: h.actionLog })
     void installHubSkill(identifier, profile).catch(err => notifyHubActionFailed(err, h.actionFailed, name, profile))
   }
@@ -195,18 +202,18 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
         <div className="flex min-h-0 flex-col gap-2 px-3 pb-2" style={{ flex: `0 1 ${height}px` }}>
           <Input
             aria-label={t.skills.searchSkills}
+            onChange={event => setQuery(event.target.value)}
             placeholder={t.skills.searchSkills}
             value={query}
-            onChange={event => setQuery(event.target.value)}
           />
           <div
-            role="region"
             aria-label={`Actelyo · ${h.pickerTitle}`}
             className="min-h-0 flex-1 overflow-auto rounded-lg border border-(--ui-stroke-secondary)"
+            role="region"
           >
             {catalog.isPending && <p className="p-3 text-sm">{t.skills.loading}</p>}
             {catalog.isError && (
-              <div role="alert" className="p-3 text-sm">
+              <div className="p-3 text-sm" role="alert">
                 {h.loadFailed}
                 <Button onClick={() => void catalog.refetch()} size="xs" variant="text">
                   {t.skills.refresh}
@@ -216,7 +223,9 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
             {skills.map(skill => {
               const installed =
                 skill.installed || installedNames.has(skill.name) || installedNames.has(skill.identifier)
+
               const installing = running.has(skill.identifier)
+
               return (
                 <div
                   className="flex items-center gap-3 border-b border-(--ui-stroke-secondary) p-3 last:border-b-0"

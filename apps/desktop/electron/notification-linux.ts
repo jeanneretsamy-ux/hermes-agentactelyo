@@ -250,7 +250,7 @@ export function createLinuxNotifications() {
               member: 'Notify',
               signature: 'susssasa{sv}i',
               body: [
-                "Actelyo Law Harness",
+                'Actelyo Law Harness',
                 0,
                 options.icon || '',
                 options.title,

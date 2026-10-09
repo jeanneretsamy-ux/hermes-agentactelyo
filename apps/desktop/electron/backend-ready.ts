@@ -168,7 +168,11 @@ function waitForDashboardPort(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(
+        new Error(
+          `Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`
+        )
+      )
     }
 
     function onError(err) {
@@ -256,7 +260,11 @@ function waitForDashboardReadyFile(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(
+        new Error(
+          `Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`
+        )
+      )
     }
 
     function onError(err) {

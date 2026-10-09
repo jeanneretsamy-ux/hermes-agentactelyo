@@ -159,7 +159,7 @@ const gatewayRequester: WakeRequester = async <T>(method: string, params: Record
   const gateway = $gateway.get()
 
   if (!gateway) {
-    throw new Error("Actelyo Law Harness gateway unavailable")
+    throw new Error('Actelyo Law Harness gateway unavailable')
   }
 
   return method === 'wake.start'

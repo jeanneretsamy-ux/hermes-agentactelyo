@@ -6,7 +6,7 @@ import {
   DropdownMenuRadioItem,
   dropdownMenuRow
 } from '@/components/ui/dropdown-menu'
-import { saveHermesConfigRecord, type ProfileScope } from '@/hermes'
+import { type ProfileScope, saveHermesConfigRecord } from '@/hermes'
 import { triggerHaptic } from '@/lib/haptics'
 import { notifyError } from '@/store/notifications'
 import type { HermesConfigRecord } from '@/types/hermes'
@@ -95,11 +95,13 @@ export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
   const modelOptions = modelOptionsFor(modelKey, provider)
   const modelValue = modelKey ? asText(getNested(record, modelKey)) || modelOptions[0] || '' : ''
   const sttProvider = asText(getNested(record, 'stt.provider')) || DEFAULT_STT_PROVIDER
+
   const sttProviderOptions = useMemo(() => {
     const options = enumOptionsFor('stt.provider', sttProvider, record) ?? []
 
     return options.includes('local_command') ? options : [...options, 'local_command']
   }, [record, sttProvider])
+
   const sttModelKey = STT_MODEL_KEY_BY_PROVIDER[sttProvider]
   const sttModelOptions = modelOptionsFor(sttModelKey, sttProvider)
   const sttModelValue = sttModelKey ? asText(getNested(record, sttModelKey)) || sttModelOptions[0] || '' : ''

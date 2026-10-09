@@ -14,9 +14,9 @@ export const en: Translations = {
     }
   },
   sharedMetrics: {
-    consentTitle: "Help improve Actelyo Law Harness?",
+    consentTitle: 'Help improve Actelyo Law Harness?',
     consentBody:
-      "Shared metrics contain only bounded counters. Never prompts, files, paths or error text. Collection is local. Sending them to fournisseur externe is a separate opt-in.",
+      'Shared metrics contain only bounded counters. Never prompts, files, paths or error text. Collection is local. Sending them to fournisseur externe is a separate opt-in.',
     whatIsCollected: 'What is collected',
     collectedIntro: 'Only bounded counters:',
     collectedActivity: 'Activity, session length, outcomes and error classes',
@@ -25,27 +25,27 @@ export const en: Translations = {
     collectedMilestones: 'Bucketed setup counts',
     collectedReliability: 'Update results and timing, crashes, startup and reply speed, messaging-platform health',
     collectedUsage:
-      "How Actelyo Law Harness gets used: agent accuracy and efficiency (edit matches, loops, recoveries, tokens and tool calls per task, cache breaks), active time per surface and Desktop mode, which app areas, actions and settings are used, closed quickly or switched off, and provider setup outcomes",
+      'How Actelyo Law Harness gets used: agent accuracy and efficiency (edit matches, loops, recoveries, tokens and tool calls per task, cache breaks), active time per surface and Desktop mode, which app areas, actions and settings are used, closed quickly or switched off, and provider setup outcomes',
     collectedMachine:
-      "Coarse machine facts: RAM range, GPU type, Actelyo Law Harness version age and release channel, updates behind, whether a local model server is used",
+      'Coarse machine facts: RAM range, GPU type, Actelyo Law Harness version age and release channel, updates behind, whether a local model server is used',
     installId:
-      "Sending uploads each daily package to the fournisseur externe telemetry service. Packages carry this profile’s install ID: a stable random UUID with no personal information, reset by deleting the shared-metrics directory.",
+      'Sending uploads each daily package to the fournisseur externe telemetry service. Packages carry this profile’s install ID: a stable random UUID with no personal information, reset by deleting the shared-metrics directory.',
     consentWindow:
       'Only packages whose entire collection period falls inside a recorded consent window are ever sent — data from before you opt in, or from any gap while sending was off, stays on this machine. Sending can be turned off again at any time.',
     readDocs: 'Read the full details',
-    share: "Collect and send to fournisseur externe",
+    share: 'Collect and send to fournisseur externe',
     local: 'Collect locally only',
     off: 'No thanks',
     changeLater: 'You can change this any time in Settings → Safety.',
     saveFailed: 'Couldn’t save your choice',
     collectLabel: 'Collect usage stats',
     collectDesc: 'Bounded counters kept on this device. Never prompts, files, paths or error text.',
-    sendLabel: "Send usage stats to fournisseur externe",
+    sendLabel: 'Send usage stats to fournisseur externe',
     sendDesc:
-      "Upload each daily package to the fournisseur externe telemetry service. Only data from inside a consent window is sent. Needs collection on.",
-    unavailable: "Update the Actelyo Law Harness backend to change this setting.",
+      'Upload each daily package to the fournisseur externe telemetry service. Only data from inside a consent window is sent. Needs collection on.',
+    unavailable: 'Update the Actelyo Law Harness backend to change this setting.',
     stripBody: 'Bounded counters only, never prompts or files.',
-    stripChoices: { share: "Send to fournisseur externe", local: 'Local only', off: 'No thanks' },
+    stripChoices: { share: 'Send to fournisseur externe', local: 'Local only', off: 'No thanks' },
     stripDetails: 'Details'
   },
   // English editorial copy stays in the shipped JSONL; other locales override it.
@@ -74,7 +74,7 @@ export const en: Translations = {
     ownerMissing: 'Reopen this conversation to manage its connections.',
     search: 'Find an app',
     empty: 'No matching apps',
-    disclaimer: "Connecting is optional. Only authorize the apps you want Actelyo Law Harness to use.",
+    disclaimer: 'Connecting is optional. Only authorize the apps you want Actelyo Law Harness to use.',
     execution: 'Connector tools',
     setup: server => `Set up ${server}`,
     openInBrowser: 'Open in browser',
@@ -113,7 +113,7 @@ export const en: Translations = {
       kindCatalog: 'MCP · Catalog',
       kindCustom: 'MCP · Custom',
       kindPlugin: (plugin: string) => `MCP · Plugin ${plugin}`,
-      inCatalog: "In the Actelyo Law Harness catalog",
+      inCatalog: 'In the Actelyo Law Harness catalog',
       hostedTwin: 'Managed version available',
       alsoLocal: 'Also runs on this device',
       open: (name: string) => `Open ${name}`,
@@ -163,7 +163,7 @@ export const en: Translations = {
       loading: 'Reading the catalog and the servers on this computer',
       emptyTitle: 'No apps here yet. Add a server on this computer to get started.',
       noMatchTitle: 'No matching apps',
-      noMatchBody: "Nothing here matches. Point Actelyo Law Harness at your own MCP server to add it.",
+      noMatchBody: 'Nothing here matches. Point Actelyo Law Harness at your own MCP server to add it.',
       clearSearch: 'Clear the search',
       hostedFailedTitle: 'Could not reach the hosted apps.',
       hostedFailedBody: 'The servers on this computer are unaffected and still running. Nothing was turned off.',
@@ -172,14 +172,14 @@ export const en: Translations = {
       showAllMatches: 'Show all matches',
       segmentNoMatch: (segment: string) => `No match in ${segment}, so every match is shown.`,
       freeTierNote: 'Connections stay on this computer until you sign in.',
-      signInLine: "Sign in to fournisseur externe to use managed apps.",
+      signInLine: 'Sign in to fournisseur externe to use managed apps.',
       signIn: 'Sign in',
       managedUnavailable: 'Managed apps are not available for this account yet.',
       writeFailed: 'That change was not saved.',
       refreshFailed: 'The tool list was not refreshed.',
-      disconnectNoAccount: "Actelyo Law Harness has no account to disconnect here. Refresh the page and try again.",
+      disconnectNoAccount: 'Actelyo Law Harness has no account to disconnect here. Refresh the page and try again.',
       disconnectRefused:
-        "fournisseur externe could not remove this sign-in right now. Turn the app off with the switch instead, or try again later."
+        'fournisseur externe could not remove this sign-in right now. Turn the app off with the switch instead, or try again later.'
     },
 
     add: {
@@ -219,7 +219,7 @@ export const en: Translations = {
     dialog: {
       disconnect: 'Disconnect',
       disconnectTitle: (name: string) => `Disconnect ${name}?`,
-      disconnectBody: "Actelyo Law Harness stops acting as this account. You can connect again at any time.",
+      disconnectBody: 'Actelyo Law Harness stops acting as this account. You can connect again at any time.',
       menuRefreshTools: 'Refresh tools',
       moreActions: 'More actions',
       removeServerTitle: (name: string) => `Remove ${name}?`,
@@ -233,10 +233,10 @@ export const en: Translations = {
       providedByPlugin: (plugin: string) => `Provided by plugin ${plugin}`,
       openPlugins: 'Open the Plugins tab',
       // Verbatim, by decision of the design of record.
-      nousLine: "fournisseur externe apps follow your account, not the profile.",
+      nousLine: 'fournisseur externe apps follow your account, not the profile.',
       rulesReadOnly: 'Rules cannot be changed right now.',
       rulesAppOff: (name: string) => `Turn ${name} on to change its tools.`,
-      rulesSignIn: "Sign in to change what Actelyo Law Harness may do here.",
+      rulesSignIn: 'Sign in to change what Actelyo Law Harness may do here.',
       orgNote: (count: number) => `Your organisation turned ${count} tools off.`,
       orgLink: 'Open the connectors admin',
       connectEnded: 'The sign-in did not finish.',
@@ -284,11 +284,11 @@ export const en: Translations = {
       needsAuthBody: 'The sign-in stays on this computer. Nothing leaves it.',
       retry: 'Retry',
       goneTitle: (name: string) => `${name} left the catalog.`,
-      goneBody: "Actelyo Law Harness cannot call it any more. The row stays until you remove it, so nothing vanishes.",
+      goneBody: 'Actelyo Law Harness cannot call it any more. The row stays until you remove it, so nothing vanishes.',
       remove: 'Remove',
       offTitle: (name: string) => `${name} is off.`,
       offBody: 'Turn it on with the switch above to read the tools it brings.',
-      signedOutTitle: "Sign in to fournisseur externe to read the tool list.",
+      signedOutTitle: 'Sign in to fournisseur externe to read the tool list.',
       signedOutBody: 'Your servers on this computer are unaffected.',
       conflictTitle: 'Someone changed this rule while you were editing.',
       // Two sentences at most, and the second says the work is still here.
@@ -328,7 +328,7 @@ export const en: Translations = {
 
   sessionImport: {
     title: 'Continue from another app',
-    subtitle: "Bring a conversation into Actelyo Law Harness and pick up where you left off.",
+    subtitle: 'Bring a conversation into Actelyo Law Harness and pick up where you left off.',
     action: 'Import session',
     readingFrom: 'Reading from',
     connectedComputer: 'the connected computer',
@@ -346,18 +346,18 @@ export const en: Translations = {
     more: 'Load more sessions',
     messages: 'messages',
     choose: 'A conversation worth continuing',
-    chooseHelp: "Choose a session to read its history before bringing it into Actelyo Law Harness.",
+    chooseHelp: 'Choose a session to read its history before bringing it into Actelyo Law Harness.',
     previewLoading: 'Opening preview',
     previewError: 'Preview unavailable',
     previewHelp: 'The source may have moved or changed. Refresh the list and try again.',
     previewLimit: 'Preview shortened for readability. The complete conversation is imported.',
     you: 'You',
-    snapshot: "This conversation is already in Actelyo Law Harness. Open your existing copy to continue.",
+    snapshot: 'This conversation is already in Actelyo Law Harness. Open your existing copy to continue.',
     copyNotice:
       'Copies conversation text. Source files stay unchanged. Tool output and reasoning are not carried over.',
     importing: 'Importing…',
-    open: "Open in Actelyo Law Harness",
-    continue: "Continue in Actelyo Law Harness",
+    open: 'Open in Actelyo Law Harness',
+    continue: 'Continue in Actelyo Law Harness',
     importError: 'Could not import this conversation.'
   },
   common: {
@@ -425,30 +425,30 @@ export const en: Translations = {
   },
 
   boot: {
-    ready: "Actelyo Law Harness Desktop is ready",
+    ready: 'Actelyo Law Harness Desktop is ready',
     desktopBootFailedWithMessage: message => `Desktop boot failed: ${message}`,
     steps: {
       connectingGateway: 'Connecting live desktop gateway',
-      loadingSettings: "Loading Actelyo Law Harness settings",
+      loadingSettings: 'Loading Actelyo Law Harness settings',
       loadingSessions: 'Loading recent sessions',
-      retryingRemoteBackend: "Reconnecting to the remote Actelyo Law Harness backend…",
+      retryingRemoteBackend: 'Reconnecting to the remote Actelyo Law Harness backend…',
       startingDesktopConnection: 'Starting desktop connection',
-      startingHermesDesktop: "Starting Actelyo Law Harness Desktop…"
+      startingHermesDesktop: 'Starting Actelyo Law Harness Desktop…'
     },
     errors: {
       backgroundExited:
         'The service that runs your chats closed unexpectedly. Restart it to keep going — your chats and settings are safe.',
-      backgroundExitedDuringStartup: "Actelyo Law Harness stopped right after it started.",
-      backendStopped: "Actelyo Law Harness stopped working in the background",
-      restartHermes: "Restart Actelyo Law Harness",
+      backgroundExitedDuringStartup: 'Actelyo Law Harness stopped right after it started.',
+      backendStopped: 'Actelyo Law Harness stopped working in the background',
+      restartHermes: 'Restart Actelyo Law Harness',
       openLogs: 'Open logs',
       desktopBootFailed: "Actelyo Law Harness couldn't start",
-      gatewayConnectionLost: "Actelyo Law Harness lost its connection",
+      gatewayConnectionLost: 'Actelyo Law Harness lost its connection',
       gatewayConnectionLostDetail:
         'Still trying to reconnect. You can keep reading and drafting. If this keeps up, reconnect now or check your connection settings.',
       reconnectNow: 'Reconnect now',
       connectionSettings: 'Connection settings',
-      gatewaySignInRequired: "Your remote Actelyo Law Harness signed you out",
+      gatewaySignInRequired: 'Your remote Actelyo Law Harness signed you out',
       gatewaySignInRequiredDetail: 'Sign in again to reconnect. Your chats and settings are safe.',
       signInAgain: 'Sign in again',
       ipcBridgeUnavailable: "Actelyo Law Harness Desktop couldn't talk to its own background layer. Restart the app."
@@ -459,8 +459,8 @@ export const en: Translations = {
       exitedEarly: "Actelyo Law Harness' background service stopped right after starting.",
       timedOut: "Actelyo Law Harness' background service didn't answer in time.",
       permission: "Actelyo Law Harness couldn't write to its data folder (permission problem).",
-      diskFull: "The disk is full, so Actelyo Law Harness could not start.",
-      portInUse: "Another program is using the network port Actelyo Law Harness needs.",
+      diskFull: 'The disk is full, so Actelyo Law Harness could not start.',
+      portInUse: 'Another program is using the network port Actelyo Law Harness needs.',
       installMissing: "Part of Actelyo Law Harness' installation is missing. Choose Repair install to put it back."
     },
     failure: {
@@ -485,11 +485,11 @@ export const en: Translations = {
         `Signs out of the saved remote browser session, then opens ${signInLabel}. Use local gateway to switch to the bundled backend instead.`,
       signOutAndSignIn: 'Sign out & sign in',
       remoteFailureHint: 'Check the gateway URL and sign-in under Gateway settings, or switch to the local gateway.',
-      cloudDownTitle: "fournisseur externe Cloud agent is down",
+      cloudDownTitle: 'fournisseur externe Cloud agent is down',
       cloudDownDescription:
-        "The fournisseur externe-managed cloud agent this gateway connects to is returning a server error. It cannot be restarted from here — check its status, switch to the local gateway, or get support.",
+        'The fournisseur externe-managed cloud agent this gateway connects to is returning a server error. It cannot be restarted from here — check its status, switch to the local gateway, or get support.',
       cloudDownHint:
-        "The buttons below open the fournisseur externe Portal (instance status and controls) and our Discord for support.",
+        'The buttons below open the fournisseur externe Portal (instance status and controls) and our Discord for support.',
       cloudDownCheckPortal: 'Check Portal status',
       cloudDownDiscord: 'Get help on Discord',
       hideRecentLogs: 'Hide recent logs',
@@ -507,7 +507,7 @@ export const en: Translations = {
 
   notifications: {
     sharedProfileWarning:
-      "Another Actelyo Law Harness installation is using this profile. Both installations share its settings and data, so changes can conflict. You can continue, or close the other installation before making changes.",
+      'Another Actelyo Law Harness installation is using this profile. Both installations share its settings and data, so changes can conflict. You can continue, or close the other installation before making changes.',
     region: 'Notifications',
     hide: 'Hide',
     show: 'Show',
@@ -520,17 +520,18 @@ export const en: Translations = {
     compressDeferredDone: 'Context compression finished',
     backendOutOfDateTitle: 'Backend out of date',
     backendOutOfDateMessage:
-      "Your Actelyo Law Harness backend is older than this desktop build and may not work correctly. Update to align them.",
-    desktopOutOfDateTitle: "Actelyo Law Harness app out of date",
+      'Your Actelyo Law Harness backend is older than this desktop build and may not work correctly. Update to align them.',
+    desktopOutOfDateTitle: 'Actelyo Law Harness app out of date',
     desktopOutOfDateMessage:
-      "This Actelyo Law Harness app is older than the backend it is connected to and may not work correctly. Update the app to align them.",
+      'This Actelyo Law Harness app is older than the backend it is connected to and may not work correctly. Update the app to align them.',
     updateDesktopApp: 'Update app',
     installMethodUnsupportedTitle: 'Unsupported install method',
-    updateHermes: "Update Actelyo Law Harness",
+    updateHermes: 'Update Actelyo Law Harness',
     updateReadyTitle: 'Update ready',
     updateReadyMessage: count => `${count} new change${count === 1 ? '' : 's'} available.`,
     updateReadyMessageUnknown: 'A new update is available.',
-    updateReadyMessageAppInstaller: "A new version of Actelyo Law Harness is ready. Update now and Windows will finish it for you.",
+    updateReadyMessageAppInstaller:
+      'A new version of Actelyo Law Harness is ready. Update now and Windows will finish it for you.',
     seeWhatsNew: "See what's new",
     mcp: {
       needsAuthTitle: 'MCP server needs re-authentication',
@@ -549,19 +550,19 @@ export const en: Translations = {
       diskFull: 'Disk full — free some space, then try again.',
       storageFailure: "Actelyo Law Harness couldn't save to its data folder. Open Maintenance to check and repair it.",
       gatewayAuthFailed:
-        "This Actelyo Law Harness no longer accepts your saved sign-in. Open Gateways and sign in again (or paste a new access token), then retry.",
+        'This Actelyo Law Harness no longer accepts your saved sign-in. Open Gateways and sign in again (or paste a new access token), then retry.',
       methodNotAllowed:
         "Actelyo Law Harness' background service is out of step with the app, probably after an update. Restart it to fix this.",
       microphonePermission: 'Microphone permission was denied.',
       openaiRejectedApiKey: "OpenAI didn't accept your API key. Update it in Settings → Keys, then try again.",
       openaiTtsNeedsKey: 'Voice needs an OpenAI key. Add one in Settings → Keys.',
       codeSkewRestartRequired:
-        "Actelyo Law Harness was updated but is still running the old version. Restart it to finish the update.",
+        'Actelyo Law Harness was updated but is still running the old version. Restart it to finish the update.',
       rpcOutOfSync: 'The app and the backend are on different versions. Update both.',
       restartHermesFailed: "Couldn't restart Actelyo Law Harness"
     },
     actions: {
-      restartHermes: "Restart Actelyo Law Harness",
+      restartHermes: 'Restart Actelyo Law Harness',
       openKeys: 'Open Keys',
       openGateways: 'Open Gateways',
       openMaintenance: 'Open Maintenance'
@@ -589,7 +590,7 @@ export const en: Translations = {
       liveEndedConnectionLost: 'The live voice session lost its connection.',
       liveEndedClosed: 'The live voice session was closed by the service.',
       liveError: 'Live voice',
-      liveDelegationFailed: "Could not hand the request to Actelyo Law Harness",
+      liveDelegationFailed: 'Could not hand the request to Actelyo Law Harness',
       liveUnavailable: reason => `GPT-Live voice chat is not available: ${reason}. Using speech-to-text instead.`
     },
     native: {
@@ -599,8 +600,8 @@ export const en: Translations = {
       rejectAction: 'Reject',
       inputTitle: 'Input needed',
       inputTitleNamed: session => `Input needed — ${session}`,
-      inputBody: "Actelyo Law Harness is waiting for your response.",
-      turnDoneTitle: "Actelyo Law Harness finished",
+      inputBody: 'Actelyo Law Harness is waiting for your response.',
+      turnDoneTitle: 'Actelyo Law Harness finished',
       turnDoneBody: '',
       turnErrorTitle: 'Turn failed',
       backgroundDoneTitle: 'Background task finished',
@@ -615,7 +616,7 @@ export const en: Translations = {
   },
 
   billingBlock: {
-    titleNous: "Out of fournisseur externe credits",
+    titleNous: 'Out of fournisseur externe credits',
     titleProvider: provider => `Out of credits — ${provider}`,
     fallbackMessage: 'Your account is out of credits. Add credits to keep going.',
     openBilling: 'Open billing',
@@ -624,9 +625,9 @@ export const en: Translations = {
   },
 
   sendDiagnostics: {
-    title: "Send diagnostics to fournisseur externe",
+    title: 'Send diagnostics to fournisseur externe',
     privacyNotice:
-      "This uploads a debug bundle to fournisseur externe-internal storage (not a public paste). It includes system info (OS, versions, provider, which API keys are configured — never the keys themselves) and full agent, gateway, and desktop logs (up to 512 KB each), which likely contain conversation content, tool outputs, and file paths. Secrets are redacted before upload. The bundle is viewable only by fournisseur externe staff and allowlisted Discord moderators, and auto-deletes after 14 days.",
+      'This uploads a debug bundle to fournisseur externe-internal storage (not a public paste). It includes system info (OS, versions, provider, which API keys are configured — never the keys themselves) and full agent, gateway, and desktop logs (up to 512 KB each), which likely contain conversation content, tool outputs, and file paths. Secrets are redacted before upload. The bundle is viewable only by fournisseur externe staff and allowlisted Discord moderators, and auto-deletes after 14 days.',
     upload: 'Upload',
     uploading: 'Uploading…',
     cancel: 'Cancel',
@@ -642,7 +643,7 @@ export const en: Translations = {
     handoffLead: 'Pick up the discussion in:',
     links: {
       github: 'GitHub Issues',
-      portal: "fournisseur externe Portal Support",
+      portal: 'fournisseur externe Portal Support',
       discord: 'Discord'
     }
   },
@@ -866,7 +867,7 @@ export const en: Translations = {
     exportConfig: 'Export config',
     importConfig: 'Import config',
     resetToDefaults: 'Reset to defaults',
-    resetConfirm: "Reset all settings to Actelyo Law Harness defaults?",
+    resetConfirm: 'Reset all settings to Actelyo Law Harness defaults?',
     exportFailed: 'Export failed',
     resetFailed: 'Reset failed',
     nav: {
@@ -956,7 +957,7 @@ export const en: Translations = {
         desktopSuccess: name => `Desktop plugin ${name} installed`,
         agentFailed: 'Agent plugin install failed',
         installUncertain:
-          "Actelyo Law Harness stopped waiting for the install result, but the plugin may still be installing. Close this dialog and use Rescan in Plugins before trying Install again.",
+          'Actelyo Law Harness stopped waiting for the install result, but the plugin may still be installing. Close this dialog and use Rescan in Plugins before trying Install again.',
         desktopFailed: 'Desktop plugin install failed',
         missingEnv: (name, vars) =>
           `${name} is installed but needs a key before it can work: ${vars}. Add it now, or the plugin's tools will fail.`
@@ -1008,7 +1009,8 @@ export const en: Translations = {
       deleteAction: 'Remove saved item',
       otpField: 'Authenticator key',
       otpPlaceholder: 'Base32 secret or otpauth:// link',
-      otpHint: "The \"setup key\" the site shows when you enable 2FA. With it saved, Actelyo Law Harness generates the codes itself.",
+      otpHint:
+        'The "setup key" the site shows when you enable 2FA. With it saved, Actelyo Law Harness generates the codes itself.',
       twoFactorBadge: '2FA auto',
       deleteTitle: 'Delete this item?',
       deleteDescription: label => `"${label}" will be removed. This cannot be undone.`,
@@ -1020,9 +1022,10 @@ export const en: Translations = {
         toggleFailed: 'Could not update password manager',
         notInstalled: name =>
           `Not detected. Install the ${name} command-line tool and sign in to it; Actelyo Law Harness picks it up automatically.`,
-        disabledDesc: "Detected but turned off for Actelyo Law Harness.",
+        disabledDesc: 'Detected but turned off for Actelyo Law Harness.',
         lockedDesc: 'Detected. The agent will ask you to unlock it when it needs a login, or unlock now.',
-        unlockedDesc: "Unlocked for this session. Locks automatically after 30 minutes idle or when Actelyo Law Harness closes.",
+        unlockedDesc:
+          'Unlocked for this session. Locks automatically after 30 minutes idle or when Actelyo Law Harness closes.',
         statusLocked: 'Locked',
         statusNotDetected: 'Not detected',
         statusOff: 'Off',
@@ -1042,7 +1045,7 @@ export const en: Translations = {
       intro: 'OS notifications (not in-app toasts). Per device.',
       enableAll: 'Enable notifications',
       enableAllDesc: 'Off silences every notification below.',
-      focusedHint: "Completion alerts only fire while Actelyo Law Harness is in the background.",
+      focusedHint: 'Completion alerts only fire while Actelyo Law Harness is in the background.',
       kinds: {
         approval: {
           label: 'Approval needed',
@@ -1050,11 +1053,11 @@ export const en: Translations = {
         },
         input: {
           label: 'Input needed',
-          description: "Actelyo Law Harness asked a question or needs a password or secret."
+          description: 'Actelyo Law Harness asked a question or needs a password or secret.'
         },
         turnDone: {
           label: 'Response ready',
-          description: "A turn finished while Actelyo Law Harness was in the background."
+          description: 'A turn finished while Actelyo Law Harness was in the background.'
         },
         turnError: {
           label: 'Turn failed',
@@ -1070,11 +1073,11 @@ export const en: Translations = {
         },
         plugin: {
           label: 'Plugin notifications',
-          description: "A desktop plugin sent a notification while Actelyo Law Harness was in the background."
+          description: 'A desktop plugin sent a notification while Actelyo Law Harness was in the background.'
         }
       },
       test: 'Send test notification',
-      testTitle: "Actelyo Law Harness",
+      testTitle: 'Actelyo Law Harness',
       testBody: 'Notifications are working.',
       testSent: 'Test sent. If nothing appears, check your OS notification permissions and Focus/Do Not Disturb.',
       testUnsupported: 'This system does not support native notifications.',
@@ -1093,7 +1096,7 @@ export const en: Translations = {
       advanced: 'Advanced'
     },
     searchPlaceholder: {
-      about: "About Actelyo Law Harness Desktop",
+      about: 'About Actelyo Law Harness Desktop',
       config: 'Search settings...',
       gateway: 'Gateway connection...',
       keys: 'Search API keys...',
@@ -1112,7 +1115,7 @@ export const en: Translations = {
       title: 'Appearance',
       intro: 'Desktop-only. Mode is brightness; theme is palette and chat chrome.',
       colorMode: 'Color Mode',
-      colorModeDesc: "Pick a fixed mode or let Actelyo Law Harness follow your system setting.",
+      colorModeDesc: 'Pick a fixed mode or let Actelyo Law Harness follow your system setting.',
       toolViewTitle: 'Tool Call Display',
       toolViewDesc: 'Product hides raw tool payloads; Technical shows full input/output.',
       hideCodeDiffsTitle: 'Hide code diffs',
@@ -1185,14 +1188,14 @@ export const en: Translations = {
       modelPricingTitle: 'Model Pricing',
       modelPricingDesc: 'Show input, output, and cache-read prices per million tokens in the model picker.',
       reactionsTitle: 'Message Reactions',
-      reactionsDesc: "iMessage-style emoji tapbacks — react to messages, and Actelyo Law Harness can react to yours.",
+      reactionsDesc: 'iMessage-style emoji tapbacks — react to messages, and Actelyo Law Harness can react to yours.',
       tipsTitle: 'In-App Tips',
       tipsDesc:
-        "Occasional hints from the app and Actelyo Law Harness. Each tip appears once. Turns off automatically after your first 30 days; you can turn it back on.",
+        'Occasional hints from the app and Actelyo Law Harness. Each tip appears once. Turns off automatically after your first 30 days; you can turn it back on.',
       tipsReset: (count: number) => `Show ${count} ${count === 1 ? 'tip' : 'tips'} again`,
       toursTitle: 'Guided Tours',
       toursDesc:
-        "Let Actelyo Law Harness spotlight each step as it guides you through the app. Turns off automatically after your first 30 days; you can turn it back on.",
+        'Let Actelyo Law Harness spotlight each step as it guides you through the app. Turns off automatically after your first 30 days; you can turn it back on.',
       composerPopoutTitle: 'Floating Composer',
       composerPopoutDesc: 'Allow dragging the composer out of its dock. When off, it stays docked at the bottom.',
       fileBrowserTitle: 'File Browser',
@@ -1232,9 +1235,9 @@ export const en: Translations = {
       pet: {
         title: 'Pet',
         intro:
-          "Adopt an animated petdex mascot that floats over the app and reacts to what Actelyo Law Harness is doing — running while tools execute, celebrating on success, sulking on errors.",
+          'Adopt an animated petdex mascot that floats over the app and reacts to what Actelyo Law Harness is doing — running while tools execute, celebrating on success, sulking on errors.',
         restartHint:
-          "Pets need a quick restart — the running app started before this feature was added. Quit and reopen Actelyo Law Harness, then come back here.",
+          'Pets need a quick restart — the running app started before this feature was added. Quit and reopen Actelyo Law Harness, then come back here.',
         scaleTitle: 'Size',
         scaleDesc: 'Resize the floating mascot. Applies everywhere instantly.',
         roamTitle: 'Roam',
@@ -1272,7 +1275,7 @@ export const en: Translations = {
     uninstallSection: {
       dangerZone: 'Danger zone',
       checkingInstalled: 'Checking what’s installed…',
-      uninstallHermes: "Uninstall Actelyo Law Harness",
+      uninstallHermes: 'Uninstall Actelyo Law Harness',
       chooseHowMuch:
         'Choose how much to remove. The app closes to finish the job; reopen the installer any time to come back.',
       confirmUninstall: 'Confirm uninstall',
@@ -1284,19 +1287,20 @@ export const en: Translations = {
       options: {
         gui: {
           title: 'Uninstall Chat GUI only',
-          description: "Remove this desktop app. The Actelyo Law Harness agent, your config, and chats all stay.",
+          description: 'Remove this desktop app. The Actelyo Law Harness agent, your config, and chats all stay.',
           consequence: 'the desktop Chat GUI (this app and its data)'
         },
         lite: {
           title: 'Uninstall GUI + agent, keep my data',
           description:
-            "Remove the app and the Actelyo Law Harness agent, but keep config, chats, and secrets for a future reinstall.",
-          consequence: "the Chat GUI and the Actelyo Law Harness agent (config, chats, and secrets are kept)"
+            'Remove the app and the Actelyo Law Harness agent, but keep config, chats, and secrets for a future reinstall.',
+          consequence: 'the Chat GUI and the Actelyo Law Harness agent (config, chats, and secrets are kept)'
         },
         full: {
           title: 'Uninstall everything',
           description: 'Remove the app, the agent, and all user data — config, chats, scheduled jobs, secrets, logs.',
-          consequence: "EVERYTHING — the Chat GUI, the Actelyo Law Harness agent, and all of your config, chats, secrets, and logs"
+          consequence:
+            'EVERYTHING — the Chat GUI, the Actelyo Law Harness agent, and all of your config, chats, secrets, and logs'
         }
       }
     },
@@ -1358,7 +1362,7 @@ export const en: Translations = {
     config: {
       minimizeToTrayTitle: 'Minimize to tray',
       minimizeToTrayDesc:
-        "Minimize windows or close the main window to hide them in the system tray (menu bar on macOS) and keep Actelyo Law Harness running. Use Quit Actelyo Law Harness from the tray menu or Cmd+Q to exit. Off by default; applies only to this device.",
+        'Minimize windows or close the main window to hide them in the system tray (menu bar on macOS) and keep Actelyo Law Harness running. Use Quit Actelyo Law Harness from the tray menu or Cmd+Q to exit. Off by default; applies only to this device.',
       minimizeToTrayUnavailable:
         'The system tray is unavailable. Windows will minimize and close normally. Turn this off and on to retry.',
       none: 'None',
@@ -1369,7 +1373,7 @@ export const en: Translations = {
       searchPlaceholder: 'Search…',
       noResults: 'No results found',
       systemDefault: 'System default',
-      loading: "Loading Actelyo Law Harness configuration...",
+      loading: 'Loading Actelyo Law Harness configuration...',
       emptyTitle: 'Nothing to configure',
       emptyDesc: 'This section has no adjustable settings.',
       failedLoad: 'Settings failed to load',
@@ -1404,27 +1408,27 @@ export const en: Translations = {
       description:
         'Tap and release ⌘ + Option on Mac, or Ctrl + Alt on Windows/Linux, to bring the HUD forward from any app. Off by default; applies only to this device.',
       permission:
-        "Allow Actelyo Law Harness in System Settings → Privacy & Security → Input Monitoring, then retry. This gesture does not record keystrokes or capture your screen.",
+        'Allow Actelyo Law Harness in System Settings → Privacy & Security → Input Monitoring, then retry. This gesture does not record keystrokes or capture your screen.',
       unavailable:
-        "The HUD gesture helper could not start or stopped unexpectedly. Retry, or restart Actelyo Law Harness. The existing HUD shortcut still works inside Actelyo Law Harness.",
+        'The HUD gesture helper could not start or stopped unexpectedly. Retry, or restart Actelyo Law Harness. The existing HUD shortcut still works inside Actelyo Law Harness.',
       missingHelper:
-        "This Actelyo Law Harness installation is missing the HUD gesture helper. Update or reinstall Actelyo Law Harness, then retry.",
+        'This Actelyo Law Harness installation is missing the HUD gesture helper. Update or reinstall Actelyo Law Harness, then retry.',
       unsupportedSession:
         'This desktop session does not support global modifier taps. Linux requires X11; Wayland is not supported.'
     },
     screenshot: {
       enabledTitle: 'Screenshot shortcut',
       enabledDesc:
-        "Press both Command keys together from any app to capture its frontmost window and attach it to your current Actelyo Law Harness draft. Never sends automatically. Off by default; applies only to this Mac. Window contents may be sensitive — review the attachment before sending.",
+        'Press both Command keys together from any app to capture its frontmost window and attach it to your current Actelyo Law Harness draft. Never sends automatically. Off by default; applies only to this Mac. Window contents may be sensitive — review the attachment before sending.',
       statusTitle: 'Screenshot shortcut status',
       checking: 'Checking screenshot shortcut…',
       disabled: 'Screenshot shortcut is off.',
       starting: 'Starting the shortcut listener. It is not ready yet.',
       ready: 'Shortcut is ready. Screenshots attach to your current draft without sending.',
       inputPermission:
-        "Input Monitoring permission lets Actelyo Law Harness detect both Command keys while another app is active. Allow Actelyo Law Harness in System Settings → Privacy & Security → Input Monitoring, then return here and retry.",
+        'Input Monitoring permission lets Actelyo Law Harness detect both Command keys while another app is active. Allow Actelyo Law Harness in System Settings → Privacy & Security → Input Monitoring, then return here and retry.',
       screenPermission:
-        "Screen Recording permission lets Actelyo Law Harness capture the frontmost app window when you use this shortcut. Allow Actelyo Law Harness in System Settings → Privacy & Security → Screen Recording, then return here and retry. Restart Actelyo Law Harness if macOS asks.",
+        'Screen Recording permission lets Actelyo Law Harness capture the frontmost app window when you use this shortcut. Allow Actelyo Law Harness in System Settings → Privacy & Security → Screen Recording, then return here and retry. Restart Actelyo Law Harness if macOS asks.',
       openSettings: 'Open System Settings',
       retry: 'Retry',
       unavailable: 'The screenshot shortcut is unavailable. Retry, or turn it off.',
@@ -1438,7 +1442,7 @@ export const en: Translations = {
     quickEntry: {
       enabledTitle: 'Quick Entry',
       enabledDesc:
-        "Summon a small composer from anywhere with a global shortcut and fire a prompt without opening Actelyo Law Harness.",
+        'Summon a small composer from anywhere with a global shortcut and fire a prompt without opening Actelyo Law Harness.',
       shortcutTitle: 'Quick Entry shortcut',
       shortcutDesc: 'Needs at least one modifier, e.g. CommandOrControl+Shift+Space.',
       active: 'Shortcut is active.',
@@ -1468,7 +1472,8 @@ export const en: Translations = {
     // v2 multi-connection registry: Settings → Gateways.
     connections: {
       title: 'Registered gateways',
-      intro: "Manage this device and every Actelyo Law Harness gateway it can reach through remote, SSH, or Cloud connections.",
+      intro:
+        'Manage this device and every Actelyo Law Harness gateway it can reach through remote, SSH, or Cloud connections.',
       stagedNote:
         'Switch gateways from Sessions. Profiles, chats, messaging, and cron jobs stay with their gateway; work on other gateways keeps running.',
       launchModeTitle: 'At startup, return to Sessions on the last-used gateway',
@@ -1495,15 +1500,15 @@ export const en: Translations = {
       updateAllRunning: 'Updating all instances…',
       updateAllDone: 'Updates dispatched',
       updateAllFailed: 'Update fan-out failed',
-      updateSkippedCloud: "Managed by Cloud externe",
+      updateSkippedCloud: 'Managed by Cloud externe',
       kindLocal: 'Local',
       kindRemote: 'Remote gateway',
-      kindCloud: "Cloud externe",
+      kindCloud: 'Cloud externe',
       kindSsh: 'SSH',
-      kindLocalDesc: "The Actelyo Law Harness runtime managed by this app.",
-      kindRemoteDesc: "A Actelyo Law Harness gateway reachable over HTTP(S) — LAN, Tailscale, or the internet.",
-      kindCloudDesc: "A hosted instance discovered through your Cloud externe account.",
-      kindSshDesc: "A Actelyo Law Harness install reached over SSH.",
+      kindLocalDesc: 'The Actelyo Law Harness runtime managed by this app.',
+      kindRemoteDesc: 'A Actelyo Law Harness gateway reachable over HTTP(S) — LAN, Tailscale, or the internet.',
+      kindCloudDesc: 'A hosted instance discovered through your Cloud externe account.',
+      kindSshDesc: 'A Actelyo Law Harness install reached over SSH.',
       labelTitle: 'Name',
       labelDesc: 'Required. Shown everywhere this instance appears; must be unique (e.g. “Homelab”, “Work laptop”).',
       labelPlaceholder: 'Homelab',
@@ -1511,7 +1516,7 @@ export const en: Translations = {
       sshHostTitle: 'SSH host',
       headersTitle: 'Extra gateway headers',
       headersDesc:
-        "Sent with every HTTP and WebSocket request to this gateway — for access proxies such as Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Values are stored encrypted. Headers Actelyo Law Harness manages (Authorization, Cookie, Host…) are ignored.",
+        'Sent with every HTTP and WebSocket request to this gateway — for access proxies such as Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Values are stored encrypted. Headers Actelyo Law Harness manages (Authorization, Cookie, Host…) are ignored.',
       headerValuePlaceholder: 'Value',
       headerValueSaved: 'Saved — leave blank to keep',
       headerAdd: 'Add header',
@@ -1522,7 +1527,7 @@ export const en: Translations = {
       sameBackendHint: (label: string) => `Same backend as “${label}”`,
       localAddHint: 'Local is unavailable: the managed local connection already exists (there is only ever one).',
       cloudAddHint:
-        "Tip: signing in under Cloud externe above discovers your agents automatically — use this form only to register a known instance URL by hand.",
+        'Tip: signing in under Cloud externe above discovers your agents automatically — use this form only to register a known instance URL by hand.',
       save: 'Save connection',
       saving: 'Saving…',
       cancel: 'Cancel',
@@ -1550,26 +1555,26 @@ export const en: Translations = {
       loading: 'Loading gateway settings...',
       unavailableTitle: 'Gateway settings unavailable',
       unavailableDesc:
-        "Connection settings can only be changed from the Actelyo Law Harness Desktop app on the computer running it.",
+        'Connection settings can only be changed from the Actelyo Law Harness Desktop app on the computer running it.',
       title: 'Gateway Connection',
       envOverride: 'env override',
       intro:
-        "Local by default. Use remote when this app should drive a Actelyo Law Harness backend elsewhere. Gateway connections are machine-level; profiles are discovered from the gateways you connect.",
-      envOverrideTitle: "This connection was fixed by the way Actelyo Law Harness was launched.",
+        'Local by default. Use remote when this app should drive a Actelyo Law Harness backend elsewhere. Gateway connections are machine-level; profiles are discovered from the gateways you connect.',
+      envOverrideTitle: 'This connection was fixed by the way Actelyo Law Harness was launched.',
       envOverrideDesc:
-        "A startup setting outside the app chose this connection, so the options below are read-only. Restart Actelyo Law Harness without that setting — or ask whoever set it up — to change it here.",
+        'A startup setting outside the app chose this connection, so the options below are read-only. Restart Actelyo Law Harness without that setting — or ask whoever set it up — to change it here.',
       modeTitle: 'Connection mode',
       localTitle: 'Local gateway',
-      localDesc: "Start a private Actelyo Law Harness backend on localhost. This is the default and works offline.",
+      localDesc: 'Start a private Actelyo Law Harness backend on localhost. This is the default and works offline.',
       remoteTitle: 'Remote gateway',
-      remoteDesc: "Connect this desktop shell to a remote Actelyo Law Harness backend.",
+      remoteDesc: 'Connect this desktop shell to a remote Actelyo Law Harness backend.',
       remoteAuthHint: 'Hosted gateways use OAuth or a username and password; self-hosted ones may use a session token.',
-      cloudTitle: "Cloud externe",
-      cloudDesc: "Sign in once to Cloud externe and pick from the agents on your account — no URL to paste.",
-      cloudSignInTitle: "Cloud externe",
-      cloudSignIn: "Sign in to Cloud externe",
-      cloudSignedIn: "Signed in to Cloud externe",
-      cloudNeedsSignIn: "Sign in to Cloud externe to discover the agents on your account.",
+      cloudTitle: 'Cloud externe',
+      cloudDesc: 'Sign in once to Cloud externe and pick from the agents on your account — no URL to paste.',
+      cloudSignInTitle: 'Cloud externe',
+      cloudSignIn: 'Sign in to Cloud externe',
+      cloudSignedIn: 'Signed in to Cloud externe',
+      cloudNeedsSignIn: 'Sign in to Cloud externe to discover the agents on your account.',
       cloudSignedInDesc: 'You are signed in. Pick an agent below; the session refreshes automatically.',
       cloudAgentsTitle: 'Your agents',
       cloudOrgPickerTitle: 'Choose an organization',
@@ -1579,7 +1584,7 @@ export const en: Translations = {
       cloudLoadingAgents: 'Loading your agents…',
       cloudNoAgents: {
         before: 'No agents found on this account. Create one in the ',
-        linkText: "fournisseur externe portal",
+        linkText: 'fournisseur externe portal',
         after: ', then refresh.'
       },
       cloudRefresh: 'Refresh',
@@ -1590,11 +1595,11 @@ export const en: Translations = {
       cloudUseSaved: 'Use gateway',
       cloudActive: 'Active in this window',
       cloudConnecting: 'Connecting…',
-      cloudDiscoverFailed: "Could not load your Cloud externe agents",
+      cloudDiscoverFailed: 'Could not load your Cloud externe agents',
       cloudConnectFailed: 'Could not connect to that agent',
-      cloudSignInFailed: "Cloud externe sign-in failed",
-      cloudSignedOutTitle: "Signed out of Cloud externe",
-      cloudSignedOutMessage: "Cleared the Cloud externe session.",
+      cloudSignInFailed: 'Cloud externe sign-in failed',
+      cloudSignedOutTitle: 'Signed out of Cloud externe',
+      cloudSignedOutMessage: 'Cleared the Cloud externe session.',
       cloudConnectedTitle: 'Connected',
       cloudConnectedPill: 'Connected',
       cloudConnectedTo: name => `Connected to ${name}.`,
@@ -1645,7 +1650,7 @@ export const en: Translations = {
       enterUrlFirst: 'Enter a remote URL first.',
       restartingTitle: 'Gateway connection restarting',
       savedTitle: 'Gateway settings saved',
-      restartingMessage: "Actelyo Law Harness Desktop will reconnect using the saved settings — the shell stays open.",
+      restartingMessage: 'Actelyo Law Harness Desktop will reconnect using the saved settings — the shell stays open.',
       savedMessage: 'Saved for the next restart.',
       connectedTo: (baseUrl, version) => `Connected to ${baseUrl}${version ? ` · Actelyo Law Harness ${version}` : ''}`,
       reachableTitle: 'Remote gateway reachable',
@@ -1659,7 +1664,7 @@ export const en: Translations = {
       saveFailed: 'Could not save gateway settings',
       sshTitle: 'Connect via SSH',
       sshDesc:
-        "Actelyo Law Harness is launched on the remote over SSH and tunneled to this app — nothing to start or expose yourself. Requires working key-based SSH access to the host.",
+        'Actelyo Law Harness is launched on the remote over SSH and tunneled to this app — nothing to start or expose yourself. Requires working key-based SSH access to the host.',
       sshTrustHint: 'The first presented host key is trusted and pinned; later changes fail closed.',
       sshHostTitle: 'Host',
       sshHostDesc: 'user@host, or a Host alias from ~/.ssh/config.',
@@ -1674,7 +1679,7 @@ export const en: Translations = {
       sshPortDesc: 'Blank = 22 or the ~/.ssh/config port.',
       sshKeyTitle: 'Identity file',
       sshKeyDesc: 'Private key path. Blank = ssh-agent or ~/.ssh/config.',
-      sshHermesPathTitle: "Actelyo Law Harness path (optional)",
+      sshHermesPathTitle: 'Actelyo Law Harness path (optional)',
       sshHermesPathDesc: 'Full path to the remote hermes binary. Blank = auto-detect.',
       sshHermesPathPlaceholder: 'auto-detect',
       sshTestConnection: 'Test SSH',
@@ -1684,15 +1689,15 @@ export const en: Translations = {
       sshIncompleteHost: 'Enter an SSH host before connecting.',
       sshErrUnreachable: 'Could not reach that host over SSH. Check the host, port, and your network.',
       sshErrAuth:
-        "SSH authentication failed. Load your key into the ssh-agent (ssh-add) or set an IdentityFile in ~/.ssh/config — Actelyo Law Harness runs ssh non-interactively.",
+        'SSH authentication failed. Load your key into the ssh-agent (ssh-add) or set an IdentityFile in ~/.ssh/config — Actelyo Law Harness runs ssh non-interactively.',
       sshErrHostKey:
         'The host key has CHANGED since you last connected. Verify this is expected, then run ssh-keygen -R <host> and reconnect.',
       sshErrNotInstalled:
         'Hermes is not installed on the remote host. Install it there (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) or set the Hermes path.',
       sshErrPlatform:
-        "Unsupported remote platform. Actelyo Law Harness Desktop SSH mode supports Linux, macOS, and Windows remote hosts.",
+        'Unsupported remote platform. Actelyo Law Harness Desktop SSH mode supports Linux, macOS, and Windows remote hosts.',
       sshErrTimeout: 'SSH connection timed out. The host may be unreachable or asleep.',
-      sshErrUpdateRequired: "Update Actelyo Law Harness on the remote host before connecting with Desktop SSH.",
+      sshErrUpdateRequired: 'Update Actelyo Law Harness on the remote host before connecting with Desktop SSH.',
       sshErrUnknown: 'SSH connection failed.'
     },
     keys: {
@@ -1739,7 +1744,7 @@ export const en: Translations = {
       noOutput: 'No output yet.',
       deepLinkTitle: 'Add MCP server?',
       deepLinkDescription:
-        "A link asked to add this MCP server to Actelyo Law Harness. Review the exact configuration below — it comes from the link, not from Actelyo Law Harness.",
+        'A link asked to add this MCP server to Actelyo Law Harness. Review the exact configuration below — it comes from the link, not from Actelyo Law Harness.',
       deepLinkStdioWarning:
         'This server runs a local process on your machine with the command shown below. Only continue if you trust its source.',
       deepLinkConfirm: 'Add server',
@@ -1957,12 +1962,12 @@ export const en: Translations = {
       freeTier: {
         signIn: 'Sign in',
         title: "You're on the fournisseur externe free tier",
-        message: "Sign in with a fournisseur externe account to unlock more models and tools.",
+        message: 'Sign in with a fournisseur externe account to unlock more models and tools.',
         caption:
           'Runs on nous/welcome with connectors included. Signing in keeps your connectors and adds the tools that need an account and every other model.',
-        name: "fournisseur externe · free tier",
+        name: 'fournisseur externe · free tier',
         footnote:
-          "The free tier has no balance and nothing to pay. Payment and usage appear when you sign in with a fournisseur externe account.",
+          'The free tier has no balance and nothing to pay. Payment and usage appear when you sign in with a fournisseur externe account.',
         plan: 'Free tier',
         model: 'Model',
         connectors: 'Connectors',
@@ -2070,8 +2075,8 @@ export const en: Translations = {
       state: {
         notice: {
           loggedOut: {
-            title: "Connect your fournisseur externe account",
-            message: "Sign in with your fournisseur externe account to see your balance, plan and usage here.",
+            title: 'Connect your fournisseur externe account',
+            message: 'Sign in with your fournisseur externe account to see your balance, plan and usage here.',
             action: 'Sign in'
           },
           openPortal: 'Open portal ↗',
@@ -2229,7 +2234,7 @@ export const en: Translations = {
       connectAccount: 'Connect an account',
       haveApiKey: 'Have an API key instead?',
       intro:
-        "Sign in with a subscription — no API key to copy. Actelyo Law Harness runs the browser sign-in for you, right here in the app.",
+        'Sign in with a subscription — no API key to copy. Actelyo Law Harness runs the browser sign-in for you, right here in the app.',
       connected: 'Connected',
       collapse: 'Collapse',
       connectAnother: 'Connect another provider',
@@ -2250,7 +2255,8 @@ export const en: Translations = {
       noKeysMatch: 'No providers match your search.',
       localEndpoint: {
         title: 'Local / custom endpoint',
-        description: "Point Actelyo Law Harness at any OpenAI-compatible endpoint (Zyphra, vLLM, llama.cpp, Ollama, etc)."
+        description:
+          'Point Actelyo Law Harness at any OpenAI-compatible endpoint (Zyphra, vLLM, llama.cpp, Ollama, etc).'
       },
       loading: 'Loading providers...'
     },
@@ -2311,14 +2317,15 @@ export const en: Translations = {
       activeBackend: 'Active',
       activeBackendHint: 'This is your active backend',
       useBackend: 'Use this backend',
-      nousIncluded: "Included with a fournisseur externe subscription — sign in with your fournisseur externe account to activate.",
-      nousAuthNeededTitle: "Sign in with your fournisseur externe account",
+      nousIncluded:
+        'Included with a fournisseur externe subscription — sign in with your fournisseur externe account to activate.',
+      nousAuthNeededTitle: 'Sign in with your fournisseur externe account',
       nousAuthNeededMessage: provider =>
         `${provider} is saved but will only work once you sign in with your fournisseur externe account.`,
       nousAuthSignIn: 'Sign in',
-      nousAuthDoneTitle: "fournisseur externe account connected",
+      nousAuthDoneTitle: 'fournisseur externe account connected',
       nousAuthDoneMessage: 'Your subscription backends are now active.',
-      nousAuthFailed: "fournisseur externe sign-in did not complete",
+      nousAuthFailed: 'fournisseur externe sign-in did not complete',
       nousAuthFailedMessage: 'Try again.',
       nousAuthTryAgain: 'Try again',
       noApiKeyRequired: 'No API key required.',
@@ -2393,7 +2400,7 @@ export const en: Translations = {
         failedSave: 'Could not save the real-profile setting',
         prompt: {
           title: 'Stay signed in to your sites',
-          body: "Let Actelyo Law Harness browse with a snapshot of your default browser profile, so sites open already signed in.",
+          body: 'Let Actelyo Law Harness browse with a snapshot of your default browser profile, so sites open already signed in.',
           bulletSnapshot: 'Cookies and logins are copied into a managed snapshot.',
           bulletLiveProfile: 'Your live browser profile is never opened directly.',
           bulletLocal: 'Nothing leaves this computer.',
@@ -2481,7 +2488,7 @@ export const en: Translations = {
       halfDesktopHint: 'this app, same for every profile',
       halfAgent: 'Agent',
       halfAgentIn: (profile: string) => `Agent in ${profile}`,
-      defaultProfile: "Actelyo Law Harness (default)",
+      defaultProfile: 'Actelyo Law Harness (default)',
       kindAgent: 'Agent',
       kindDesktop: 'Desktop',
       kindBoth: 'Agent + Desktop',
@@ -2505,7 +2512,8 @@ export const en: Translations = {
       toolsetOff: (name: string, profile: string) => `${name} agent tools disabled for ${profile}`,
       toolsetToggleFailed: (name: string) =>
         `Could not toggle the ${name} agent tools; the Desktop panel was left unchanged`,
-      legacyBackend: "This backend predates key-addressed plugin toggles — update Actelyo Law Harness to manage it here.",
+      legacyBackend:
+        'This backend predates key-addressed plugin toggles — update Actelyo Law Harness to manage it here.',
       portableBadge: 'portable',
       serverStates: {
         connected: 'connected',
@@ -2524,7 +2532,8 @@ export const en: Translations = {
       catalogHint:
         'Hit "+ Add to this Agent" on any plugin — reviewed entries install at their pinned commit into the selected profile. Bundled agent+desktop plugins offer both halves.',
       alreadyInstalled: (name: string) => `${name} is already installed in this profile.`,
-      catalogProvenance: (sha: string) => `Installed from the Actelyo Law Harness catalog${sha ? ` at pin ${sha}` : ''}.`,
+      catalogProvenance: (sha: string) =>
+        `Installed from the Actelyo Law Harness catalog${sha ? ` at pin ${sha}` : ''}.`,
       pinnedProvenance: (sha: string) =>
         `Pinned to commit ${sha}. Updates are refused until it is reinstalled with a new pin.`,
       pinnedBadge: (sha: string) => `pinned @ ${sha}`,
@@ -2553,7 +2562,7 @@ export const en: Translations = {
       deepLinkCatalogUnknown: (name: string) =>
         `\u201C${name}\u201D is not in the Actelyo Law Harness plugin catalog. Nothing was installed.`,
       deepLinkCatalogUnavailable:
-        "Could not load the Actelyo Law Harness plugin catalog. Check your connection and open the link again.",
+        'Could not load the Actelyo Law Harness plugin catalog. Check your connection and open the link again.',
       settingsToggle: (name: string) => `Settings: ${name}`,
       settingsForm: {
         save: 'Save settings',
@@ -2640,7 +2649,7 @@ export const en: Translations = {
     loadFailed: 'Could not load memory graph',
     loading: 'Loading…',
     emptyTitle: 'Nothing learned yet',
-    emptyDesc: "As Actelyo Law Harness builds skills and memories for your work, they appear here.",
+    emptyDesc: 'As Actelyo Law Harness builds skills and memories for your work, they appear here.',
     share: 'Share map',
     shareHint:
       'Copy the code to share this map, or paste one to load. It only includes the layout, not your memory or skill text.',
@@ -2722,7 +2731,7 @@ export const en: Translations = {
       placeholder: 'Search pets…',
       loading: 'Loading petdex gallery…',
       error: 'Could not reach the petdex gallery.',
-      staleBackend: "Restart Actelyo Law Harness to use pets — the backend predates this feature.",
+      staleBackend: 'Restart Actelyo Law Harness to use pets — the backend predates this feature.',
       empty: 'No matching pets.',
       turnOff: 'Turn off',
       turnOn: 'Turn on',
@@ -2749,8 +2758,8 @@ export const en: Translations = {
       hatchComposing: 'Piecing it together…',
       hatchSaving: 'Almost there…',
       namePlaceholder: 'Name your pet',
-      staleBackend: "Update Actelyo Law Harness to generate pets.",
-      backgroundHint: "You can close this — Actelyo Law Harness will notify you when it’s done.",
+      staleBackend: 'Update Actelyo Law Harness to generate pets.',
+      backgroundHint: 'You can close this — Actelyo Law Harness will notify you when it’s done.',
       slowProviderHint: 'This can take several minutes',
       remix: 'Remix',
       remixConfirmTitle: 'Remix this look?',
@@ -2780,7 +2789,7 @@ export const en: Translations = {
     sections: { maintenance: 'Maintenance', sessions: 'Sessions', system: 'System', usage: 'Usage' },
     nav: {
       newChat: { title: 'New session', detail: 'Start a fresh session' },
-      settings: { title: 'Settings', detail: "Configure Actelyo Law Harness desktop" },
+      settings: { title: 'Settings', detail: 'Configure Actelyo Law Harness desktop' },
       capabilities: { title: 'Capabilities', detail: 'Skills, tools, MCP servers, and plugins' },
       messaging: { title: 'Messaging', detail: 'Set up Telegram, Slack, Discord, and more' },
       artifacts: { title: 'Artifacts', detail: 'Browse generated outputs' }
@@ -2811,7 +2820,7 @@ export const en: Translations = {
     sharedGatewayRestartDescription: bots => `All bots on this device reconnect: ${bots}`,
     sharedGatewayRestartConfirm: 'Restart all',
     sharedGatewayRestarted: count => `Shared gateway restarted (${count} ${count === 1 ? 'bot' : 'bots'})`,
-    updateHermes: "Update Actelyo Law Harness",
+    updateHermes: 'Update Actelyo Law Harness',
     reloadWindow: 'Reload window',
     actionRunning: 'running',
     actionDone: 'done',
@@ -2971,11 +2980,12 @@ export const en: Translations = {
     openLogs: 'Open logs',
     telegramQr: {
       title: 'Choose how to connect your Telegram bot',
-      subtitle: "Both options connect a bot you control and save its credentials only to this Actelyo Law Harness installation.",
+      subtitle:
+        'Both options connect a bot you control and save its credentials only to this Actelyo Law Harness installation.',
       quickSetup: 'Quick setup',
       recommended: 'Recommended',
       quickHelp:
-        "Scan a QR code and confirm in Telegram. Actelyo Law Harness creates the bot and detects your Telegram user ID automatically.",
+        'Scan a QR code and confirm in Telegram. Actelyo Law Harness creates the bot and detects your Telegram user ID automatically.',
       createWithQr: 'Create with QR',
       starting: 'Starting…',
       replaceWarning:
@@ -3178,14 +3188,15 @@ export const en: Translations = {
       onGateway: (name, gateway) => `${name} · ${gateway}`,
       switchTo: (name, gateway) => `Switch to ${name} on ${gateway}`,
       deleteOn: gateway => ` on ${gateway}`,
-      localDevice: "This device (local backend — installs Actelyo Law Harness if missing, otherwise opens a fresh session)",
+      localDevice:
+        'This device (local backend — installs Actelyo Law Harness if missing, otherwise opens a fresh session)',
       switchDeviceTitle: 'Switch to This device?',
       switchDeviceDesc:
         'This opens a fresh session on this computer. The conversation you are in stays on the other gateway.',
       switchDeviceConfirm: 'Switch',
       installDeviceTitle: 'Switch to This device?',
       installDeviceDesc:
-        "This will install Actelyo Law Harness locally, then open a fresh session on this computer. Nothing is installed until you confirm.",
+        'This will install Actelyo Law Harness locally, then open a fresh session on this computer. Nothing is installed until you confirm.',
       installDeviceConfirm: 'Install locally',
       connectExistingInstead: 'Connect to existing instead'
     },
@@ -3199,7 +3210,8 @@ export const en: Translations = {
       menuItem: 'Connect to a remote host…',
       badge: (host: string) => `Runs on ${host}`,
       title: (profile: string) => `Connect ${profile} to a remote host`,
-      description: "Sessions in this profile will run on the remote Actelyo Law Harness you point it at, instead of this computer.",
+      description:
+        'Sessions in this profile will run on the remote Actelyo Law Harness you point it at, instead of this computer.',
       urlLabel: 'Remote address',
       urlPlaceholder: 'https://hermes.example.com',
       urlInvalid: 'Enter a full address starting with http:// or https://',
@@ -3234,7 +3246,8 @@ export const en: Translations = {
     setAsDefault: 'Set as default',
     defaultProfile: 'Default profile',
     defaultSet: name => `${name} is now the default`,
-    defaultDescription: "Used when Actelyo Law Harness opens and for new chats. Existing sessions stay in their profiles.",
+    defaultDescription:
+      'Used when Actelyo Law Harness opens and for new chats. Existing sessions stay in their profiles.',
     failedSetDefault: 'Could not set the default profile',
     setColor: color => `Set color ${color}`,
     autoColor: 'Auto',
@@ -3272,7 +3285,7 @@ export const en: Translations = {
     deleteDescMid: ' and remove its ',
     deleteDescSuffix: ' directory. This cannot be undone.',
     deleting: 'Deleting...',
-    createDesc: "Profiles are independent Actelyo Law Harness environments: separate config, skills, and SOUL.md.",
+    createDesc: 'Profiles are independent Actelyo Law Harness environments: separate config, skills, and SOUL.md.',
     nameLabel: 'Name',
     cloneFrom: 'Clone from',
     cloneFromNone: 'None (blank)',
@@ -3306,7 +3319,7 @@ export const en: Translations = {
   },
 
   modelAssignment: {
-    saveFailed: "Actelyo Law Harness did not save that model change.",
+    saveFailed: 'Actelyo Law Harness did not save that model change.',
     confirmTitle: 'Model Selection Warning',
     confirmDetail: 'Confirm only if you accept this trade-off.',
     confirmAction: 'Confirm',
@@ -3375,7 +3388,7 @@ export const en: Translations = {
     everyHourAt: minute => `Every hour at :${minute}`,
     newCron: 'New cron',
     emptyDescNew:
-      "Schedule a prompt to run on a cron expression. Actelyo Law Harness will run it and deliver results to the destination you pick.",
+      'Schedule a prompt to run on a cron expression. Actelyo Law Harness will run it and deliver results to the destination you pick.',
     emptyDescSearch: 'Try a broader search query.',
     emptyTitleNew: 'No scheduled jobs yet',
     emptyTitleSearch: 'No matches',
@@ -3589,7 +3602,8 @@ export const en: Translations = {
       title: 'Session database is damaged',
       body: (profiles: string) =>
         `Actelyo Law Harness can't read all of the session history for ${profiles}. Chats missing from this list were not deleted; the file they are stored in is damaged.`,
-      action: "Quit Actelyo Law Harness on this profile, then inspect the file without changing it, or restore a snapshot:",
+      action:
+        'Quit Actelyo Law Harness on this profile, then inspect the file without changing it, or restore a snapshot:',
       guide: 'Recovery guide'
     },
     noFilterMatches: 'No sessions match these filters',
@@ -3634,8 +3648,9 @@ export const en: Translations = {
         "Project created on the previous connection or profile. Switch back to find it; IDEA.md wasn't written.",
       createFailed: 'Could not create project',
       staleBackend:
-        "Update the Actelyo Law Harness backend to create projects — your backend is older than this desktop app (Settings → Updates → Backend).",
-      deleteConfirm: "This removes the saved project from Actelyo Law Harness. Files, git repos, and worktrees stay untouched.",
+        'Update the Actelyo Law Harness backend to create projects — your backend is older than this desktop app (Settings → Updates → Backend).',
+      deleteConfirm:
+        'This removes the saved project from Actelyo Law Harness. Files, git repos, and worktrees stay untouched.',
       startWork: 'New worktree',
       newWorktreeTitle: 'New worktree',
       newWorktreeDesc: 'Name the branch for this worktree.',
@@ -3645,7 +3660,7 @@ export const en: Translations = {
       baseBranchNone: 'No branches found',
       startWorkFailed: 'Could not create worktree',
       worktreeStaleBackend:
-        "Update the Actelyo Law Harness backend to create worktrees over this remote connection — it predates the git worktree API.",
+        'Update the Actelyo Law Harness backend to create worktrees over this remote connection — it predates the git worktree API.',
       worktreeProjectLabel: 'Project',
       worktreeProjectPlaceholder: 'Search projects…',
       worktreeProjectNone: 'No projects with a folder',
@@ -3742,12 +3757,12 @@ export const en: Translations = {
   composer: {
     message: 'Message',
     wakingProfile: profile => `Waking up ${profile}…`,
-    placeholderStarting: "Starting Actelyo Law Harness...",
-    placeholderReconnecting: "Reconnecting to Actelyo Law Harness…",
+    placeholderStarting: 'Starting Actelyo Law Harness...',
+    placeholderReconnecting: 'Reconnecting to Actelyo Law Harness…',
     placeholderFollowUp: 'Send follow-up',
     newSessionPlaceholders: [
       'What are we building?',
-      "Give Actelyo Law Harness a task",
+      'Give Actelyo Law Harness a task',
       "What's on your mind?",
       'Describe what you need',
       'What should we tackle?',
@@ -3784,8 +3799,8 @@ export const en: Translations = {
     transcribingDictation: 'Transcribing dictation',
     voiceControls: 'Voice',
     voiceEngine: 'Voice chat engine',
-    voiceEngineChained: "Speech-to-text + Actelyo Law Harness voice",
-    voiceEngineLive: "GPT-Live (full-duplex, delegates to Actelyo Law Harness)",
+    voiceEngineChained: 'Speech-to-text + Actelyo Law Harness voice',
+    voiceEngineLive: 'GPT-Live (full-duplex, delegates to Actelyo Law Harness)',
     voiceEngineLiveNeedsKey: 'Needs an OpenAI API key',
     voiceEngineChangeFailed: 'Could not change the voice chat engine',
     voiceEngineChainedShort: 'speech-to-text',
@@ -3834,7 +3849,7 @@ export const en: Translations = {
       '/journey': 'Open the memory graph — skills + memories over time',
       '/queue': 'Queue a prompt for the next turn, or list/edit/rm/move/clear queued prompts',
       '/steer': 'Inject a message after the next tool call without interrupting',
-      '/goal': "Set a standing goal Actelyo Law Harness works on across turns until achieved",
+      '/goal': 'Set a standing goal Actelyo Law Harness works on across turns until achieved',
       '/heartbeat': 'Set a recurring prompt that re-enters this session when idle',
       '/refine': 'Review this conversation now and save lessons to memory/skills',
       '/review': 'Spawn an independent subagent to review the work just discussed (PR, code, docs)',
@@ -3847,7 +3862,7 @@ export const en: Translations = {
       '/context':
         'Show detailed context window view with usage gauge, category breakdown, compression stats, and throughput',
       '/whoami': 'Show your slash command access (admin / user)',
-      '/profile': "Switch the active Actelyo Law Harness profile",
+      '/profile': 'Switch the active Actelyo Law Harness profile',
       '/codex-runtime': 'Toggle codex app-server runtime for OpenAI/Codex models',
       '/personality': 'Set a predefined personality',
       '/battery': 'Toggle a color-coded battery indicator in the status bar',
@@ -3871,10 +3886,10 @@ export const en: Translations = {
       '/browser': 'Manage the agent browser [connect|disconnect|status|use]',
       '/palette': 'Open the fuzzy command palette (also Ctrl+P)',
       '/usage': 'Show token usage and rate limits; `reset` redeems a banked Codex limit reset',
-      '/subscription': "View your fournisseur externe plan and change it in the browser",
-      '/topup': "Show your fournisseur externe balance and manage billing on the portal",
+      '/subscription': 'View your fournisseur externe plan and change it in the browser',
+      '/topup': 'Show your fournisseur externe balance and manage billing on the portal',
       '/platform': 'Pause, resume, or list a failing gateway platform',
-      '/version': "Show Actelyo Law Harness Agent version",
+      '/version': 'Show Actelyo Law Harness Agent version',
       '/debug': 'Upload debug report (system info + logs) and get shareable links',
       '/model': 'Switch the model for this session'
     },
@@ -3889,7 +3904,7 @@ export const en: Translations = {
       'composer.history': 'cycle popover / history'
     },
     attachUrlTitle: 'Attach a URL',
-    attachUrlDesc: "Actelyo Law Harness will fetch the page and include it as context for this turn.",
+    attachUrlDesc: 'Actelyo Law Harness will fetch the page and include it as context for this turn.',
     urlPlaceholder: 'https://example.com/post',
     urlHintPre: 'Include the full URL, e.g. ',
     attach: 'Attach',
@@ -4146,7 +4161,7 @@ export const en: Translations = {
       createPr: 'Create PR',
       openPr: 'Open PR',
       ghMissing: 'Install the GitHub CLI (gh) and sign in to open PRs',
-      agentShip: "Ask Actelyo Law Harness to open PR",
+      agentShip: 'Ask Actelyo Law Harness to open PR',
       agentShipUnavailable: "The chat that owns these changes isn't on screen.",
       agentShipPrompt:
         'Review the current changes, commit them with a clear conventional-commit message, push the branch, and open a pull request.',
@@ -4159,23 +4174,23 @@ export const en: Translations = {
   },
 
   updates: {
-    discontinuedTitle: "This build of Actelyo Law Harness is no longer supported",
+    discontinuedTitle: 'This build of Actelyo Law Harness is no longer supported',
     discontinuedBody:
-      "This build of Actelyo Law Harness is no longer supported and may break — uninstall it. Your data stays on disk.",
+      'This build of Actelyo Law Harness is no longer supported and may break — uninstall it. Your data stays on disk.',
     channels: { stable: 'Stable', canary: 'Canary' },
     bundleSwapPending: 'Restart to finish the update',
     bundleSwapPendingDesc:
-      "The updated app is already installed — Actelyo Law Harness only needs to restart to load it. Chats and settings are untouched.",
-    bundleSwapPendingAction: "Restart Actelyo Law Harness",
+      'The updated app is already installed — Actelyo Law Harness only needs to restart to load it. Chats and settings are untouched.',
+    bundleSwapPendingAction: 'Restart Actelyo Law Harness',
     stages: {
       idle: 'Getting ready…',
       prepare: 'Getting ready…',
       fetch: 'Downloading…',
       pull: 'Almost there…',
       pydeps: 'Finishing up…',
-      update: "Updating Actelyo Law Harness…",
+      update: 'Updating Actelyo Law Harness…',
       rebuild: 'Rebuilding the desktop app…',
-      restart: "Restarting Actelyo Law Harness…",
+      restart: 'Restarting Actelyo Law Harness…',
       done: 'Update complete',
       manual: 'Update from your terminal',
       guiSkew: 'Update the desktop app',
@@ -4185,59 +4200,62 @@ export const en: Translations = {
     checkFailedTitle: 'Couldn’t check for updates',
     tryAgain: 'Try again',
     notAvailableTitle: 'Update not available',
-    unsupportedMessage: "This version of Actelyo Law Harness can’t update itself from inside the app.",
+    unsupportedMessage: 'This version of Actelyo Law Harness can’t update itself from inside the app.',
     connectionRetry:
       "Actelyo Law Harness couldn't reach the update server. Check your internet connection and try again. If you use a remote Actelyo Law Harness, make sure it is online.",
-    gitUnusable: "Actelyo Law Harness could not run Git on this computer, so it could not check for updates.",
+    gitUnusable: 'Actelyo Law Harness could not run Git on this computer, so it could not check for updates.',
     connectionSettings: 'Connection settings',
     openDownloadPage: 'Open download page',
     latestBody: 'You’re running the latest version.',
     latestBodyBackend: 'The backend is running the latest version.',
     allSetTitle: 'You’re all set',
     availableTitle: 'New update available',
-    availableBody: "A new version of Actelyo Law Harness is ready to install.",
+    availableBody: 'A new version of Actelyo Law Harness is ready to install.',
     availableTitleBackend: 'Backend update available',
-    availableBodyBackend: "A newer version of the connected Actelyo Law Harness backend is ready to install.",
+    availableBodyBackend: 'A newer version of the connected Actelyo Law Harness backend is ready to install.',
     availableBodyNoChangelog: 'A newer version is ready. Release notes aren’t available for this install type.',
     availableBodyAppInstaller:
-      "A new version of Actelyo Law Harness is ready. Actelyo Law Harness will close, Windows will finish the update, and Actelyo Law Harness will reopen on its own.",
+      'A new version of Actelyo Law Harness is ready. Actelyo Law Harness will close, Windows will finish the update, and Actelyo Law Harness will reopen on its own.',
     updateNow: 'Update now',
     maybeLater: 'Maybe later',
     moreChanges: count => `+ ${count} more change${count === 1 ? '' : 's'} included.`,
     copyFullLog: 'Copy full changelog',
     manualTitle: 'Update from your terminal',
     manualUnavailableTitle: "Can't update from here",
-    manualBody: "You installed Actelyo Law Harness from the command line, so updates run there too. Paste this into your terminal:",
-    manualBodyBackend: "The Actelyo Law Harness backend is managed outside this app. Run this on the server that hosts it:",
-    manualPickedUp: "Actelyo Law Harness will pick up the new version next time you launch it.",
+    manualBody:
+      'You installed Actelyo Law Harness from the command line, so updates run there too. Paste this into your terminal:',
+    manualBodyBackend:
+      'The Actelyo Law Harness backend is managed outside this app. Run this on the server that hosts it:',
+    manualPickedUp: 'Actelyo Law Harness will pick up the new version next time you launch it.',
     manualPickedUpBackend: 'The backend picks up the new version after the update completes.',
     guiSkewTitle: 'Update the desktop app',
     guiSkewBody:
-      "The backend was updated, but this desktop app package wasn’t changed. Update or reinstall the Actelyo Law Harness desktop app (your AppImage / .deb / .rpm) to match.",
+      'The backend was updated, but this desktop app package wasn’t changed. Update or reinstall the Actelyo Law Harness desktop app (your AppImage / .deb / .rpm) to match.',
     copy: 'Copy',
     copied: 'Copied',
     done: 'Done',
     applyingBody:
-      "The Actelyo Law Harness updater takes over in its own window and reopens Actelyo Law Harness automatically when it’s done. Please don’t reopen Actelyo Law Harness yourself while it’s updating.",
+      'The Actelyo Law Harness updater takes over in its own window and reopens Actelyo Law Harness automatically when it’s done. Please don’t reopen Actelyo Law Harness yourself while it’s updating.',
     applyingBodyBackend:
-      "The remote backend is applying the update and will restart. Actelyo Law Harness reconnects automatically when it’s back.",
-    applyingClose: "This window will close while the update runs, then Actelyo Law Harness reopens on its own.",
+      'The remote backend is applying the update and will restart. Actelyo Law Harness reconnects automatically when it’s back.',
+    applyingClose: 'This window will close while the update runs, then Actelyo Law Harness reopens on its own.',
     applyingBodyAppInstaller:
-      "Actelyo Law Harness will close and Windows will finish the update. Actelyo Law Harness will reopen when it’s done — you don’t need to do anything.",
-    applyingCloseAppInstaller: "This window will close, Windows finishes the update, and Actelyo Law Harness reopens on its own.",
+      'Actelyo Law Harness will close and Windows will finish the update. Actelyo Law Harness will reopen when it’s done — you don’t need to do anything.',
+    applyingCloseAppInstaller:
+      'This window will close, Windows finishes the update, and Actelyo Law Harness reopens on its own.',
     checkUnknownTitleAppInstaller: 'Couldn’t check for updates',
     checkUnknownBodyAppInstaller:
-      "Windows couldn’t check for updates right now. Updates also install automatically when you restart Actelyo Law Harness.",
+      'Windows couldn’t check for updates right now. Updates also install automatically when you restart Actelyo Law Harness.',
     errorTitle: 'Update didn’t finish',
     errorBody: 'No worries — nothing was lost. You can try again now.',
-    blockerTitle: "Close local previews to update Actelyo Law Harness?",
+    blockerTitle: 'Close local previews to update Actelyo Law Harness?',
     blockerBody:
-      "Actelyo Law Harness needs to stop these local previews before updating. This will not modify or delete your files.",
-    foreignBlockerTitle: "Close other processes to update Actelyo Law Harness",
+      'Actelyo Law Harness needs to stop these local previews before updating. This will not modify or delete your files.',
+    foreignBlockerTitle: 'Close other processes to update Actelyo Law Harness',
     foreignBlockerBody:
-      "Actelyo Law Harness can’t safely close these processes automatically. Close the app, terminal, or service that owns each one, then try the update again.",
+      'Actelyo Law Harness can’t safely close these processes automatically. Close the app, terminal, or service that owns each one, then try the update again.',
     mixedBlockerBody:
-      "Actelyo Law Harness can close the local previews listed below. Other processes must be closed manually before the update can continue.",
+      'Actelyo Law Harness can close the local previews listed below. Other processes must be closed manually before the update can continue.',
     closePreviewsAndUpdate: 'Close previews and update',
     closePreviewsAndCheckAgain: 'Close previews and check again',
     localPreview: 'Local preview',
@@ -4269,7 +4287,7 @@ export const en: Translations = {
       noReturn: 'Backend didn’t come back online. The update may not have completed — check the backend host.'
     },
     // Update-status overlay + version-details (mechanism-aware update UI).
-    appName: "Actelyo Law Harness",
+    appName: 'Actelyo Law Harness',
     version: (value: string) => `Version ${value}`,
     versionUnavailable: 'Version unavailable',
     checkNow: 'Check now',
@@ -4291,7 +4309,7 @@ export const en: Translations = {
     justNowSuffix: ' · just now',
     bundleOutOfSync: 'App build out of date',
     bundleOutOfSyncDesc:
-      "The Actelyo Law Harness runtime was updated, but the desktop app itself is still an older build. Update it to pick up the latest fixes.",
+      'The Actelyo Law Harness runtime was updated, but the desktop app itself is still an older build. Update it to pick up the latest fixes.',
     bundleOutOfSyncAction: 'Get the installer',
     checkingShort: 'Checking…',
     releaseAvailable: tag => `Version ${tag} is available.`,
@@ -4323,8 +4341,9 @@ export const en: Translations = {
     sessionsTitle: 'Each profile keeps its own sessions',
     sessionsText:
       'This list belongs to the default profile. New session starts one on whichever profile is selected. Switch profiles on the rail and the list changes with it.',
-    stayTitle: "Actelyo Law Harness is one click away",
-    stayText: "Switch to the setup profile and open Welcome to Actelyo Law Harness whenever you want a hand. It stays there."
+    stayTitle: 'Actelyo Law Harness is one click away',
+    stayText:
+      'Switch to the setup profile and open Welcome to Actelyo Law Harness whenever you want a hand. It stays there.'
   },
   guidedGreeting: {
     line: "Hey, come on in. I'm Actelyo Law Harness. Give me two minutes to set the place up around you, then we'll put me to work on something you actually want done.\n\nFirst though, what should I call you?",
@@ -4338,7 +4357,7 @@ export const en: Translations = {
       skipped: 'Skipped',
       failed: 'Failed'
     },
-    oneTimeTitle: "Actelyo Law Harness needs a one-time install",
+    oneTimeTitle: 'Actelyo Law Harness needs a one-time install',
     unsupportedDesc: platform =>
       `Automated first-launch install isn’t available on ${platform} yet. Open Terminal and run the command below, then relaunch this app. Subsequent launches will skip this step.`,
     installCommand: 'Install command',
@@ -4346,21 +4365,26 @@ export const en: Translations = {
     viewDocs: 'View install docs',
     installTo: 'Will install to',
     retryAfterRun: 'I’ve run it -- retry',
-    setupChoiceTitle: "Set up Actelyo Law Harness Desktop",
+    setupChoiceTitle: 'Set up Actelyo Law Harness Desktop',
     setupChoiceDesc:
-      "Connect this app to a Actelyo Law Harness gateway you already run, or install Actelyo Law Harness locally on this computer.",
-    setupChoiceDescLocal: "Install Actelyo Law Harness on this computer, or connect to a Actelyo Law Harness gateway you already run.",
-    connectExistingTitle: "Connect to existing Actelyo Law Harness",
+      'Connect this app to a Actelyo Law Harness gateway you already run, or install Actelyo Law Harness locally on this computer.',
+    setupChoiceDescLocal:
+      'Install Actelyo Law Harness on this computer, or connect to a Actelyo Law Harness gateway you already run.',
+    connectExistingTitle: 'Connect to existing Actelyo Law Harness',
     connectExistingShort: 'Connect existing',
     connectExistingDesc: 'Use a remote backend with a session token or browser sign-in. No local install will start.',
-    installLocalTitle: "Install Actelyo Law Harness locally",
-    installLocalDesc: "Download Actelyo Law Harness, create its Python environment, and run the backend on this computer.",
-    useLocalTitle: "Use Actelyo Law Harness on this computer",
-    useLocalDesc: "A Actelyo Law Harness runtime is already installed here — start it with one click. Nothing downloads.",
-    bundledLocalDesc: "Use the Actelyo Law Harness runtime included with this app — the bundled backend is the local install.",
-    localStartUnavailable: "Local installation could not start. Restart Actelyo Law Harness Desktop and try again.",
-    remoteSetupTitle: "Connect to existing Actelyo Law Harness",
-    remoteSetupDesc: "Enter your gateway URL. Actelyo Law Harness Desktop will detect whether it needs a token or browser sign-in.",
+    installLocalTitle: 'Install Actelyo Law Harness locally',
+    installLocalDesc:
+      'Download Actelyo Law Harness, create its Python environment, and run the backend on this computer.',
+    useLocalTitle: 'Use Actelyo Law Harness on this computer',
+    useLocalDesc:
+      'A Actelyo Law Harness runtime is already installed here — start it with one click. Nothing downloads.',
+    bundledLocalDesc:
+      'Use the Actelyo Law Harness runtime included with this app — the bundled backend is the local install.',
+    localStartUnavailable: 'Local installation could not start. Restart Actelyo Law Harness Desktop and try again.',
+    remoteSetupTitle: 'Connect to existing Actelyo Law Harness',
+    remoteSetupDesc:
+      'Enter your gateway URL. Actelyo Law Harness Desktop will detect whether it needs a token or browser sign-in.',
     remoteUrlTitle: 'Gateway URL',
     remoteUrlDesc: 'Use the base URL of the Hermes gateway, including https:// when remote.',
     remoteUrlPlaceholder: 'https://gateway.example.com/hermes',
@@ -4387,12 +4411,12 @@ export const en: Translations = {
     applyRemote: 'Apply and reconnect',
     backToSetup: 'Back',
     failedTitle: 'Installation failed',
-    settingUpTitle: "Setting up Actelyo Law Harness Agent",
+    settingUpTitle: 'Setting up Actelyo Law Harness Agent',
     finishingTitle: 'Finishing up',
     failedDesc:
-      "One of the setup steps did not finish. This can happen when another copy of Actelyo Law Harness is running, the internet connection dropped, or antivirus blocked the installer. Close other Actelyo Law Harness windows, then choose Reload and retry. If it fails again, open the logs and send them to support.",
+      'One of the setup steps did not finish. This can happen when another copy of Actelyo Law Harness is running, the internet connection dropped, or antivirus blocked the installer. Close other Actelyo Law Harness windows, then choose Reload and retry. If it fails again, open the logs and send them to support.',
     activeDesc:
-      "This is a one-time setup. The Actelyo Law Harness installer is downloading dependencies and configuring your machine. Subsequent launches will skip this step.",
+      'This is a one-time setup. The Actelyo Law Harness installer is downloading dependencies and configuring your machine. Subsequent launches will skip this step.',
     progress: (completed, total) => `${completed} of ${total} steps complete`,
     currentStage: stage => ` -- now: ${stage}`,
     fetchingManifest: 'Fetching installer manifest...',
@@ -4413,8 +4437,8 @@ export const en: Translations = {
   onboarding: {
     headerTitle: "Let's get you setup with Actelyo Law Harness Agent",
     headerDesc: 'Connect a model provider to start chatting. Most options take one click.',
-    preparingInstall: "Actelyo Law Harness is finishing install. This usually takes under a minute on first run.",
-    starting: "Starting Actelyo Law Harness…",
+    preparingInstall: 'Actelyo Law Harness is finishing install. This usually takes under a minute on first run.',
+    starting: 'Starting Actelyo Law Harness…',
     lookingUpProviders: 'Looking up providers...',
     collapse: 'Collapse',
     otherProviders: 'Other providers',
@@ -4422,7 +4446,7 @@ export const en: Translations = {
     chooseLater: "I'll choose a provider later",
     recommended: 'Recommended',
     connected: 'Connected',
-    featuredPitch: "One subscription, 300+ frontier models — the recommended way to run Actelyo Law Harness",
+    featuredPitch: 'One subscription, 300+ frontier models — the recommended way to run Actelyo Law Harness',
     fireworksPitch: 'Direct model API — Fireworks-hosted frontier models',
     localModelsTitle: 'Run models locally',
     localModelsPitch: 'No account needed — download a model and run it on this machine',
@@ -4441,7 +4465,8 @@ export const en: Translations = {
       xai: { short: 'Grok models', description: 'Direct access to xAI Grok models.' },
       local: {
         short: 'self-hosted',
-        description: "Point Actelyo Law Harness at a local or self-hosted OpenAI-compatible endpoint (vLLM, llama.cpp, Ollama, etc)."
+        description:
+          'Point Actelyo Law Harness at a local or self-hosted OpenAI-compatible endpoint (vLLM, llama.cpp, Ollama, etc).'
       }
     },
     backToSignIn: 'Back to sign in',
@@ -4455,7 +4480,7 @@ export const en: Translations = {
     update: 'Update',
     flowSubtitles: {
       pkce: 'Opens your browser to sign in, then continues here',
-      device_code: "Opens a verification page in your browser — Actelyo Law Harness connects automatically",
+      device_code: 'Opens a verification page in your browser — Actelyo Law Harness connects automatically',
       external: 'Sign in once in your terminal, then come back to chat'
     },
     startingSignIn: provider => `Starting sign-in for ${provider}...`,
@@ -4473,7 +4498,7 @@ export const en: Translations = {
     pickDifferentProvider: 'Pick a different provider',
     signInWith: provider => `Sign in with ${provider}`,
     openedBrowser: provider => `We opened ${provider} in your browser.`,
-    authorizeThere: "Authorize Actelyo Law Harness there.",
+    authorizeThere: 'Authorize Actelyo Law Harness there.',
     copyAuthCode: 'Copy the authorization code and paste it below.',
     pasteAuthCode: 'Paste authorization code',
     reopenAuthPage: 'Re-open authorization page',
@@ -4498,21 +4523,21 @@ export const en: Translations = {
   },
 
   freeTier: {
-    providerRowTitle: "fournisseur externe · free tier",
-    providerRowPitch: "Sign in with a fournisseur externe account to unlock more models and tools.",
-    readyTitle: "Actelyo Law Harness is ready.",
+    providerRowTitle: 'fournisseur externe · free tier',
+    providerRowPitch: 'Sign in with a fournisseur externe account to unlock more models and tools.',
+    readyTitle: 'Actelyo Law Harness is ready.',
     readyCaption: 'Free · connectors included',
     begin: 'Begin',
-    signInInstead: "Sign in with a fournisseur externe account instead",
+    signInInstead: 'Sign in with a fournisseur externe account instead',
     otherProviders: 'Other providers',
-    stripTitle: "Free fournisseur externe inference and connectors are now available.",
-    stripBody: "Open the model picker to try them, or sign in with a fournisseur externe account.",
+    stripTitle: 'Free fournisseur externe inference and connectors are now available.',
+    stripBody: 'Open the model picker to try them, or sign in with a fournisseur externe account.',
     openModelPicker: 'Open model picker',
     dismiss: 'Dismiss',
-    providerName: "fournisseur externe",
+    providerName: 'fournisseur externe',
     statusLabel: model => `fournisseur externe · ${model}`,
     signIn: 'Sign in',
-    signInHeading: "Sign in with a fournisseur externe account to unlock more models and tools.",
+    signInHeading: 'Sign in with a fournisseur externe account to unlock more models and tools.',
     settingUp: 'Setting up free inference…',
     codeBody: 'Enter this code in your browser to finish signing in.',
     copyLink: 'Copy link',
@@ -4543,23 +4568,25 @@ export const en: Translations = {
     unreachableBody:
       "Actelyo Law Harness couldn't reach the fournisseur externe service to finish signing you in. Check your internet connection and try again. Your session is still here.",
     alreadySignedInHeading: 'Already signed in.',
-    alreadySignedInBody: "This Actelyo Law Harness is already signed in to a fournisseur externe account.",
+    alreadySignedInBody: 'This Actelyo Law Harness is already signed in to a fournisseur externe account.',
     setupFailed: {
       gateClosed:
         "This version of Actelyo Law Harness can't start without a fournisseur externe account. Sign in or create one, it's free and only takes a minute.",
       paused:
-        "Using Actelyo Law Harness without signing in is paused for a moment. Actelyo Law Harness will keep checking. Signing in is free and gets you going right now.",
+        'Using Actelyo Law Harness without signing in is paused for a moment. Actelyo Law Harness will keep checking. Signing in is free and gets you going right now.',
       rateLimited: wait =>
         `Lots of people are getting started right now, so Actelyo Law Harness will try again in ${wait}. Signing in is free and skips the wait.`,
       unreachable:
         "Actelyo Law Harness couldn't reach the fournisseur externe service. Check your internet connection, then tap Try again. Or connect another provider for now.",
-      serverError: "The fournisseur externe service had a hiccup. Tap Try again in a moment, or connect another provider for now.",
+      serverError:
+        'The fournisseur externe service had a hiccup. Tap Try again in a moment, or connect another provider for now.',
       powRequired:
         "The fournisseur externe server asked for a proof of work, but that isn't implemented in your Agent yet. Sign in or create a free fournisseur externe account to continue.",
-      locked: "This session can't continue without signing in. Sign in or create a free fournisseur externe account to keep going.",
+      locked:
+        "This session can't continue without signing in. Sign in or create a free fournisseur externe account to keep going.",
       generic:
         "Actelyo Law Harness couldn't set up free access without signing in. Signing in is free, or connect another provider.",
-      signInBelow: "Signing in is free. Pick fournisseur externe below.",
+      signInBelow: 'Signing in is free. Pick fournisseur externe below.',
       tryAgain: 'Try again',
       retrying: 'Trying again…'
     }
@@ -4578,7 +4605,7 @@ export const en: Translations = {
     localDownloadsHeading: 'Local',
     noAuthenticatedProviders: 'No authenticated providers.',
     pro: 'Pro',
-    proNeedsSubscription: "Pro models need a paid fournisseur externe subscription.",
+    proNeedsSubscription: 'Pro models need a paid fournisseur externe subscription.',
     free: 'Free',
     freeTier: 'Free tier',
     priceTitle: 'Input / Output price per million tokens',
@@ -4886,11 +4913,11 @@ export const en: Translations = {
         'This address points at the machine running your agent, not this one. The browser pane loads pages locally, so a remote dev server needs a port forward or a reachable hostname.',
       failedToLoad: 'Preview failed to load',
       tryAgain: 'Try again',
-      restarting: "Actelyo Law Harness is restarting...",
-      askRestart: "Ask Actelyo Law Harness to restart the server",
+      restarting: 'Actelyo Law Harness is restarting...',
+      askRestart: 'Ask Actelyo Law Harness to restart the server',
       lookingRestart: taskId => `Actelyo Law Harness is looking for a preview server to restart (${taskId})`,
       restartingTitle: 'Restarting preview server',
-      restartingMessage: "Actelyo Law Harness is working in the background. Watch the preview console for progress.",
+      restartingMessage: 'Actelyo Law Harness is working in the background. Watch the preview console for progress.',
       startRestartFailed: message => `Could not start server restart: ${message}`,
       restartFailed: 'Server restart failed',
       hideConsole: 'Hide preview console',
@@ -4902,16 +4929,17 @@ export const en: Translations = {
       reload: 'Reload page',
       address: 'Address',
       addressPlaceholder: 'Enter address',
-      blankPageBody: "Type an address above to browse, or ask Actelyo Law Harness to open a page.",
-      finishedRestarting: message => `Actelyo Law Harness finished restarting the preview server${message ? `: ${message}` : ''}`,
+      blankPageBody: 'Type an address above to browse, or ask Actelyo Law Harness to open a page.',
+      finishedRestarting: message =>
+        `Actelyo Law Harness finished restarting the preview server${message ? `: ${message}` : ''}`,
       failedRestarting: message => `Server restart failed: ${message}`,
       unknownError: 'unknown error',
       restartedTitle: 'Preview server restarted',
       reloadingNow: 'Reloading the preview now.',
       restartFailedTitle: 'Preview restart failed',
-      restartFailedMessage: "Actelyo Law Harness could not restart the server.",
+      restartFailedMessage: 'Actelyo Law Harness could not restart the server.',
       stillWorking:
-        "Actelyo Law Harness is still working, but no restart result has arrived yet. The server command may be running in the foreground.",
+        'Actelyo Law Harness is still working, but no restart result has arrived yet. The server command may be running in the foreground.',
       workspaceReloading: 'Workspace changed, reloading preview',
       fileChanged: url => `File changed, reloading preview: ${url}`,
       filesChanged: (count, url) => `${count} file changes, reloading preview: ${url}`,
@@ -4937,11 +4965,11 @@ export const en: Translations = {
 
   interfaceMode: {
     title: 'Interface mode',
-    hint: "Changes what is shown, not what Actelyo Law Harness can do.",
+    hint: 'Changes what is shown, not what Actelyo Law Harness can do.',
     sessionNote: 'Set by Simple mode. A change here lasts for this session; switch to Advanced to make it yours.',
     simple: {
       label: 'Simple',
-      description: "For talking to Actelyo Law Harness. Sidebar and chat; no terminal, file or diff panes."
+      description: 'For talking to Actelyo Law Harness. Sidebar and chat; no terminal, file or diff panes.'
     },
     advanced: {
       label: 'Advanced',
@@ -5027,7 +5055,7 @@ export const en: Translations = {
     thread: {
       loadingSession: 'Loading session',
       showEarlier: 'Show earlier messages',
-      loadingResponse: "Actelyo Law Harness is loading a response",
+      loadingResponse: 'Actelyo Law Harness is loading a response',
       loadingLocalModel: model => `Loading ${model} into memory`,
       processingPrompt: 'Processing prompt',
       resumeWhenBackgroundDone: count =>
@@ -5053,24 +5081,25 @@ export const en: Translations = {
         billing: 'Out of credits',
         disk: 'Disk full',
         endpoint: "Can't reach your model server",
-        gateway: "Actelyo Law Harness hit a problem",
+        gateway: 'Actelyo Law Harness hit a problem',
         generic: "Actelyo Law Harness couldn't finish this reply",
         provider: 'The AI service returned an error',
-        runtime: "Actelyo Law Harness hit a problem",
+        runtime: 'Actelyo Law Harness hit a problem',
         streaming: 'The reply was cut off'
       },
       errorLayerBodies: {
         auth: 'The AI service rejected your sign-in. Check the credentials for this provider, then send your message again.',
         billing: 'Your account has no credits left for this provider. Top up or switch provider, then send again.',
-        disk: "Your disk is full, so Actelyo Law Harness could not save this conversation. Free some space, then retry.",
+        disk: 'Your disk is full, so Actelyo Law Harness could not save this conversation. Free some space, then retry.',
         endpoint:
           "Actelyo Law Harness can't reach your custom model server. Check that it is running, then send your message again.",
         gateway:
-          "Actelyo Law Harness hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.",
-        generic: "Something went wrong while Actelyo Law Harness was replying. Retry, or copy the details if it keeps happening.",
+          'Actelyo Law Harness hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
+        generic:
+          'Something went wrong while Actelyo Law Harness was replying. Retry, or copy the details if it keeps happening.',
         provider: 'The AI service could not complete this request. Retry in a moment or switch provider.',
         runtime:
-          "Actelyo Law Harness hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.",
+          'Actelyo Law Harness hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
         streaming: 'The connection dropped before the reply finished. Retry to send it again.'
       },
       errorCodes: {
@@ -5115,7 +5144,7 @@ export const en: Translations = {
         },
         no_reply: {
           title: "The reply didn't finish",
-          body: "Actelyo Law Harness ended this turn without a reply. Retry to send it again."
+          body: 'Actelyo Law Harness ended this turn without a reply. Retry to send it again.'
         },
         upstream_blocked: {
           title: 'A firewall blocked the request',
@@ -5167,21 +5196,21 @@ export const en: Translations = {
           body: provider => `${provider} returned nothing for this message. Retry in a moment.`
         },
         loop_error: {
-          title: "Actelyo Law Harness got stuck in a loop",
-          body: "The reply kept repeating the same steps, so Actelyo Law Harness stopped it. Retry, or start a new chat if it happens again."
+          title: 'Actelyo Law Harness got stuck in a loop',
+          body: 'The reply kept repeating the same steps, so Actelyo Law Harness stopped it. Retry, or start a new chat if it happens again.'
         },
         SESSION_NOT_OWNED: {
           title: 'This chat is open somewhere else',
-          body: "This chat is currently open in another Actelyo Law Harness window or terminal. Close it there and send your message again, or start a new chat here."
+          body: 'This chat is currently open in another Actelyo Law Harness window or terminal. Close it there and send your message again, or start a new chat here.'
         },
         disk_full: {
           title: 'Disk full',
-          body: "Your disk is full, so Actelyo Law Harness could not save this conversation. Free some space, then retry."
+          body: 'Your disk is full, so Actelyo Law Harness could not save this conversation. Free some space, then retry.'
         },
         // Nous free tier. The body is normally the backend's own sentence (it names the wait
         // and the way forward); these bodies stand in for an older backend that sent none.
         free_tier_disabled: {
-          title: "Using Actelyo Law Harness without signing in is switched off right now",
+          title: 'Using Actelyo Law Harness without signing in is switched off right now',
           body: "Sign in with a fournisseur externe account to keep chatting, it's free."
         },
         free_tier_rate_limited: {
@@ -5206,7 +5235,7 @@ export const en: Translations = {
         },
         free_tier_refused: {
           title: "Actelyo Law Harness couldn't send that without signing in",
-          body: "Signing in with a fournisseur externe account is free."
+          body: 'Signing in with a fournisseur externe account is free.'
         }
       },
       errorAuthKinds: {
@@ -5231,11 +5260,11 @@ export const en: Translations = {
       errorChooseModel: 'Choose a model',
       errorCompressConversation: 'Compress conversation',
       errorCompressFailed: 'Could not compress the conversation',
-      errorOpenHermesFolder: "Open Actelyo Law Harness folder",
-      errorOpenHermesFolderFailed: "Could not open the Actelyo Law Harness folder",
+      errorOpenHermesFolder: 'Open Actelyo Law Harness folder',
+      errorOpenHermesFolderFailed: 'Could not open the Actelyo Law Harness folder',
       errorUpdateApiKey: 'Update API key',
       errorSignInAgain: provider => `Sign in to ${provider} again`,
-      errorSignInFreeTier: "Sign in with a fournisseur externe account",
+      errorSignInFreeTier: 'Sign in with a fournisseur externe account',
       errorOauthExpired: provider =>
         `Your ${provider} sign-in has expired or was revoked. Sign in again to keep chatting.`,
       errorOpenLogs: 'Open logs',
@@ -5269,11 +5298,11 @@ export const en: Translations = {
     },
     approval: {
       gatewayDisconnected:
-        "Actelyo Law Harness is offline right now. The command is still waiting for your answer (until the approval timeout). Reconnect, then send it again.",
+        'Actelyo Law Harness is offline right now. The command is still waiting for your answer (until the approval timeout). Reconnect, then send it again.',
       sendFailed: 'Could not send your answer',
       reconnect: 'Reconnect',
       timedOutSystemLine:
-        "Approval timed out — the command was not run. Ask Actelyo Law Harness to try again, or raise the limit in Settings → Safety → Approval timeout.",
+        'Approval timed out — the command was not run. Ask Actelyo Law Harness to try again, or raise the limit in Settings → Safety → Approval timeout.',
       openSafetySettings: 'Open Safety settings',
       run: 'Run',
       command: 'Command',
@@ -5290,7 +5319,7 @@ export const en: Translations = {
     },
     clarify: {
       notReady: 'Clarify request is not ready yet',
-      gatewayDisconnected: "Actelyo Law Harness is offline right now. Reconnect, then send it again.",
+      gatewayDisconnected: 'Actelyo Law Harness is offline right now. Reconnect, then send it again.',
       sendFailed: 'Could not send clarify response',
       loadingQuestion: 'Loading question…',
       other: 'Other (type your answer)',
@@ -5343,7 +5372,7 @@ export const en: Translations = {
       envRequired: 'Fill in the required credentials first',
       sendFailed: 'Could not send MCP setup response',
       reloadFailed: 'Server saved, but reloading MCP tools failed — they load next session',
-      gatewayDisconnected: "Actelyo Law Harness is offline right now. Reconnect, then send it again."
+      gatewayDisconnected: 'Actelyo Law Harness is offline right now. Reconnect, then send it again.'
     },
     tool: {
       copyCode: 'Copy code',
@@ -5449,7 +5478,7 @@ export const en: Translations = {
   },
 
   prompts: {
-    gatewayDisconnected: "Actelyo Law Harness is offline right now. Reconnect, then send it again.",
+    gatewayDisconnected: 'Actelyo Law Harness is offline right now. Reconnect, then send it again.',
     reconnect: 'Reconnect',
     sudoSendFailed: 'Could not send sudo password',
     secretSendFailed: 'Could not send secret',
@@ -5459,10 +5488,10 @@ export const en: Translations = {
     sudoCommandUnavailable:
       'This agent did not provide the command. Cancel if you cannot verify it in the conversation.',
     sudoInstallDesc:
-      "Actelyo Law Harness needs your sudo password to install the Bot Screen packages (TigerVNC + Xfce) on the gateway host. It is sent only to that host.",
+      'Actelyo Law Harness needs your sudo password to install the Bot Screen packages (TigerVNC + Xfce) on the gateway host. It is sent only to that host.',
     sudoPlaceholder: 'sudo password',
     secretTitle: 'Secret required',
-    secretDesc: "Actelyo Law Harness needs a credential to continue.",
+    secretDesc: 'Actelyo Law Harness needs a credential to continue.',
     secretPlaceholder: 'secret value',
     vaultUnlockSendFailed: 'Could not send master password',
     vaultUnlockTitle: name => `Unlock ${name}`,
@@ -5487,7 +5516,7 @@ export const en: Translations = {
       `${site} is asking for a one-time code (text message, email or authenticator app). Enter it here and Actelyo Law Harness types it into the page; the model never sees it.`,
     vaultCodeLabel: 'Code',
     vaultCodeFootnote:
-      "Tip: save the authenticator key with this login in Settings → Passwords & Logins and Actelyo Law Harness enters codes for you.",
+      'Tip: save the authenticator key with this login in Settings → Passwords & Logins and Actelyo Law Harness enters codes for you.',
     vaultCodeSkip: 'Skip',
     vaultCodeConfirm: 'Enter code'
   },
@@ -5563,8 +5592,8 @@ export const en: Translations = {
     sessionExportFailed: 'Could not export session',
     imageSaved: 'Image saved',
     downloadStarted: 'Download started',
-    restartToUseSaveImage: "Restart Actelyo Law Harness Desktop to use Save Image.",
-    restartToSaveImages: "Restart Actelyo Law Harness Desktop to save images",
+    restartToUseSaveImage: 'Restart Actelyo Law Harness Desktop to use Save Image.',
+    restartToSaveImages: 'Restart Actelyo Law Harness Desktop to save images',
     imageDownloadFailed: 'Image download failed',
     openImage: 'Open image',
     downloadImage: 'Download image',
@@ -5603,14 +5632,14 @@ export const en: Translations = {
       },
       skills: {
         title: 'Teach it once',
-        text: "Skills are folders of instructions Actelyo Law Harness loads when the work calls for them."
+        text: 'Skills are folders of instructions Actelyo Law Harness loads when the work calls for them.'
       },
       messaging: {
-        title: "Actelyo Law Harness away from your desk",
+        title: 'Actelyo Law Harness away from your desk',
         text: 'Connect Telegram, Discord, Slack and more — same agent, same memory.'
       },
       artifacts: {
-        title: "Everything Actelyo Law Harness made",
+        title: 'Everything Actelyo Law Harness made',
         text: 'Images, files and links from every session, indexed in one place.'
       },
       cron: {
@@ -5623,7 +5652,7 @@ export const en: Translations = {
       },
       profiles: {
         title: 'Profiles are separate',
-        text: "Each one is its own Actelyo Law Harness — own keys, own memory, own sessions."
+        text: 'Each one is its own Actelyo Law Harness — own keys, own memory, own sessions.'
       },
       'composer-mentions': {
         title: 'Attach and command',

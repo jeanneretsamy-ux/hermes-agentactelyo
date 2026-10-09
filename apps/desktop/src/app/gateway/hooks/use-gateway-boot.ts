@@ -464,7 +464,7 @@ export function useGatewayBoot({
         const conn = await withTimeout(
           desktop.getConnection(),
           RECONNECT_ATTEMPT_TIMEOUT_MS,
-          "Timed out reconnecting to Actelyo Law Harness backend"
+          'Timed out reconnecting to Actelyo Law Harness backend'
         )
 
         setPrimaryGatewayConnection(conn)
@@ -801,7 +801,7 @@ export function useGatewayBoot({
         const conn = await withTimeout(
           getWindowBackend(),
           BACKEND_BOOT_WAIT_TIMEOUT_MS,
-          "Timed out reconnecting to Actelyo Law Harness backend"
+          'Timed out reconnecting to Actelyo Law Harness backend'
         )
 
         if (!ownsSwitch()) {
@@ -1175,7 +1175,7 @@ export function useGatewayBoot({
         activeGateway()?.close()
 
         if (!(await ensureActiveGatewayOpen({ explicit: true }))) {
-          throw new Error("Actelyo Law Harness gateway is not connected")
+          throw new Error('Actelyo Law Harness gateway is not connected')
         }
 
         return
@@ -1435,7 +1435,7 @@ export function useGatewayBoot({
         const conn = await withTimeout(
           getWindowBackend(true),
           BACKEND_BOOT_WAIT_TIMEOUT_MS,
-          "Timed out connecting to Actelyo Law Harness backend"
+          'Timed out connecting to Actelyo Law Harness backend'
         )
 
         if (cancelled) {

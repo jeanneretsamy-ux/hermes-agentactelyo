@@ -4,10 +4,14 @@ export const arChat = {
   composer: {
     message: 'الرسالة',
     wakingProfile: profile => `جار إيقاظ ${profile}`,
-    placeholderStarting: "جار بدء Actelyo Law Harness...",
+    placeholderStarting: 'جار بدء Actelyo Law Harness...',
     placeholderReconnecting: 'جار إعادة الاتصال...',
     placeholderFollowUp: 'اكتب متابعة...',
-    newSessionPlaceholders: ["اسأل Actelyo Law Harness عن شيء...", "اطلب من Actelyo Law Harness تنفيذ مهمة...", 'ابدأ محادثة جديدة...'],
+    newSessionPlaceholders: [
+      'اسأل Actelyo Law Harness عن شيء...',
+      'اطلب من Actelyo Law Harness تنفيذ مهمة...',
+      'ابدأ محادثة جديدة...'
+    ],
     followUpPlaceholders: ['اكتب متابعة...', 'أضف توجيها...', 'اسأل سؤالا آخر...'],
     startVoice: 'بدء الصوت',
     openDirective: 'فتح',
@@ -67,7 +71,7 @@ export const arChat = {
       '/journey': 'فتح رسم الذاكرة لعرض المهارات والذكريات عبر الزمن',
       '/queue': 'إضافة طلبات للدور التالي أو عرضها أو تعديلها أو حذفها أو نقلها أو مسحها',
       '/steer': 'إدراج رسالة بعد استدعاء الأداة التالي دون مقاطعة العمل',
-      '/goal': "تحديد هدف مستمر يعمل عليه Actelyo Law Harness حتى إنجازه",
+      '/goal': 'تحديد هدف مستمر يعمل عليه Actelyo Law Harness حتى إنجازه',
       '/heartbeat': 'تحديد طلب متكرر يعود إلى هذه الجلسة عندما تكون خاملة',
       '/refine': 'مراجعة هذه المحادثة وحفظ الدروس في الذاكرة أو المهارات',
       '/review': 'تشغيل وكيل فرعي مستقل لمراجعة العمل الذي نوقش',
@@ -79,7 +83,7 @@ export const arChat = {
       '/egress': 'عرض حالة وكيل الاتصالات الصادرة في Docker',
       '/context': 'عرض استخدام السياق وتفاصيله وإحصاءات الضغط ومعدل المعالجة',
       '/whoami': 'عرض صلاحية الوصول إلى أوامر الشرطة المائلة',
-      '/profile': "تبديل ملف Actelyo Law Harness الشخصي النشط",
+      '/profile': 'تبديل ملف Actelyo Law Harness الشخصي النشط',
       '/codex-runtime': 'تبديل بيئة Codex app-server لنماذج OpenAI/Codex',
       '/personality': 'اختيار شخصية محددة مسبقًا',
       '/battery': 'تبديل عرض مؤشر البطارية الملون في شريط الحالة',
@@ -103,10 +107,10 @@ export const arChat = {
       '/browser': 'إدارة متصفح الوكيل [connect|disconnect|status|use]',
       '/palette': 'فتح لوحة الأوامر',
       '/usage': 'عرض استخدام الرموز وحدود الطلبات؛ reset يسترد إعادة ضبط محفوظة لحدود Codex',
-      '/subscription': "عرض خطة fournisseur externe وتغييرها في المتصفح",
-      '/topup': "عرض رصيد fournisseur externe وإدارة الفواتير",
+      '/subscription': 'عرض خطة fournisseur externe وتغييرها في المتصفح',
+      '/topup': 'عرض رصيد fournisseur externe وإدارة الفواتير',
       '/platform': 'إيقاف منصة بوابة متعثرة مؤقتًا أو استئنافها أو عرضها',
-      '/version': "عرض إصدار Actelyo Law Harness Agent",
+      '/version': 'عرض إصدار Actelyo Law Harness Agent',
       '/debug': 'رفع تقرير تصحيح يتضمن معلومات النظام والسجلات للحصول على رابط قابل للمشاركة',
       '/model': 'تبديل نموذج هذه الجلسة'
     },
@@ -123,7 +127,7 @@ export const arChat = {
     attachUrlTitle: 'إرفاق رابط',
     attachUrlDesc: 'أضف رابطا إلى الرسالة.',
     urlPlaceholder: 'https://example.com',
-    urlHintPre: "سيقرأ Actelyo Law Harness الرابط ضمن السياق.",
+    urlHintPre: 'سيقرأ Actelyo Law Harness الرابط ضمن السياق.',
     attach: 'إرفاق',
     queued: count => `${count} في الطابور`,
     attachmentOnly: 'إرفاق فقط',
@@ -335,7 +339,7 @@ export const arChat = {
       createPr: 'إنشاء PR',
       openPr: 'فتح PR',
       ghMissing: 'ثبّت GitHub CLI (gh) وسجّل الدخول لفتح طلبات السحب',
-      agentShip: "اطلب من Actelyo Law Harness فتح PR",
+      agentShip: 'اطلب من Actelyo Law Harness فتح PR',
       agentShipUnavailable: 'المحادثة التي تملك هذه التغييرات ليست على الشاشة.',
       agentShipPrompt: 'راجع التغييرات الحالية، وأودعها برسالة إيداع تقليدية واضحة، وادفع الفرع، وافتح طلب سحب.',
       newBranch: 'فرع جديد',
@@ -354,7 +358,7 @@ export const arChat = {
       'راجع الأمر قبل إدخال كلمة مرور sudo. تُرسل كلمة المرور إلى الوكيل الذي ينفّذه وتُحفظ مؤقتًا لهذه الجلسة.',
     sudoCommandUnavailable: 'لم يقدّم هذا الوكيل الأمر. ألغِ الطلب إذا لم تتمكن من التحقق منه في المحادثة.',
     sudoInstallDesc:
-      "يحتاج Actelyo Law Harness إلى كلمة مرور sudo لتثبيت حزم Bot Screen (TigerVNC + Xfce) على مضيف البوابة. تُرسل إلى ذلك المضيف فقط.",
+      'يحتاج Actelyo Law Harness إلى كلمة مرور sudo لتثبيت حزم Bot Screen (TigerVNC + Xfce) على مضيف البوابة. تُرسل إلى ذلك المضيف فقط.',
     sudoPlaceholder: 'كلمة المرور',
     secretTitle: 'مطلوب سر',
     secretDesc: 'أدخل القيمة المطلوبة لمتابعة المهمة.',
@@ -382,7 +386,7 @@ export const arChat = {
       `يطلب ${site} رمزًا لمرة واحدة (رسالة نصية أو بريد إلكتروني أو تطبيق مصادقة). أدخله هنا وسيكتبه Actelyo Law Harness في الصفحة؛ لا يراه النموذج أبدًا.`,
     vaultCodeLabel: 'الرمز',
     vaultCodeFootnote:
-      "تلميح: احفظ مفتاح المصادقة مع بيانات الدخول هذه في الإعدادات ← كلمات المرور وتسجيلات الدخول وسيُدخل Actelyo Law Harness الرموز نيابةً عنك.",
+      'تلميح: احفظ مفتاح المصادقة مع بيانات الدخول هذه في الإعدادات ← كلمات المرور وتسجيلات الدخول وسيُدخل Actelyo Law Harness الرموز نيابةً عنك.',
     vaultCodeSkip: 'تخطٍ',
     vaultCodeConfirm: 'إدخال الرمز'
   },
@@ -492,14 +496,14 @@ export const arChat = {
       },
       skills: {
         title: 'علّمه مرة واحدة',
-        text: "المهارات مجلدات من التعليمات يحمّلها Actelyo Law Harness عندما يقتضي العمل ذلك."
+        text: 'المهارات مجلدات من التعليمات يحمّلها Actelyo Law Harness عندما يقتضي العمل ذلك.'
       },
       messaging: {
-        title: "Actelyo Law Harness بعيدًا عن مكتبك",
+        title: 'Actelyo Law Harness بعيدًا عن مكتبك',
         text: 'اربطه بـ Telegram وDiscord وSlack وغيرها — الوكيل نفسه والذاكرة نفسها.'
       },
       artifacts: {
-        title: "كل ما صنعه Actelyo Law Harness",
+        title: 'كل ما صنعه Actelyo Law Harness',
         text: 'الصور والملفات والروابط من كل الجلسات، مفهرسة في مكان واحد.'
       },
       cron: {
@@ -512,7 +516,7 @@ export const arChat = {
       },
       profiles: {
         title: 'الملفات الشخصية منفصلة',
-        text: "كل واحد منها Actelyo Law Harness مستقل — مفاتيحه وذاكرته وجلساته الخاصة."
+        text: 'كل واحد منها Actelyo Law Harness مستقل — مفاتيحه وذاكرته وجلساته الخاصة.'
       },
       'composer-mentions': {
         title: 'المرفقات والأوامر',

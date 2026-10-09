@@ -257,14 +257,15 @@ export const arChrome = {
       removeFromSidebar: 'إخفاء من الشريط الجانبي',
       createdInPreviousContext: 'أُنشئ المشروع على الاتصال أو الملف الشخصي السابق. عُد إليه؛ لم يُكتب ملف IDEA.md.',
       createFailed: 'تعذّر إنشاء المشروع',
-      deleteConfirm: "هذا يزيل المشروع المحفوظ من Actelyo Law Harness. تبقى الملفات ومستودعات git وأشجار العمل دون تغيير.",
+      deleteConfirm:
+        'هذا يزيل المشروع المحفوظ من Actelyo Law Harness. تبقى الملفات ومستودعات git وأشجار العمل دون تغيير.',
       startWork: 'شجرة عمل جديدة',
       newWorktreeTitle: 'شجرة عمل جديدة',
       newWorktreeDesc: 'سمِّ الفرع لشجرة العمل هذه.',
       branchPlaceholder: 'مثال: my-feature',
       startWorkFailed: 'تعذّر إنشاء شجرة العمل',
       worktreeStaleBackend:
-        "حدِّث خادم Actelyo Law Harness لإنشاء أشجار العمل عبر هذا الاتصال البعيد — فهو أقدم من واجهة git worktree.",
+        'حدِّث خادم Actelyo Law Harness لإنشاء أشجار العمل عبر هذا الاتصال البعيد — فهو أقدم من واجهة git worktree.',
       worktreeProjectLabel: 'المشروع',
       worktreeProjectPlaceholder: 'ابحث في المشاريع…',
       worktreeProjectNone: 'لا توجد مشاريع بمجلد',

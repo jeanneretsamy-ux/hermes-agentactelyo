@@ -217,7 +217,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): UpdaterStrat
     deps.emitUpdateProgress({
       stage: 'restart',
       message:
-        "Updating Actelyo Law Harness — this window will close and the updater will open. Don’t reopen Actelyo Law Harness yourself; it restarts automatically when the update finishes.",
+        'Updating Actelyo Law Harness — this window will close and the updater will open. Don’t reopen Actelyo Law Harness yourself; it restarts automatically when the update finishes.',
       percent: 100
     })
     deps.repairMacUpdaterHelper(updater)
@@ -487,7 +487,7 @@ export function createCheckoutStrategy(deps: CheckoutStrategyDeps): UpdaterStrat
     deps.emitUpdateProgress({
       stage: 'restart',
       message:
-        "Updating Actelyo Law Harness — this window will close. Don’t reopen Actelyo Law Harness yourself; it restarts automatically when the update finishes.",
+        'Updating Actelyo Law Harness — this window will close. Don’t reopen Actelyo Law Harness yourself; it restarts automatically when the update finishes.',
       percent: 100
     })
 
