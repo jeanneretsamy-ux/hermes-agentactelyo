@@ -16,6 +16,16 @@ import { ENUM_OPTIONS } from '../../settings/constants'
 import { asText, enumOptionsFor, getNested, setNested } from '../../settings/helpers'
 
 const DEFAULT_TTS_PROVIDER = 'edge'
+const DEFAULT_STT_PROVIDER = 'local'
+
+const STT_MODEL_KEY_BY_PROVIDER: Record<string, string> = {
+  elevenlabs: 'stt.elevenlabs.model_id',
+  groq: 'stt.groq.model',
+  local: 'stt.local.model',
+  local_command: 'stt.local.model',
+  mistral: 'stt.mistral.model',
+  openai: 'stt.openai.model'
+}
 
 const TTS_MODEL_KEY_BY_PROVIDER: Record<string, string> = {
   elevenlabs: 'tts.elevenlabs.model_id',
@@ -28,10 +38,14 @@ const TTS_MODEL_KEY_BY_PROVIDER: Record<string, string> = {
 }
 
 const PROVIDER_LABELS: Record<string, string> = {
+  deepinfra: 'DeepInfra',
   edge: 'Microsoft Edge',
   elevenlabs: 'ElevenLabs',
   gemini: 'Gemini',
+  groq: 'Groq',
   kittentts: 'KittenTTS',
+  local: 'Local Whisper',
+  local_command: 'Local command / Phonon',
   minimax: 'MiniMax',
   mistral: 'Mistral',
   neutts: 'NeuTTS',
@@ -40,10 +54,26 @@ const PROVIDER_LABELS: Record<string, string> = {
   xai: 'xAI'
 }
 
+const PHONON_STT_MODELS = ['phonon-2', 'phonon-1', 'phonon-1-big', 'phonon-1-micro']
+
 const modelLabel = (model: string) => model.replace(/^KittenML\//, '').replace(/^neuphonic\//, '')
 const providerLabel = (provider: string) => PROVIDER_LABELS[provider] ?? provider
 
-function saveTtsValue(key: string, value: string, writeScope: ProfileScope | undefined) {
+function modelOptionsFor(key: string | undefined, provider: string): string[] {
+  if (!key) {
+    return []
+  }
+
+  const options = ENUM_OPTIONS[key] ?? []
+
+  if (provider === 'local_command' && key === 'stt.local.model') {
+    return [...PHONON_STT_MODELS, ...options.filter(option => !PHONON_STT_MODELS.includes(option))]
+  }
+
+  return options
+}
+
+function saveAudioValue(key: string, value: string, writeScope: ProfileScope | undefined) {
   const patch = setNested({}, key, value)
 
   setHermesConfigCache(previous => setNested(previous ?? {}, key, value))
@@ -52,9 +82,9 @@ function saveTtsValue(key: string, value: string, writeScope: ProfileScope | und
 }
 
 /**
- * Fast TTS picker shown next to the voice controls. The full Settings → Voice
+ * Fast audio model picker shown next to the voice controls. The full Settings → Voice
  * page still owns API keys and advanced fields; this keeps the common
- * provider/model switch where the user actually presses Audio.
+ * TTS/STT provider and model switches where the user actually presses Audio.
  */
 export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
   const { data: config, writeScope } = useHermesConfigRecord()
@@ -62,10 +92,19 @@ export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
   const provider = asText(getNested(record, 'tts.provider')) || DEFAULT_TTS_PROVIDER
   const providerOptions = useMemo(() => enumOptionsFor('tts.provider', provider, record) ?? [], [provider, record])
   const modelKey = TTS_MODEL_KEY_BY_PROVIDER[provider]
-  const modelOptions = modelKey ? (ENUM_OPTIONS[modelKey] ?? []) : []
+  const modelOptions = modelOptionsFor(modelKey, provider)
   const modelValue = modelKey ? asText(getNested(record, modelKey)) || modelOptions[0] || '' : ''
+  const sttProvider = asText(getNested(record, 'stt.provider')) || DEFAULT_STT_PROVIDER
+  const sttProviderOptions = useMemo(() => {
+    const options = enumOptionsFor('stt.provider', sttProvider, record) ?? []
 
-  if (providerOptions.length === 0) {
+    return options.includes('local_command') ? options : [...options, 'local_command']
+  }, [record, sttProvider])
+  const sttModelKey = STT_MODEL_KEY_BY_PROVIDER[sttProvider]
+  const sttModelOptions = modelOptionsFor(sttModelKey, sttProvider)
+  const sttModelValue = sttModelKey ? asText(getNested(record, sttModelKey)) || sttModelOptions[0] || '' : ''
+
+  if (providerOptions.length === 0 && sttProviderOptions.length === 0) {
     return null
   }
 
@@ -75,7 +114,7 @@ export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
     }
 
     triggerHaptic('open')
-    saveTtsValue('tts.provider', nextProvider, writeScope).catch(error =>
+    saveAudioValue('tts.provider', nextProvider, writeScope).catch(error =>
       notifyError(error, 'TTS provider change failed')
     )
   }
@@ -86,7 +125,27 @@ export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
     }
 
     triggerHaptic('open')
-    saveTtsValue(modelKey, nextModel, writeScope).catch(error => notifyError(error, 'TTS model change failed'))
+    saveAudioValue(modelKey, nextModel, writeScope).catch(error => notifyError(error, 'TTS model change failed'))
+  }
+
+  const saveSttProvider = (nextProvider: string) => {
+    if (!nextProvider || nextProvider === sttProvider) {
+      return
+    }
+
+    triggerHaptic('open')
+    saveAudioValue('stt.provider', nextProvider, writeScope).catch(error =>
+      notifyError(error, 'STT provider change failed')
+    )
+  }
+
+  const saveSttModel = (nextModel: string) => {
+    if (!sttModelKey || !nextModel || nextModel === sttModelValue) {
+      return
+    }
+
+    triggerHaptic('open')
+    saveAudioValue(sttModelKey, nextModel, writeScope).catch(error => notifyError(error, 'STT model change failed'))
   }
 
   return (
@@ -104,6 +163,26 @@ export function VoiceTtsRows({ disabled }: { disabled: boolean }) {
           <DropdownMenuLabel>TTS model</DropdownMenuLabel>
           <DropdownMenuRadioGroup onValueChange={saveModel} value={modelValue}>
             {modelOptions.map(option => (
+              <DropdownMenuRadioItem className={dropdownMenuRow} disabled={disabled} key={option} value={option}>
+                {modelLabel(option)}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </>
+      ) : null}
+      <DropdownMenuLabel>STT provider</DropdownMenuLabel>
+      <DropdownMenuRadioGroup onValueChange={saveSttProvider} value={sttProvider}>
+        {sttProviderOptions.map(option => (
+          <DropdownMenuRadioItem className={dropdownMenuRow} disabled={disabled} key={option} value={option}>
+            {providerLabel(option)}
+          </DropdownMenuRadioItem>
+        ))}
+      </DropdownMenuRadioGroup>
+      {sttModelKey && sttModelOptions.length > 0 ? (
+        <>
+          <DropdownMenuLabel>STT model</DropdownMenuLabel>
+          <DropdownMenuRadioGroup onValueChange={saveSttModel} value={sttModelValue}>
+            {sttModelOptions.map(option => (
               <DropdownMenuRadioItem className={dropdownMenuRow} disabled={disabled} key={option} value={option}>
                 {modelLabel(option)}
               </DropdownMenuRadioItem>
