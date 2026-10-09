@@ -1,0 +1,30 @@
+name: Actelyo Law service and Windows long paths
+on:
+  workflow_dispatch:
+  push:
+    paths: ['integrations/actelyo-law-harness/**', 'scripts/actelyo-download/**', '.github/workflows/actelyo-law-service.yml']
+  pull_request:
+    paths: ['integrations/actelyo-law-harness/**', 'scripts/actelyo-download/**', '.github/workflows/actelyo-law-service.yml']
+permissions:
+  contents: read
+jobs:
+  legal-service:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Test independent stdlib legal service
+        working-directory: integrations/actelyo-law-harness
+        run: python -m unittest discover -s tests -v
+  windows-paths:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Install verified compiler
+        shell: pwsh
+        run: ./scripts/actelyo-download/install-inno.ps1 -Destination "$env:RUNNER_TEMP/inno7"
+      - name: Compile, install and read back extended path
+        shell: pwsh
+        run: ./scripts/actelyo-download/test-long-path.ps1 -Compiler "$env:ACTELYO_ISCC" -WorkDir "$env:RUNNER_TEMP/actelyo-path-proof"

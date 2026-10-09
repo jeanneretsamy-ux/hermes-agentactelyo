@@ -2,10 +2,11 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { $desktopOnboarding, type DesktopOnboardingState, type OnboardingContext } from '@/store/onboarding'
+import { $localModelsEnabled } from '@/store/local-models-flag'
 import { makeOAuthProvider } from '@/test/oauth-provider'
 import type { OAuthProvider } from '@/types/hermes'
 
-import { ApiKeyForm, Picker } from '.'
+import { ApiKeyForm, Picker, providerTitle } from '.'
 
 function setProviders(providers: OAuthProvider[]) {
   $desktopOnboarding.set({
@@ -26,6 +27,7 @@ const ctx: OnboardingContext = { requestGateway: async () => undefined as never 
 
 afterEach(() => {
   cleanup()
+  $localModelsEnabled.set(false)
 
   try {
     window.localStorage.clear()
@@ -48,11 +50,48 @@ afterEach(() => {
 })
 
 describe('onboarding Picker', () => {
+  it.each([{ providers: [] }, { providers: [makeOAuthProvider('nous', 'Nous Portal')] }])(
+    'offers OpenRouter without expanding other providers (%j)',
+    ({ providers }) => {
+      setProviders(providers)
+      render(<Picker ctx={ctx} />)
+
+      fireEvent.click(screen.getByRole('button', { name: /^OpenRouter / }))
+
+      expect($desktopOnboarding.get().mode).toBe('apikey')
+      const entry = screen.getByPlaceholderText('Paste API key')
+      expect(entry.getAttribute('type')).toBe('password')
+      expect(
+        screen.getByText('Hosts hundreds of models behind a single key. Good default for new installs.')
+      ).toBeTruthy()
+      fireEvent.click(screen.getByRole('button', { name: 'Back to sign in' }))
+      expect(screen.getByRole('button', { name: /LM Studio \/ Ollama/ })).toBeTruthy()
+    }
+  )
+
+  it.each([{ providers: [] }, { providers: [makeOAuthProvider('nous', 'Nous Portal')] }])(
+    'offers a local endpoint without the managed-runtime flag (%j)',
+    ({ providers }) => {
+      $localModelsEnabled.set(false)
+      setProviders(providers)
+      render(<Picker ctx={ctx} />)
+
+      fireEvent.click(screen.getByRole('button', { name: /LM Studio \/ Ollama/ }))
+
+      expect($desktopOnboarding.get().mode).toBe('apikey')
+      expect(screen.getByPlaceholderText('http://127.0.0.1:1234/v1').getAttribute('type')).toBe('text')
+      expect(screen.getByPlaceholderText('API key (optional — only if your endpoint requires one)')).toBeTruthy()
+      expect($desktopOnboarding.get().firstRunSkipped).toBe(false)
+      fireEvent.click(screen.getByRole('button', { name: 'Back to sign in' }))
+      expect(screen.getByRole('button', { name: /^OpenRouter / })).toBeTruthy()
+    }
+  )
+
   it('features Nous Portal and hides other providers behind a disclosure', () => {
     setProviders([makeOAuthProvider('anthropic', 'Anthropic Claude'), makeOAuthProvider('nous', 'Nous Portal')])
     render(<Picker ctx={ctx} />)
 
-    expect(screen.getByText('Nous Portal')).toBeTruthy()
+    expect(screen.getByText(providerTitle(makeOAuthProvider('nous', 'Nous Portal')))).toBeTruthy()
     expect(screen.getByText('Recommended')).toBeTruthy()
     // Fireworks stays behind the disclosure with the other alternatives; only
     // Nous Portal is visible before the user expands the list.
@@ -125,7 +164,7 @@ describe('ApiKeyForm manual local-model fallback', () => {
 
     render(<ApiKeyForm canGoBack={false} initialEnvKey="OPENAI_BASE_URL" onBack={() => undefined} onSave={onSave} />)
 
-    fireEvent.change(screen.getByPlaceholderText('http://127.0.0.1:8000/v1'), {
+    fireEvent.change(screen.getByPlaceholderText('http://127.0.0.1:1234/v1'), {
       target: { value: 'https://api.cohere.ai/compatibility/v1' }
     })
 

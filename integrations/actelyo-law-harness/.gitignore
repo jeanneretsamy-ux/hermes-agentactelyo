@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+config.toml
+.env
+connection*.json
+reviews/
+corrections/
+*.egg-info/
+dist/
+build/

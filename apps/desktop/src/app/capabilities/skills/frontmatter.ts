@@ -14,7 +14,11 @@ export function parseFrontmatter(content: string): { body: string; meta: [string
 
   const flush = () => {
     if (currentKey !== null) {
-      meta.push([currentKey, block.join('\n').trim()])
+      const value = block.join('\n').trim()
+      // This pane is display-only; the editor and engine retain the original
+      // namespace so installed third-party skills remain compatible.
+      const displayValue = currentKey === 'metadata' ? value.replace(/^(\s*)hermes:(?=\s|$)/gim, '$1actelyo:') : value
+      meta.push([currentKey, displayValue])
     }
 
     currentKey = null

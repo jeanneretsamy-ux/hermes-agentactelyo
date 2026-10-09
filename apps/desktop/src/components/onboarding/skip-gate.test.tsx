@@ -6,8 +6,6 @@ import { makeOAuthProvider } from '@/test/oauth-provider'
 
 import { DesktopOnboardingOverlay } from '.'
 
-const HEADER = "Let's get you setup with Hermes Agent"
-
 // Never answers: the readiness effect stays in flight, so each case is observed
 // on exactly the state it set up instead of racing a round to completion.
 const pendingGateway = (() => new Promise(() => {})) as OnboardingContext['requestGateway']
@@ -46,7 +44,7 @@ describe('DesktopOnboardingOverlay first-run skip gate', () => {
 
     render(<DesktopOnboardingOverlay enabled profile="default" requestGateway={pendingGateway} />)
 
-    expect(screen.queryByText(HEADER)).toBeNull()
+    expect(screen.queryByRole('heading', { level: 2 })).toBeNull()
   })
 
   it('still opens when a real credential wall asked for it', () => {
@@ -57,6 +55,6 @@ describe('DesktopOnboardingOverlay first-run skip gate', () => {
 
     render(<DesktopOnboardingOverlay enabled profile="default" requestGateway={pendingGateway} />)
 
-    expect(screen.getByText(HEADER)).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 2 })).toBeTruthy()
   })
 })

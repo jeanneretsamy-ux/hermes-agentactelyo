@@ -123,6 +123,19 @@ export function LocalModelsProviderRow({ onClick }: { onClick: () => void }) {
   )
 }
 
+/** Connect an existing LM Studio/Ollama server without the managed-runtime flag. */
+export function LocalEndpointProviderRow({ onClick }: { onClick: () => void }) {
+  const { t } = useI18n()
+
+  return (
+    <KeyProviderRow
+      onClick={onClick}
+      pitch={t.onboarding.apiKeyOptions.local.description}
+      title={`${t.onboarding.localModelsTitle} · LM Studio / Ollama`}
+    />
+  )
+}
+
 export function OpenRouterProviderRow({ onClick }: { onClick: () => void }) {
   const { t } = useI18n()
 

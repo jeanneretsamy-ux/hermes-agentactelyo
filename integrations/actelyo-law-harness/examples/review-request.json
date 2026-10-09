@@ -1,0 +1,13 @@
+{
+  "task": "contract_review",
+  "matter_id": "EXEMPLE-001",
+  "jurisdiction": "FR",
+  "as_of": "2026-10-04",
+  "instruction": "Examiner la clause de responsabilité et signaler les éléments nécessaires pour une analyse complète.",
+  "documents": [
+    {
+      "id": "contrat-exemple",
+      "text": "EXEMPLE SYNTHÉTIQUE, SANS CLIENT RÉEL. Article 8 : Le prestataire exclut toute responsabilité pour les dommages directs ou indirects, quelle qu'en soit la cause. Article 9 : Le contrat est soumis au droit français. Les parties et la nature des obligations restent à préciser."
+    }
+  ]
+}

@@ -35,10 +35,10 @@ For a desktop app, use `terminal` to run the helper bundled with this skill:
 ```text
 python <skill-directory>/scripts/desktop_link.py launch --executable "<installed Actelyo executable>" --port 9229
 python <skill-directory>/scripts/desktop_link.py probe --port 9229
-hermes config set browser.cdp_url http://127.0.0.1:9229
+actelyo-law-harness config set browser.cdp_url http://127.0.0.1:9229
 ```
 
-Start a new agent session after changing the browser connection. The technical `hermes` command is retained for compatibility; the application identity is Actelyo Law Harness. Fully exit an already running desktop app first, after allowing the user to save work: Electron's single-instance handling may discard new debugging flags. Do not silently kill an existing application.
+Start a new agent session after changing the browser connection. Fully exit an already running desktop app first, after allowing the user to save work: Electron's single-instance handling may discard new debugging flags. Do not silently kill an existing application.
 
 Use different ports for ERP Desktop (9229) and LLMQushu (9230). Connect one target at a time. Use the helper's `probe` output to identify the intended Actelyo window, then take `browser_snapshot`. A desktop window loaded from a local file is already the application; do not navigate it away to a website.
 
