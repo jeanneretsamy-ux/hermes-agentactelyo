@@ -327,6 +327,7 @@ def girl_path(art: IconArt, girl: str) -> str:
         else:
             # Brand assets can combine a background and an embedded logo. Keep
             # the whole SVG and normalize its canvas to the portrait coordinates.
+            assert "<image" in src, f"no <path> or <image> found in {art.girls[girl].name}"
             root = ET.fromstring(src)
             assert root.get("viewBox"), f"missing viewBox in {art.girls[girl].name}"
             root.set("width", str(GIRL_VIEWBOX))
