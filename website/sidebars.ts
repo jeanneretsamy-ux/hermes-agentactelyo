@@ -230,6 +230,7 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-bundled-legal',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/bundled/legal/legal-actelyo-rag-backend',
                     'user-guide/skills/bundled/legal/legal-legal-data-hunter',
                     'user-guide/skills/bundled/legal/legal-openlegi-official-sources',
                   ],

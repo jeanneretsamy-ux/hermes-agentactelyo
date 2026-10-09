@@ -1,16 +1,32 @@
 ---
-name: actelyo-rag-backend
-description: Search, question and cite locally indexed documents.
-version: 1.0.0
-author: JEANNERETSAMY (@jeanneretsamy-ux)
-license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [actelyo, legal, rag, documents, mcp]
-    category: legal
-user-invocable: true
+title: "Actelyo Rag Backend — Search, question and cite locally indexed documents"
+sidebar_label: "Actelyo Rag Backend"
+description: "Search, question and cite locally indexed documents"
 ---
+
+{/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
+
+# Actelyo Rag Backend
+
+Search, question and cite locally indexed documents.
+
+## Skill metadata
+
+| | |
+|---|---|
+| Source | Bundled (installed by default) |
+| Path | `skills/legal/actelyo-rag-backend` |
+| Version | `1.0.0` |
+| Author | JEANNERETSAMY (@jeanneretsamy-ux) |
+| License | MIT |
+| Platforms | linux, macos, windows |
+| Tags | `actelyo`, `legal`, `rag`, `documents`, `mcp` |
+
+## Reference: full SKILL.md
+
+:::info
+The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+:::
 
 # Actelyo RAG Backend
 
