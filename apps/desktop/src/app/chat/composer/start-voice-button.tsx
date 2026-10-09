@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tip } from '@/components/ui/tooltip'
 import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
@@ -9,6 +9,7 @@ import { recordAction } from '@/store/desktop-metrics'
 
 import { GHOST_ICON_BTN, PRIMARY_ICON_BTN } from './control-classes'
 import { useVoiceEngineName, VoiceEngineRows } from './voice-engine-rows'
+import { VoiceTtsRows } from './voice-tts-rows'
 
 /**
  * The primary "start voice conversation" button, with the engine picker one
@@ -68,6 +69,8 @@ export function StartVoiceButton({
           </Tip>
           <DropdownMenuContent align="end" className="min-w-52">
             <VoiceEngineRows disabled={disabled} />
+            <DropdownMenuSeparator />
+            <VoiceTtsRows disabled={disabled} />
           </DropdownMenuContent>
         </DropdownMenu>
       ) : null}
