@@ -161,7 +161,7 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
     """
     package = release_dir.parent / "package.json"
     product_name = (
-        json.loads(package.read_text(encoding="utf-8")).get("productName", "Hermes")
+        json.loads(package.read_text(encoding="utf-8-sig")).get("productName", "Hermes")
         if package.is_file() else "Hermes"
     )
     names = tuple(dict.fromkeys((product_name, "Hermes")))
