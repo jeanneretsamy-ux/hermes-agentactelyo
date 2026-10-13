@@ -92,7 +92,7 @@ describe('BootFailureOverlay', () => {
       </>
     )
 
-    const recoverySurface = screen.getByRole('dialog', { name: /Hermes couldn't start/i })
+    const recoverySurface = screen.getByRole('dialog', { name: en.boot.failure.title })
     const retry = screen.getByRole('button', { name: /retry/i })
     const backgroundAction = screen.getByText(/background action/i)
 
@@ -129,7 +129,7 @@ describe('BootFailureOverlay', () => {
 
     $desktopBoot.set({ ...$desktopBoot.get(), error: 'A different startup failure' })
     rerender(<BootFailureOverlay />)
-    expect(screen.getByRole('dialog', { name: /Hermes couldn't start/i })).toBeTruthy()
+    expect(screen.getByRole('dialog', { name: en.boot.failure.title })).toBeTruthy()
 
     fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
     expect(screen.queryByRole('dialog')).toBeNull()
@@ -139,14 +139,14 @@ describe('BootFailureOverlay', () => {
     $desktopBoot.set({ ...$desktopBoot.get(), error, running: false })
     rerender(<BootFailureOverlay />)
 
-    expect(screen.getByRole('dialog', { name: /Hermes couldn't start/i })).toBeTruthy()
+    expect(screen.getByRole('dialog', { name: en.boot.failure.title })).toBeTruthy()
   })
 
   it('dismisses on Escape and keeps the boot error latched', () => {
     render(<BootFailureOverlay />)
     const error = $desktopBoot.get().error
 
-    fireEvent.keyDown(screen.getByRole('dialog', { name: /Hermes couldn't start/i }), { key: 'Escape' })
+    fireEvent.keyDown(screen.getByRole('dialog', { name: en.boot.failure.title }), { key: 'Escape' })
 
     expect(screen.queryByRole('dialog')).toBeNull()
     expect($desktopBoot.get().error).toBe(error)
@@ -174,7 +174,7 @@ describe('BootFailureOverlay', () => {
     act(() => $desktopBoot.set({ ...$desktopBoot.get(), running: true }))
     act(() => $desktopBoot.set({ ...$desktopBoot.get(), error, running: false }))
 
-    expect(screen.getByRole('dialog', { name: /Hermes couldn't start/i })).toBeTruthy()
+    expect(screen.getByRole('dialog', { name: en.boot.failure.title })).toBeTruthy()
   })
 
   it('drops local-only Repair and Use-local-gateway on a local failure', () => {
@@ -310,7 +310,7 @@ describe('BootFailureOverlay', () => {
       render(<BootFailureOverlay />)
       // Cloud-specific title + actionable recovery instead of the generic
       // remote-failure copy.
-      expect(await screen.findByText(/Nous Cloud agent is down/i)).toBeTruthy()
+      expect(await screen.findByText(en.boot.failure.cloudDownTitle)).toBeTruthy()
       // Portal and Discord are dedicated action buttons (localized labels
       // can't drift the URLs, which live in code).
       expect(screen.getByRole('button', { name: /check portal status/i })).toBeTruthy()
