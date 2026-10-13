@@ -512,11 +512,17 @@ def compose_svg(art: IconArt, girl: str, bg: str, *, badge: bool = True) -> str:
     portrait = portrait_layer(art, girl, bg, join_bottom)
     # The badge shares the portrait's clip so it can never paint past the plate.
     badge_svg = commit_layer(art.commit, bg) if art.commit and badge else ""
+    portrait_svg = ET.tostring(portrait, encoding="unicode")
+    # Composite logos contain an opaque tile which would hide the commit ID.
+    # Keep the historical path silhouette ordering, but put the badge above
+    # composite artwork so every digit remains readable.
+    layers = (badge_svg + portrait_svg if portrait[0].tag.rsplit("}", 1)[-1] == "path"
+              else portrait_svg + badge_svg)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">\n'
         f'  <defs><clipPath id="icon-silhouette">{clip}</clipPath></defs>\n'
         f"  {inner.strip()}\n"
-        f'  <g clip-path="url(#icon-silhouette)">{badge_svg}{ET.tostring(portrait, encoding="unicode")}</g>\n'
+        f'  <g clip-path="url(#icon-silhouette)">{layers}</g>\n'
         "</svg>\n"
     )
 
@@ -647,10 +653,12 @@ def icon_art_svg(art: IconArt, girl: str) -> str:
     join_bottom = ICON_CANVAS - ICON_CANVAS * BORDER_FRACTION + 10 if BORDER_ENABLED else ICON_CANVAS * (1 + EDGE_OVERSHOOT)
     portrait = portrait_layer(art, girl, bg, join_bottom)
     badge = f"  {commit_layer(art.commit, bg)}\n" if art.commit else ""
+    portrait_svg = f"  {ET.tostring(portrait, encoding='unicode')}\n"
+    layers = (badge + portrait_svg if portrait[0].tag.rsplit("}", 1)[-1] == "path"
+              else portrait_svg + badge)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ICON_CANVAS} {ICON_CANVAS}">\n'
-        f"{badge}"
-        f"  {ET.tostring(portrait, encoding='unicode')}\n"
+        f"{layers}"
         "</svg>\n"
     )
 
