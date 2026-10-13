@@ -27,6 +27,10 @@ from tests.e2e.core.upgrade import _helpers as H
 
 OFFICIAL_HTTPS = "https://github.com/NousResearch/hermes-agent.git"
 OFFICIAL_SSH = "git@github.com:NousResearch/hermes-agent.git"
+ACTELYO_REPOSITORY = "jeanneretsamy-ux/hermes-agentactelyo"
+INSTALL_URLS = (OFFICIAL_HTTPS, OFFICIAL_SSH,
+                f"https://github.com/{ACTELYO_REPOSITORY}.git",
+                f"git@github.com:{ACTELYO_REPOSITORY}.git")
 TRACEBACK = "Traceback (most recent call last)"
 FAKE_KEY = "sk-fake-e2e-install-update"
 
@@ -141,9 +145,8 @@ def new_sandbox(root: Path, origin: Path | None = None, *, pythonpath: Path | No
     # A fresh machine: ~/.local/bin is NOT on PATH yet; the installer must wire it up.
     if origin is not None:
         (home / ".gitconfig").write_text(
-            f'[url "file://{origin}"]\n  insteadOf = {OFFICIAL_HTTPS}\n  insteadOf = {OFFICIAL_SSH}\n'
-            '  insteadOf = https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git\n'
-            '  insteadOf = git@github.com:jeanneretsamy-ux/hermes-agentactelyo.git\n', encoding="utf-8")
+            f'[url "file://{origin}"]\n' +
+            ''.join(f'  insteadOf = {url}\n' for url in INSTALL_URLS), encoding="utf-8")
     wrap.mkdir(exist_ok=True)
     real_git = shutil.which("git")
     shim = wrap / "git"

@@ -203,6 +203,21 @@ afterEach(async () => {
 })
 
 describe('LocalModelsSettings', () => {
+  it.each(['status', 'catalog'])('offers recovery when %s cannot load', async resource => {
+    if (resource === 'status') {
+      mocked.getLocalModelsStatus.mockRejectedValue(new Error('Gateway unavailable'))
+    } else {
+      mocked.getLocalCatalog.mockRejectedValue(new Error('Catalog unavailable'))
+    }
+
+    renderPane()
+    const retry = await screen.findByRole('button', { name: /refresh/i })
+    mocked.getLocalModelsStatus.mockResolvedValue(BASE_STATUS)
+    mocked.getLocalCatalog.mockResolvedValue({ models: [FITTING_MODEL] })
+    fireEvent.click(retry)
+    await screen.findByRole('button', { name: /let me choose/i })
+    expect(screen.queryByRole('button', { name: /refresh/i })).toBeNull()
+  })
   it.each(['starting', 'running'])(
     'keeps the runtime update view visible with no staged models while %s',
     async phase => {

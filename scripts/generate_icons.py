@@ -296,12 +296,14 @@ TARGETS: list[tuple[str, str, object]] = [
 class IconArt:
     """One generation's rendering inputs and caches; never writes to source."""
 
-    def __init__(self, source: Path, *, colors: tuple[str, str] | None = None, commit: str = ""):
+    def __init__(self, source: Path, *, colors: tuple[str, str] | None = None, commit: str = "",
+                 desktop: bool = False):
         assets = source / "assets"
         self.source = source
         self.colors = colors
         self.commit = commit
-        self.girls = {color: assets / f"nous-girl-{color}.svg" for color in ("black", "white")}
+        self.girls = {color: assets / ("actelyo-desktop-mark.svg" if desktop else f"nous-girl-{color}.svg")
+                      for color in ("black", "white")}
         self.backgrounds = assets / "backgrounds"
         self.paths: dict[str, str] = {}
         self.bboxes: dict[str, tuple[float, float, float, float]] = {}
@@ -889,10 +891,10 @@ def build_art(source: Path) -> tuple[IconArt, IconArt]:
             raise ValueError("Commit builds cannot also select HERMES_PAYLOAD_TAG")
         if not re.fullmatch(r"[a-f0-9]{40}", commit):
             raise ValueError("HERMES_BUILD_COMMIT requires an exact full 40-character SHA")
-        return art, IconArt(source, colors=("#e34850", "#4a1117"), commit=commit)
+        return art, IconArt(source, colors=("#e34850", "#4a1117"), commit=commit, desktop=True)
     if _CANARY_TAG_RE.match(tag.strip()):
-        return art, IconArt(source, colors=("#f5cc32", "#443808"))
-    return art, art
+        return art, IconArt(source, colors=("#f5cc32", "#443808"), desktop=True)
+    return art, IconArt(source, desktop=True)
 
 
 def cmd_write(source: Path, out: Path) -> int:

@@ -75,6 +75,9 @@ CANONICAL_URLS = (
     "https://github.com/NousResearch/hermes-agent.git",
     "https://github.com/NousResearch/hermes-agent",
     "git@github.com:NousResearch/hermes-agent.git",
+    "https://github.com/jeanneretsamy-ux/hermes-agentactelyo.git",
+    "https://github.com/jeanneretsamy-ux/hermes-agentactelyo",
+    "git@github.com:jeanneretsamy-ux/hermes-agentactelyo.git",
 )
 NEXT_MARKER = ".hermes-e2e-next"
 # Captured before any machine strips PATH: harness plumbing (serve.git, rev-parse) only.
