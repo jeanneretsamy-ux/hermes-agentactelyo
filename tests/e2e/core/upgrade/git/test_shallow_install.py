@@ -20,6 +20,8 @@ N-1 user has. Three installs run concurrently over smart HTTP:
 
 from __future__ import annotations
 
+from contextlib import ExitStack
+
 import pytest
 
 from tests.e2e.core._pending_fixes import known_failure
@@ -31,9 +33,9 @@ pytestmark = G.PYTESTMARK
 ORPHAN = "orphan divergence"
 
 
-def _depth1(root) -> dict:
-    cm, w = G.start_world(root / "depth1", base=G.n1_base(), installer_ref=G.n1_tag())
-    run = {"cm": cm, "w": w, "shape0": w.install_shape}
+def _depth1(root, contexts: ExitStack) -> dict:
+    w = contexts.enter_context(G.world(root / "depth1", base=G.n1_base(), installer_ref=G.n1_tag()))
+    run = {"w": w, "shape0": w.install_shape}
     w.set_main(I.head_sha())
     run["mark1"] = w.srv.mark()
     run["cp1"], run["head1"] = w.update(), w.head()
@@ -45,9 +47,9 @@ def _depth1(root) -> dict:
     return run
 
 
-def _checked(root) -> dict:
-    cm, w = G.start_world(root / "checked", base=G.n1_base(), installer_ref=G.n1_tag())
-    run = {"cm": cm, "w": w, "shape0": w.install_shape, "checks": []}
+def _checked(root, contexts: ExitStack) -> dict:
+    w = contexts.enter_context(G.world(root / "checked", base=G.n1_base(), installer_ref=G.n1_tag()))
+    run = {"w": w, "shape0": w.install_shape, "checks": []}
     between = I.git("rev-list", "--first-parent", f"{G.n1_base()}..{I.head_sha()}", cwd=I.H.WORKTREE).split()
     for k in (len(between) * 3 // 4, len(between) // 2, len(between) // 4):
         w.set_main(between[k])
@@ -59,9 +61,9 @@ def _checked(root) -> dict:
     return run
 
 
-def _prefetched(root) -> dict:
-    cm, w = G.start_world(root / "prefetched", base=I.head_sha())
-    run = {"cm": cm, "w": w}
+def _prefetched(root, contexts: ExitStack) -> dict:
+    w = contexts.enter_context(G.world(root / "prefetched", base=I.head_sha()))
+    run = {"w": w}
     (w.checkout / "e2e-local-before-prefetch.txt").write_text("my local commit\n", encoding="utf-8")
     w.git("add", "-A")
     w.git("commit", "-q", "-m", "my local patch")
@@ -76,12 +78,13 @@ def _prefetched(root) -> dict:
 @pytest.fixture(scope="module")
 def runs(tmp_path_factory):
     root = tmp_path_factory.mktemp("git-shallow")
-    results = G.in_parallel({"depth1": lambda: _depth1(root), "checked": lambda: _checked(root),
-                             "prefetched": lambda: _prefetched(root)})
-    yield results
-    for res in results.values():
-        if isinstance(res, dict):
-            res["cm"].__exit__(None, None, None)
+    # Register every entered world before its scenario can fail. Exception
+    # tracebacks otherwise keep an unclosed HTTP server alive through shutdown.
+    with ExitStack() as contexts:
+        results = G.in_parallel({"depth1": lambda: _depth1(root, contexts),
+                                 "checked": lambda: _checked(root, contexts),
+                                 "prefetched": lambda: _prefetched(root, contexts)})
+        yield results
 
 
 def _run(runs, name) -> dict:

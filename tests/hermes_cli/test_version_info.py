@@ -16,6 +16,37 @@ def setup_function():
     _reset_version_info_cache()
 
 
+def test_source_identity_is_read_only_even_when_index_stat_cache_is_stale(tmp_path):
+    import os
+    from hermes_cli.version_info import _git_version_info
+
+    repo = tmp_path / "identity-read-only"
+    repo.mkdir()
+    env = {**os.environ, "GIT_AUTHOR_NAME": "test", "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "test", "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=repo, env=env, check=True, capture_output=True)
+
+    git("init", "-q")
+    unchanged, changed = repo / "unchanged", repo / "changed"
+    unchanged.write_text("same content\n", encoding="utf-8")
+    changed.write_text("before\n", encoding="utf-8")
+    git("add", ".")
+    git("commit", "-qm", "initial")
+    index = repo / ".git" / "index"
+    before = index.read_bytes()
+    stamp = unchanged.stat()
+    os.utime(unchanged, ns=(stamp.st_atime_ns, stamp.st_mtime_ns + 10_000_000_000))
+    changed.write_text("after\n", encoding="utf-8")
+
+    info = _git_version_info(repo)
+
+    assert info.dirty
+    assert index.read_bytes() == before
+    assert not (repo / ".git" / "index.lock").exists()
+
+
 def test_derived_version_shows_plus_question_for_dirty_unknown_distance():
     assert _derived_version("0.19.0", None, dirty=True) == "0.19.0+?"
     assert _derived_version("0.19.0", None, dirty=False) == "0.19.0"
