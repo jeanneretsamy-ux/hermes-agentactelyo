@@ -18,8 +18,11 @@ export const READY_IN_MERGED_OUTPUT_RE = /(?<!\w)HERMES_(?:BACKEND|DASHBOARD)_RE
 // written `.pyc`. That pre-bind cost can run 30-60s on a slow disk, so a tight
 // 45s deadline kills a *healthy but still-starting* backend and respawns it,
 // piling up orphaned processes (issue #50209). A roomier default absorbs the
-// cold-start cost; a warm start still announces in well under a second.
-const DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS = 90_000
+// cold-start cost. A real bundled Windows launch exceeded 90s while loading
+// provider plugins and mounting API routes, and a fresh profile also exceeded
+// 3 minutes. Match the startup watchdog's 5-minute initial budget; the health
+// deadline still applies after the port is announced.
+const DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS = 300_000
 // Never trust a deadline tighter than the warm-start path needs; floor at 45s
 // (the historical default) so a malformed override can't reintroduce the loop.
 const MIN_PORT_ANNOUNCE_TIMEOUT_MS = 45_000
@@ -27,7 +30,7 @@ const MIN_PORT_ANNOUNCE_TIMEOUT_MS = 45_000
 // While the backend prints venv_sync's source-update completion banners it is
 // finishing an owed update tail BEFORE `hermes serve` starts, and that tail
 // legitimately runs minutes (dependency sync alone measured at ~19-22 min,
-// #122206) — far past the 90s cold-start budget, which is sized for imports
+// #122206) — far past the cold-start budget, which is sized for imports
 // and AV scans, not repairs. Killing the child mid-repair and respawning it
 // (what the old timeout did) re-runs the repair from scratch on every boot.
 // While a banner is present the deadline is re-armed instead, up to this
@@ -168,7 +171,11 @@ function waitForDashboardPort(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(
+        new Error(
+          `Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`
+        )
+      )
     }
 
     function onError(err) {
@@ -256,7 +263,11 @@ function waitForDashboardReadyFile(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(
+        new Error(
+          `Actelyo Law Harness backend: exited before port announcement (${signal || code})${describeOutputTail()}`
+        )
+      )
     }
 
     function onError(err) {
