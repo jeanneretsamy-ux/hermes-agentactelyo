@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { DesktopConnectionsRegistry } from '@/global'
+import { TRANSLATIONS } from '@/i18n'
 import { _resetFleetRosterForTests, refreshFleetRoster } from '@/store/fleet-roster'
 import { $connection } from '@/store/session'
 import { deferred } from '@/test/deferred'
@@ -209,7 +210,7 @@ describe('ConnectionsRegistrySection', () => {
 
     await screen.findByText('Homelab')
     fireEvent.click(screen.getByText('Add connection'))
-    fireEvent.click(screen.getByRole('button', { name: 'Hermes Cloud' }))
+    fireEvent.click(screen.getByRole('button', { name: TRANSLATIONS.en.settings.connections.kindCloud }))
     fireEvent.change(screen.getByPlaceholderText('Homelab'), { target: { value: 'Team cloud' } })
     fireEvent.change(screen.getByPlaceholderText('http://homelab.lan:9119'), {
       target: { value: 'https://team.hermes.cloud' }

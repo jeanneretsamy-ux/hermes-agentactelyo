@@ -9,6 +9,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { useEffect, useState } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { TRANSLATIONS } from '@/i18n'
 import { $reasoningCollapsedByDefault, setShowReasoningFromConfig } from '@/store/reasoning-disclosure'
 
 import { stubThreadEnvironment, stubThreadViewportSize, ThreadRuntime } from '../test-utils'
@@ -481,13 +482,13 @@ describe('assistant-ui streaming renderer', () => {
 
     const { container } = render(<StreamingHarness onControls={registerControls} />)
 
-    expect(screen.getByRole('status', { name: 'Hermes is loading a response' })).toBeTruthy()
+    expect(screen.getByRole('status', { name: TRANSLATIONS.en.assistant.thread.loadingResponse })).toBeTruthy()
 
     await waitFor(() => {
       expect(container.textContent).toContain('first chunk')
     })
     expect(container.textContent).not.toContain('second chunk')
-    expect(screen.queryByRole('status', { name: 'Hermes is loading a response' })).toBeNull()
+    expect(screen.queryByRole('status', { name: TRANSLATIONS.en.assistant.thread.loadingResponse })).toBeNull()
 
     // Producer-gated, not wall-clock-gated: the old test slept 80ms and
     // assumed a 500ms timer could not fire before the assertion. On a loaded

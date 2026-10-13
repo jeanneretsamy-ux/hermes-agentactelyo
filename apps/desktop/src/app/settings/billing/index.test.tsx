@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { type I18nContextValue, I18nProvider, useI18n } from '@/i18n'
+import { type I18nContextValue, I18nProvider, TRANSLATIONS, useI18n } from '@/i18n'
 import { $freeTierSignIn } from '@/store/free-tier-sign-in'
 
 import { formatMoney } from './billing-amounts'
@@ -603,7 +603,7 @@ describe('BillingSettings', () => {
 
     renderBilling()
 
-    expect(await screen.findByText('Connect your Nous account')).toBeTruthy()
+    expect(await screen.findByText(TRANSLATIONS.en.settings.billing.state.notice.loggedOut.title)).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Sign in' }))
     expect($freeTierSignIn.get()).toEqual({ status: 'requested' })
     expect(apiMocks.openExternal).not.toHaveBeenCalled()

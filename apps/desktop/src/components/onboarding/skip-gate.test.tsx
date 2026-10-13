@@ -1,12 +1,13 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { TRANSLATIONS } from '@/i18n'
 import { $desktopOnboarding, type DesktopOnboardingState, type OnboardingContext } from '@/store/onboarding'
 import { makeOAuthProvider } from '@/test/oauth-provider'
 
 import { DesktopOnboardingOverlay } from '.'
 
-const HEADER = "Let's get you setup with Hermes Agent"
+const HEADER = TRANSLATIONS.en.onboarding.headerTitle
 
 // Never answers: the readiness effect stays in flight, so each case is observed
 // on exactly the state it set up instead of racing a round to completion.
