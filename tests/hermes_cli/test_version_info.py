@@ -305,3 +305,21 @@ def test_old_updater_version_stub_reads_the_same_stamp_as_version_info(tmp_path)
     unstamped = tmp_path / "unstamped"
     unstamped.mkdir()
     assert read(unstamped)[0] == "0.0.0"
+
+
+def test_git_identity_probe_does_not_initialize_config_or_tools():
+    """The early version path must work before config/provider initialization."""
+    import sys
+
+    repo = Path(__file__).resolve().parents[2]
+    probe = (
+        "import sys; from pathlib import Path; "
+        "from hermes_cli.version_info import _run_git; "
+        f"assert _run_git(Path({str(repo)!r}), 'rev-parse', 'HEAD'); "
+        "assert 'hermes_cli.config' not in sys.modules; "
+        "assert 'tools.environments.local' not in sys.modules"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", probe], cwd=repo, capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
