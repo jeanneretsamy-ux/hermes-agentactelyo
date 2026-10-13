@@ -55,7 +55,7 @@ def test_write_status_includes_every_target(tmp_path, monkeypatch, capsys, failu
     spec.loader.exec_module(module)
     source = tmp_path / "immutable source"
     source.mkdir()
-    monkeypatch.setattr(module, "IconArt", lambda root: root)
+    monkeypatch.setattr(module, "IconArt", lambda root, *, desktop=False: root)
     monkeypatch.setattr(sys, "argv", [str(script), "--source", str(source), "--out", str(tmp_path)])
 
     image = io.BytesIO()

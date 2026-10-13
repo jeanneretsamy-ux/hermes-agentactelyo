@@ -434,7 +434,7 @@ def run_scenario(scn: Scenario, srv: FakeLLMServer, root: Path) -> dict[str, Any
         _reap(gw, tag)
 
 
-# ── pytest wiring: all scenarios run concurrently (one gateway each), asserted per test ──
+# ── pytest wiring: bounded concurrent scenarios, one gateway each, asserted per test ──
 
 
 @pytest.fixture(scope="module")
@@ -443,8 +443,11 @@ def scenario_futures(request: pytest.FixtureRequest, tmp_path_factory: pytest.Te
         item.callspec.params["scn"].id for item in request.session.items
         if isinstance(getattr(getattr(item, "callspec", None), "params", {}).get("scn"), Scenario)
     }
+    # Each scenario boots a complete agent and subprocess tree. Running all thirteen
+    # together starves the heartbeat sampler on standard runners, turning CPU contention
+    # between independent scenarios into a false dispatcher-liveness failure.
     with FakeLLMServer(responder) as srv, ThreadPoolExecutor(
-            max_workers=max(1, len(selected)), thread_name_prefix="chaos-tui") as pool:
+            max_workers=max(1, min(2, len(selected))), thread_name_prefix="chaos-tui") as pool:
         futures: dict[str, Future] = {
             scn.id: pool.submit(run_scenario, scn, srv, tmp_path_factory.mktemp(scn.id))
             for scn in SCENARIOS if scn.id in selected
