@@ -131,10 +131,13 @@ test('lineage: a branch child is its own titled row and switching never leaks tu
           message: 'the branch created a session row'
         })
         .toBeGreaterThan(0)
-      await expect.poll(() => currentSessionId(page), { timeout: 60_000 }).not.toBe(parentId)
-      await turn(5, 'only on the branch')
-      branchId = storedSessionForMarker(sandbox, 'default', U(5)) ?? ''
+      // A cleared route during navigation is also "not parentId". Wait for
+      // the child we observed in storage before typing into its composer.
+      branchId = sessionRows(sandbox).find(r => !before.has(r.id))?.id ?? ''
       expect(branchId).not.toBe('')
+      await expect.poll(() => currentSessionId(page), { timeout: 60_000 }).toBe(branchId)
+      await turn(5, 'only on the branch')
+      expect(storedSessionForMarker(sandbox, 'default', U(5))).toBe(branchId)
       expect(before.has(branchId), 'U5 landed in a NEW session').toBe(false)
 
       await expect
