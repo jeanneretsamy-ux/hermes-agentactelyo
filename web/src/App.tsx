@@ -63,6 +63,7 @@ import { Typography } from "@nous-research/ui/ui/components/typography/index";
 import { ConfirmDialog } from "@nous-research/ui/ui/components/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { SidebarFooter } from "@/components/SidebarFooter";
+import { PlatformReturnLink } from "@/components/PlatformReturnLink";
 import { SidebarStatusStrip, gatewayLine } from "@/components/SidebarStatusStrip";
 import { useBelowBreakpoint } from "@nous-research/ui/hooks/use-below-breakpoint";
 import { useSidebarStatus } from "@/hooks/useSidebarStatus";
@@ -556,6 +557,9 @@ export default function App() {
         <Typography className="font-bold text-[0.95rem] leading-[0.95] tracking-[0.05em] text-midground">
           {t.app.brand}
         </Typography>
+        <div className="ml-auto">
+          <PlatformReturnLink compact />
+        </div>
       </header>
 
       {mobileOpen && (
@@ -620,7 +624,7 @@ export default function App() {
 
                 <Typography className="font-bold text-[1.125rem] leading-[0.95] tracking-[0.0525rem] text-midground uppercase">
                   <img src="/actelyo-logo.png" alt="Actelyo" className="h-8 w-auto rounded-lg p-1" style={{ backgroundColor: "var(--actelyo-brand-tile)" }} />
-                  Legal Harness
+                  Actelyo Law Harness
                 </Typography>
               </div>
 
@@ -651,6 +655,7 @@ export default function App() {
               </Button>
             </div>
 
+            <PlatformReturnLink compact={isDesktopCollapsed} />
             <ProfileSwitcher collapsed={isDesktopCollapsed} />
 
             <nav

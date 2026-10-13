@@ -45,6 +45,7 @@ import { DecodedLabel } from './glyph'
 import {
   FeaturedProviderRow,
   FireworksProviderRow,
+  LocalEndpointProviderRow,
   LocalModelsProviderRow,
   OpenRouterProviderRow,
   ProviderRow,
@@ -82,20 +83,19 @@ export interface ApiKeyOption {
   short?: string
 }
 
-// Curated order mirrors CANONICAL_PROVIDERS: Fireworks sits #2 overall (after
-// Nous Portal OAuth), ahead of OpenRouter and the rest of the key catalog.
+// Actelyo presents OpenRouter and an existing local endpoint first.
 const API_KEY_OPTIONS: ApiKeyOption[] = [
-  {
-    id: 'fireworks',
-    name: 'Fireworks AI',
-    envKey: 'FIREWORKS_API_KEY',
-    docsUrl: 'https://app.fireworks.ai/settings/users/api-keys'
-  },
   {
     id: 'openrouter',
     name: 'OpenRouter',
     envKey: 'OPENROUTER_API_KEY',
     docsUrl: 'https://openrouter.ai/keys'
+  },
+  {
+    id: 'fireworks',
+    name: 'Fireworks AI',
+    envKey: 'FIREWORKS_API_KEY',
+    docsUrl: 'https://app.fireworks.ai/settings/users/api-keys'
   },
   {
     id: 'openai',
@@ -120,7 +120,7 @@ const API_KEY_OPTIONS: ApiKeyOption[] = [
     name: 'Local / custom endpoint',
     envKey: 'OPENAI_BASE_URL',
     docsUrl: 'https://github.com/NousResearch/hermes-agent#bring-your-own-endpoint',
-    placeholder: 'http://127.0.0.1:8000/v1'
+    placeholder: 'http://127.0.0.1:1234/v1'
   }
 ]
 
@@ -619,18 +619,17 @@ export function Picker({ ctx }: { ctx: OnboardingContext }) {
   }
 
   const ordered = useMemo(() => (providers ? sortProviders(providers) : []), [providers])
-  const hasOauth = ordered.length > 0
   const apiKeyOptions = useApiKeyCatalog(ctx.scope)
 
   // localEndpoint forces the key form regardless of `mode` (which a manual
   // provider refresh may flip back to 'oauth'); it preselects the local option
   // and hides the "back to sign in" link since the user came specifically to
   // configure a custom endpoint.
-  if (localEndpoint || mode === 'apikey' || !hasOauth) {
+  if (localEndpoint || mode === 'apikey') {
     return (
       <div className="grid gap-3">
         <ApiKeyForm
-          canGoBack={hasOauth && !localEndpoint}
+          canGoBack={!localEndpoint}
           initialEnvKey={localEndpoint ? 'OPENAI_BASE_URL' : apiKeyInitialEnv}
           onBack={() => setOnboardingMode('oauth')}
           onSave={(envKey, value, name, apiKey, modelName) =>
@@ -656,8 +655,8 @@ export function Picker({ ctx }: { ctx: OnboardingContext }) {
   const rest = featured ? ordered.filter(p => p.id !== FEATURED_ID) : ordered
   // Collapse the secondary providers behind a disclosure whenever Nous Portal
   // is present to anchor the choice — otherwise show the full list. The
-  // Fireworks/OpenRouter key rows always live behind the disclosure, so the
-  // toggle is warranted even when there are no other OAuth providers.
+  // Secondary API-key providers live behind the disclosure; OpenRouter and
+  // the local endpoint remain visible before it.
   const collapsible = Boolean(featured)
   const showRest = !collapsible || showAll
 
@@ -679,6 +678,8 @@ export function Picker({ ctx }: { ctx: OnboardingContext }) {
   return (
     <div className="grid gap-2">
       <div className="grid max-h-[60dvh] gap-2 overflow-y-auto p-1">
+        <OpenRouterProviderRow onClick={() => openKeyForm('OPENROUTER_API_KEY')} />
+        <LocalEndpointProviderRow onClick={() => openKeyForm('OPENAI_BASE_URL')} />
         {featured ? <FeaturedProviderRow onSelect={select} provider={featured} /> : null}
         {/* The no-account path: everything runs on this machine. Shipped
             behind the --local launch flag. (Fireworks moved into the
@@ -692,7 +693,6 @@ export function Picker({ ctx }: { ctx: OnboardingContext }) {
             {rest.map(p => (
               <ProviderRow key={p.id} onSelect={select} provider={p} />
             ))}
-            <OpenRouterProviderRow onClick={() => openKeyForm('OPENROUTER_API_KEY')} />
           </>
         ) : null}
       </div>

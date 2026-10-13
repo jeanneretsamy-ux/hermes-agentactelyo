@@ -1,0 +1,17 @@
+{
+  "review_id": "identifiant-de-la-revue",
+  "reviewer": "juriste-validateur",
+  "validated_at": "2026-10-04T12:00:00Z",
+  "label": "needs_revision",
+  "errors": [
+    {
+      "risk_index": 1,
+      "category": "legal_relevance",
+      "comment": "Préciser les obligations essentielles et la qualité des parties avant de conclure.",
+      "expected_behavior": "Ajouter une question ouverte et limiter la conclusion à ce que les sources établissent."
+    }
+  ],
+  "rights_basis_for_reuse": "À remplir avant toute réutilisation de cet exemple",
+  "contains_personal_data": false,
+  "training_authorized": false
+}

@@ -15,11 +15,11 @@ export const READY_IN_MERGED_OUTPUT_RE = /(?<!\w)HERMES_(?:BACKEND|DASHBOARD)_RE
 // before uvicorn binds its socket. On a cold install the child must first
 // compile and import the whole `hermes_cli.main` → `web_server` → FastAPI/
 // uvicorn chain, and on Windows real-time AV (Defender) scans every freshly
-// written `.pyc`. That pre-bind cost can run 30-60s on a slow disk, so a tight
-// 45s deadline kills a *healthy but still-starting* backend and respawns it,
-// piling up orphaned processes (issue #50209). A roomier default absorbs the
-// cold-start cost; a warm start still announces in well under a second.
-const DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS = 90_000
+// written `.pyc`. That pre-bind cost can exceed 60s on a slow disk, so a tight
+// deadline kills a *healthy but still-starting* backend and respawns it,
+// piling up orphaned processes (issue #50209). Match the 180s backend-ready
+// budget; a warm start still announces in well under a second.
+const DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS = 180_000
 // Never trust a deadline tighter than the warm-start path needs; floor at 45s
 // (the historical default) so a malformed override can't reintroduce the loop.
 const MIN_PORT_ANNOUNCE_TIMEOUT_MS = 45_000
@@ -27,7 +27,7 @@ const MIN_PORT_ANNOUNCE_TIMEOUT_MS = 45_000
 // While the backend prints venv_sync's source-update completion banners it is
 // finishing an owed update tail BEFORE `hermes serve` starts, and that tail
 // legitimately runs minutes (dependency sync alone measured at ~19-22 min,
-// #122206) — far past the 90s cold-start budget, which is sized for imports
+// #122206) — far past the 180s cold-start budget, which is sized for imports
 // and AV scans, not repairs. Killing the child mid-repair and respawning it
 // (what the old timeout did) re-runs the repair from scratch on every boot.
 // While a banner is present the deadline is re-armed instead, up to this
@@ -93,14 +93,14 @@ function waitForDashboardPort(
     // awaits claimBackendChild + advanceBootProgress BEFORE this listener
     // attaches. child.stdout is in flowing mode from the tail's listener, so
     // a READY line flushed during that window is emitted once and never
-    // replayed to late listeners — the wait then times out at 90s and a
+    // replayed to late listeners — the wait then times out and a
     // healthy backend is killed. Scanning the tail's buffer (and seeding any
     // trailing partial line) makes the listener-attach ordering irrelevant.
     let buf = ''
     let done = false
     // #122206: the child is finishing an owed source-update completion
     // (venv_sync banners) before `hermes serve` starts. While that repair is
-    // visibly in progress the 90s deadline is re-armed, up to the total cap,
+    // visibly in progress the announcement deadline is re-armed, up to the total cap,
     // instead of killing a healthy repair mid-run.
     const startedAt = realNow()
     let completionInProgress = false
