@@ -219,6 +219,33 @@ def test_auto_vendor_detection_uses_host_gpu_class(monkeypatch, gpu_class, expec
     assert bootstrap._detect_gpu_vendor() == expected
 
 
+def test_catalog_hardware_probe_falls_back_after_bounded_engine_timeout(monkeypatch, tmp_path):
+    import subprocess
+    from types import SimpleNamespace
+
+    from hermes_cli.local_runtime import hardware
+
+    engine = SimpleNamespace(binary=tmp_path / "llama-server.exe", backend="cpu")
+    timeouts = []
+
+    def slow_probe(argv, **kwargs):
+        timeouts.append(kwargs["timeout"])
+        raise subprocess.TimeoutExpired(argv, kwargs["timeout"])
+
+    monkeypatch.setattr(hardware, "_configured_engine", lambda: engine)
+    monkeypatch.setattr(hardware, "_pool_probe_cache", None)
+    monkeypatch.setattr(hardware, "_cuda_driver_pool", lambda: None)
+    monkeypatch.setattr(hardware, "_nvidia_vram", lambda: None)
+    monkeypatch.setattr(hardware, "_ram_bytes", lambda: (8 << 30, 4 << 30))
+    monkeypatch.setattr(hardware.subprocess, "run", slow_probe)
+
+    budget = hardware.probe_budget(planning=True)
+
+    assert timeouts == [10]
+    assert budget.uma is True
+    assert budget.total_device_bytes == 8 << 30
+
+
 # ── supervisor contracts (stubbed; no GPU) ───────────────────
 
 

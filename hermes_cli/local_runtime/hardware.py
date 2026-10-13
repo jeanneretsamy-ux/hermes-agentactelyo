@@ -321,7 +321,7 @@ def _engine_device_pool() -> "tuple[int, bool | None] | None":
             return None
         exe = engine.binary
         out = subprocess.run([str(exe), "--list-devices"], capture_output=True,
-                             text=True, encoding="utf-8", errors="replace", timeout=30, cwd=str(exe.parent))
+                     text=True, encoding="utf-8", errors="replace", timeout=10, cwd=str(exe.parent))
         if out.returncode != 0:
             return None
         for line in (out.stdout + out.stderr).splitlines():

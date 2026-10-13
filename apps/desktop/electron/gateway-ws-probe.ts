@@ -311,7 +311,7 @@ function closeReason(event, fallback) {
 // the cap, which reuses the port-announcement cold-start budget
 // (DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS, backend-ready.ts). Remote gateways, the
 // "Test remote" button and host-backend attach keep the fixed budget.
-const SPAWNED_BACKEND_MAX_CONNECT_WAIT_MS = 90_000
+const SPAWNED_BACKEND_MAX_CONNECT_WAIT_MS = 180_000
 
 function spawnedBackendProbeOptions(isChildAlive: () => boolean) {
   return {

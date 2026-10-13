@@ -347,7 +347,7 @@ test(
     // The banner says a repair is in progress but nothing ever resolves: the
     // wait must still fail (bounded), and the message must carry that the
     // completion was in progress — truthful and actionable instead of a bare
-    // 90s timeout that hides a multi-minute repair. The 5-minute grace is
+    // port-announcement timeout that hides a multi-minute repair. The 5-minute grace is
     // wall-clock, so this holds the wait past it with a long test budget.
     const child = makeFakeChild()
     const wait = waitForDashboardPort(child, 20)

@@ -13,6 +13,8 @@ import assert from 'node:assert/strict'
 
 import { afterEach, beforeEach, describe, test, vi } from 'vitest'
 
+import { DEFAULT_BACKEND_READY_TIMEOUT_MS } from './backend-health'
+import { DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS } from './backend-ready'
 import {
   DEFAULT_CONNECT_TIMEOUT_MS,
   DEFAULT_PROGRESS_CHECK_INTERVAL_MS,
@@ -143,6 +145,11 @@ function track<T>(promise: Promise<T>) {
 }
 
 const WAITING = { connectTimeoutMs: 30, readyGraceMs: 10, progressCheckIntervalMs: 5, maxConnectWaitMs: 500 }
+
+test('spawned backend readiness budgets share the cold-start deadline', () => {
+  assert.equal(DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS, DEFAULT_BACKEND_READY_TIMEOUT_MS)
+  assert.equal(SPAWNED_BACKEND_MAX_CONNECT_WAIT_MS, DEFAULT_BACKEND_READY_TIMEOUT_MS)
+})
 
 describe('keepWaitingWhile', () => {
   beforeEach(() => {
