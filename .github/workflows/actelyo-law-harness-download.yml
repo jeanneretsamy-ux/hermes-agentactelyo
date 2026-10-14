@@ -89,7 +89,8 @@ jobs:
           New-Item -ItemType Directory $releaseDir -Force | Out-Null
           & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss
           if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
-          $installed = Join-Path $env:RUNNER_TEMP 'actelyo-installed'
+          # Exercise the normal per-user install location so deep bundled Python paths are tested under a realistic Windows profile.
+          $installed = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs\Actelyo Law Harness'
           $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
           $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
           if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
