@@ -28,6 +28,9 @@ async function clearFirstRunOverlay(page) {
   const overlay = page.locator('[data-glass-opaque]').last()
   const exitAction = /choose.*later|plus tard|skip|ignore|ignorer|continue|continuer|next|suivant|start|commencer|got it|compris/i
 
+  // Let first-run state hydrate before treating an absent overlay as settled.
+  await page.waitForTimeout(2000)
+
   for (let attempt = 0; attempt < 20; attempt++) {
     if (await capabilities.isVisible().catch(() => false) &&
         !(await overlay.isVisible().catch(() => false))) {
