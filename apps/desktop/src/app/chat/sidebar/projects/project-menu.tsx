@@ -23,6 +23,7 @@ import { useI18n } from '@/i18n'
 import { isDesktopFsRemoteMode } from '@/lib/desktop-fs'
 import { cn } from '@/lib/utils'
 import { $panesFlipped, dismissAutoProject } from '@/store/layout'
+import { openLegalPractice } from '@/store/legal-practice'
 import {
   copyPath,
   deleteProject,
@@ -80,6 +81,12 @@ function useProjectActions({
   const identityItems: ActionItemSpec[] = project.isAuto
     ? []
     : [
+        {
+          icon: 'law',
+          key: 'legal-practice',
+          label: p.menuLegalWorkspace,
+          onSelect: () => openLegalPractice(target)
+        },
         { icon: 'edit', key: 'rename', label: p.menuRename, onSelect: () => openProjectRename(target) },
         {
           icon: 'new-folder',

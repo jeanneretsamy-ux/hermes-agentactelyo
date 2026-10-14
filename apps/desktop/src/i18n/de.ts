@@ -4045,6 +4045,7 @@ export const deOverrides = {
       menu: 'Aktionen',
       menuRename: 'Umbenennen…',
       menuAppearance: 'Aussehen',
+      menuLegalWorkspace: 'Rechtsbereich und Abrechnung…',
       noColor: 'Keine Farbe',
       menuAddFolder: 'Ordner hinzufügen',
       menuSetActive: 'Als aktiv festlegen',

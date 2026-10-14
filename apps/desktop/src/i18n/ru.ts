@@ -2723,6 +2723,7 @@ export const ru = defineLocale({
       menu: 'Действия',
       menuRename: 'Переименовать',
       menuAppearance: 'Внешний вид',
+      menuLegalWorkspace: 'Юридическое пространство и счета…',
       noColor: 'Без цвета',
       menuAddFolder: 'Добавить папку',
       menuSetActive: 'Сделать активным',

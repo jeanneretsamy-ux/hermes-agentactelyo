@@ -2536,6 +2536,7 @@ export const ja = defineLocale({
       menu: 'アクション',
       menuRename: '名前を変更…',
       menuAppearance: '外観',
+      menuLegalWorkspace: '法務ワークスペースと請求…',
       noColor: '色なし',
       menuAddFolder: 'フォルダを追加',
       menuSetActive: 'アクティブに設定',

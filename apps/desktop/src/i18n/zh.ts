@@ -3386,6 +3386,7 @@ export const zh = defineLocale({
       menu: '操作',
       menuRename: '重命名…',
       menuAppearance: '外观',
+      menuLegalWorkspace: '法律工作区与账单…',
       noColor: '无颜色',
       menuAddFolder: '添加文件夹',
       menuSetActive: '设为活动',
