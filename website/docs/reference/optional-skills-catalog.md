@@ -126,6 +126,7 @@ hermes skills uninstall <skill-name>
 | [**comps-analysis**](../user-guide/skills/optional/finance/finance-comps-analysis.md) | Build comparable-company valuation workbooks in Excel. |
 | [**dcf-model**](../user-guide/skills/optional/finance/finance-dcf-model.md) | Build discounted cash flow valuation workbooks in Excel. |
 | [**excel-author**](../user-guide/skills/optional/finance/finance-excel-author.md) | Build auditable financial workbooks headless via openpyxl. |
+| [**france-accounting-tax**](../user-guide/skills/optional/finance/finance-france-accounting-tax.md) | Prepare traceable French accounting and tax drafts. |
 | [**lbo-model**](../user-guide/skills/optional/finance/finance-lbo-model.md) | Build leveraged buyout workbooks with IRR/MOIC in Excel. |
 | [**merger-model**](../user-guide/skills/optional/finance/finance-merger-model.md) | Build M&A accretion/dilution workbooks in Excel. |
 | [**polymarket**](../user-guide/skills/optional/finance/finance-polymarket.md) | Query Polymarket: markets, prices, orderbooks, history. |

@@ -460,6 +460,7 @@ const sidebars: SidebarsConfig = {
                     'user-guide/skills/optional/finance/finance-comps-analysis',
                     'user-guide/skills/optional/finance/finance-dcf-model',
                     'user-guide/skills/optional/finance/finance-excel-author',
+                    'user-guide/skills/optional/finance/finance-france-accounting-tax',
                     'user-guide/skills/optional/finance/finance-lbo-model',
                     'user-guide/skills/optional/finance/finance-merger-model',
                     'user-guide/skills/optional/finance/finance-polymarket',
