@@ -82,6 +82,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
           New-Item -ItemType Directory $releaseDir -Force | Out-Null
+          # Preserve diagnostics as artifacts if packaging or installation fails.
           $transcriptPath = Join-Path $releaseDir 'installer-diagnostics.log'
           Start-Transcript -Path $transcriptPath -Force | Out-Null
           try {
