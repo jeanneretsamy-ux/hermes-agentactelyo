@@ -17,6 +17,8 @@ on:
       - .github/workflows/actelyo-law-harness-download.yml
       - scripts/actelyo-download/**
       - scripts/bundles/stage.py
+      - scripts/build/frontend-common.mjs
+      - apps/desktop/scripts/run-electron-builder.mjs
       - optional-skills/finance/france-accounting-tax/**
       - agent/prompt_builder.py
 permissions:
