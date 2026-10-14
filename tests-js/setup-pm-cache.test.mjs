@@ -110,6 +110,14 @@ const dispatches = {
 const admitted = labels => ({
   validate: { result: 'success', outputs: Object.fromEntries(labels.map(label => [label, 'true'])) },
 })
+// Derive trust branches from executable gates, not unsupported job metadata.
+const cacheModeOf = job => {
+  const needs = admitted(targetOf(job))
+  const release = evaluate(job.if, { inputs: dispatches.tag, needs })
+  const commit = evaluate(job.if, { inputs: dispatches.commit, needs })
+  expect(release).not.toBe(commit)
+  return release ? 'write' : 'read'
+}
 // Payload snapshots are shared by every later build; only a trusted main push writes them.
 const payloadEvents = {
   trusted: { event_name: 'push', ref: 'refs/heads/main', sha: SHA },
@@ -118,7 +126,7 @@ const payloadEvents = {
 }
 
 it('finds a release and a commit leg for every native target, and the payload producer', () => {
-  const legs = desktopLegs.map(([, job]) => `${targetOf(job)}:${job['cache-mode']}`).sort()
+  const legs = desktopLegs.map(([, job]) => `${targetOf(job)}:${cacheModeOf(job)}`).sort()
   const targets = ['darwin-arm64', 'darwin-x64', 'win32-arm64', 'win32-x64']
   expect(legs).toEqual(targets.flatMap(target => [`${target}:read`, `${target}:write`]).sort())
   expect(cacheUsers(payload)).toHaveLength(1)
@@ -128,7 +136,7 @@ it.each([
   ...desktopLegs.map(([id, job]) => [id, job, 'desktop', 'scripts/bundles/desktop.py']),
   ...cacheUsers(payload).map(([id, job]) => [id, job, 'payload-test', 'scripts/bundles/native_build.py']),
 ])('%s restores, admits and saves candidates before consuming them', (id, job, producer, driver) => {
-  const cacheMode = job['cache-mode']
+  const cacheMode = producer === 'desktop' ? cacheModeOf(job) : undefined
   if (cacheMode) {
     expect(job.needs).toEqual(['validate'])
     // Only the release branch writes the shared cache; commit and channel
@@ -197,7 +205,7 @@ it('each selection gate joins exactly one target\'s two trust branches after adm
   for (const gate of gates) {
     const [admission, ...branches] = gate.needs
     expect(admission).toBe('validate')
-    expect(branches.map(id => legs[id]?.['cache-mode']).sort()).toEqual(['read', 'write'])
+    expect(branches.map(id => cacheModeOf(legs[id])).sort()).toEqual(['read', 'write'])
     const [label] = new Set(branches.flatMap(id => targetOf(legs[id])))
     expect(new Set(branches.flatMap(id => targetOf(legs[id]))).size).toBe(1)
     // The gate runs always() to judge a skipped branch, so it must still

@@ -10,7 +10,7 @@ import struct
 import subprocess
 import sys
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
 import pytest
 
 
@@ -94,14 +94,17 @@ def frames(path):
         yield Image.open(path).convert("RGBA")
 
 
-def tile_color(image):
-    # The flavor background is the tile fill. Tiles carry an inward contrasting
-    # border (black or white) and the artwork sits above the centre, both of
-    # which LANCZOS smears across tiny frames — so read the most chromatic pixel
-    # of the tile's lower half instead of one fixed coordinate: on a flavored
-    # tile that is the fill colour, on a stable tile every candidate is grey.
+def tile_color(image, original):
+    # Compare the lower half, away from the commit badge. Antialiasing
+    # blends small-frame edges, so choose the most chromatic changed pixel.
     x0, y0, x1, y1 = image.getchannel("A").point(lambda a: 255 if a >= 128 else 0).getbbox()
-    pixels = [rgba[:3] for rgba in image.crop((x0, (y0 + y1) // 2, x1, y1)).getdata() if rgba[3] >= 128]
+    region = (x0, (y0 + y1) // 2, x1, y1)
+    # The Actelyo artwork has its own saturated colours. Only the changed
+    # background pixels identify a channel; unchanged logo pixels cannot vote.
+    pixels = [rgba[:3] for rgba, before in zip(
+        image.crop(region).get_flattened_data(), original.crop(region).get_flattened_data(), strict=True
+    ) if rgba[3] >= 128 and max(abs(a - b) for a, b in zip(rgba[:3], before[:3])) > 8]
+    assert pixels, "the publication flavor must visibly change the background"
     # Saturation weighted by chroma: a near-black anti-aliased edge pixel has high HSV
     # saturation but almost no colour, the fill has both.
     return max(pixels, key=lambda rgb: max(rgb) - min(rgb))
@@ -156,9 +159,9 @@ def test_canary_changes_only_desktop_background_preserving_art_and_native_geomet
         assert len(original_frames) == len(canary_frames)
         for original, yellow in zip(original_frames, canary_frames, strict=True):
             assert_same_geometry(original, yellow)
-            hue, saturation, value = colorsys.rgb_to_hsv(*(v / 255 for v in tile_color(yellow)))
-            assert 0.10 < hue < 0.18 and saturation > 0.65, (path, yellow.size, tile_color(yellow))
-            assert (value < 0.4) if is_dark_tile(path) else (value > 0.8), (path, yellow.size, tile_color(yellow))
+            hue, saturation, value = colorsys.rgb_to_hsv(*(v / 255 for v in tile_color(yellow, original)))
+            assert 0.10 < hue < 0.18 and saturation > 0.65, (path, yellow.size, tile_color(yellow, original))
+            assert (value < 0.4) if is_dark_tile(path) else (value > 0.8), (path, yellow.size, tile_color(yellow, original))
             # Compare art in direct renders. Tiny container frames use LANCZOS,
             # whose ringing legitimately depends on adjacent background colors.
             if path.suffix == ".png" and original.width >= 256:
@@ -186,9 +189,9 @@ def test_commit_icons_are_red_and_print_only_the_actual_seven_digit_prefix(gener
         stable_frames = list(frames(stable / rel))
         for original, red, other in zip(stable_frames, first_frames, other_frames, strict=True):
             assert_same_geometry(original, red)
-            hue, saturation, value = colorsys.rgb_to_hsv(*(v / 255 for v in tile_color(red)))
-            assert (hue < 0.05 or hue > 0.95) and saturation > 0.6, (rel, tile_color(red))
-            assert (value < 0.4) if is_dark_tile(path) else (value > 0.8), (rel, red.size, tile_color(red))
+            hue, saturation, value = colorsys.rgb_to_hsv(*(v / 255 for v in tile_color(red, original)))
+            assert (hue < 0.05 or hue > 0.95) and saturation > 0.6, (rel, tile_color(red, original))
+            assert (value < 0.4) if is_dark_tile(path) else (value > 0.8), (rel, red.size, tile_color(red, original))
             # No SHA change may move the tile/art or alter the region below its top quarter.
             bbox = red.getchannel("A").point(lambda a: 255 if a >= 128 else 0).getbbox()
             diff = ImageChops.difference(red.convert("RGB"), other.convert("RGB")).convert("L")
@@ -209,24 +212,18 @@ def test_commit_icons_are_red_and_print_only_the_actual_seven_digit_prefix(gener
         (2, 6, 10, 18, 31, 2, 2), (31, 16, 16, 30, 1, 1, 30),
         (14, 16, 16, 30, 17, 17, 14),
     )
-    # The portrait renders in front of the badge (her hair crosses its lower rows), so a
-    # cell is only judged where the stable icon shows no art at that spot; every glyph
-    # must still be identified by a majority of its uncovered cells.
+    # The composite Actelyo logo must not obscure any of the commit digits.
     for name in ("icon.png", "icon-dark.png"):
         image = Image.open(first / "apps/desktop/assets" / name).convert("RGB")
-        unbadged = Image.open(stable / "apps/desktop/assets" / name).convert("RGB")
-        art = (0, 0, 0) if name == "icon.png" else (255, 255, 255)
         for digit, rows in enumerate(expected):
             judged = 0
             for y, row in enumerate(rows):
                 for x in range(5):
                     point = (gx + (digit * 6 + x) * 16 + 8, gy + y * 16 + 8)
-                    if unbadged.getpixel(point) == art:
-                        continue
                     judged += 1
                     pixel = image.getpixel(point)
                     assert (min(pixel) > 240) == bool(row & (1 << (4 - x))), (name, digit, x, y)
-            assert judged >= 18, (name, digit, judged)
+            assert judged == 35, (name, digit, judged)
     assert_unbranded_outputs(stable, first)
 
 
@@ -272,10 +269,8 @@ def manifest_fills(package):
 
 
 def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, monkeypatch):
-    """macOS 26 masks the layers itself. The girl is dragged past the plate edge
-    so the mask crops her (no gap below), the mono layer is one image of two
-    materials — near-black frosted ink and white — so nothing stacks, and build
-    flavors recolour the fill in icon.json only; the layers never change."""
+    """Keep the Actelyo mark large and transparent around its margins, preserve
+    its grayscale detail, and apply channel colours only to the manifest fill."""
     module = load_generator(monkeypatch)
     stable = generate("v1.2.3") / "apps/desktop/assets" / LAYERED_ICON
     canary = generate("v1.2.3+canary.20260911T010203Z") / "apps/desktop/assets" / LAYERED_ICON
@@ -285,21 +280,17 @@ def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, mo
     for name in ("art-light.png", "art-dark.png"):
         layer = Image.open(stable / "Assets" / name).convert("RGBA")
         assert layer.size == (canvas, canvas)
-        bottom_row = layer.crop((0, canvas - 1, canvas, canvas)).getchannel("A").getbbox()
-        assert bottom_row is not None, f"{name}: the girl must reach the plate edge"
+        bbox = layer.getchannel("A").getbbox()
+        assert bbox is not None and bbox[2] - bbox[0] > canvas * 0.8, (name, bbox)
+        assert bbox[3] - bbox[1] > canvas * 0.8, (name, bbox)
+        assert layer.getpixel((0, 0))[3] == 0, name
     mono = Image.open(stable / "Assets" / "mono.png").convert("RGBA")
-    ink_tone = round(module.MONO_INK[0] * 255)
-    tones = {px[0] for px in mono.getdata() if px[3] > 127}
-    assert tones == {ink_tone, 255}, tones
     light_art = Image.open(stable / "Assets" / "art-light.png").convert("RGBA")
-    dark_art = Image.open(stable / "Assets" / "art-dark.png").convert("RGBA")
-    for x, y in ((canvas // 2, canvas // 2), (canvas // 3, canvas // 3), (2 * canvas // 3, canvas // 2)):
-        px = mono.getpixel((x, y))
-        if dark_art.getpixel((x, y))[3] > 200:      # the girl's white parts stay white and opaque
-            assert px[:3] == (255, 255, 255) and px[3] == 255, (x, y, px)
-        elif light_art.getpixel((x, y))[3] > 200:   # her black parts become the frosted ink
-            assert px[0] == ink_tone and abs(px[3] - round(module.MONO_INK[1] * 255)) <= 1, (x, y, px)
-
+    # A full-colour composite logo needs its luminance detail, not the old
+    # portrait's two alpha silhouettes. Check the entire grayscale layer.
+    expected_mono = ImageOps.grayscale(light_art).convert("RGBA")
+    expected_mono.putalpha(light_art.getchannel("A"))
+    assert mono.tobytes() == expected_mono.tobytes()
     for name in ("art-light.png", "art-dark.png", "mono.png"):
         assert (stable / "Assets" / name).read_bytes() == (canary / "Assets" / name).read_bytes(), name
 
@@ -377,7 +368,7 @@ def test_msix_logos_resolve_every_slot_windows_draws(generate, monkeypatch):
         dark = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-unplated.png").convert("RGBA")
         light = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-lightunplated.png").convert("RGBA")
         assert plain.size == dark.size == light.size == (size, size)
-        edge = (max(1, size // 24), size // 2)  # on the plate, left of the girl
+        edge = (0, size // 2)  # plate midpoint, outside the artwork even at 16px
         assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == (255, 255, 255), size
         dark_plate = dark.getpixel(edge)
         assert dark_plate[3] == 255 and max(dark_plate[:3]) < 60, (size, dark_plate)

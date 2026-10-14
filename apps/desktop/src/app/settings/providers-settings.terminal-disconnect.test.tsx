@@ -3,6 +3,7 @@ import { atom } from 'nanostores'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ConfirmHost } from '@/components/confirm-host'
+import { PROVIDER_DISPLAY_NAMES } from '@/lib/model-status-label'
 import { $confirmRequest } from '@/store/confirm'
 import type { OAuthProvider } from '@/types/hermes'
 
@@ -109,7 +110,7 @@ describe('connected external provider row', () => {
     })
 
     await renderAccounts()
-    fireEvent.click(await screen.findByRole('button', { name: 'Remove Nous Portal' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove ' + PROVIDER_DISPLAY_NAMES.nous }))
     fireEvent.click(await screen.findByRole('button', { name: 'Disconnect' }))
 
     await waitFor(() => expect(disconnectOAuthProvider).toHaveBeenCalled())

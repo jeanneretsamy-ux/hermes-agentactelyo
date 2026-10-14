@@ -215,7 +215,7 @@ def world(root: Path, *, base: str, installer_ref: str | None = None,
         sb = I.new_sandbox(root / "sb")
         url = srv.url(REPO)
         (sb.home / ".gitconfig").write_text(
-            f'[url "{url}"]\n  insteadOf = {I.OFFICIAL_HTTPS}\n  insteadOf = {I.OFFICIAL_SSH}\n'
+            f'[url "{url}"]\n' + ''.join(f'  insteadOf = {remote}\n' for remote in I.INSTALL_URLS) +
             '[user]\n  name = user\n  email = user@example.invalid\n', encoding="utf-8")
         w = World(root=root, srv=srv, bare=bare, sb=sb)
         if preclone is not None:

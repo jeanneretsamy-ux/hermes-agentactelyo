@@ -102,7 +102,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 try:
     import resvg_py
@@ -296,12 +296,14 @@ TARGETS: list[tuple[str, str, object]] = [
 class IconArt:
     """One generation's rendering inputs and caches; never writes to source."""
 
-    def __init__(self, source: Path, *, colors: tuple[str, str] | None = None, commit: str = ""):
+    def __init__(self, source: Path, *, colors: tuple[str, str] | None = None, commit: str = "",
+                 desktop: bool = False):
         assets = source / "assets"
         self.source = source
         self.colors = colors
         self.commit = commit
-        self.girls = {color: assets / f"nous-girl-{color}.svg" for color in ("black", "white")}
+        self.girls = {color: assets / ("actelyo-desktop-mark.svg" if desktop else f"nous-girl-{color}.svg")
+                      for color in ("black", "white")}
         self.backgrounds = assets / "backgrounds"
         self.paths: dict[str, str] = {}
         self.bboxes: dict[str, tuple[float, float, float, float]] = {}
@@ -322,8 +324,17 @@ def girl_path(art: IconArt, girl: str) -> str:
     if girl not in art.paths:
         src = art.girls[girl].read_text(encoding="utf-8-sig")
         m = re.search(r"<path\b.*?/>", src, re.S)
-        assert m, f"no <path> found in {art.girls[girl].name}"
-        path = re.sub(r'\s+(inkscape|sodipodi):[a-zA-Z-]+="[^"]*"', "", m.group(0))
+        if m and "<image" not in src:
+            path = re.sub(r'\s+(inkscape|sodipodi):[a-zA-Z-]+="[^"]*"', "", m.group(0))
+        else:
+            # Brand assets can combine a background and an embedded logo. Keep
+            # the whole SVG and normalize its canvas to the portrait coordinates.
+            assert "<image" in src, f"no <path> or <image> found in {art.girls[girl].name}"
+            root = ET.fromstring(src)
+            assert root.get("viewBox"), f"missing viewBox in {art.girls[girl].name}"
+            root.set("width", str(GIRL_VIEWBOX))
+            root.set("height", str(GIRL_VIEWBOX))
+            path = ET.tostring(root, encoding="unicode")
         art.paths[girl] = path
     return art.paths[girl]
 
@@ -465,10 +476,11 @@ def portrait_layer(art: IconArt, girl: str, bg: str, join_bottom: float) -> ET.E
     _, y, portrait_width, portrait_height = box
     _, by, bw, bh = girl_bbox(art, girl)
     scale = min(portrait_width / bw, portrait_height / bh)
-    drag_bottom_nodes(
-        portrait[0], cutoff=by + bh * 0.97, band=bh * 0.02,
-        distance=max(0.0, join_bottom - (y + portrait_height)) / scale,
-    )
+    if portrait[0].tag.rsplit("}", 1)[-1] == "path":
+        drag_bottom_nodes(
+            portrait[0], cutoff=by + bh * 0.97, band=bh * 0.02,
+            distance=max(0.0, join_bottom - (y + portrait_height)) / scale,
+        )
     # Keep the fitted viewBox fixed, but let edited nodes reach into the border.
     portrait.set("overflow", "visible")
     return portrait
@@ -502,11 +514,17 @@ def compose_svg(art: IconArt, girl: str, bg: str, *, badge: bool = True) -> str:
     portrait = portrait_layer(art, girl, bg, join_bottom)
     # The badge shares the portrait's clip so it can never paint past the plate.
     badge_svg = commit_layer(art.commit, bg) if art.commit and badge else ""
+    portrait_svg = ET.tostring(portrait, encoding="unicode")
+    # Composite logos contain an opaque tile which would hide the commit ID.
+    # Keep the historical path silhouette ordering, but put the badge above
+    # composite artwork so every digit remains readable.
+    layers = (badge_svg + portrait_svg if portrait[0].tag.rsplit("}", 1)[-1] == "path"
+              else portrait_svg + badge_svg)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">\n'
         f'  <defs><clipPath id="icon-silhouette">{clip}</clipPath></defs>\n'
         f"  {inner.strip()}\n"
-        f'  <g clip-path="url(#icon-silhouette)">{badge_svg}{ET.tostring(portrait, encoding="unicode")}</g>\n'
+        f'  <g clip-path="url(#icon-silhouette)">{layers}</g>\n'
         "</svg>\n"
     )
 
@@ -637,10 +655,12 @@ def icon_art_svg(art: IconArt, girl: str) -> str:
     join_bottom = ICON_CANVAS - ICON_CANVAS * BORDER_FRACTION + 10 if BORDER_ENABLED else ICON_CANVAS * (1 + EDGE_OVERSHOOT)
     portrait = portrait_layer(art, girl, bg, join_bottom)
     badge = f"  {commit_layer(art.commit, bg)}\n" if art.commit else ""
+    portrait_svg = f"  {ET.tostring(portrait, encoding='unicode')}\n"
+    layers = (badge + portrait_svg if portrait[0].tag.rsplit("}", 1)[-1] == "path"
+              else portrait_svg + badge)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ICON_CANVAS} {ICON_CANVAS}">\n'
-        f"{badge}"
-        f"  {ET.tostring(portrait, encoding='unicode')}\n"
+        f"{layers}"
         "</svg>\n"
     )
 
@@ -663,6 +683,14 @@ def icon_mono_image(art: IconArt) -> Image.Image:
     """The single grayscale layer behind Clear light/dark and Tinted light/dark
     (Apple's "tinted" specialization). One image, each pixel painted once, so
     translucent materials never stack where the girl meets the ring."""
+    if ET.fromstring(girl_path(art, "black")).tag.rsplit("}", 1)[-1] != "path":
+        # Composite logos carry their detail in colour, not only in alpha.
+        # Using their opaque tile as a silhouette would erase the brand mark.
+        image = render_svg(icon_art_svg(art, "black"), ICON_CANVAS).convert("RGBA")
+        mono = ImageOps.grayscale(image).convert("RGBA")
+        mono.putalpha(image.getchannel("A"))
+        return mono
+
     def coverage(svg: str) -> Image.Image:
         return render_svg(svg, ICON_CANVAS).convert("RGBA").getchannel("A")
 
@@ -863,10 +891,10 @@ def build_art(source: Path) -> tuple[IconArt, IconArt]:
             raise ValueError("Commit builds cannot also select HERMES_PAYLOAD_TAG")
         if not re.fullmatch(r"[a-f0-9]{40}", commit):
             raise ValueError("HERMES_BUILD_COMMIT requires an exact full 40-character SHA")
-        return art, IconArt(source, colors=("#e34850", "#4a1117"), commit=commit)
+        return art, IconArt(source, colors=("#e34850", "#4a1117"), commit=commit, desktop=True)
     if _CANARY_TAG_RE.match(tag.strip()):
-        return art, IconArt(source, colors=("#f5cc32", "#443808"))
-    return art, art
+        return art, IconArt(source, colors=("#f5cc32", "#443808"), desktop=True)
+    return art, IconArt(source, desktop=True)
 
 
 def cmd_write(source: Path, out: Path) -> int:

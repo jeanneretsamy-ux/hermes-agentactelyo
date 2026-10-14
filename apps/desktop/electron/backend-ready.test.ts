@@ -17,7 +17,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-import { test } from 'vitest'
+import { test, vi } from 'vitest'
 
 import {
   DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS,
@@ -53,6 +53,44 @@ test('default is cold-start tolerant (> the historical 45s floor)', () => {
     DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS > MIN_PORT_ANNOUNCE_TIMEOUT_MS,
     'cold-start default must exceed the warm-start floor'
   )
+})
+
+test('a cold backend can announce after module initialization exceeds ninety seconds', async () => {
+  vi.useFakeTimers()
+
+  try {
+    const child = makeFakeChild()
+
+    const result = waitForDashboardPort(child).then(
+      port => ({ port }),
+      error => ({ error })
+    )
+
+    await vi.advanceTimersByTimeAsync(100_000)
+    child.stdout.emit('data', 'HERMES_BACKEND_READY port=43210\n')
+    assert.deepEqual(await result, { port: 43210 })
+  } finally {
+    vi.useRealTimers()
+  }
+})
+
+test('a cold backend that never announces still fails within the readiness budget', async () => {
+  vi.useFakeTimers()
+
+  try {
+    const child = makeFakeChild()
+
+    const result = waitForDashboardPort(child).then(
+      () => null,
+      error => error
+    )
+
+    await vi.advanceTimersByTimeAsync(300_001)
+    assert.match(((await result) as Error).message, /Timed out waiting for .*backend port announcement/)
+    assert.equal(child.stdout.listenerCount('data'), 0)
+  } finally {
+    vi.useRealTimers()
+  }
 })
 
 test('honors a valid HERMES_DESKTOP_PORT_ANNOUNCE_TIMEOUT_MS override', () => {
@@ -356,7 +394,7 @@ test(
     child.stdout.emit('data', 'hermes: finishing an interrupted source update...\n')
     await assert.rejects(
       wait,
-      /Timed out waiting for Hermes backend port announcement .* while an update completion was in progress/
+      /Timed out waiting for Actelyo Law Harness backend port announcement .* while an update completion was in progress/
     )
   },
   6 * 60_000

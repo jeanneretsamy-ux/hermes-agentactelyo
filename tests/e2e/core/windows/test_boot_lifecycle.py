@@ -59,7 +59,7 @@ def test_version_reports_checkout_identity(tmp_path: Path) -> None:
     assert res.returncode == 0, res.tail()
     version = get_version_info().derived_version
     assert version != "unknown", "the checkout must have a readable release or commit identity"
-    assert f"Hermes Agent v{version} (" in res.stdout, (
+    assert f"Actelyo Law Harness v{version} (" in res.stdout, (
         f"--version does not report this checkout's {version}:\n{res.tail()}")
 
 
@@ -140,7 +140,11 @@ def test_serve_tree_kill_leaves_no_orphans_and_reboots(tmp_path: Path) -> None:
             assert first.pid in owned, f"ownership scan cannot see serve pid {first.pid} (saw {owned})"
 
             killed = taskkill_tree(first.pid)
-            assert killed.returncode == 0, killed.stderr
+            # Killing the child can make the launcher exit before taskkill reaches
+            # it (rc=255, "no running instance"). Judge the actual process tree,
+            # not a racy taskkill exit status; a surviving root must still fail.
+            wait_until(lambda: first.poll() is not None, 30,
+                       f"serve pid {first.pid} to exit after taskkill: {killed}")
             # Ownership, not ancestry: anything the backend spawned detached (a broken
             # parent link taskkill /T cannot follow) still carries this profile's
             # HERMES_HOME / cwd, and is an orphan the Desktop quit leaves behind.

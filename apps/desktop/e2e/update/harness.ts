@@ -147,10 +147,11 @@ export function releaseDir(facts: InstallFacts): string {
 /** The packaged executable `hermes desktop` built into the install (electron-builder names it after productName). */
 export function packagedExe(facts: InstallFacts): string {
   const dir = releaseDir(facts)
-  const name = fs.readdirSync(dir).find(entry => /^hermes$/i.test(entry))
+  const metadata = JSON.parse(fs.readFileSync(path.join(facts.checkout, 'apps', 'desktop', 'package.json'), 'utf8').replace(/^\uFEFF/, '')) as { productName: string }
+  const name = fs.readdirSync(dir).find(entry => entry === metadata.productName && fs.statSync(path.join(dir, entry)).isFile())
 
   if (!name) {
-    throw new Error(`no packaged Hermes executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
+    throw new Error(`no packaged ${metadata.productName} executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
   }
 
   return path.join(dir, name)

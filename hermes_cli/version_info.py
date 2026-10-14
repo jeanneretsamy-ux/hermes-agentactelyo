@@ -12,6 +12,7 @@ Resolution order:
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import tomllib
 from dataclasses import dataclass
@@ -19,6 +20,7 @@ from pathlib import Path
 from typing import Literal, cast
 
 from hermes_cli.steward import UPDATE_MECHANISMS
+from hermes_cli._subprocess_compat import NO_LAZY_FETCH_ENV
 from hermes_cli.update_channel import STABLE_TAG_RE
 
 
@@ -61,7 +63,8 @@ def _derived_version(
 def _run_git(repo_dir: Path, *args: str) -> str | None:
     try:
         result = subprocess.run(
-            ["git", *args], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=3, cwd=str(repo_dir)
+            ["git", "--no-optional-locks", *args], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=3,
+            cwd=str(repo_dir), env={**os.environ, **NO_LAZY_FETCH_ENV},
         )
     except (OSError, subprocess.SubprocessError):
         return None
@@ -217,7 +220,9 @@ def _git_version_info(repo_dir: Path, *, include_untracked: bool = False) -> Ver
         # -uno: skip the untracked-file scan. This runs on the startup-banner
         # path, and a full working-tree walk costs real time on large or cold
         # checkouts. Same semantics as write_install_stamp.py.
-        status_command = ["git", "status", "--porcelain"]
+        # Preserve the checkout's line-ending rules while keeping this probe
+        # passive: no index refresh writes and no promisor fetches.
+        status_command = ["git", "--no-optional-locks", "status", "--porcelain"]
         if not include_untracked:
             status_command.append("-uno")
         dirty_result = subprocess.run(
@@ -226,6 +231,7 @@ def _git_version_info(repo_dir: Path, *, include_untracked: bool = False) -> Ver
             text=True, encoding="utf-8", errors="replace",
             timeout=3,
             cwd=str(repo_dir),
+            env={**os.environ, **NO_LAZY_FETCH_ENV},
         )
         dirty = dirty_result.returncode == 0 and bool((dirty_result.stdout or "").strip())
     except (OSError, subprocess.SubprocessError):

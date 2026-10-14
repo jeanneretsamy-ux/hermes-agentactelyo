@@ -1,12 +1,21 @@
 ---
 name: actelyo-rag-backend
-description: Use Actelyo RAG as the local document-retrieval backend for Actelyo Law Harness. Trigger when the user asks to search, question, summarize, compare, or cite their own indexed documents, workspaces, uploaded files, or local knowledge base.
+description: Search, question and cite locally indexed documents.
+version: 1.0.0
+author: JEANNERETSAMY (@jeanneretsamy-ux)
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [actelyo, legal, rag, documents, mcp]
+    category: legal
 user-invocable: true
 ---
 
 # Actelyo RAG Backend
 
 Use this skill when the user asks Actelyo Law Harness to work against their own indexed documents or a document workspace.
+Trigger for searching, questioning, summarizing, comparing or citing indexed documents, workspaces, uploaded files or a local knowledge base.
 
 Use the local MCP server `actelyo-rag` rather than reindexing or copying documents into Actelyo Law Harness. Prefer these tools:
 
@@ -18,4 +27,3 @@ Use the local MCP server `actelyo-rag` rather than reindexing or copying documen
 Default workspace: `mon-espace-de-travail`.
 
 If Actelyo RAG is not running, tell the user to launch Actelyo RAG and retry. Do not upload private files to external services for this workflow.
-

@@ -202,7 +202,7 @@ async def test_in_chat_restart_skips_home_shutdown_even_with_active_session():
     assert len(adapter.sent_calls) == 1
     chat_id, message, metadata = adapter.sent_calls[0]
     assert chat_id == source.chat_id
-    assert "Hermes is restarting" in message
+    assert "Actelyo Law Harness is restarting" in message
     assert metadata["telegram_reply_to_message_id"] == "restart-command"
 
 
@@ -325,9 +325,9 @@ async def test_signal_initiated_shutdown_persists_running_not_stopped(tmp_path, 
 # with exit 1 (a silent crash loop).
 
 
-def test_pid_exists_zombie_via_psutil_returns_false(monkeypatch):
-    """The live path is psutil. psutil.pid_exists() returns True for a zombie,
-    so _pid_exists must additionally check Process.status() == STATUS_ZOMBIE."""
+def test_pid_exists_checks_zombies_only_on_posix(monkeypatch):
+    """Reject POSIX zombies; Windows uses pid_exists without the costly status probe."""
+    import os
     import sys
     import types
 
@@ -344,12 +344,14 @@ def test_pid_exists_zombie_via_psutil_returns_false(monkeypatch):
 
     fake_psutil.NoSuchProcess = NoSuchProcess
     fake_psutil.Error = PsutilError
+    status_reads = []
 
     class _Proc:
         def __init__(self, pid):
             self.pid = pid
 
         def status(self):
+            status_reads.append(self.pid)
             return "zombie"
 
     fake_psutil.Process = _Proc
@@ -359,7 +361,8 @@ def test_pid_exists_zombie_via_psutil_returns_false(monkeypatch):
 
     monkeypatch.setitem(sys.modules, "psutil", fake_psutil)
 
-    assert status._pid_exists(4242) is False
+    assert status._pid_exists(4242) is (os.name == "nt")
+    assert status_reads == ([] if os.name == "nt" else [4242])
 
 
 

@@ -118,9 +118,9 @@ test('nonstable runtime pins userData before the app name can change', async ():
 })
 
 test.each([
-  [undefined, 'Hermes', 'hermes', 'latest', 'canary'],
-  ['bundled', 'Hermes Agent', 'hermes', 'latest', 'canary'],
-  ['light', 'Hermes Light', 'hermes-light', 'light', 'light-canary']
+  [undefined, 'Actelyo Law Harness', 'hermes', 'latest', 'canary'],
+  ['bundled', 'Actelyo Law Harness', 'hermes', 'latest', 'canary'],
+  ['light', 'Actelyo Law Harness Light', 'hermes-light', 'light', 'light-canary']
 ] as const)(
   '%s separates stable, canary and independent commits',
   async (
@@ -187,11 +187,12 @@ test('light and bundled retain distinct OS markers from the full client', async 
   for (const variant of ['bundled', 'light']) {
     const other: ProductIdentity = await identityForVariant(variant)
 
-    for (const field of ['displayName', 'appId', 'appNamePascal'] as const) {
+    for (const field of ['appId', 'appNamePascal'] as const) {
       assert.notEqual(other[field], full[field])
     }
 
     if (variant === 'light') {
+      assert.notEqual(other.displayName, full.displayName)
       assert.notEqual(other.msixAppIdWithOrg, full.msixAppIdWithOrg)
       assert.notEqual(other.channel, full.channel)
     }
@@ -263,39 +264,27 @@ test('packaging isolates boot metadata and executable names without renaming rel
   }
 })
 
-test('store inherits the bundled app identity (shared userData) but swaps the MSIX packaging identity', async (): Promise<void> => {
-  const bundled: ProductIdentity = await identityForVariant('bundled')
-  const store: ProductIdentity = await identityForVariant('store')
+test.each(['stable', 'canary', 'commit'])(
+  'Actelyo %s refuses Store publication without its own publisher identity',
+  async (kind): Promise<void> => {
+    if (kind === 'canary') {
+      process.env.HERMES_PAYLOAD_TAG = 'v0.28.0+canary.20260818T000000Z'
+    }
 
-  // Same Electron app: displayName/appNamePascal (-> shared userData dir),
-  // appId, and the out-of-store org-prefixed name are all inherited.
-  assert.equal(store.store, true)
-  assert.equal(store.light, false)
-  assert.equal(store.displayName, bundled.displayName)
-  assert.equal(store.appNamePascal, bundled.appNamePascal)
-  assert.equal(store.appId, bundled.appId)
-  assert.equal(store.msixAppIdWithOrg, bundled.msixAppIdWithOrg)
-  // The store build never publishes to a feed.
-  assert.equal(store.channel, null)
-})
+    if (kind === 'commit') {
+      process.env.HERMES_BUILD_COMMIT = 'abcdef1234567890abcdef1234567890abcdef12'
+    }
 
-test('nonstable builds cannot claim the official Store package', async (): Promise<void> => {
-  process.env.HERMES_PAYLOAD_TAG = 'v0.28.0+canary.20260818T000000Z'
-  await assert.rejects(identityForVariant('store'), /Store.*stable/)
-  delete process.env.HERMES_PAYLOAD_TAG
-  process.env.HERMES_BUILD_COMMIT = 'abcdef1234567890abcdef1234567890abcdef12'
-  await assert.rejects(identityForVariant('store'), /Store.*stable/)
-})
+    await assert.rejects(identityForVariant('store'), /Actelyo Store publication requires an Actelyo publisher identity and certificate/)
+  }
+)
 
-test('store carries the Partner Center MSIX identity and no other variant does', async (): Promise<void> => {
-  const store: ProductIdentity = await identityForVariant('store')
-  assert.deepEqual(store.storeMsix, {
-    identityName: 'NousResearchInc.HermesAgent',
-    publisher: 'CN=EE6D86E4-606F-4E38-B940-AD7248C9D519',
-    publisherDisplayName: 'Nous Research Inc.'
-  })
-
-  for (const v of [undefined, 'bundled', 'light'] as const) {
-    assert.equal((await identityForVariant(v)).storeMsix, undefined, `variant ${v} must carry no storeMsix`)
+test('local variants never carry another publisher Store identity', async (): Promise<void> => {
+  for (const variant of [undefined, 'bundled', 'light'] as const) {
+    const identity = await identityForVariant(variant)
+    assert.equal(identity.store, false)
+    assert.equal(identity.storeMsix, undefined)
+    assert.ok(identity.appId.startsWith('fr.actelyo.'))
+    assert.ok(identity.msixAppIdWithOrg.startsWith('Actelyo.'))
   }
 })

@@ -63,9 +63,15 @@ def test_resizes_keep_each_transcript_line_once_in_tmux_scrollback(tmp_path: Pat
             out += [f"--- {name} (tail) ---", *tail]
         pid = tmux("display-message", "-p", "-t", "p", "#{pane_pid}").strip()
         if pid.isdigit():
-            os.kill(int(pid), signal.SIGABRT)
-            time.sleep(2.0)
-            out += ["--- CLI thread dump ---", transcript()[-6000:]]
+            try:
+                os.kill(int(pid), signal.SIGABRT)
+            except (OSError, RuntimeError) as exc:
+                # A detached tmux pane may be outside the test's process tree.
+                # Respect the live-system guard and retain the original timeout.
+                out.append(f"CLI thread dump unavailable: {exc}")
+            else:
+                time.sleep(2.0)
+                out += ["--- CLI thread dump ---", transcript()[-6000:]]
         return "\n".join(out)
 
     def wait_for(needle: str, timeout: float = 60.0) -> None:
@@ -107,7 +113,7 @@ def test_resizes_keep_each_transcript_line_once_in_tmux_scrollback(tmp_path: Pat
         try:
             tmux("set", "-g", "window-size", "manual")
             tmux("set", "-g", "remain-on-exit", "on")  # keeps a crash or the diagnostics' dump readable
-            wait_for("Welcome to Hermes", timeout=120)
+            wait_for("Welcome to Actelyo Law Harness", timeout=120)
             # The welcome line is printed before the input loop exists. Keys typed then land in the
             # still-cooked tty: the kernel echoes them (a plain transcript row) and hands the app
             # text + Enter in one read, which it takes for a pasted newline — the question sits

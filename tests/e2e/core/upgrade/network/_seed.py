@@ -36,7 +36,7 @@ from tests.e2e.core.upgrade import _install_helpers as I
 from tests.e2e.core.upgrade.network import _netedge as N
 
 ASSETS = "hermes-assets.nousresearch.com"
-REPOSITORY = "NousResearch/hermes-agent"
+REPOSITORY = I.ACTELYO_REPOSITORY
 # Hosts a correctly isolated update must never reach directly; with the proxy they appear in
 # the proxy log as "refused" (the proxy has no route for them).
 PUBLIC_INDEXES = ("pypi.org", "files.pythonhosted.org", "registry.npmjs.org")
@@ -200,8 +200,9 @@ def seed_install(root: Path) -> Installed:
     # From here on the checkout talks to the official URL, which only the proxy can serve.
     (sb.home / ".gitconfig").write_text("", encoding="utf-8")
     gitroot = root / "gitroot"
-    (gitroot / "NousResearch").mkdir(parents=True, exist_ok=True)
-    (gitroot / "NousResearch" / "hermes-agent.git").symlink_to(origin)
+    repository_path = gitroot / (REPOSITORY + ".git")
+    repository_path.parent.mkdir(parents=True, exist_ok=True)
+    repository_path.symlink_to(origin)
     ca = N.TestCA(root / "corporate-ca")
     inst = Installed(root, sb, origin, gitroot, ca, ca.os_trust_store(root / "corporate-ca" / "etc-ssl-certs"))
     assert_isolated(inst)

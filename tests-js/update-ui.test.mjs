@@ -170,7 +170,9 @@ test.skipIf(process.platform === 'win32')('probe Git reaches the staged main eve
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }
-})
+// This test creates two real Git histories and starts two Python probes.
+// Allow subprocess scheduling headroom on standard shared CI runners.
+}, 30_000)
 
 test.skipIf(process.platform === 'win32')('historical venv install without a PM launcher still checks staged Git main', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-legacy-branch-'))

@@ -3,6 +3,8 @@ import { type ReactElement, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { NEW_CHAT_ROUTE } from '@/app/routes'
+import { Button } from '@/components/ui/button'
+import { useI18n } from '@/i18n'
 import {
   localModelsCatalogOptions,
   localModelsHardwareOptions,
@@ -13,6 +15,8 @@ import {
   useLocalRuntimeJobs
 } from '@/store/local-runtime-jobs'
 import type { LocalRuntimeJob } from '@/types/hermes'
+
+import { PanelEmpty } from '../overlays/panel'
 
 import { isActiveStatus } from './local-models-actions'
 import { LocalModelsBrowseSection } from './local-models-browse'
@@ -35,11 +39,14 @@ export function LocalModelsSettings(): ReactElement {
 }
 
 function ScopedLocalModelsSettings(): ReactElement {
+  const { t } = useI18n()
   const owner: LocalModelsOwner = useScopedLocalModelsOwner()
   const installStarting: boolean = useIsMutating({ mutationKey: localModelsKey(owner, 'install') }) > 0
-  const { data: status } = useLocalModelsStatus(owner)
+  const statusQuery = useLocalModelsStatus(owner)
+  const { data: status } = statusQuery
   const { data: hardware } = useQuery(localModelsHardwareOptions(owner))
-  const { data: catalog } = useQuery(localModelsCatalogOptions(owner))
+  const catalogQuery = useQuery(localModelsCatalogOptions(owner))
+  const { data: catalog } = catalogQuery
   // Quickstart escape hatch: true once the user asks for the full pane
   // (model list, HF browser) instead of the one-button setup card.
   const [configure, setConfigure] = useState<boolean>(false)
@@ -80,6 +87,28 @@ function ScopedLocalModelsSettings(): ReactElement {
   }, [jobs, navigate])
 
   if (!status || !catalog) {
+    if ((!status && statusQuery.isError) || (!catalog && catalogQuery.isError)) {
+      return (
+        <div className="flex h-full min-h-0 flex-1">
+          <PanelEmpty
+            action={
+              <Button
+                onClick={() => {
+                  void statusQuery.refetch()
+                  void catalogQuery.refetch()
+                }}
+                size="sm"
+              >
+                {t.common.refresh}
+              </Button>
+            }
+            icon="error"
+            title={t.settings.config.failedLoad}
+          />
+        </div>
+      )
+    }
+
     return <SettingsSkeleton sections={[{ rows: 2 }, { rows: 4 }]} />
   }
 

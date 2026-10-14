@@ -261,3 +261,12 @@ def test_recovery_copy_without_a_catalog_memory_entry_keeps_the_generic_hint(tmp
     assert mig.catalog_install_hint("no-such-provider") is None
     doctor_state._memory_provider_generic("no-such-provider")
     assert "run: hermes memory setup" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("prog", ["hermes", "actelyo-law-harness"])
+def test_plugin_recovery_hint_is_top_level_only(tmp_path, monkeypatch, prog):
+    from hermes_cli._parser import _plugin_command_install_hint
+
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    assert _plugin_command_install_hint(prog, "honcho") == "hermes plugins install honcho"
+    assert _plugin_command_install_hint(f"{prog} gateway", "honcho") is None

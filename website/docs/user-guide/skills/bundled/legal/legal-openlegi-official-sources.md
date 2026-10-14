@@ -1,14 +1,14 @@
 ---
-title: "Openlegi Official Sources — Research French official legal sources through the authenticated OpenLegi MCP services"
+title: "Openlegi Official Sources — Research official French legal sources via MCP"
 sidebar_label: "Openlegi Official Sources"
-description: "Research French official legal sources through the authenticated OpenLegi MCP services"
+description: "Research official French legal sources via MCP"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # Openlegi Official Sources
 
-Research French official legal sources through the authenticated OpenLegi MCP services.
+Research official French legal sources via MCP.
 
 ## Skill metadata
 

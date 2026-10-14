@@ -654,6 +654,8 @@ _ENTRIES = {
     "hermes-acp-version": Entry("hermes-acp", ("--version",), frozenset({0}), prints_version=True),
     "hermes-acp-help": Entry("hermes-acp", ("--help",), frozenset({0})),
     "hermes-agent-help": Entry("hermes-agent", ("--help",), frozenset({0})),
+    "actelyo-law-harness-version": Entry("actelyo-law-harness", ("--version",), frozenset({0}), prints_version=True),
+    "actelyo-law-harness-help": Entry("actelyo-law-harness", ("--help",), frozenset({0})),
 }
 def _run_on_tty(argv: list[str], *, env: dict[str, str], cwd: Path, writable: list[Path],
                 timeout: float) -> subprocess.CompletedProcess:

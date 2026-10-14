@@ -6,7 +6,7 @@ import {
   DropdownMenuRadioItem,
   dropdownMenuRow
 } from '@/components/ui/dropdown-menu'
-import { saveHermesConfigRecord, type ProfileScope } from '@/hermes'
+import { type ProfileScope, saveHermesConfigRecord } from '@/hermes'
 import { triggerHaptic } from '@/lib/haptics'
 import { notifyError } from '@/store/notifications'
 import type { HermesConfigRecord } from '@/types/hermes'

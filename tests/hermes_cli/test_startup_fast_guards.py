@@ -66,7 +66,7 @@ def test_cli_starts_from_a_deleted_cwd(tmp_path):
     finally:
         os.close(fd)
     assert result.returncode == 0, result.stderr
-    assert "Hermes Agent v" in result.stdout
+    assert "Actelyo Law Harness v" in result.stdout
     assert "FileNotFoundError" not in result.stderr
 
 
@@ -116,7 +116,7 @@ def test_fast_version_parity_on_termux(tmp_path):
         {"HERMES_HOME": str(home), "TERMUX_VERSION": "0.118"}
     )
     assert result.returncode == 0, result.stderr
-    assert "Hermes Agent v" in result.stdout
+    assert "Actelyo Law Harness v" in result.stdout
     assert "Traceback" not in result.stderr
 
 
@@ -159,7 +159,7 @@ def test_literal_tilde_hermes_home_expands_before_any_reader(tmp_path):
         capture_output=True, text=True, timeout=120, cwd=cwd, env=env,
     )
     assert probe.returncode == 0, probe.stderr
-    assert probe.stdout.strip() == str(fake_home / ".x")
+    assert Path(probe.stdout.strip()) == fake_home / ".x"
 
 
 def test_normalize_hermes_home_env_rewrites_tilde_and_leaves_absolute_alone(tmp_path, monkeypatch):
@@ -169,7 +169,7 @@ def test_normalize_hermes_home_env_rewrites_tilde_and_leaves_absolute_alone(tmp_
     monkeypatch.setenv("USERPROFILE", str(tmp_path))
     monkeypatch.setenv("HERMES_HOME", "~/.x")
     _startup_fast.normalize_hermes_home_env()
-    assert os.environ["HERMES_HOME"] == str(tmp_path / ".x")
+    assert Path(os.environ["HERMES_HOME"]) == tmp_path / ".x"
 
     monkeypatch.setenv("HERMES_HOME", str(tmp_path / "abs"))
     _startup_fast.normalize_hermes_home_env()
@@ -212,7 +212,7 @@ def test_fast_version_parity(tmp_path):
     result = _run_version({"HERMES_HOME": str(home)})
     assert result.returncode == 0, result.stderr
     out = result.stdout
-    for field in ("Hermes Agent v", "Install directory:", "Python:", "OpenAI SDK:"):
+    for field in ("Actelyo Law Harness v", "Install directory:", "Python:", "OpenAI SDK:"):
         assert field in out, f"fast --version output missing {field!r}:\n{out}"
     assert "Traceback" not in result.stderr
 

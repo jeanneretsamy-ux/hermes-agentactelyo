@@ -50,6 +50,12 @@ ALLOWED_RAW_SPAWN_ENV_FILES = {
     # only raw copy is the except-fallback for when the tools package itself
     # cannot be imported, so the user's typed command still runs.
     "hermes_cli/bang_shell.py",
+    # Version probes run before config/tool initialization (including --version).
+    # Importing local.build_subprocess_env here recursively loads config and provider
+    # plugins. These read-only Git children must retain the process checkout identity,
+    # not a routed profile; the only overrides prevent lazy fetches. Git optional
+    # locks are disabled in argv, and real-Git version tests enforce index immutability.
+    "hermes_cli/version_info.py",
     # These children are Hermes itself and need its full environment: the gateway respawn
     # watcher (generated script source), the launchd stderr-timestamp wrapper around the
     # gateway command, and the skills sync that seeds a new profile.

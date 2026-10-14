@@ -1,14 +1,14 @@
 ---
-title: "Legal Data Hunter — Research legal sources through the authenticated Legal Data Hunter MCP connector"
+title: "Legal Data Hunter — Research legal sources through authenticated MCP access"
 sidebar_label: "Legal Data Hunter"
-description: "Research legal sources through the authenticated Legal Data Hunter MCP connector"
+description: "Research legal sources through authenticated MCP access"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # Legal Data Hunter
 
-Research legal sources through the authenticated Legal Data Hunter MCP connector.
+Research legal sources through authenticated MCP access.
 
 ## Skill metadata
 
