@@ -1,14 +1,14 @@
 ---
-title: "French Accounting and Tax — Prepare traceable French accounting and tax drafts"
-sidebar_label: "French Accounting and Tax"
+title: "France Accounting Tax — Prepare traceable French accounting and tax drafts"
+sidebar_label: "France Accounting Tax"
 description: "Prepare traceable French accounting and tax drafts"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# French Accounting and Tax
+# France Accounting Tax
 
-Prepare traceable French accounting work, bank reconciliations, FEC checks, and drafts for IFU 2561, 2777-SD, 2042, 2044, and 2759-SD. The workflow does not submit declarations or payments.
+Prepare traceable French accounting and tax drafts.
 
 ## Skill metadata
 
@@ -23,27 +23,6 @@ Prepare traceable French accounting work, bank reconciliations, FEC checks, and 
 | Tags | `France`, `comptabilité`, `FEC`, `fiscalité`, `formulaires` |
 | Related skills | [`excel-author`](../../optional/finance/finance-excel-author.md), [`pdf`](../../bundled/productivity/productivity-pdf.md) |
 
-## Important scope distinctions
-
-- Bank reconciliation matches existing ledger entries to bank statement lines and reports exceptions; it does not create postings from bank data.
-- A FEC is validated from the accounting system's export against current French requirements. A bank CSV is not a FEC.
-- IFU 2561 and 2777 are payer-side workflows when the declarant has the relevant obligations.
-- 2042 and 2044 are individual income-tax workflows. 2044 applies to relevant unfurnished rental income; special cases may use 2044-SPE or another return.
-- 2759-SD is for eligible social-right transfers not recorded in an instrument. It does not complete corporate registry formalities.
-
-## Agent safeguards
-
-The skill requires current official forms and notices, a source-to-field trail for each amount, reconciliation checks, and an explicit list of unresolved facts. Deliverables remain labelled **DRAFT — NOT FILED**. The agent does not sign, transmit, pay, or invent values. A second jurisdiction must be named before its rules are applied.
-
-## Official sources
-
-- [2561 — IFU](https://www.impots.gouv.fr/formulaire/2561/declaration-recapitulative-des-operations-sur-valeurs-mobilieres-et-revenus-de-capi)
-- [2777-SD](https://www.impots.gouv.fr/formulaire/2777-sd/revenus-de-capitaux-mobiliers-prelevement-et-retenue-la-source)
-- [2042](https://www.impots.gouv.fr/formulaire/2042/declaration-des-revenus)
-- [2044](https://www.impots.gouv.fr/formulaire/2044/declaration-des-revenus-fonciers)
-- [2759-SD](https://www.impots.gouv.fr/formulaire/2759-sd/declaration-de-cessions-de-droits-sociaux-non-constatees-par-un-acte)
-- [FEC structure — Legifrance](https://www.legifrance.gouv.fr/loda/article_lc/JORFARTI000027788280)
-
 ## Reference: full SKILL.md
 
 :::info
@@ -56,7 +35,7 @@ Use this workflow to prepare traceable bookkeeping work, bank reconciliations (r
 
 ## When to Use
 
-Use for French-law accounting and tax preparation: bank reconciliation, accounting review, FEC validation, IFU 2561 (including 2561 bis/ter), 2777-SD, 2042, 2044/2044-SPE, or 2759-SD. Confirm which legal person, taxpayer, jurisdiction, accounting basis, fiscal year, declarant role, and requested output before processing.
+Use for French-law accounting and tax preparation: bank reconciliation, accounting review, FEC validation, IFU 2561 (including 2561 bis/ter), 2777-SD, 2042, 2044/2044-SPE, or 2759-SD. Confirm which legal person, taxpayer, fiscal year, jurisdiction, and role the user means before processing.
 
 ## Prerequisites
 
