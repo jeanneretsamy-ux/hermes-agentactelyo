@@ -80,28 +80,38 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
-          if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-          $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
-          Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
-          if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
-          $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
-          if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
           $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
           New-Item -ItemType Directory $releaseDir -Force | Out-Null
-          & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss
-          if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
-          # Exercise the normal per-user install location so deep bundled Python paths are tested under a realistic Windows profile.
-          $installed = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs\Actelyo Law Harness'
-          $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
-          $installLog = Join-Path $releaseDir 'installer-install.log'
-          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/LOG=`"$installLog`"","/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
-          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
-          $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
-          $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
-          if ($link.TargetPath -ne (Join-Path $installed 'Actelyo Law Harness.exe')) { throw 'Desktop shortcut target mismatch' }
-          if ($link.IconLocation -notlike '*Actelyo Law Harness.exe*') { throw 'Desktop shortcut icon mismatch' }
-          "ACTELYO_INSTALLED=$installed" >> $env:GITHUB_ENV
+          $transcriptPath = Join-Path $releaseDir 'installer-diagnostics.log'
+          Start-Transcript -Path $transcriptPath -Force | Out-Null
+          try {
+            $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
+            if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
+            $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
+            Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+            if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
+            $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+            if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
+            $compileLog = Join-Path $releaseDir 'installer-compile.log'
+            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss 2>&1
+            $compileExitCode = $LASTEXITCODE
+            $compileOutput | Set-Content -LiteralPath $compileLog
+            $compileOutput | Write-Output
+            if ($compileExitCode -ne 0) { throw "Installer compilation failed with exit code $compileExitCode" }
+            # Exercise the normal per-user install location so deep bundled Python paths are tested under a realistic Windows profile.
+            $installed = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs\Actelyo Law Harness'
+            $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
+            $installLog = Join-Path $releaseDir 'installer-install.log'
+            $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/LOG=`"$installLog`"","/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
+            if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+            $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
+            $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
+            if ($link.TargetPath -ne (Join-Path $installed 'Actelyo Law Harness.exe')) { throw 'Desktop shortcut target mismatch' }
+            if ($link.IconLocation -notlike '*Actelyo Law Harness.exe*') { throw 'Desktop shortcut icon mismatch' }
+            "ACTELYO_INSTALLED=$installed" >> $env:GITHUB_ENV
+          } finally {
+            Stop-Transcript | Out-Null
+          }
       - name: Verify actual installed application
         run: node "$env:RUNNER_TEMP/verify-actelyo-installed.mjs" "$env:ACTELYO_INSTALLED" actelyo-release/proof
       - name: Record checksum and exact source
