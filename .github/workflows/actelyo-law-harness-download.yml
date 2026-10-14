@@ -73,6 +73,8 @@ jobs:
         run: npm run build --workspace apps/desktop
       - name: Package Windows bundled application
         working-directory: apps/desktop
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never
       - name: Build and install Actelyo installer
         shell: pwsh
