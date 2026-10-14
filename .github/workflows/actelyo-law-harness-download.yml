@@ -94,7 +94,8 @@ jobs:
           # Exercise the normal per-user install location so deep bundled Python paths are tested under a realistic Windows profile.
           $installed = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs\Actelyo Law Harness'
           $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
-          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
+          $installLog = Join-Path $releaseDir 'installer-install.log'
+          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/LOG=`"$installLog`"","/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
           if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
           $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
           $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
@@ -117,6 +118,7 @@ jobs:
           path: |
             actelyo-release/*.exe
             actelyo-release/*.txt
+            actelyo-release/*.log
             actelyo-release/*.json
             actelyo-release/proof/*.png
             actelyo-release/proof/*.json
