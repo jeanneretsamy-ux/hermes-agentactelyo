@@ -1,12 +1,23 @@
 name: Actelyo Law Harness Windows download
 on:
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Commit to package (defaults to the selected branch head)
+        required: false
+        type: string
+      publish:
+        description: Publish the verified installer as a prerelease
+        required: false
+        default: false
+        type: boolean
   push:
-    branches: [codex/actelyo-local-modules-20261003]
+    branches: [codex/actelyo-local-modules-20261003, feat/legal-workspaces-billing]
     paths:
       - .github/workflows/actelyo-law-harness-download.yml
       - scripts/actelyo-download/**
       - scripts/bundles/stage.py
+      - optional-skills/finance/france-accounting-tax/**
       - agent/prompt_builder.py
 permissions:
   contents: write
@@ -19,13 +30,14 @@ jobs:
     timeout-minutes: 180
     env:
       HERMES_DESKTOP_VARIANT: bundled
-      # Pin the complete product source; packaging fixes may reuse these exact inputs.
-      ACTELYO_SOURCE_SHA: 8a7c8e98fa5e9461e07d004cfd867a654619e52c
+      # Keep the established product pin on its legacy branch; PR/manual builds use the selected source head.
+      ACTELYO_SOURCE_SHA: ${{ inputs.source_sha || (github.ref == 'refs/heads/codex/actelyo-local-modules-20261003' && '8a7c8e98fa5e9461e07d004cfd867a654619e52c' || github.sha) }}
     steps:
       - uses: actions/checkout@v4
       - name: Keep verifier and select exact product source
         shell: pwsh
         run: |
+          if ($env:ACTELYO_SOURCE_SHA -notmatch '^[0-9a-fA-F]{40}$') { throw 'Product source must be a full commit SHA' }
           Copy-Item scripts/actelyo-download/verify-installed.mjs "$env:RUNNER_TEMP/verify-actelyo-installed.mjs"
           git fetch origin $env:ACTELYO_SOURCE_SHA --depth=1
           if ($LASTEXITCODE -ne 0) { throw 'Product source unavailable' }
@@ -104,6 +116,7 @@ jobs:
             actelyo-release/proof/*.json
           if-no-files-found: ignore
       - name: Publish verified download
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/codex/actelyo-local-modules-20261003') || inputs.publish }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
