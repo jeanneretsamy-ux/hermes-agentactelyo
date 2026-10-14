@@ -3618,6 +3618,7 @@ export const en: Translations = {
       menu: 'Actions',
       menuRename: 'Rename…',
       menuAppearance: 'Appearance',
+      menuLegalWorkspace: 'Legal workspace and billing…',
       noColor: 'No color',
       menuAddFolder: 'Add folder',
       menuSetActive: 'Set active',

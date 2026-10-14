@@ -3041,6 +3041,7 @@ export interface Translations {
       menu: string
       menuRename: string
       menuAppearance: string
+      menuLegalWorkspace: string
       noColor: string
       menuAddFolder: string
       menuSetActive: string

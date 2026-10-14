@@ -140,6 +140,7 @@ export const zhHantChrome = {
       menu: '動作',
       menuRename: '重新命名…',
       menuAppearance: '外觀',
+      menuLegalWorkspace: '法律工作區與帳單…',
       noColor: '無顏色',
       menuAddFolder: '新增資料夾',
       menuSetActive: '設為使用中',

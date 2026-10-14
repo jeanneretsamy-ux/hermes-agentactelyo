@@ -1834,6 +1834,238 @@ export interface ClientCapabilitiesResult {
   server_requests: string[]
   declines_not_shown?: boolean
 }
+export interface LegalProjectParams {
+  profile?: string | null
+  project_id: string
+}
+export interface LegalSnapshot {
+  project_id: string
+  domain: string | null
+  matter_types: string[]
+  domains: LegalDomain[]
+  clients: LegalClient[]
+  matters: LegalMatter[]
+  acts: LegalAct[]
+  fees: LegalFee[]
+  documents: LegalDocument[]
+  payments: LegalPayment[]
+  firm_settings: LegalFirmSettings
+  firm_totals: LegalFirmTotals
+}
+export interface LegalDomain {
+  id: string
+  label: string
+  matter_types: string[]
+  act_types: string[]
+}
+export interface LegalClient {
+  name: string
+  email: string
+  address: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
+  id: string
+}
+export interface LegalMatter {
+  title: string
+  reference: string
+  id: string
+  client_id: string
+  matter_type: string
+  status: 'open' | 'closed'
+}
+export interface LegalAct {
+  id: string
+  title: string
+  act_type: string
+  body: string
+}
+export interface LegalFee {
+  description: string
+  net_cents: number
+  tax_bps: number
+  tax_cents: number
+  id: string
+  matter_id: string
+  kind: 'fixed' | 'time'
+  minutes: number
+  rate_cents: number
+  invoice_id: string | null
+  responsible_user?: string
+}
+export interface LegalDocument {
+  id: string
+  matter_id: string
+  kind: 'quote' | 'invoice'
+  reference: string
+  created_on: string
+  due_on: string
+  snapshot: LegalDocumentSnapshot
+  net_cents: number
+  tax_cents: number
+  total_cents: number
+  paid_cents: number
+  balance_cents: number
+}
+export interface LegalDocumentSnapshot {
+  client: LegalClientSnapshot
+  matter: LegalMatterSnapshot
+  lines: LegalLine[]
+  jurisdiction?: string | null
+  issuer?: LegalInvoiceIssuer | null
+  payment_terms?: Record<string, unknown> | null
+  vat_notice?: string
+}
+export interface LegalClientSnapshot {
+  name: string
+  email: string
+  address: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
+}
+export interface LegalMatterSnapshot {
+  title: string
+  reference: string
+}
+export interface LegalLine {
+  description: string
+  net_cents: number
+  tax_bps: number
+  tax_cents: number
+}
+export interface LegalInvoiceIssuer {
+  legal_name: string
+  address: string
+  siren: string
+  vat_number: string
+  vat_regime: 'standard' | 'franchise'
+  bar_name: string
+}
+export interface LegalPayment {
+  id: string
+  document_id: string
+  amount_cents: number
+  paid_on: string
+  reference: string
+}
+export interface LegalFirmSettings {
+  jurisdiction: string
+  legal_name: string
+  address: string
+  siren: string
+  vat_number: string
+  vat_regime: 'standard' | 'franchise'
+  bar_name: string
+  payment_delay_days: number
+  late_penalty_rate: string
+}
+export interface LegalFirmTotals {
+  fees_cents: number
+  fee_count: number
+  invoiced_cents: number
+  paid_cents: number
+  balance_cents: number
+  by_project: LegalProjectBillingGroup[]
+  by_user: LegalBillingGroup[]
+  by_matter: LegalMatterBillingGroup[]
+}
+export interface LegalProjectBillingGroup {
+  project_id: string
+  name: string
+  fees_cents: number
+  fee_count: number
+}
+export interface LegalBillingGroup {
+  user: string
+  fees_cents: number
+  fee_count: number
+}
+export interface LegalMatterBillingGroup {
+  project_id: string
+  project: string
+  matter_id: string
+  title: string
+  fees_cents: number
+  fee_count: number
+}
+export interface LegalWorkspaceParams {
+  profile?: string | null
+  project_id: string
+  domain: string
+  matter_types?: string[] | null
+}
+export interface LegalFirmSettingsParams {
+  profile?: string | null
+  project_id: string
+  jurisdiction?: 'FR'
+  legal_name: string
+  address: string
+  siren: string
+  vat_number?: string
+  vat_regime?: 'standard' | 'franchise'
+  bar_name?: string
+  payment_delay_days?: number
+  late_penalty_rate?: string
+}
+export interface LegalClientParams {
+  profile?: string | null
+  project_id: string
+  id?: string | null
+  name: string
+  email?: string
+  address?: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
+}
+export interface LegalMatterParams {
+  profile?: string | null
+  project_id: string
+  id?: string | null
+  client_id: string
+  title: string
+  matter_type: string
+  reference?: string
+  status?: 'open' | 'closed'
+}
+export interface LegalActParams {
+  profile?: string | null
+  project_id: string
+  id?: string | null
+  title: string
+  act_type: string
+  body: string
+}
+export interface LegalFeeParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  description: string
+  kind: 'fixed' | 'time'
+  amount_cents?: number
+  minutes?: number
+  rate_cents?: number
+  tax_bps?: number
+  responsible_user?: string
+}
+export interface LegalDocumentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  kind: 'quote' | 'invoice'
+  fee_ids: string[]
+  due_on: string
+}
+export interface LegalPaymentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  document_id: string
+  amount_cents: number
+  paid_on: string
+  reference: string
+}
 /** ``word`` is the token under the cursor (``@`` prefix = context reference); ``cwd`` / ``session_id`` pick the directory the listing resolves against. */
 export interface CompletePathParams {
   profile?: string | null
@@ -5062,6 +5294,15 @@ export interface RpcMethods {
   'learning.edit': { params: LearningEditParams; result: LearningMutationResult }
   /** Pre-render the /journey timeline (frames + legend/summary) so the TUI walks it locally. */
   'learning.frames': { params: LearningFramesParams; result: LearningFramesResult }
+  'legal.act.save': { params: LegalActParams; result: LegalSnapshot }
+  'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
+  'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
+  'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
+  'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
+  'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
+  'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
+  'legal.snapshot': { params: LegalProjectParams; result: LegalSnapshot }
+  'legal.workspace.set': { params: LegalWorkspaceParams; result: LegalSnapshot }
   /** Stateless one-shot LLM completion (titles, ideas) on the session's or the task backend. */
   'llm.oneshot': { params: LlmOneshotParams; result: LlmOneshotResult }
   /** Curated MCP presets with per-profile installed/enabled state and the env keys each needs. */
@@ -5475,6 +5716,15 @@ export const RPC_METHODS = [
   'learning.detail',
   'learning.edit',
   'learning.frames',
+  'legal.act.save',
+  'legal.client.save',
+  'legal.document.create',
+  'legal.fee.add',
+  'legal.firm.settings.set',
+  'legal.matter.save',
+  'legal.payment.add',
+  'legal.snapshot',
+  'legal.workspace.set',
   'llm.oneshot',
   'mcp.catalog',
   'mcp.servers.add',

@@ -4037,6 +4037,7 @@ export const esOverrides = {
       menu: 'Acciones',
       menuRename: 'Renombrar',
       menuAppearance: 'Apariencia',
+      menuLegalWorkspace: 'Espacio jurídico y facturación…',
       noColor: 'Sin color',
       menuAddFolder: 'Agregar carpeta',
       menuSetActive: 'Establecer activo',

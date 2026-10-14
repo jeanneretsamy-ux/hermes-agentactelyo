@@ -248,6 +248,7 @@ export const arChrome = {
       menu: 'إجراءات',
       menuRename: 'إعادة تسمية…',
       menuAppearance: 'المظهر',
+      menuLegalWorkspace: 'مساحة العمل القانونية والفوترة…',
       noColor: 'بلا لون',
       menuAddFolder: 'إضافة مجلد',
       menuSetActive: 'تعيين كنشط',

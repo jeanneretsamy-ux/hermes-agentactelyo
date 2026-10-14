@@ -1663,6 +1663,168 @@
       }
     },
     {
+      "name": "legal.act.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalActParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.client.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalClientParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.document.create",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalDocumentParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.fee.add",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalFeeParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.firm.settings.set",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalFirmSettingsParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.matter.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalMatterParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.payment.add",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalPaymentParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.snapshot",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalProjectParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.workspace.set",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalWorkspaceParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "llm.oneshot",
       "summary": "Stateless one-shot LLM completion (titles, ideas) on the session's or the task backend.",
       "params": [
@@ -17113,6 +17275,1386 @@
           "enabled"
         ],
         "title": "LegacyPluginRow",
+        "type": "object"
+      },
+      "LegalAct": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "act_type": {
+            "title": "Act Type",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "act_type",
+          "body"
+        ],
+        "title": "LegalAct",
+        "type": "object"
+      },
+      "LegalActParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "act_type": {
+            "title": "Act Type",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "title",
+          "act_type",
+          "body"
+        ],
+        "title": "LegalActParams",
+        "type": "object"
+      },
+      "LegalBillingGroup": {
+        "additionalProperties": false,
+        "properties": {
+          "user": {
+            "title": "User",
+            "type": "string"
+          },
+          "fees_cents": {
+            "title": "Fees Cents",
+            "type": "integer"
+          },
+          "fee_count": {
+            "title": "Fee Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user",
+          "fees_cents",
+          "fee_count"
+        ],
+        "title": "LegalBillingGroup",
+        "type": "object"
+      },
+      "LegalClient": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "customer_type": {
+            "default": "individual",
+            "enum": [
+              "individual",
+              "professional"
+            ],
+            "title": "Customer Type",
+            "type": "string"
+          },
+          "siren": {
+            "default": "",
+            "title": "Siren",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "address",
+          "id"
+        ],
+        "title": "LegalClient",
+        "type": "object"
+      },
+      "LegalClientParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "email": {
+            "default": "",
+            "title": "Email",
+            "type": "string"
+          },
+          "address": {
+            "default": "",
+            "title": "Address",
+            "type": "string"
+          },
+          "customer_type": {
+            "default": "individual",
+            "enum": [
+              "individual",
+              "professional"
+            ],
+            "title": "Customer Type",
+            "type": "string"
+          },
+          "siren": {
+            "default": "",
+            "title": "Siren",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "name"
+        ],
+        "title": "LegalClientParams",
+        "type": "object"
+      },
+      "LegalClientSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "customer_type": {
+            "default": "individual",
+            "enum": [
+              "individual",
+              "professional"
+            ],
+            "title": "Customer Type",
+            "type": "string"
+          },
+          "siren": {
+            "default": "",
+            "title": "Siren",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "address"
+        ],
+        "title": "LegalClientSnapshot",
+        "type": "object"
+      },
+      "LegalDocument": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "quote",
+              "invoice"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "created_on": {
+            "title": "Created On",
+            "type": "string"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/LegalDocumentSnapshot"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "paid_cents": {
+            "title": "Paid Cents",
+            "type": "integer"
+          },
+          "balance_cents": {
+            "title": "Balance Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "matter_id",
+          "kind",
+          "reference",
+          "created_on",
+          "due_on",
+          "snapshot",
+          "net_cents",
+          "tax_cents",
+          "total_cents",
+          "paid_cents",
+          "balance_cents"
+        ],
+        "title": "LegalDocument",
+        "type": "object"
+      },
+      "LegalDocumentParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "quote",
+              "invoice"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "fee_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Fee Ids",
+            "type": "array"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "kind",
+          "fee_ids",
+          "due_on"
+        ],
+        "title": "LegalDocumentParams",
+        "type": "object"
+      },
+      "LegalDocumentSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "client": {
+            "$ref": "#/components/schemas/LegalClientSnapshot"
+          },
+          "matter": {
+            "$ref": "#/components/schemas/LegalMatterSnapshot"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/LegalLine"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "jurisdiction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Jurisdiction"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LegalInvoiceIssuer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "payment_terms": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Payment Terms"
+          },
+          "vat_notice": {
+            "default": "",
+            "title": "Vat Notice",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client",
+          "matter",
+          "lines"
+        ],
+        "title": "LegalDocumentSnapshot",
+        "type": "object"
+      },
+      "LegalDomain": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "matter_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matter Types",
+            "type": "array"
+          },
+          "act_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Act Types",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "matter_types",
+          "act_types"
+        ],
+        "title": "LegalDomain",
+        "type": "object"
+      },
+      "LegalFee": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "fixed",
+              "time"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "rate_cents": {
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "invoice_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Id"
+          },
+          "responsible_user": {
+            "default": "",
+            "title": "Responsible User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "net_cents",
+          "tax_bps",
+          "tax_cents",
+          "id",
+          "matter_id",
+          "kind",
+          "minutes",
+          "rate_cents",
+          "invoice_id"
+        ],
+        "title": "LegalFee",
+        "type": "object"
+      },
+      "LegalFeeParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "fixed",
+              "time"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "amount_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "minutes": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "rate_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "default": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "responsible_user": {
+            "default": "",
+            "title": "Responsible User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "description",
+          "kind"
+        ],
+        "title": "LegalFeeParams",
+        "type": "object"
+      },
+      "LegalFirmSettings": {
+        "additionalProperties": false,
+        "properties": {
+          "jurisdiction": {
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "legal_name": {
+            "title": "Legal Name",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "siren": {
+            "title": "Siren",
+            "type": "string"
+          },
+          "vat_number": {
+            "title": "Vat Number",
+            "type": "string"
+          },
+          "vat_regime": {
+            "enum": [
+              "standard",
+              "franchise"
+            ],
+            "title": "Vat Regime",
+            "type": "string"
+          },
+          "bar_name": {
+            "title": "Bar Name",
+            "type": "string"
+          },
+          "payment_delay_days": {
+            "title": "Payment Delay Days",
+            "type": "integer"
+          },
+          "late_penalty_rate": {
+            "title": "Late Penalty Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "jurisdiction",
+          "legal_name",
+          "address",
+          "siren",
+          "vat_number",
+          "vat_regime",
+          "bar_name",
+          "payment_delay_days",
+          "late_penalty_rate"
+        ],
+        "title": "LegalFirmSettings",
+        "type": "object"
+      },
+      "LegalFirmSettingsParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "jurisdiction": {
+            "const": "FR",
+            "default": "FR",
+            "title": "Jurisdiction",
+            "type": "string"
+          },
+          "legal_name": {
+            "title": "Legal Name",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "siren": {
+            "title": "Siren",
+            "type": "string"
+          },
+          "vat_number": {
+            "default": "",
+            "title": "Vat Number",
+            "type": "string"
+          },
+          "vat_regime": {
+            "default": "standard",
+            "enum": [
+              "standard",
+              "franchise"
+            ],
+            "title": "Vat Regime",
+            "type": "string"
+          },
+          "bar_name": {
+            "default": "",
+            "title": "Bar Name",
+            "type": "string"
+          },
+          "payment_delay_days": {
+            "default": 30,
+            "maximum": 60,
+            "minimum": 1,
+            "title": "Payment Delay Days",
+            "type": "integer"
+          },
+          "late_penalty_rate": {
+            "default": "3 fois le taux d\u2019int\u00e9r\u00eat l\u00e9gal",
+            "title": "Late Penalty Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "legal_name",
+          "address",
+          "siren"
+        ],
+        "title": "LegalFirmSettingsParams",
+        "type": "object"
+      },
+      "LegalFirmTotals": {
+        "additionalProperties": false,
+        "properties": {
+          "fees_cents": {
+            "title": "Fees Cents",
+            "type": "integer"
+          },
+          "fee_count": {
+            "title": "Fee Count",
+            "type": "integer"
+          },
+          "invoiced_cents": {
+            "title": "Invoiced Cents",
+            "type": "integer"
+          },
+          "paid_cents": {
+            "title": "Paid Cents",
+            "type": "integer"
+          },
+          "balance_cents": {
+            "title": "Balance Cents",
+            "type": "integer"
+          },
+          "by_project": {
+            "items": {
+              "$ref": "#/components/schemas/LegalProjectBillingGroup"
+            },
+            "title": "By Project",
+            "type": "array"
+          },
+          "by_user": {
+            "items": {
+              "$ref": "#/components/schemas/LegalBillingGroup"
+            },
+            "title": "By User",
+            "type": "array"
+          },
+          "by_matter": {
+            "items": {
+              "$ref": "#/components/schemas/LegalMatterBillingGroup"
+            },
+            "title": "By Matter",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fees_cents",
+          "fee_count",
+          "invoiced_cents",
+          "paid_cents",
+          "balance_cents",
+          "by_project",
+          "by_user",
+          "by_matter"
+        ],
+        "title": "LegalFirmTotals",
+        "type": "object"
+      },
+      "LegalInvoiceIssuer": {
+        "additionalProperties": false,
+        "properties": {
+          "legal_name": {
+            "title": "Legal Name",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "siren": {
+            "title": "Siren",
+            "type": "string"
+          },
+          "vat_number": {
+            "title": "Vat Number",
+            "type": "string"
+          },
+          "vat_regime": {
+            "enum": [
+              "standard",
+              "franchise"
+            ],
+            "title": "Vat Regime",
+            "type": "string"
+          },
+          "bar_name": {
+            "title": "Bar Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "legal_name",
+          "address",
+          "siren",
+          "vat_number",
+          "vat_regime",
+          "bar_name"
+        ],
+        "title": "LegalInvoiceIssuer",
+        "type": "object"
+      },
+      "LegalLine": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "description",
+          "net_cents",
+          "tax_bps",
+          "tax_cents"
+        ],
+        "title": "LegalLine",
+        "type": "object"
+      },
+      "LegalMatter": {
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "client_id": {
+            "title": "Client Id",
+            "type": "string"
+          },
+          "matter_type": {
+            "title": "Matter Type",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "reference",
+          "id",
+          "client_id",
+          "matter_type",
+          "status"
+        ],
+        "title": "LegalMatter",
+        "type": "object"
+      },
+      "LegalMatterBillingGroup": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "project": {
+            "title": "Project",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "fees_cents": {
+            "title": "Fees Cents",
+            "type": "integer"
+          },
+          "fee_count": {
+            "title": "Fee Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "project",
+          "matter_id",
+          "title",
+          "fees_cents",
+          "fee_count"
+        ],
+        "title": "LegalMatterBillingGroup",
+        "type": "object"
+      },
+      "LegalMatterParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "client_id": {
+            "title": "Client Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "matter_type": {
+            "title": "Matter Type",
+            "type": "string"
+          },
+          "reference": {
+            "default": "",
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "default": "open",
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "client_id",
+          "title",
+          "matter_type"
+        ],
+        "title": "LegalMatterParams",
+        "type": "object"
+      },
+      "LegalMatterSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "reference"
+        ],
+        "title": "LegalMatterSnapshot",
+        "type": "object"
+      },
+      "LegalPayment": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "paid_on": {
+            "title": "Paid On",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "document_id",
+          "amount_cents",
+          "paid_on",
+          "reference"
+        ],
+        "title": "LegalPayment",
+        "type": "object"
+      },
+      "LegalPaymentParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "paid_on": {
+            "title": "Paid On",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "document_id",
+          "amount_cents",
+          "paid_on",
+          "reference"
+        ],
+        "title": "LegalPaymentParams",
+        "type": "object"
+      },
+      "LegalProjectBillingGroup": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "fees_cents": {
+            "title": "Fees Cents",
+            "type": "integer"
+          },
+          "fee_count": {
+            "title": "Fee Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "name",
+          "fees_cents",
+          "fee_count"
+        ],
+        "title": "LegalProjectBillingGroup",
+        "type": "object"
+      },
+      "LegalProjectParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "LegalProjectParams",
+        "type": "object"
+      },
+      "LegalSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "matter_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matter Types",
+            "type": "array"
+          },
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/LegalDomain"
+            },
+            "title": "Domains",
+            "type": "array"
+          },
+          "clients": {
+            "items": {
+              "$ref": "#/components/schemas/LegalClient"
+            },
+            "title": "Clients",
+            "type": "array"
+          },
+          "matters": {
+            "items": {
+              "$ref": "#/components/schemas/LegalMatter"
+            },
+            "title": "Matters",
+            "type": "array"
+          },
+          "acts": {
+            "items": {
+              "$ref": "#/components/schemas/LegalAct"
+            },
+            "title": "Acts",
+            "type": "array"
+          },
+          "fees": {
+            "items": {
+              "$ref": "#/components/schemas/LegalFee"
+            },
+            "title": "Fees",
+            "type": "array"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/LegalDocument"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "payments": {
+            "items": {
+              "$ref": "#/components/schemas/LegalPayment"
+            },
+            "title": "Payments",
+            "type": "array"
+          },
+          "firm_settings": {
+            "$ref": "#/components/schemas/LegalFirmSettings"
+          },
+          "firm_totals": {
+            "$ref": "#/components/schemas/LegalFirmTotals"
+          }
+        },
+        "required": [
+          "project_id",
+          "domain",
+          "matter_types",
+          "domains",
+          "clients",
+          "matters",
+          "acts",
+          "fees",
+          "documents",
+          "payments",
+          "firm_settings",
+          "firm_totals"
+        ],
+        "title": "LegalSnapshot",
+        "type": "object"
+      },
+      "LegalWorkspaceParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "matter_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Matter Types"
+          }
+        },
+        "required": [
+          "project_id",
+          "domain"
+        ],
+        "title": "LegalWorkspaceParams",
         "type": "object"
       },
       "LiveSessionStatus": {

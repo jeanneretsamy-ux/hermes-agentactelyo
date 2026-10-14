@@ -4056,6 +4056,7 @@ export const frOverrides = {
       menu: 'Actions',
       menuRename: 'Renommer',
       menuAppearance: 'Apparence',
+      menuLegalWorkspace: 'Cabinet juridique et facturation…',
       noColor: 'Aucune couleur',
       menuAddFolder: 'Ajouter un dossier',
       menuSetActive: 'Définir comme actif',

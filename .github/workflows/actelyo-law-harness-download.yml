@@ -1,12 +1,26 @@
 name: Actelyo Law Harness Windows download
 on:
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Commit to package (defaults to the selected branch head)
+        required: false
+        type: string
+      publish:
+        description: Publish the verified installer as a prerelease
+        required: false
+        default: false
+        type: boolean
   push:
-    branches: [codex/actelyo-local-modules-20261003]
+    branches: [codex/actelyo-local-modules-20261003, feat/legal-workspaces-billing]
     paths:
       - .github/workflows/actelyo-law-harness-download.yml
       - scripts/actelyo-download/**
       - scripts/bundles/stage.py
+      - scripts/build/frontend-common.mjs
+      - apps/desktop/scripts/run-electron-builder.mjs
+      - apps/desktop/scripts/run-electron-builder.test.mjs
+      - optional-skills/finance/france-accounting-tax/**
       - agent/prompt_builder.py
 permissions:
   contents: write
@@ -19,13 +33,14 @@ jobs:
     timeout-minutes: 180
     env:
       HERMES_DESKTOP_VARIANT: bundled
-      # Pin the complete product source; packaging fixes may reuse these exact inputs.
-      ACTELYO_SOURCE_SHA: 8a7c8e98fa5e9461e07d004cfd867a654619e52c
+      # Keep the established product pin on its legacy branch; PR/manual builds use the selected source head.
+      ACTELYO_SOURCE_SHA: ${{ inputs.source_sha || (github.ref == 'refs/heads/codex/actelyo-local-modules-20261003' && '8a7c8e98fa5e9461e07d004cfd867a654619e52c' || github.sha) }}
     steps:
       - uses: actions/checkout@v4
       - name: Keep verifier and select exact product source
         shell: pwsh
         run: |
+          if ($env:ACTELYO_SOURCE_SHA -notmatch '^[0-9a-fA-F]{40}$') { throw 'Product source must be a full commit SHA' }
           Copy-Item scripts/actelyo-download/verify-installed.mjs "$env:RUNNER_TEMP/verify-actelyo-installed.mjs"
           git fetch origin $env:ACTELYO_SOURCE_SHA --depth=1
           if ($LASTEXITCODE -ne 0) { throw 'Product source unavailable' }
@@ -58,31 +73,60 @@ jobs:
         run: npm run build --workspace apps/desktop
       - name: Package Windows bundled application
         working-directory: apps/desktop
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never
       - name: Build and install Actelyo installer
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
-          if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-          $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
-          Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
-          if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
-          $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
-          if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
           $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'actelyo-release'
           New-Item -ItemType Directory $releaseDir -Force | Out-Null
-          & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss
-          if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
-          $installed = Join-Path $env:RUNNER_TEMP 'actelyo-installed'
-          $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
-          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
-          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
-          $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
-          $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
-          if ($link.TargetPath -ne (Join-Path $installed 'Actelyo Law Harness.exe')) { throw 'Desktop shortcut target mismatch' }
-          if ($link.IconLocation -notlike '*Actelyo Law Harness.exe*') { throw 'Desktop shortcut icon mismatch' }
-          "ACTELYO_INSTALLED=$installed" >> $env:GITHUB_ENV
+          # Preserve diagnostics as artifacts if packaging or installation fails.
+          $transcriptPath = Join-Path $releaseDir 'installer-diagnostics.log'
+          Start-Transcript -Path $transcriptPath -Force | Out-Null
+          try {
+            $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
+            if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
+            # Keep the staged source root short; Python packages contain deeply nested filenames.
+            $appSource = Join-Path $env:RUNNER_TEMP 'a'
+            Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+            if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
+            # Inno Setup 6 cannot reliably compile/install the long Python paths in the bundled runtime.
+            # Pin stable Inno Setup 7 and verify the official Authenticode publisher before running it.
+            $innoVersion = '7.1.0'
+            $innoInstaller = Join-Path $env:RUNNER_TEMP "innosetup-$innoVersion-x64.exe"
+            $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe"
+            Invoke-WebRequest -Uri $innoUrl -OutFile $innoInstaller
+            $signature = Get-AuthenticodeSignature -FilePath $innoInstaller
+            if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B\.V\.') {
+              throw 'Inno Setup installer signature or publisher verification failed'
+            }
+            $innoRoot = Join-Path $env:RUNNER_TEMP 'InnoSetup7'
+            $setup = Start-Process -FilePath $innoInstaller -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=$innoRoot") -WindowStyle Hidden -Wait -PassThru
+            if ($setup.ExitCode -ne 0) { throw "Inno Setup installation failed: $($setup.ExitCode)" }
+            $compiler = Join-Path $innoRoot 'ISCC.exe'
+            if (-not (Test-Path $compiler)) { throw 'Pinned Inno Setup 7 compiler unavailable after installation' }
+            $compileLog = Join-Path $releaseDir 'installer-compile.log'
+            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss 2>&1
+            $compileExitCode = $LASTEXITCODE
+            $compileOutput | Set-Content -LiteralPath $compileLog
+            $compileOutput | Write-Output
+            if ($compileExitCode -ne 0) { throw "Installer compilation failed with exit code $compileExitCode" }
+            # Exercise the normal per-user install location so deep bundled Python paths are tested under a realistic Windows profile.
+            $installed = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs\Actelyo Law Harness'
+            $installer = Join-Path $releaseDir 'Actelyo-Law-Harness-Setup-x64.exe'
+            $installLog = Join-Path $releaseDir 'installer-install.log'
+            $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/LOG=`"$installLog`"","/DIR=`"$installed`"",'/TASKS=desktopicon') -WindowStyle Hidden -Wait -PassThru
+            if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+            $shortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Actelyo Law Harness.lnk'
+            $link = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcut)
+            if ($link.TargetPath -ne (Join-Path $installed 'Actelyo Law Harness.exe')) { throw 'Desktop shortcut target mismatch' }
+            if ($link.IconLocation -notlike '*Actelyo Law Harness.exe*') { throw 'Desktop shortcut icon mismatch' }
+            "ACTELYO_INSTALLED=$installed" >> $env:GITHUB_ENV
+          } finally {
+            Stop-Transcript | Out-Null
+          }
       - name: Verify actual installed application
         run: node "$env:RUNNER_TEMP/verify-actelyo-installed.mjs" "$env:ACTELYO_INSTALLED" actelyo-release/proof
       - name: Record checksum and exact source
@@ -99,11 +143,13 @@ jobs:
           path: |
             actelyo-release/*.exe
             actelyo-release/*.txt
+            actelyo-release/*.log
             actelyo-release/*.json
             actelyo-release/proof/*.png
             actelyo-release/proof/*.json
           if-no-files-found: ignore
       - name: Publish verified download
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/codex/actelyo-local-modules-20261003') || inputs.publish }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
