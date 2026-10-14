@@ -86,3 +86,23 @@ def test_legal_rpc_scopes_two_profile_homes_a_b_a(monkeypatch, tmp_path):
     finally:
         server._hermes_home = previous_home
         reset_hermes_home_override(token)
+
+
+def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
+    expected = [
+        "Droit Pénal et Procédure", "Contentieux Judiciaire", "Droit des Affaires",
+        "Droit des Sociétés", "Droit Social / Travail", "Droit Fiscal", "Droit Notarié",
+        "Baux & Contrats", "Droit du Sport", "Droit Agricole", "Droit du Transport",
+        "Droit de Douane", "Droit Médical", "Recouvrement", "Droit Patrimonial et Famille",
+        "Droit des Personnes Protégées", "Droit Civil", "Droit NTIC & Propriété Intellectuelle",
+        "Droit de l'E-Sport", "Droit Aérien",
+    ]
+    pid = call("projects.create", name="Cabinet multi-domaines", folders=[str(tmp_path)])["project"]["id"]
+    domains = call("legal.snapshot", project_id=pid)["domains"]
+    assert [domain["label"] for domain in domains[:20]] == expected
+    assert domains[20]["id"] == "administratif"  # Preserve existing workspace IDs.
+    for domain in domains:
+        assert domain["matter_types"] and domain["act_types"]
+        state = call("legal.workspace.set", project_id=pid, domain=domain["id"])
+        assert state["domain"] == domain["id"]
+        assert state["matter_types"] == domain["matter_types"]
