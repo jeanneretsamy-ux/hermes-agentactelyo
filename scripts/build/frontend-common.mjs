@@ -34,7 +34,15 @@ const productOwner = 'hermes-frontend-product-v1\n'
 const developerOutputs = ['ui-tui/dist', 'hermes_cli/web_dist', 'apps/desktop/dist', 'apps/desktop/build/native-deps']
 
 function developerOutput(source, out) {
-  return source && developerOutputs.some(name => path.resolve(out) === path.join(path.resolve(source), name))
+  if (!source) return false
+  const root = path.resolve(source)
+  const destination = path.resolve(out)
+  if (developerOutputs.some(name => destination === path.join(root, name))) return true
+  // Architecture-specific native dependency trees are sibling products under
+  // apps/desktop/build; admit only the exact platform/architecture naming
+  // scheme produced by run-electron-builder, never arbitrary build subfolders.
+  const relative = path.relative(root, destination).split(path.sep).join('/')
+  return /^apps\/desktop\/build\/native-deps-(?:win32|darwin|linux)-(?:x64|arm64|ia32|armv7l)$/.test(relative)
 }
 
 // A destination name alone does not confer ownership of its existing contents.

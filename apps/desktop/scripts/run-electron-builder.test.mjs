@@ -3,6 +3,7 @@ import { test } from 'vitest'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { builderNodeOptions, runElectronBuilder } from './run-electron-builder.mjs'
+import { productOutput } from '../../../scripts/build/frontend-common.mjs'
 import fs from 'node:fs'
 import os from 'node:os'
 import { publishPackagingInputs } from './prepared-packaging.mjs'
@@ -31,6 +32,13 @@ test('validate-only admits real prepared inputs without launching tools and reje
   } finally {
     fs.rmSync(out, { recursive: true, force: true })
   }
+})
+
+test('architecture-specific native dependency output uses an admitted generated path', () => {
+  const source = path.resolve(import.meta.dirname, '../../..')
+  const nativeOut = path.join(source, 'apps/desktop/build/native-deps-win32-x64')
+  assert.equal(productOutput(source, nativeOut, ['node_modules', 'apps/desktop/node_modules']).out, nativeOut)
+  assert.throws(() => productOutput(source, path.join(source, 'apps/desktop/build/native-deps-untrusted'), []), /supported generated destination/)
 })
 
 test('source multiarch prepares isolated native and packaging inputs before each strict invocation', () => {
