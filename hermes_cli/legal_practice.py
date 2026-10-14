@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS legal_workspaces (
 );
 CREATE TABLE IF NOT EXISTS legal_clients (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
- name TEXT NOT NULL, email TEXT NOT NULL, address TEXT NOT NULL
+ name TEXT NOT NULL, email TEXT NOT NULL, address TEXT NOT NULL,
+ customer_type TEXT NOT NULL DEFAULT 'individual', siren TEXT NOT NULL DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS legal_matters (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -60,7 +61,14 @@ CREATE TABLE IF NOT EXISTS legal_fees (
  matter_id TEXT NOT NULL REFERENCES legal_matters(id), description TEXT NOT NULL,
  kind TEXT NOT NULL, minutes INTEGER NOT NULL, rate_cents INTEGER NOT NULL,
  net_cents INTEGER NOT NULL, tax_bps INTEGER NOT NULL, tax_cents INTEGER NOT NULL,
- invoice_id TEXT
+ invoice_id TEXT, responsible_user TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS legal_firm_settings (
+ id INTEGER PRIMARY KEY CHECK(id=1), jurisdiction TEXT NOT NULL DEFAULT 'FR',
+ legal_name TEXT NOT NULL DEFAULT '', address TEXT NOT NULL DEFAULT '', siren TEXT NOT NULL DEFAULT '',
+ vat_number TEXT NOT NULL DEFAULT '', vat_regime TEXT NOT NULL DEFAULT 'standard',
+ bar_name TEXT NOT NULL DEFAULT '', payment_delay_days INTEGER NOT NULL DEFAULT 30,
+ late_penalty_rate TEXT NOT NULL DEFAULT '3 fois le taux d’intérêt légal'
 );
 CREATE TABLE IF NOT EXISTS legal_documents (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -83,6 +91,14 @@ CREATE TABLE IF NOT EXISTS legal_requests (
 
 def initialize_legal(conn):
     conn.executescript(_LEGAL_SCHEMA)
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_fees)")}
+    if "responsible_user" not in columns:
+        conn.execute("ALTER TABLE legal_fees ADD COLUMN responsible_user TEXT NOT NULL DEFAULT ''")
+    client_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_clients)")}
+    if "customer_type" not in client_columns:
+        conn.execute("ALTER TABLE legal_clients ADD COLUMN customer_type TEXT NOT NULL DEFAULT 'individual'")
+    if "siren" not in client_columns:
+        conn.execute("ALTER TABLE legal_clients ADD COLUMN siren TEXT NOT NULL DEFAULT ''")
 
 
 def legal_domain(domain_id):
@@ -134,7 +150,42 @@ def legal_snapshot(conn, project_id):
         document["snapshot"] = json.loads(document["snapshot"])
         document["paid_cents"] = sum(p["amount_cents"] for p in result["payments"] if p["document_id"] == document["id"])
         document["balance_cents"] = document["total_cents"] - document["paid_cents"]
+    settings = conn.execute("SELECT * FROM legal_firm_settings WHERE id=1").fetchone()
+    result["firm_settings"] = {k: settings[k] for k in settings.keys() if k != "id"} if settings else {
+        "jurisdiction": "FR", "legal_name": "", "address": "", "siren": "", "vat_number": "",
+        "vat_regime": "standard", "bar_name": "", "payment_delay_days": 30,
+        "late_penalty_rate": "3 fois le taux d’intérêt légal",
+    }
+    # The profile database is the cabinet boundary. These totals consolidate its projects,
+    # while the detail lists above remain scoped to the selected project.
+    result["firm_totals"] = _firm_totals(conn)
     return result
+
+
+def _firm_totals(conn):
+    by_project = conn.execute("""SELECT p.id AS project_id,p.name,
+      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      FROM projects p LEFT JOIN legal_fees f ON f.project_id=p.id
+      GROUP BY p.id,p.name ORDER BY p.name""").fetchall()
+    by_user = conn.execute("""SELECT COALESCE(NULLIF(f.responsible_user,''),'Non attribué') AS user,
+      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      FROM legal_fees f GROUP BY COALESCE(NULLIF(f.responsible_user,''),'Non attribué')
+      ORDER BY user""").fetchall()
+    by_matter = conn.execute("""SELECT m.project_id,p.name AS project,m.id AS matter_id,m.title,
+      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      FROM legal_matters m JOIN projects p ON p.id=m.project_id
+      LEFT JOIN legal_fees f ON f.matter_id=m.id AND f.project_id=m.project_id
+      GROUP BY m.project_id,p.name,m.id,m.title ORDER BY p.name,m.title""").fetchall()
+    totals = conn.execute("""SELECT COALESCE(SUM(net_cents),0) AS fees_cents,
+      COUNT(*) AS fee_count FROM legal_fees""").fetchone()
+    docs = conn.execute("""SELECT COALESCE(SUM(d.total_cents),0) AS invoiced_cents,
+      COALESCE((SELECT SUM(amount_cents) FROM legal_payments),0) AS paid_cents
+      FROM legal_documents d WHERE d.kind='invoice'""").fetchone()
+    return {"fees_cents": totals["fees_cents"], "fee_count": totals["fee_count"],
+            "invoiced_cents": docs["invoiced_cents"], "paid_cents": docs["paid_cents"],
+            "balance_cents": docs["invoiced_cents"] - docs["paid_cents"],
+            "by_project": [dict(row) for row in by_project], "by_user": [dict(row) for row in by_user],
+            "by_matter": [dict(row) for row in by_matter]}
 
 
 def legal_mutate(conn, project_id, action, params):
@@ -156,6 +207,28 @@ def legal_mutate(conn, project_id, action, params):
 
 
 def _legal_apply(conn, pid, action, p):
+    if action == "firm.settings.set":
+        if p.get("jurisdiction") != "FR":
+            raise ValueError("La juridiction France est disponible. Les autres juridictions ne sont pas encore prises en charge.")
+        name = _legal_text(p.get("legal_name"), required=True, limit=200)
+        address = _legal_text(p.get("address"), required=True, limit=2000)
+        siren = "".join(ch for ch in str(p.get("siren", "")) if ch.isdigit())
+        if len(siren) != 9:
+            raise ValueError("Le SIREN du cabinet doit comporter 9 chiffres.")
+        regime = p.get("vat_regime")
+        if regime not in ("standard", "franchise"):
+            raise ValueError("Régime de TVA France invalide")
+        delay = _legal_integer(p.get("payment_delay_days", 30), low=1, high=60)
+        conn.execute("""INSERT INTO legal_firm_settings
+          (id,jurisdiction,legal_name,address,siren,vat_number,vat_regime,bar_name,payment_delay_days,late_penalty_rate)
+          VALUES (1,'FR',?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET
+          jurisdiction='FR',legal_name=excluded.legal_name,address=excluded.address,siren=excluded.siren,
+          vat_number=excluded.vat_number,vat_regime=excluded.vat_regime,bar_name=excluded.bar_name,
+          payment_delay_days=excluded.payment_delay_days,late_penalty_rate=excluded.late_penalty_rate""",
+          (name,address,siren,_legal_text(p.get("vat_number"),limit=40),regime,
+           _legal_text(p.get("bar_name"),limit=200),delay,
+           _legal_text(p.get("late_penalty_rate"),required=True,limit=200)))
+        return
     if action == "workspace.set":
         domain = legal_domain(p.get("domain"))
         types = p.get("matter_types") or domain["matter_types"]
@@ -173,7 +246,13 @@ def _legal_apply(conn, pid, action, p):
         if p.get("id"):
             _legal_row(conn, table, pid, row_id)
         if action == "client.save":
-            values = {"name": _legal_text(p.get("name"), required=True), "email": _legal_text(p.get("email")), "address": _legal_text(p.get("address"), limit=2000)}
+            customer_type = p.get("customer_type", "individual")
+            if customer_type not in ("individual", "professional"):
+                raise ValueError("Type de client invalide")
+            siren = "".join(ch for ch in str(p.get("siren", "")) if ch.isdigit())
+            if siren and len(siren) != 9:
+                raise ValueError("Le SIREN du client doit comporter 9 chiffres.")
+            values = {"name": _legal_text(p.get("name"), required=True), "email": _legal_text(p.get("email")), "address": _legal_text(p.get("address"), limit=2000), "customer_type": customer_type, "siren": siren}
         elif action == "act.save":
             values = {"title": _legal_text(p.get("title"), required=True), "act_type": _legal_text(p.get("act_type"), required=True), "body": _legal_text(p.get("body"), limit=200_000)}
         else:
@@ -205,7 +284,7 @@ def _legal_apply(conn, pid, action, p):
         _legal_integer(net)
         tax_bps = _legal_integer(p.get("tax_bps", 0), high=10000)
         tax = _legal_round(Decimal(net) * tax_bps / 10000)
-        conn.execute("INSERT INTO legal_fees VALUES (?,?,?,?,?,?,?,?,?,?,NULL)", (secrets.token_hex(16), pid, p["matter_id"], _legal_text(p.get("description"), required=True), kind, minutes, rate, net, tax_bps, tax))
+        conn.execute("INSERT INTO legal_fees (id,project_id,matter_id,description,kind,minutes,rate_cents,net_cents,tax_bps,tax_cents,invoice_id,responsible_user) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,?)", (secrets.token_hex(16), pid, p["matter_id"], _legal_text(p.get("description"), required=True), kind, minutes, rate, net, tax_bps, tax, _legal_text(p.get("responsible_user"), limit=200)))
         return
     if action == "document.create":
         matter = _legal_row(conn, "legal_matters", pid, p.get("matter_id"))
@@ -213,21 +292,34 @@ def _legal_apply(conn, pid, action, p):
         kind = p.get("kind")
         if kind not in ("quote", "invoice"):
             raise ValueError("Type de document invalide")
+        settings = conn.execute("SELECT * FROM legal_firm_settings WHERE id=1").fetchone()
+        if kind == "invoice" and (not settings or not settings["legal_name"] or not settings["address"] or not settings["siren"] or (settings["vat_regime"] == "standard" and not settings["vat_number"])):
+            raise ValueError("Renseignez l’identité, l’adresse, le SIREN et, si le cabinet est assujetti, le numéro de TVA dans les paramètres de facturation.")
         ids = p.get("fee_ids") or []
         if not ids or len(ids) != len(set(ids)) or len(ids) > 500:
             raise ValueError("Sélectionner entre 1 et 500 honoraires distincts")
         fees = [_legal_row(conn, "legal_fees", pid, fee_id) for fee_id in ids]
+        if kind == "invoice" and (not client["address"].strip() or (client["customer_type"] == "professional" and len(client["siren"]) != 9)):
+            raise ValueError("Complétez l’adresse du client et, pour un client professionnel, son SIREN avant la facture.")
         if any(f["matter_id"] != matter["id"] or (kind == "invoice" and f["invoice_id"]) for f in fees):
             raise ValueError("Honoraires d'un autre dossier ou déjà facturés")
+        if kind == "invoice" and settings["vat_regime"] == "franchise" and any(f["tax_bps"] for f in fees):
+            raise ValueError("Le régime de franchise en base ne peut pas facturer de TVA. Corrigez les honoraires avant de créer la facture.")
         due_on = _legal_date(p.get("due_on"))
         today = date.today().isoformat()
         if due_on < today:
             raise ValueError("L'échéance doit être aujourd'hui ou ultérieure")
         doc_id = secrets.token_hex(16)
-        count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE project_id=?", (pid,)).fetchone()[0] + 1
-        ref = f"{'DEV' if kind == 'quote' else 'FAC'}-BROUILLON-{count:05d}"
+        count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind=?", (kind,)).fetchone()[0] + 1
+        ref = f"{'DEV' if kind == 'quote' else 'FAC'}-BROUILLON-{date.today().year}-{count:05d}"
         net, tax = sum(f["net_cents"] for f in fees), sum(f["tax_cents"] for f in fees)
-        snapshot = {"client": {k: client[k] for k in ("name", "email", "address")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees]}
+        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees]}
+        if kind == "invoice":
+            snapshot["jurisdiction"] = "FR"
+            snapshot["issuer"] = {k: settings[k] for k in ("legal_name", "address", "siren", "vat_number", "vat_regime", "bar_name")}
+            snapshot["payment_terms"] = {"due_on": due_on, "delay_days": settings["payment_delay_days"],
+                "late_penalty_rate": settings["late_penalty_rate"], "recovery_indemnity_cents": 4000}
+            snapshot["vat_notice"] = "TVA non applicable, article 293 B du CGI" if settings["vat_regime"] == "franchise" else ""
         conn.execute("INSERT INTO legal_documents VALUES (?,?,?,?,?,?,?,?,?,?,?)", (doc_id, pid, matter["id"], kind, ref, today, due_on, json.dumps(snapshot, ensure_ascii=False), net, tax, net + tax))
         if kind == "invoice":
             conn.executemany("UPDATE legal_fees SET invoice_id=? WHERE id=? AND project_id=?", [(doc_id, f["id"], pid) for f in fees])

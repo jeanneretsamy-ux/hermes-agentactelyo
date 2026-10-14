@@ -26,20 +26,26 @@ def test_legal_workflow_money_snapshot_and_retry_are_durable(tmp_path):
     pid = call("projects.create", name="Droit social", folders=[str(tmp_path)])["project"]["id"]
     p = {"project_id": pid}
     call("legal.workspace.set", **p, domain="social")
+    call("legal.firm.settings.set", **p, legal_name="Cabinet Test", address="1 rue Test, Paris",
+         siren="123456789", vat_number="FR00123456789", vat_regime="standard", bar_name="Paris")
     client = call("legal.client.save", **p, name="Client témoin", address="10 rue Test", email="test@example.test")["clients"][0]
     matter = call("legal.matter.save", **p, client_id=client["id"], title="Rupture", matter_type="Rupture du contrat", reference="SOC-01")["matters"][0]
     act = call("legal.act.save", **p, title="Modèle personnel", act_type="Avenant", body="Client : {{client}}")["acts"][0]
     call("legal.act.save", **p, **{**act, "body": "Dossier : {{dossier}}"})
-    fee_params = {**p, "request_id": "fee-1", "matter_id": matter["id"], "description": "Consultation", "kind": "time", "minutes": 25, "rate_cents": 19999, "tax_bps": 2000}
+    fee_params = {**p, "request_id": "fee-1", "matter_id": matter["id"], "description": "Consultation", "kind": "time", "minutes": 25, "rate_cents": 19999, "tax_bps": 2000, "responsible_user": "Avocate A"}
     fee = call("legal.fee.add", **fee_params)["fees"][0]
     assert fee["net_cents"] == 8333
     assert fee["tax_cents"] == 1667
+    assert fee["responsible_user"] == "Avocate A"
     assert len(call("legal.fee.add", **fee_params)["fees"]) == 1
     fail("legal.fee.add", **{**fee_params, "description": "Changed retry"})
     fail("legal.fee.add", **{**fee_params, "request_id": "negative", "minutes": -1})
     document_params = {**p, "request_id": "invoice-1", "matter_id": matter["id"], "kind": "invoice", "fee_ids": [fee["id"]], "due_on": date.today().isoformat()}
     doc = call("legal.document.create", **document_params)["documents"][0]
     assert doc["total_cents"] == 10000
+    assert doc["snapshot"]["jurisdiction"] == "FR"
+    assert doc["snapshot"]["issuer"]["siren"] == "123456789"
+    assert doc["snapshot"]["payment_terms"]["recovery_indemnity_cents"] == 4000
     assert len(call("legal.document.create", **document_params)["documents"]) == 1
     fail("legal.document.create", **{**document_params, "request_id": "double-billing"})
     call("legal.client.save", **p, **{**client, "name": "Nom modifié"})
@@ -50,11 +56,19 @@ def test_legal_workflow_money_snapshot_and_retry_are_durable(tmp_path):
     assert len(call("legal.payment.add", **payment_params)["payments"]) == 1
     fail("legal.payment.add", **{**payment_params, "request_id": "overpayment", "amount_cents": 7001})
     other_pid = call("projects.create", name="Autre projet", folders=[str(tmp_path / "other")])["project"]["id"]
+    other_state = call("legal.snapshot", project_id=other_pid)
+    assert other_state["firm_settings"]["siren"] == "123456789"
+    assert other_state["firm_totals"]["invoiced_cents"] == 10000
     fail("legal.payment.add", **{**payment_params, "project_id": other_pid, "request_id": "foreign"})
     fail("legal.workspace.set", **p, domain="fiscal")
     state = call("legal.snapshot", **p)
     assert state["acts"][0]["body"] == "Dossier : {{dossier}}"
     assert len(state["payments"]) == 1 and len(state["documents"]) == 1
+    assert state["firm_totals"]["fees_cents"] == 8333
+    assert state["firm_totals"]["invoiced_cents"] == 10000
+    assert state["firm_totals"]["paid_cents"] == 3000
+    assert state["firm_totals"]["by_user"] == [{"user": "Avocate A", "fees_cents": 8333, "fee_count": 1}]
+    assert state["firm_totals"]["by_matter"][0]["matter_id"] == matter["id"]
     # Every request reopened the real DB; deletion still observes the project FK boundary.
     call("projects.delete", id=pid)
     assert server._methods["legal.snapshot"](1, p)["error"]["code"] == 5062

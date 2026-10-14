@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { downloadLegalText, legalDecimal, legalDocumentText, legalMoney } from '@/store/legal-practice'
 
-import { Choice, type LegalSectionProps, TextField } from './fields'
+import { Choice, Field, type LegalSectionProps, TextField } from './fields'
 const today = () => new Date().toISOString().slice(0, 10)
 
 export function LegalBillingSection({ data, write, submit }: LegalSectionProps) {
@@ -18,6 +18,25 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [documentId, setDocumentId] = useState('')
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentRef, setPaymentRef] = useState('')
+  const [legalName, setLegalName] = useState(data.firm_settings.legal_name)
+  const [firmAddress, setFirmAddress] = useState(data.firm_settings.address)
+  const [siren, setSiren] = useState(data.firm_settings.siren)
+  const [vatNumber, setVatNumber] = useState(data.firm_settings.vat_number)
+  const [vatRegime, setVatRegime] = useState<'standard' | 'franchise'>(data.firm_settings.vat_regime)
+  const [barName, setBarName] = useState(data.firm_settings.bar_name)
+  const [paymentDelay, setPaymentDelay] = useState(String(data.firm_settings.payment_delay_days))
+  const [latePenalty, setLatePenalty] = useState(data.firm_settings.late_penalty_rate)
+  const [responsibleUser, setResponsibleUser] = useState('')
+  useEffect(() => {
+    setLegalName(data.firm_settings.legal_name)
+    setFirmAddress(data.firm_settings.address)
+    setSiren(data.firm_settings.siren)
+    setVatNumber(data.firm_settings.vat_number)
+    setVatRegime(data.firm_settings.vat_regime)
+    setBarName(data.firm_settings.bar_name)
+    setPaymentDelay(String(data.firm_settings.payment_delay_days))
+    setLatePenalty(data.firm_settings.late_penalty_rate)
+  }, [data.firm_settings])
 
   const matterChoices = data.matters.map(item => ({
     id: item.id,
@@ -27,17 +46,69 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const fees = data.fees.filter(fee => fee.matter_id === matterId)
   const unbilled = fees.filter(fee => !fee.invoice_id)
   const invoices = data.documents.filter(doc => doc.kind === 'invoice')
-  const total = invoices.reduce((sum, doc) => sum + doc.total_cents, 0)
-  const paid = invoices.reduce((sum, doc) => sum + doc.paid_cents, 0)
 
   return (
     <>
-      <p>Devis et factures de travail en EUR, à compléter avant émission. Les règlements sont saisis manuellement.</p>
+      <p>
+        Gestion consolidée du cabinet, avec suivi par projet, dossier et utilisateur. Juridiction prise en charge :
+        France.
+      </p>
+      <form
+        className="space-y-3 rounded-md border border-(--ui-stroke-secondary) p-4"
+        onSubmit={submit(async () => {
+          await write('legal.firm.settings.set', {
+            jurisdiction: 'FR',
+            legal_name: legalName,
+            address: firmAddress,
+            siren,
+            vat_number: vatNumber,
+            vat_regime: vatRegime,
+            bar_name: barName,
+            payment_delay_days: Number(paymentDelay),
+            late_penalty_rate: latePenalty
+          })
+        })}
+      >
+        <h3 className="font-semibold">Cabinet et juridiction</h3>
+        <p>Complétez ces informations et vérifiez-les avant la création d’une facture.</p>
+        <div className="grid gap-3 md:grid-cols-2">
+          <TextField label="Nom juridique du cabinet" onChange={setLegalName} required value={legalName} />
+          <TextField label="SIREN (9 chiffres)" onChange={setSiren} required value={siren} />
+          <Field label="Adresse du cabinet">
+            <textarea
+              className="min-h-20 rounded-md border border-(--ui-stroke-secondary) bg-(--ui-chat-bubble-background) p-2"
+              onChange={e => setFirmAddress(e.target.value)}
+              required
+              value={firmAddress}
+            />
+          </Field>
+          <TextField label="N° TVA intracommunautaire (si applicable)" onChange={setVatNumber} value={vatNumber} />
+          <Choice
+            items={[
+              { id: 'standard', label: 'Assujetti à la TVA' },
+              { id: 'franchise', label: 'Franchise en base' }
+            ]}
+            label="Régime de TVA"
+            onChange={value => setVatRegime(value as 'standard' | 'franchise')}
+            value={vatRegime}
+          />
+          <TextField label="Barreau / ordre (facultatif)" onChange={setBarName} value={barName} />
+          <TextField
+            label="Délai de règlement (jours)"
+            onChange={setPaymentDelay}
+            required
+            type="number"
+            value={paymentDelay}
+          />
+          <TextField label="Pénalités de retard" onChange={setLatePenalty} required value={latePenalty} />
+        </div>
+        <Button type="submit">Enregistrer les paramètres du cabinet</Button>
+      </form>
       <div className="grid gap-3 sm:grid-cols-3">
         {[
-          ['Total des factures de travail', total],
-          ['Règlements saisis', paid],
-          ['Solde', total - paid]
+          ['Honoraires du cabinet', data.firm_totals.fees_cents],
+          ['Facturé', data.firm_totals.invoiced_cents],
+          ['Solde du cabinet', data.firm_totals.balance_cents]
         ].map(([label, value]) => (
           <div className="rounded-md border border-(--ui-stroke-secondary) p-3" key={label}>
             <p>{label}</p>
@@ -57,11 +128,13 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
               ...(feeKind === 'time'
                 ? { minutes: Number(minutes), rate_cents: legalDecimal(amount) }
                 : { amount_cents: legalDecimal(amount) }),
-              tax_bps: legalDecimal(tax)
+              tax_bps: legalDecimal(tax),
+              responsible_user: responsibleUser
             })
           ) {
             setDescription('')
             setAmount('')
+            setResponsibleUser('')
           }
         })}
       >
@@ -77,6 +150,11 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             value={feeKind}
           />
           <TextField label="Prestation" onChange={setDescription} required value={description} />
+          <TextField
+            label="Utilisateur responsable / collaborateur"
+            onChange={setResponsibleUser}
+            value={responsibleUser}
+          />
           <TextField
             label={feeKind === 'time' ? 'Tarif horaire HT (€)' : 'Montant HT (€)'}
             onChange={setAmount}
@@ -100,6 +178,28 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
           </li>
         ))}
       </ul>
+      <div className="grid gap-4 md:grid-cols-2">
+        <section>
+          <h3 className="font-semibold">Répartition par utilisateur</h3>
+          <ul>
+            {data.firm_totals.by_user.map(row => (
+              <li key={row.user}>
+                {row.user} — {legalMoney(row.fees_cents)} HT ({row.fee_count})
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section>
+          <h3 className="font-semibold">Répartition par dossier</h3>
+          <ul>
+            {data.firm_totals.by_matter.map(row => (
+              <li key={`${row.project_id}:${row.matter_id}`}>
+                {row.project} · {row.title} — {legalMoney(row.fees_cents)} HT ({row.fee_count})
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
       <TextField label="Échéance du document" onChange={setDueOn} type="date" value={dueOn} />
       <div className="flex flex-wrap gap-2">
         <Button

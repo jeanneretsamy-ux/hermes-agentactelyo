@@ -9,6 +9,8 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
   const [clientName, setClientName] = useState('')
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
+  const [customerType, setCustomerType] = useState('individual')
+  const [siren, setSiren] = useState('')
   const [clientId, setClientId] = useState('')
   const [matterTitle, setMatterTitle] = useState('')
   const [matterType, setMatterType] = useState('')
@@ -20,16 +22,37 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
         <form
           className="space-y-3"
           onSubmit={submit(async () => {
-            if (await write('legal.client.save', { name: clientName, email, address })) {
+            if (
+              await write('legal.client.save', {
+                name: clientName,
+                email,
+                address,
+                customer_type: customerType as 'individual' | 'professional',
+                siren
+              })
+            ) {
               setClientName('')
               setEmail('')
               setAddress('')
+              setSiren('')
             }
           })}
         >
           <h3 className="font-semibold">Nouveau client</h3>
           <TextField label="Nom du client" onChange={setClientName} required value={clientName} />
           <TextField label="Email" onChange={setEmail} type="email" value={email} />
+          <Choice
+            items={[
+              { id: 'individual', label: 'Particulier' },
+              { id: 'professional', label: 'Professionnel' }
+            ]}
+            label="Type de client"
+            onChange={setCustomerType}
+            value={customerType}
+          />
+          {customerType === 'professional' && (
+            <TextField label="SIREN du client professionnel" onChange={setSiren} value={siren} />
+          )}
           <Field label="Adresse">
             <Textarea onChange={e => setAddress(e.target.value)} value={address} />
           </Field>

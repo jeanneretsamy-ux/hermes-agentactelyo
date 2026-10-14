@@ -89,18 +89,34 @@ export function legalDecimal(value: string): number {
 
 export function legalDocumentText(doc: LegalDocument): string {
   const { client, matter, lines } = doc.snapshot
+  const issuer = doc.snapshot.issuer
+  const terms = doc.snapshot.payment_terms
 
   return [
     `# ${doc.kind === 'quote' ? 'Devis' : 'Facture'} — BROUILLON`,
     doc.reference,
     `Date : ${doc.created_on} | Échéance : ${doc.due_on}`,
+    ...(issuer
+      ? [
+          `Émetteur : ${issuer.legal_name}\n${issuer.address}\nSIREN ${issuer.siren}${issuer.vat_number ? ` · TVA ${issuer.vat_number}` : ''}${issuer.bar_name ? ` · Barreau ${issuer.bar_name}` : ''}`
+        ]
+      : []),
     `Client : ${client.name}\n${client.address}\n${client.email}`,
+    ...(client.customer_type === 'professional' && client.siren
+      ? [`Client professionnel — SIREN ${client.siren}`]
+      : []),
     `Dossier : ${matter.title} (${matter.reference})`,
     ...lines.map(
       line =>
         `${line.description} — HT ${legalMoney(line.net_cents)} — TVA ${line.tax_bps / 100} % : ${legalMoney(line.tax_cents)}`
     ),
     `Total HT : ${legalMoney(doc.net_cents)}\nTVA : ${legalMoney(doc.tax_cents)}\nTotal TTC : ${legalMoney(doc.total_cents)}`,
+    ...(doc.snapshot.vat_notice ? [doc.snapshot.vat_notice] : []),
+    ...(terms
+      ? [
+          `Paiement : échéance au ${terms.due_on} (${terms.delay_days} jours)\nPénalités de retard : ${terms.late_penalty_rate}${client.customer_type === 'professional' ? '\nIndemnité forfaitaire pour frais de recouvrement : 40,00 €' : ''}`
+        ]
+      : []),
     `Règlements saisis : ${legalMoney(doc.paid_cents)}\nSolde : ${legalMoney(doc.balance_cents)}`,
     'Document de travail interne. À compléter et valider avant toute émission au client.'
   ].join('\n\n')

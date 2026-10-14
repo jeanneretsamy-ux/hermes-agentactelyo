@@ -25,7 +25,7 @@ def _register_legal_method(action):
             return _err(rid, 5061, str(error))
 
 
-for _legal_action in ("snapshot", "workspace.set", "client.save", "matter.save", "act.save", "fee.add", "document.create", "payment.add"):
+for _legal_action in ("snapshot", "workspace.set", "firm.settings.set", "client.save", "matter.save", "act.save", "fee.add", "document.create", "payment.add"):
     _register_legal_method(_legal_action)
 
 

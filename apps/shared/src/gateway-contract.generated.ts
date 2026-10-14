@@ -1849,6 +1849,8 @@ export interface LegalSnapshot {
   fees: LegalFee[]
   documents: LegalDocument[]
   payments: LegalPayment[]
+  firm_settings: LegalFirmSettings
+  firm_totals: LegalFirmTotals
 }
 export interface LegalDomain {
   id: string
@@ -1860,6 +1862,8 @@ export interface LegalClient {
   name: string
   email: string
   address: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
   id: string
 }
 export interface LegalMatter {
@@ -1887,6 +1891,7 @@ export interface LegalFee {
   minutes: number
   rate_cents: number
   invoice_id: string | null
+  responsible_user?: string
 }
 export interface LegalDocument {
   id: string
@@ -1906,11 +1911,17 @@ export interface LegalDocumentSnapshot {
   client: LegalClientSnapshot
   matter: LegalMatterSnapshot
   lines: LegalLine[]
+  jurisdiction?: string | null
+  issuer?: LegalInvoiceIssuer | null
+  payment_terms?: Record<string, unknown> | null
+  vat_notice?: string
 }
 export interface LegalClientSnapshot {
   name: string
   email: string
   address: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
 }
 export interface LegalMatterSnapshot {
   title: string
@@ -1922,6 +1933,14 @@ export interface LegalLine {
   tax_bps: number
   tax_cents: number
 }
+export interface LegalInvoiceIssuer {
+  legal_name: string
+  address: string
+  siren: string
+  vat_number: string
+  vat_regime: 'standard' | 'franchise'
+  bar_name: string
+}
 export interface LegalPayment {
   id: string
   document_id: string
@@ -1929,11 +1948,64 @@ export interface LegalPayment {
   paid_on: string
   reference: string
 }
+export interface LegalFirmSettings {
+  jurisdiction: string
+  legal_name: string
+  address: string
+  siren: string
+  vat_number: string
+  vat_regime: 'standard' | 'franchise'
+  bar_name: string
+  payment_delay_days: number
+  late_penalty_rate: string
+}
+export interface LegalFirmTotals {
+  fees_cents: number
+  fee_count: number
+  invoiced_cents: number
+  paid_cents: number
+  balance_cents: number
+  by_project: LegalProjectBillingGroup[]
+  by_user: LegalBillingGroup[]
+  by_matter: LegalMatterBillingGroup[]
+}
+export interface LegalProjectBillingGroup {
+  project_id: string
+  name: string
+  fees_cents: number
+  fee_count: number
+}
+export interface LegalBillingGroup {
+  user: string
+  fees_cents: number
+  fee_count: number
+}
+export interface LegalMatterBillingGroup {
+  project_id: string
+  project: string
+  matter_id: string
+  title: string
+  fees_cents: number
+  fee_count: number
+}
 export interface LegalWorkspaceParams {
   profile?: string | null
   project_id: string
   domain: string
   matter_types?: string[] | null
+}
+export interface LegalFirmSettingsParams {
+  profile?: string | null
+  project_id: string
+  jurisdiction?: 'FR'
+  legal_name: string
+  address: string
+  siren: string
+  vat_number?: string
+  vat_regime?: 'standard' | 'franchise'
+  bar_name?: string
+  payment_delay_days?: number
+  late_penalty_rate?: string
 }
 export interface LegalClientParams {
   profile?: string | null
@@ -1942,6 +2014,8 @@ export interface LegalClientParams {
   name: string
   email?: string
   address?: string
+  customer_type?: 'individual' | 'professional'
+  siren?: string
 }
 export interface LegalMatterParams {
   profile?: string | null
@@ -1972,6 +2046,7 @@ export interface LegalFeeParams {
   minutes?: number
   rate_cents?: number
   tax_bps?: number
+  responsible_user?: string
 }
 export interface LegalDocumentParams {
   profile?: string | null
@@ -5223,6 +5298,7 @@ export interface RpcMethods {
   'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
+  'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
   'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
   'legal.snapshot': { params: LegalProjectParams; result: LegalSnapshot }
@@ -5644,6 +5720,7 @@ export const RPC_METHODS = [
   'legal.client.save',
   'legal.document.create',
   'legal.fee.add',
+  'legal.firm.settings.set',
   'legal.matter.save',
   'legal.payment.add',
   'legal.snapshot',
