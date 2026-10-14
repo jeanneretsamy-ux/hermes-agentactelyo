@@ -22,15 +22,54 @@ const app = await _electron.launch({
   },
   timeout: 180000
 })
+
+async function clearFirstRunOverlay(page) {
+  const capabilities = page.getByText(/^(Capabilities|Capacités)$/).first()
+  const overlay = page.locator('[data-glass-opaque]').last()
+  const exitAction = /choose.*later|plus tard|skip|ignore|ignorer|continue|continuer|next|suivant|start|commencer|got it|compris/i
+
+  for (let attempt = 0; attempt < 20; attempt++) {
+    if (await capabilities.isVisible().catch(() => false) &&
+        !(await overlay.isVisible().catch(() => false))) {
+      return
+    }
+
+    if (await overlay.isVisible().catch(() => false)) {
+      const buttons = await overlay.getByRole('button').all()
+      let clicked = false
+
+      for (const button of buttons) {
+        const label = (await button.innerText().catch(() => '')).trim()
+        if (exitAction.test(label) && await button.isEnabled().catch(() => false)) {
+          await button.click({ timeout: 10000 })
+          clicked = true
+          break
+        }
+      }
+
+      if (!clicked) {
+        // The initial welcome screen can expose a single unlabeled close/continue
+        // action. Escape is the same user-facing dismissal path as its close button.
+        await page.keyboard.press('Escape')
+      }
+
+      await page.waitForTimeout(500)
+      continue
+    }
+
+    // Wait for the first-run UI to mount before deciding it is absent. On Windows
+    // it can appear after the sidebar and otherwise intercept every navigation click.
+    await page.waitForTimeout(500)
+  }
+
+  const text = await overlay.innerText().catch(() => '')
+  throw new Error(`First-run onboarding still blocks the app after dismissal attempts: ${text.slice(0, 500)}`)
+}
+
 try {
   const page = await app.firstWindow({ timeout: 180000 })
-  // A clean profile opens the first-run provider chooser over the sidebar. Choose
-  // the explicit "later" path so this smoke test stays offline and can inspect the app.
-  const chooseProviderLater = page.getByText(/^(I'll choose a provider later|Je choisirai un fournisseur plus tard)$/i).first()
-  if (await chooseProviderLater.isVisible().catch(() => false)) {
-    await chooseProviderLater.click({ timeout: 30000 })
-  }
   await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
+  await clearFirstRunOverlay(page)
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
