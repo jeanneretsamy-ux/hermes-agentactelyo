@@ -24,6 +24,12 @@ const app = await _electron.launch({
 })
 try {
   const page = await app.firstWindow({ timeout: 180000 })
+  // A clean profile opens the first-run provider chooser over the sidebar. Choose
+  // the explicit "later" path so this smoke test stays offline and can inspect the app.
+  const chooseProviderLater = page.getByText(/^(I'll choose a provider later|Je choisirai un fournisseur plus tard)$/i).first()
+  if (await chooseProviderLater.isVisible().catch(() => false)) {
+    await chooseProviderLater.click({ timeout: 30000 })
+  }
   await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
