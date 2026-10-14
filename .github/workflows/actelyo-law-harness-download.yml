@@ -88,11 +88,25 @@ jobs:
           try {
             $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
             if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-            $appSource = Join-Path $env:RUNNER_TEMP 'actelyo-packaged'
+            # Keep the staged source root short; Python packages contain deeply nested filenames.
+            $appSource = Join-Path $env:RUNNER_TEMP 'a'
             Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
             if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
-            $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
-            if (-not (Test-Path $compiler)) { throw 'Inno Setup compiler unavailable on runner' }
+            # Inno Setup 6 cannot reliably compile/install the long Python paths in the bundled runtime.
+            # Pin stable Inno Setup 7 and verify the official Authenticode publisher before running it.
+            $innoVersion = '7.1.0'
+            $innoInstaller = Join-Path $env:RUNNER_TEMP "innosetup-$innoVersion-x64.exe"
+            $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe"
+            Invoke-WebRequest -Uri $innoUrl -OutFile $innoInstaller
+            $signature = Get-AuthenticodeSignature -FilePath $innoInstaller
+            if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B\.V\.') {
+              throw 'Inno Setup installer signature or publisher verification failed'
+            }
+            $innoRoot = Join-Path $env:RUNNER_TEMP 'InnoSetup7'
+            $setup = Start-Process -FilePath $innoInstaller -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=$innoRoot") -WindowStyle Hidden -Wait -PassThru
+            if ($setup.ExitCode -ne 0) { throw "Inno Setup installation failed: $($setup.ExitCode)" }
+            $compiler = Join-Path $innoRoot 'ISCC.exe'
+            if (-not (Test-Path $compiler)) { throw 'Pinned Inno Setup 7 compiler unavailable after installation' }
             $compileLog = Join-Path $releaseDir 'installer-compile.log'
             $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss 2>&1
             $compileExitCode = $LASTEXITCODE
