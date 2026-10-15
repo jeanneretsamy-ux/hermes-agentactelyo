@@ -40,11 +40,13 @@ def test_chat_tool_manages_project_workspace_and_invoice_draft(monkeypatch, tmp_
     ))["data"]["fees"][0]
     invoice = json.loads(legal_cabinet.legal_cabinet(
         "document.create", request_id="invoice-chat-1", matter_id=matter["id"],
-        kind="invoice", fee_ids=[fee["id"]], due_on=date.today().isoformat(),
+        kind="invoice", fee_ids=[fee["id"]], due_on=date.today().isoformat(), template_id="detaille",
     ))
 
     assert invoice["success"] is True
     assert invoice["data"]["documents"][0]["total_cents"] == 12000
+    assert invoice["data"]["documents"][0]["snapshot"]["template_id"] == "detaille"
+    assert "Présentation détaillée" in invoice["data"]["rendered_document"]
     assert "Détail des prestations" in invoice["data"]["rendered_document"]
     assert "BROUILLON INTERNE — NON ÉMIS" in invoice["data"]["rendered_document"]
     assert registry.get_entry("legal_cabinet").toolset == "project"
