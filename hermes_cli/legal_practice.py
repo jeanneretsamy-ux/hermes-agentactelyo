@@ -162,6 +162,74 @@ def legal_snapshot(conn, project_id):
     return result
 
 
+def render_legal_document(document):
+    """Render a saved quote/invoice snapshot as a readable, source-faithful Markdown draft."""
+    snapshot = document["snapshot"]
+    client, matter = snapshot["client"], snapshot["matter"]
+
+    def money(cents):
+        value = f"{cents / 100:,.2f}"
+        return value.replace(",", "\u202f").replace(".", ",") + " €"
+
+    def date_fr(value):
+        return date.fromisoformat(value).strftime("%d/%m/%Y")
+
+    def cell(value):
+        return str(value or "").replace("|", "\\|").replace("\r", " ").replace("\n", " ").strip()
+
+    is_invoice = document["kind"] == "invoice"
+    title = "Facture" if is_invoice else "Devis"
+    lines = [
+        f"# {title} — BROUILLON À RELIRE",
+        "",
+        f"**Référence provisoire :** {document['reference']}  ",
+        f"**Date du document :** {date_fr(document['created_on'])}  ",
+        f"**Échéance indiquée :** {date_fr(document['due_on'])}",
+    ]
+    issuer = snapshot.get("issuer")
+    if issuer:
+        lines.extend(["", "## Cabinet émetteur", f"**{cell(issuer['legal_name'])}**", cell(issuer["address"]),
+                      f"SIREN : {cell(issuer['siren'])}"])
+        if issuer.get("vat_number"):
+            lines.append(f"TVA intracommunautaire : {cell(issuer['vat_number'])}")
+        if issuer.get("bar_name"):
+            lines.append(f"Barreau : {cell(issuer['bar_name'])}")
+    lines.extend(["", "## Client", f"**{cell(client['name'])}**"])
+    if client.get("address"):
+        lines.append(cell(client["address"]))
+    if client.get("email"):
+        lines.append(f"Courriel : {cell(client['email'])}")
+    if client.get("customer_type") == "professional" and client.get("siren"):
+        lines.append(f"SIREN client : {cell(client['siren'])}")
+    lines.extend(["", "## Dossier", f"{cell(matter['title'])}" + (f" — réf. {cell(matter['reference'])}" if matter.get("reference") else ""),
+                  "", "## Détail des prestations", "",
+                  "| Prestation | Montant HT | Taux TVA | TVA | Montant TTC |",
+                  "|---|---:|---:|---:|---:|"])
+    for item in snapshot["lines"]:
+        lines.append(
+            f"| {cell(item['description'])} | {money(item['net_cents'])} | "
+            f"{item['tax_bps'] / 100:g} % | {money(item['tax_cents'])} | "
+            f"{money(item['net_cents'] + item['tax_cents'])} |"
+        )
+    lines.extend(["", f"**Total HT : {money(document['net_cents'])}**  ",
+                  f"**TVA : {money(document['tax_cents'])}**  ",
+                  f"# Total TTC : {money(document['total_cents'])}"])
+    if snapshot.get("vat_notice"):
+        lines.extend(["", cell(snapshot["vat_notice"])])
+    terms = snapshot.get("payment_terms")
+    if terms:
+        lines.extend(["", "## Règlement", f"Échéance : {date_fr(terms['due_on'])} ({terms['delay_days']} jours).",
+                      f"Pénalités de retard prévues au paramétrage : {cell(terms['late_penalty_rate'])}."])
+        if client.get("customer_type") == "professional":
+            lines.append(f"Indemnité forfaitaire pour frais de recouvrement : {money(terms['recovery_indemnity_cents'])}.")
+    paid = document.get("paid_cents", 0)
+    if is_invoice:
+        lines.extend(["", "## Suivi interne", f"Règlements enregistrés : {money(paid)}  ",
+                      f"Solde calculé : {money(document['total_cents'] - paid)}"])
+    lines.extend(["", "---", "**BROUILLON INTERNE — NON ÉMIS.** Vérifier les mentions, les taux, les dates, les conditions convenues et les pièces sources avant toute émission au client."])
+    return "\n".join(lines)
+
+
 def _firm_totals(conn):
     by_project = conn.execute("""SELECT p.id AS project_id,p.name,
       COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
@@ -338,3 +406,4 @@ def _legal_apply(conn, pid, action, p):
         conn.execute("INSERT INTO legal_payments VALUES (?,?,?,?,?,?)", (secrets.token_hex(16), pid, doc["id"], amount, paid_on, _legal_text(p.get("reference"), required=True)))
         return
     raise ValueError("Opération juridique inconnue")
+
