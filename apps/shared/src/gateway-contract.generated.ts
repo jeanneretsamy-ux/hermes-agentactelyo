@@ -1915,6 +1915,7 @@ export interface LegalDocumentSnapshot {
   issuer?: LegalInvoiceIssuer | null
   payment_terms?: Record<string, unknown> | null
   vat_notice?: string
+  template_id?: 'classique' | 'synthese' | 'detaille'
 }
 export interface LegalClientSnapshot {
   name: string
@@ -2056,6 +2057,7 @@ export interface LegalDocumentParams {
   kind: 'quote' | 'invoice'
   fee_ids: string[]
   due_on: string
+  template_id?: 'classique' | 'synthese' | 'detaille'
 }
 export interface LegalPaymentParams {
   profile?: string | null
@@ -6163,3 +6165,4 @@ export const GATEWAY_EVENT_TYPES = [
   'voice.transcript',
   'wake.detected'
 ] as const satisfies readonly BackendGatewayEventName[]
+
