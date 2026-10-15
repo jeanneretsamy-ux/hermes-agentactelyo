@@ -125,6 +125,7 @@ class LegalDocumentSnapshot(Result):
     issuer: LegalInvoiceIssuer | None = None
     payment_terms: dict[str, object] | None = None
     vat_notice: str = ""
+    template_id: Literal["classique", "synthese", "detaille"] = "classique"
 
 
 class LegalDocument(Result):
@@ -229,6 +230,7 @@ class LegalDocumentParams(LegalProjectParams):
     kind: Literal["quote", "invoice"]
     fee_ids: list[str] = Field(min_length=1, max_length=500)
     due_on: str
+    template_id: Literal["classique", "synthese", "detaille"] = "classique"
 
 
 class LegalPaymentParams(LegalProjectParams):
@@ -248,3 +250,4 @@ method("legal.act.save", params=LegalActParams, result=LegalSnapshot)
 method("legal.fee.add", params=LegalFeeParams, result=LegalSnapshot)
 method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
+
