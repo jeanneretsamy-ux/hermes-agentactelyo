@@ -7,6 +7,7 @@ test patches on ``update_cmd`` stay effective).
 
 import logging
 from contextlib import suppress
+import os
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -469,7 +470,7 @@ def _portable_git_candidates() -> list:
 
 
 def _locate_real_git() -> Optional[Path]:
-    """Find a real Git-for-Windows ``git-core/git.exe`` (standard locations + managed PortableGit) that runs
+    """Find a usable Git-for-Windows ``git.exe`` (standard locations, PATH + managed PortableGit) that runs
     without the trampoline guard. None when nothing suits — callers keep the broken command and let the
     fetch-failure ZIP fallback handle it. A failed probe (None) disqualifies a candidate like a guard hit.
 
@@ -482,7 +483,31 @@ def _locate_real_git() -> Optional[Path]:
         for base in (r"C:\Program Files", r"C:\Program Files (x86)")
         for arch in ("clangarm64", "mingw64", "mingw32")
     ] + _portable_git_candidates()
-    return next((c for c in candidates if c.exists() and _probe_fork_bomb([str(c)]) is False), None)
+
+    # Recent Windows runners and package managers can put a working standalone Git
+    # executable on PATH without installing Git for Windows under Program Files.
+    # Check every PATH entry because the first `git.exe` can be the broken trampoline
+    # we are trying to replace while a healthy binary appears later in PATH.
+    for entry in os.environ.get("PATH", "").split(os.pathsep):
+        if not entry.strip():
+            continue
+        directory = Path(entry.strip().strip('"'))
+        candidates.append(directory / "git.exe")
+        if directory.name.lower() in ("bin", "cmd"):
+            install_root = directory.parent
+            candidates.extend(
+                install_root / arch / "libexec" / "git-core" / "git.exe"
+                for arch in ("clangarm64", "mingw64", "mingw32")
+            )
+
+    seen = set()
+    unique_candidates = []
+    for candidate in candidates:
+        key = str(candidate).casefold()
+        if key not in seen:
+            seen.add(key)
+            unique_candidates.append(candidate)
+    return next((c for c in unique_candidates if c.exists() and _probe_fork_bomb([str(c)]) is False), None)
 
 
 def _ensure_non_trampoline_git(git_cmd: list) -> list:
