@@ -178,9 +178,16 @@ def render_legal_document(document):
         return str(value or "").replace("|", "\\|").replace("\r", " ").replace("\n", " ").strip()
 
     is_invoice = document["kind"] == "invoice"
+    template_id = snapshot.get("template_id", "classique")
     title = "Facture" if is_invoice else "Devis"
+    template_titles = {
+        "classique": "Présentation classique",
+        "synthese": "Présentation synthèse",
+        "detaille": "Présentation détaillée",
+    }
     lines = [
         f"# {title} — BROUILLON À RELIRE",
+        f"_{template_titles.get(template_id, template_titles['classique'])}_",
         "",
         f"**Référence provisoire :** {document['reference']}  ",
         f"**Date du document :** {date_fr(document['created_on'])}  ",
@@ -201,16 +208,32 @@ def render_legal_document(document):
         lines.append(f"Courriel : {cell(client['email'])}")
     if client.get("customer_type") == "professional" and client.get("siren"):
         lines.append(f"SIREN client : {cell(client['siren'])}")
-    lines.extend(["", "## Dossier", f"{cell(matter['title'])}" + (f" — réf. {cell(matter['reference'])}" if matter.get("reference") else ""),
-                  "", "## Détail des prestations", "",
-                  "| Prestation | Montant HT | Taux TVA | TVA | Montant TTC |",
-                  "|---|---:|---:|---:|---:|"])
-    for item in snapshot["lines"]:
-        lines.append(
-            f"| {cell(item['description'])} | {money(item['net_cents'])} | "
-            f"{item['tax_bps'] / 100:g} % | {money(item['tax_cents'])} | "
-            f"{money(item['net_cents'] + item['tax_cents'])} |"
-        )
+    lines.extend(["", "## Dossier", f"{cell(matter['title'])}" + (f" — réf. {cell(matter['reference'])}" if matter.get("reference") else "")])
+    if template_id == "synthese":
+        lines.extend(["", "## Prestations", ""])
+        for item in snapshot["lines"]:
+            lines.append(
+                f"- **{cell(item['description'])}** — {money(item['net_cents'])} HT, "
+                f"TVA {item['tax_bps'] / 100:g} % ({money(item['tax_cents'])}), "
+                f"soit {money(item['net_cents'] + item['tax_cents'])} TTC"
+            )
+    elif template_id == "detaille":
+        lines.extend(["", "## Détail des prestations", "",
+                      "| Prestation | Montant HT | Taux TVA | TVA | Montant TTC |",
+                      "|---|---:|---:|---:|---:|"])
+        for item in snapshot["lines"]:
+            lines.append(
+                f"| {cell(item['description'])} | {money(item['net_cents'])} | "
+                f"{item['tax_bps'] / 100:g} % | {money(item['tax_cents'])} | "
+                f"{money(item['net_cents'] + item['tax_cents'])} |"
+            )
+    else:
+        lines.extend(["", "## Honoraires", ""])
+        for item in snapshot["lines"]:
+            lines.append(
+                f"- {cell(item['description'])} : {money(item['net_cents'])} HT "
+                f"(TVA {item['tax_bps'] / 100:g} % : {money(item['tax_cents'])})"
+            )
     lines.extend(["", f"**Total HT : {money(document['net_cents'])}**  ",
                   f"**TVA : {money(document['tax_cents'])}**  ",
                   f"# Total TTC : {money(document['total_cents'])}"])
@@ -360,6 +383,9 @@ def _legal_apply(conn, pid, action, p):
         kind = p.get("kind")
         if kind not in ("quote", "invoice"):
             raise ValueError("Type de document invalide")
+        template_id = p.get("template_id", "classique")
+        if template_id not in ("classique", "synthese", "detaille"):
+            raise ValueError("Modèle de document inconnu")
         settings = conn.execute("SELECT * FROM legal_firm_settings WHERE id=1").fetchone()
         if kind == "invoice" and (not settings or not settings["legal_name"] or not settings["address"] or not settings["siren"] or (settings["vat_regime"] == "standard" and not settings["vat_number"])):
             raise ValueError("Renseignez l’identité, l’adresse, le SIREN et, si le cabinet est assujetti, le numéro de TVA dans les paramètres de facturation.")
@@ -381,7 +407,7 @@ def _legal_apply(conn, pid, action, p):
         count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind=?", (kind,)).fetchone()[0] + 1
         ref = f"{'DEV' if kind == 'quote' else 'FAC'}-BROUILLON-{date.today().year}-{count:05d}"
         net, tax = sum(f["net_cents"] for f in fees), sum(f["tax_cents"] for f in fees)
-        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees]}
+        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees], "template_id": template_id}
         if kind == "invoice":
             snapshot["jurisdiction"] = "FR"
             snapshot["issuer"] = {k: settings[k] for k in ("legal_name", "address", "siren", "vat_number", "vat_regime", "bar_name")}
