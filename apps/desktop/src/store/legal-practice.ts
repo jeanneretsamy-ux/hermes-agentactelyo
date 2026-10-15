@@ -87,15 +87,52 @@ export function legalDecimal(value: string): number {
   return cents
 }
 
-export function legalDocumentText(doc: LegalDocument): string {
+export type LegalDocumentTemplate = NonNullable<LegalDocument['snapshot']['template_id']>
+
+export const LEGAL_DOCUMENT_TEMPLATES: { id: LegalDocumentTemplate; label: string; description: string }[] = [
+  { id: 'classique', label: 'Cabinet classique', description: 'Présentation formelle, équilibrée et lisible.' },
+  { id: 'synthese', label: 'Synthèse', description: 'Informations essentielles en tête, document plus compact.' },
+  { id: 'detaille', label: 'Détaillé', description: 'Prestations et conditions présentées avec davantage de repères.' }
+]
+
+export function legalDocumentText(
+  doc: LegalDocument,
+  template: LegalDocumentTemplate = doc.snapshot.template_id ?? 'classique'
+): string {
   const { client, matter, lines } = doc.snapshot
   const issuer = doc.snapshot.issuer
   const terms = doc.snapshot.payment_terms
+  const title = doc.kind === 'quote' ? 'Devis' : 'Facture'
+  const header =
+    template === 'synthese'
+      ? [
+          `# ${title} ${doc.reference}`,
+          `**Total TTC : ${legalMoney(doc.total_cents)}**`,
+          `Émis le ${doc.created_on} · Échéance ${doc.due_on}`
+        ]
+      : [
+          `# ${title} — BROUILLON`,
+          `Référence : ${doc.reference}`,
+          `Date : ${doc.created_on} | Échéance : ${doc.due_on}`
+        ]
+  const itemLines =
+    template === 'synthese'
+      ? lines.map(
+          line =>
+            `- ${line.description} — ${legalMoney(line.net_cents)} HT, TVA ${line.tax_bps / 100} % (${legalMoney(line.tax_cents)})`
+        )
+      : template === 'detaille'
+        ? lines.map(
+            (line, index) =>
+              `${index + 1}. **${line.description}**\n   Montant HT : ${legalMoney(line.net_cents)} · Taux TVA : ${line.tax_bps / 100} % · TVA : ${legalMoney(line.tax_cents)} · TTC : ${legalMoney(line.net_cents + line.tax_cents)}`
+          )
+        : lines.map(
+            line =>
+              `${line.description} — HT ${legalMoney(line.net_cents)} — TVA ${line.tax_bps / 100} % : ${legalMoney(line.tax_cents)}`
+          )
 
   return [
-    `# ${doc.kind === 'quote' ? 'Devis' : 'Facture'} — BROUILLON`,
-    doc.reference,
-    `Date : ${doc.created_on} | Échéance : ${doc.due_on}`,
+    ...header,
     ...(issuer
       ? [
           `Émetteur : ${issuer.legal_name}\n${issuer.address}\nSIREN ${issuer.siren}${issuer.vat_number ? ` · TVA ${issuer.vat_number}` : ''}${issuer.bar_name ? ` · Barreau ${issuer.bar_name}` : ''}`
@@ -106,10 +143,8 @@ export function legalDocumentText(doc: LegalDocument): string {
       ? [`Client professionnel — SIREN ${client.siren}`]
       : []),
     `Dossier : ${matter.title} (${matter.reference})`,
-    ...lines.map(
-      line =>
-        `${line.description} — HT ${legalMoney(line.net_cents)} — TVA ${line.tax_bps / 100} % : ${legalMoney(line.tax_cents)}`
-    ),
+    ...(template === 'detaille' ? ['Détail des prestations'] : []),
+    ...itemLines,
     `Total HT : ${legalMoney(doc.net_cents)}\nTVA : ${legalMoney(doc.tax_cents)}\nTotal TTC : ${legalMoney(doc.total_cents)}`,
     ...(doc.snapshot.vat_notice ? [doc.snapshot.vat_notice] : []),
     ...(terms
@@ -130,3 +165,4 @@ export function downloadLegalText(name: string, text: string): void {
   link.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+
