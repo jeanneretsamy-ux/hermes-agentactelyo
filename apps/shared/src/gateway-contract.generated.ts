@@ -1009,8 +1009,7 @@ export interface ConnectionOperationTarget {
 export type ConnectionTargetKind = 'connector' | 'mcp' | 'plugin' | 'skill'
 export type ConnectionTargetAction = 'authorize' | 'connect' | 'enable' | 'install' | 'reconnect'
 /** ``tools/connectors/contract.py::TargetState``. */
-export type ConnectionTargetState =
-  'pending' | 'initiated' | 'connected' | 'skipped' | 'failed' | 'expired' | 'not_connected'
+export type ConnectionTargetState = 'pending' | 'initiated' | 'connected' | 'skipped' | 'failed' | 'expired' | 'not_connected'
 /** One credential an MCP install still needs; the card renders a field per entry and sends the values back with the approval. */
 export interface ConnectionTargetEnvField {
   name: string
@@ -1155,17 +1154,12 @@ export interface ConnectorAccountsRemoveResult {
 }
 export interface ConnectorPolicyGetResult {
   layers: ConnectorPolicyLayer[]
-  effective:
-    | ConnectorPolicyEffectiveUnrestricted
-    | ConnectorPolicyEffectiveDenyAll
-    | ConnectorPolicyEffectiveAllow
-    | ConnectorPolicyEffectiveDeny
+  effective: ConnectorPolicyEffectiveUnrestricted | ConnectorPolicyEffectiveDenyAll | ConnectorPolicyEffectiveAllow | ConnectorPolicyEffectiveDeny
 }
 export interface ConnectorPolicyLayer {
   kind: ConnectorPolicyLayerKind
   revision: string
-  body:
-    ConnectorPolicyUnrestrictedBody | ConnectorPolicyDenyAllBody | ConnectorPolicyAllowBody | ConnectorPolicyDenyBody
+  body: ConnectorPolicyUnrestrictedBody | ConnectorPolicyDenyAllBody | ConnectorPolicyAllowBody | ConnectorPolicyDenyBody
 }
 export type ConnectorPolicyLayerKind = 'org' | 'role' | 'member'
 export interface ConnectorPolicyUnrestrictedBody {
@@ -1237,11 +1231,7 @@ export interface ConnectorChange {
 }
 export interface ConnectorPolicySetResult {
   revision: string
-  effective:
-    | ConnectorPolicyEffectiveUnrestricted
-    | ConnectorPolicyEffectiveDenyAll
-    | ConnectorPolicyEffectiveAllow
-    | ConnectorPolicyEffectiveDeny
+  effective: ConnectorPolicyEffectiveUnrestricted | ConnectorPolicyEffectiveDenyAll | ConnectorPolicyEffectiveAllow | ConnectorPolicyEffectiveDeny
 }
 /** ``tools/bot_desktop/runtime.py::DesktopStatus`` plus the lease and the profile it speaks for. */
 export interface DisplayStatus {
@@ -4642,16 +4632,7 @@ export interface PluginServerRow {
   state: PluginServerState
   sentence: string
 }
-export type PluginServerState =
-  | 'connected'
-  | 'app_not_running'
-  | 'hermes_not_connected'
-  | 'endpoint_unavailable'
-  | 'no_interactive_session'
-  | 'version_too_old'
-  | 'missing_app'
-  | 'unsupported_gpu'
-  | 'unknown'
+export type PluginServerState = 'connected' | 'app_not_running' | 'hermes_not_connected' | 'endpoint_unavailable' | 'no_interactive_session' | 'version_too_old' | 'missing_app' | 'unsupported_gpu' | 'unknown'
 /** One ``config_schema`` key of a plugin manifest, rendered by the Plugins hub (``hermes_cli.plugins_settings.plugin_settings_fields``). ``secret`` fields carry no value: ``env`` names the ``.env`` variable and ``has_value`` whether it is set. */
 export interface PluginSettingField {
   key: string
@@ -5243,30 +5224,7 @@ export interface PetHatchProgressPayload {
 }
 /** ``change_watcher._CHANGE_WATCHES`` payload fn — ``{}`` for every watch except pet.changed. */
 export type ChangeSignalPayload = Record<string, unknown>
-export type ConnectorErrorReason =
-  | 'INVALID_PARAMS'
-  | 'NOT_OWNER'
-  | 'UNSUPPORTED_RUNTIME'
-  | 'CONNECTOR_REQUEST_FAILED'
-  | 'INVALID_CONNECTOR_RESPONSE'
-  | 'UNKNOWN_TARGET'
-  | 'LINK_STILL_VALID'
-  | 'REISSUE_REFUSED'
-  | 'UNKNOWN_OPERATION'
-  | 'INVALID_ANSWER'
-  | 'NEEDS_NOUS_AUTH'
-  | 'CONNECTOR_NOT_FOUND'
-  | 'TOOLS_UNAVAILABLE'
-  | 'CONNECTORS_UNAVAILABLE'
-  | 'CATALOG_UNAVAILABLE'
-  | 'ACCOUNTS_UNAVAILABLE'
-  | 'CONNECTION_NOT_FOUND'
-  | 'POLICY_UNAVAILABLE'
-  | 'POLICY_CONFLICT'
-  | 'FORBIDDEN_SCOPE'
-  | 'ORG_REQUIRED'
-  | 'ORG_ACCESS_DENIED'
-  | 'INVALID_POLICY'
+export type ConnectorErrorReason = 'INVALID_PARAMS' | 'NOT_OWNER' | 'UNSUPPORTED_RUNTIME' | 'CONNECTOR_REQUEST_FAILED' | 'INVALID_CONNECTOR_RESPONSE' | 'UNKNOWN_TARGET' | 'LINK_STILL_VALID' | 'REISSUE_REFUSED' | 'UNKNOWN_OPERATION' | 'INVALID_ANSWER' | 'NEEDS_NOUS_AUTH' | 'CONNECTOR_NOT_FOUND' | 'TOOLS_UNAVAILABLE' | 'CONNECTORS_UNAVAILABLE' | 'CATALOG_UNAVAILABLE' | 'ACCOUNTS_UNAVAILABLE' | 'CONNECTION_NOT_FOUND' | 'POLICY_UNAVAILABLE' | 'POLICY_CONFLICT' | 'FORBIDDEN_SCOPE' | 'ORG_REQUIRED' | 'ORG_ACCESS_DENIED' | 'INVALID_POLICY'
 
 // ── Client→server methods ──
 export interface RpcMethods {
@@ -5702,10 +5660,7 @@ export interface RpcMethods {
   /** Count one user-typed slash command (fire-and-forget; a no-op unless shared metrics are on). */
   'shared_metrics.slash_command': { params: SharedMetricsSlashCommandParams; result: SharedMetricsSlashCommandResult }
   /** Record one client launch-to-ready latency (fire-and-forget; a no-op unless shared metrics are on). */
-  'shared_metrics.startup_latency': {
-    params: SharedMetricsStartupLatencyParams
-    result: SharedMetricsStartupLatencyResult
-  }
+  'shared_metrics.startup_latency': { params: SharedMetricsStartupLatencyParams; result: SharedMetricsStartupLatencyResult }
   /** Pure read of the focused profile's shared-metrics opt-ins (collection, upload, answered). */
   'shared_metrics.status': { params: ProfileParams; result: SharedMetricsConsentResult }
   /** Count one Desktop packaged self-update outcome (fire-and-forget; a no-op unless shared metrics are on). */
