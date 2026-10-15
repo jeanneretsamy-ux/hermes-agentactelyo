@@ -106,7 +106,7 @@ export function legalDocumentText(
   const header =
     template === 'synthese'
       ? [
-          `# ${title} ${doc.reference}`,
+          `# ${title} ${doc.reference} — BROUILLON`,
           `**Total TTC : ${legalMoney(doc.total_cents)}**`,
           `Émis le ${doc.created_on} · Échéance ${doc.due_on}`
         ]
@@ -119,7 +119,7 @@ export function legalDocumentText(
     template === 'synthese'
       ? lines.map(
           line =>
-            `- ${line.description} — ${legalMoney(line.net_cents)} HT, TVA ${line.tax_bps / 100} % (${legalMoney(line.tax_cents)})`
+            `- **${line.description}** — ${legalMoney(line.net_cents)} HT, TVA ${line.tax_bps / 100} % (${legalMoney(line.tax_cents)}), soit ${legalMoney(line.net_cents + line.tax_cents)} TTC`
         )
       : template === 'detaille'
         ? lines.map(
