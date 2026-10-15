@@ -19,6 +19,7 @@ def test_chat_tool_manages_project_workspace_and_invoice_draft(monkeypatch, tmp_
     result = json.loads(legal_cabinet.legal_cabinet("workspace.set", domain="social"))
     assert result["success"] is True
     assert result["data"]["matter_types"]
+    assert result["project"]["primary_path"] == str(tmp_path)
 
     result = json.loads(legal_cabinet.legal_cabinet(
         "firm.settings.set", legal_name="Cabinet Test", address="1 rue Test, Paris",
