@@ -61,6 +61,32 @@ class LegalFee(LegalLine):
     rate_cents: int
     invoice_id: str | None
     responsible_user: str = ""
+    activity_date: str
+    billing_code: str
+    activity_type: str
+    billable: bool
+
+
+class LegalFeeCode(Result):
+    id: str
+    code: str
+    label: str
+    hourly_rate_cents: int
+    fixed_amount_cents: int
+    tax_bps: int
+
+
+class LegalSubscription(Result):
+    id: str
+    matter_id: str
+    label: str
+    amount_cents: int
+    tax_bps: int
+    cadence: Literal["monthly", "semiannual", "annual"]
+    starts_on: str
+    ends_on: str
+    next_invoice_on: str
+    status: Literal["active", "paused", "ended"]
 
 
 class LegalFirmSettings(Result):
@@ -159,6 +185,21 @@ class LegalPayment(Result):
     reference: str
 
 
+class LegalPracticeDocumentTemplate(Result):
+    id: str
+    label: str
+
+
+class LegalPracticeDocument(Result):
+    id: str
+    matter_id: str
+    template_id: str
+    title: str
+    body: str
+    fee_ids: list[str]
+    created_on: str
+
+
 class LegalSnapshot(Result):
     project_id: str
     domain: str | None
@@ -168,6 +209,10 @@ class LegalSnapshot(Result):
     matters: list[LegalMatter]
     acts: list[LegalAct]
     fees: list[LegalFee]
+    fee_codes: list[LegalFeeCode]
+    subscriptions: list[LegalSubscription]
+    practice_documents: list[LegalPracticeDocument]
+    practice_document_templates: list[LegalPracticeDocumentTemplate]
     documents: list[LegalDocument]
     payments: list[LegalPayment]
     firm_settings: LegalFirmSettings
@@ -212,12 +257,54 @@ class LegalFeeParams(LegalProjectParams):
     request_id: str = Field(min_length=1, max_length=100)
     matter_id: str
     description: str
-    kind: Literal["fixed", "time"]
+    kind: Literal["fixed", "time", "expense"]
     amount_cents: int = Field(default=0, ge=0, le=1_000_000_000, strict=True)
     minutes: int = Field(default=0, ge=0, le=1_000_000, strict=True)
     rate_cents: int = Field(default=0, ge=0, le=1_000_000_000, strict=True)
     tax_bps: int = Field(default=0, ge=0, le=10000, strict=True)
     responsible_user: str = ""
+    activity_date: str = ""
+    billing_code: str = ""
+    activity_type: str = ""
+    billable: bool = True
+
+
+class LegalFeeCodeParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    id: str | None = None
+    code: str
+    label: str
+    hourly_rate_cents: int = Field(default=0, ge=0, le=1_000_000_000, strict=True)
+    fixed_amount_cents: int = Field(default=0, ge=0, le=1_000_000_000, strict=True)
+    tax_bps: int = Field(default=0, ge=0, le=10000, strict=True)
+
+
+class LegalSubscriptionParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    id: str | None = None
+    matter_id: str
+    label: str
+    amount_cents: int = Field(ge=1, le=1_000_000_000, strict=True)
+    tax_bps: int = Field(default=0, ge=0, le=10000, strict=True)
+    cadence: Literal["monthly", "semiannual", "annual"]
+    starts_on: str
+    ends_on: str = ""
+    next_invoice_on: str = ""
+    status: Literal["active", "paused", "ended"] = "active"
+
+
+class LegalSubscriptionInvoiceParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    subscription_id: str
+    template_id: Literal["classique", "synthese", "detaille"] = "classique"
+
+
+class LegalPracticeDocumentParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    matter_id: str
+    template_id: str
+    title: str = ""
+    fee_ids: list[str] = Field(default_factory=list, max_length=500)
 
 
 class LegalFirmSettingsParams(LegalProjectParams):
@@ -276,6 +363,10 @@ method("legal.client.save", params=LegalClientParams, result=LegalSnapshot)
 method("legal.matter.save", params=LegalMatterParams, result=LegalSnapshot)
 method("legal.act.save", params=LegalActParams, result=LegalSnapshot)
 method("legal.fee.add", params=LegalFeeParams, result=LegalSnapshot)
+method("legal.fee_code.save", params=LegalFeeCodeParams, result=LegalSnapshot)
+method("legal.subscription.save", params=LegalSubscriptionParams, result=LegalSnapshot)
+method("legal.subscription.invoice", params=LegalSubscriptionInvoiceParams, result=LegalSnapshot)
+method("legal.practice_document.create", params=LegalPracticeDocumentParams, result=LegalSnapshot)
 method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot)
 method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)

@@ -37,6 +37,27 @@ LEGAL_DOMAINS = (
     {"id": "administratif", "label": "Droit administratif", "matter_types": ["Recours", "Marchés publics", "Urbanisme", "Responsabilité administrative"], "act_types": ["Recours gracieux", "Requête", "Mémoire", "Référé"]},
 )
 
+LEGAL_PRACTICE_DOCUMENT_TEMPLATES = (
+    ("invoice_appendix", "Annexe facture"), ("invoice_cancellation", "Annulation de facture"),
+    ("credit_note", "Avoir"), ("document_communication", "Bordereau de communication de pièces"),
+    ("carpa_movements", "Bordereau de mouvement CARPA"), ("case_list", "Bordereau liste / cote dossier"),
+    ("remittance_cheque", "Bordereau de remise par chèque"), ("remittance_invoice", "Bordereau de remise par facture"),
+    ("end_of_mission", "Compte rendu de fin de mission"), ("support_letter_2777", "Courrier d'accompagnement 2777"),
+    ("fixed_withdrawal_exemption", "Dispense de prélèvement forfaitaire"), ("payments_list", "Édition des règlements"),
+    ("labels", "Étiquettes"), ("subscription_invoice", "Facture d'abonnement"),
+    ("detailed_invoice", "Facture détaillée"), ("detailed_invoice_matter", "Facture détaillée par dossier"),
+    ("expense_invoice", "Facture état de frais"), ("free_invoice", "Facture libre"),
+    ("summary_invoice", "Facture résumée"), ("fax", "Fax"),
+    ("attendance_landscape", "Feuille de présence paysage"), ("attendance_portrait", "Feuille de présence portrait"),
+    ("expense_statement", "Impression état de frais"), ("carpa_letter", "Lettre CARPA"),
+    ("mailing", "Mailing"), ("reimbursement_receipt", "Reçu remboursement"),
+    ("quick_letter", "Rédaction rapide d'un courrier"), ("registered_letter_ack", "Recommandé avec accusé de réception"),
+    ("registered_letter", "Recommandé sans accusé de réception"),
+    ("reminder_1", "Relance 1"), ("reminder_2", "Relance 2"), ("reminder_3", "Relance 3"),
+    ("reminder_4", "Relance 4"), ("reminder_5", "Relance 5"),
+    ("email_reminder", "Relance par mail"), ("payment_delay_table", "Tableau de délai de paiement"),
+)
+
 _LEGAL_SCHEMA = """
 CREATE TABLE IF NOT EXISTS legal_workspaces (
  project_id TEXT PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
@@ -61,7 +82,27 @@ CREATE TABLE IF NOT EXISTS legal_fees (
  matter_id TEXT NOT NULL REFERENCES legal_matters(id), description TEXT NOT NULL,
  kind TEXT NOT NULL, minutes INTEGER NOT NULL, rate_cents INTEGER NOT NULL,
  net_cents INTEGER NOT NULL, tax_bps INTEGER NOT NULL, tax_cents INTEGER NOT NULL,
- invoice_id TEXT, responsible_user TEXT NOT NULL DEFAULT ''
+ invoice_id TEXT, responsible_user TEXT NOT NULL DEFAULT '', activity_date TEXT NOT NULL DEFAULT '',
+ billing_code TEXT NOT NULL DEFAULT '', activity_type TEXT NOT NULL DEFAULT '', billable INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS legal_fee_codes (
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+ code TEXT NOT NULL, label TEXT NOT NULL, hourly_rate_cents INTEGER NOT NULL DEFAULT 0,
+ fixed_amount_cents INTEGER NOT NULL DEFAULT 0, tax_bps INTEGER NOT NULL DEFAULT 0,
+ UNIQUE(project_id,code)
+);
+CREATE TABLE IF NOT EXISTS legal_subscriptions (
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+ matter_id TEXT NOT NULL REFERENCES legal_matters(id), label TEXT NOT NULL,
+ amount_cents INTEGER NOT NULL, tax_bps INTEGER NOT NULL DEFAULT 0,
+ cadence TEXT NOT NULL, starts_on TEXT NOT NULL, ends_on TEXT NOT NULL DEFAULT '',
+ next_invoice_on TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'active',
+ UNIQUE(project_id,matter_id,label)
+);
+CREATE TABLE IF NOT EXISTS legal_practice_documents (
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+ matter_id TEXT NOT NULL REFERENCES legal_matters(id), template_id TEXT NOT NULL,
+ title TEXT NOT NULL, body TEXT NOT NULL, fee_ids TEXT NOT NULL DEFAULT '[]', created_on TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS legal_firm_settings (
  id INTEGER PRIMARY KEY CHECK(id=1), jurisdiction TEXT NOT NULL DEFAULT 'FR',
@@ -105,6 +146,11 @@ def initialize_legal(conn):
         conn.execute("ALTER TABLE legal_documents ADD COLUMN purpose TEXT NOT NULL DEFAULT 'standard'")
     if "related_document_id" not in document_columns:
         conn.execute("ALTER TABLE legal_documents ADD COLUMN related_document_id TEXT REFERENCES legal_documents(id)")
+    fee_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_fees)")}
+    for name, definition in (("activity_date", "TEXT NOT NULL DEFAULT ''"), ("billing_code", "TEXT NOT NULL DEFAULT ''"),
+                             ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1")):
+        if name not in fee_columns:
+            conn.execute(f"ALTER TABLE legal_fees ADD COLUMN {name} {definition}")
 
 
 def legal_domain(domain_id):
@@ -149,7 +195,7 @@ def legal_snapshot(conn, project_id):
     result = {"project_id": project_id, "domain": workspace["domain"] if workspace else None,
               "matter_types": json.loads(workspace["matter_types"]) if workspace else [],
               "domains": list(LEGAL_DOMAINS)}
-    for key in ("clients", "matters", "acts", "fees", "documents", "payments"):
+    for key in ("clients", "matters", "acts", "fees", "fee_codes", "subscriptions", "documents", "payments"):
         rows = conn.execute(f"SELECT * FROM legal_{key} WHERE project_id=? ORDER BY rowid", (project_id,)).fetchall()
         result[key] = [{k: row[k] for k in row.keys() if k != "project_id"} for row in rows]
     for document in result["documents"]:
@@ -169,6 +215,9 @@ def legal_snapshot(conn, project_id):
     # The profile database is the cabinet boundary. These totals consolidate its projects,
     # while the detail lists above remain scoped to the selected project.
     result["firm_totals"] = _firm_totals(conn)
+    drafts = conn.execute("SELECT * FROM legal_practice_documents WHERE project_id=? ORDER BY rowid", (project_id,)).fetchall()
+    result["practice_documents"] = [{**{k: row[k] for k in row.keys() if k not in ("project_id", "fee_ids")}, "fee_ids": json.loads(row["fee_ids"])} for row in drafts]
+    result["practice_document_templates"] = [{"id": key, "label": label} for key, label in LEGAL_PRACTICE_DOCUMENT_TEMPLATES]
     return result
 
 
@@ -269,19 +318,19 @@ def render_legal_document(document):
 
 def _firm_totals(conn):
     by_project = conn.execute("""SELECT p.id AS project_id,p.name,
-      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      COALESCE(SUM(CASE WHEN f.billable=1 THEN f.net_cents ELSE 0 END),0) AS fees_cents,COUNT(f.id) AS fee_count
       FROM projects p LEFT JOIN legal_fees f ON f.project_id=p.id
       GROUP BY p.id,p.name ORDER BY p.name""").fetchall()
     by_user = conn.execute("""SELECT COALESCE(NULLIF(f.responsible_user,''),'Non attribué') AS user,
-      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      COALESCE(SUM(CASE WHEN f.billable=1 THEN f.net_cents ELSE 0 END),0) AS fees_cents,COUNT(f.id) AS fee_count
       FROM legal_fees f GROUP BY COALESCE(NULLIF(f.responsible_user,''),'Non attribué')
       ORDER BY user""").fetchall()
     by_matter = conn.execute("""SELECT m.project_id,p.name AS project,m.id AS matter_id,m.title,
-      COALESCE(SUM(f.net_cents),0) AS fees_cents,COUNT(f.id) AS fee_count
+      COALESCE(SUM(CASE WHEN f.billable=1 THEN f.net_cents ELSE 0 END),0) AS fees_cents,COUNT(f.id) AS fee_count
       FROM legal_matters m JOIN projects p ON p.id=m.project_id
       LEFT JOIN legal_fees f ON f.matter_id=m.id AND f.project_id=m.project_id
       GROUP BY m.project_id,p.name,m.id,m.title ORDER BY p.name,m.title""").fetchall()
-    totals = conn.execute("""SELECT COALESCE(SUM(net_cents),0) AS fees_cents,
+    totals = conn.execute("""SELECT COALESCE(SUM(CASE WHEN billable=1 THEN net_cents ELSE 0 END),0) AS fees_cents,
       COUNT(*) AS fee_count FROM legal_fees""").fetchone()
     docs = conn.execute("""SELECT COALESCE(SUM(CASE WHEN d.kind='invoice' THEN d.total_cents WHEN d.kind='credit_note' THEN -d.total_cents ELSE 0 END),0) AS invoiced_cents,
       COALESCE((SELECT SUM(amount_cents) FROM legal_payments),0) AS paid_cents
@@ -298,7 +347,7 @@ def legal_mutate(conn, project_id, action, params):
     payload = json.dumps({"action": action, **{k: v for k, v in params.items() if k not in ("profile", "project_id")}}, sort_keys=True, ensure_ascii=False)
     request_id = params.get("request_id")
     with write_txn(conn):
-        if action in ("fee.add", "document.create", "payment.add", "payment.allocate", "document.credit"):
+        if action in ("fee.add", "fee_code.save", "subscription.save", "subscription.invoice", "practice_document.create", "document.create", "payment.add", "payment.allocate", "document.credit"):
             request_id = _legal_text(request_id, required=True, limit=100)
             existing = conn.execute("SELECT payload FROM legal_requests WHERE project_id=? AND request_id=?", (project_id, request_id)).fetchone()
             if existing:
@@ -389,7 +438,122 @@ def _legal_apply(conn, pid, action, p):
         _legal_integer(net)
         tax_bps = _legal_integer(p.get("tax_bps", 0), high=10000)
         tax = _legal_round(Decimal(net) * tax_bps / 10000)
-        conn.execute("INSERT INTO legal_fees (id,project_id,matter_id,description,kind,minutes,rate_cents,net_cents,tax_bps,tax_cents,invoice_id,responsible_user) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,?)", (secrets.token_hex(16), pid, p["matter_id"], _legal_text(p.get("description"), required=True), kind, minutes, rate, net, tax_bps, tax, _legal_text(p.get("responsible_user"), limit=200)))
+        billing_code = _legal_text(p.get("billing_code"), limit=40)
+        activity_type = _legal_text(p.get("activity_type"), limit=40)
+        activity_date = _legal_date(p.get("activity_date") or date.today().isoformat())
+        if billing_code and not conn.execute("SELECT 1 FROM legal_fee_codes WHERE project_id=? AND code=?", (pid, billing_code)).fetchone():
+            raise ValueError("Code de facturation inconnu dans le cabinet")
+        billable = p.get("billable", True)
+        if type(billable) is not bool:
+            raise ValueError("Le statut facturable doit être vrai ou faux")
+        conn.execute("INSERT INTO legal_fees (id,project_id,matter_id,description,kind,minutes,rate_cents,net_cents,tax_bps,tax_cents,invoice_id,responsible_user,activity_date,billing_code,activity_type,billable) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,?,?,?,?,?)", (secrets.token_hex(16), pid, p["matter_id"], _legal_text(p.get("description"), required=True), kind, minutes, rate, net, tax_bps, tax, _legal_text(p.get("responsible_user"), limit=200), activity_date, billing_code, activity_type, int(billable)))
+        return
+    if action == "fee_code.save":
+        code = _legal_text(p.get("code"), required=True, limit=40)
+        label = _legal_text(p.get("label"), required=True, limit=120)
+        hourly = _legal_integer(p.get("hourly_rate_cents", 0))
+        fixed = _legal_integer(p.get("fixed_amount_cents", 0))
+        tax_bps = _legal_integer(p.get("tax_bps", 0), high=10000)
+        if p.get("id"):
+            _legal_row(conn, "legal_fee_codes", pid, p["id"])
+            conn.execute("UPDATE legal_fee_codes SET code=?,label=?,hourly_rate_cents=?,fixed_amount_cents=?,tax_bps=? WHERE id=? AND project_id=?", (code, label, hourly, fixed, tax_bps, p["id"], pid))
+        else:
+            current = conn.execute("SELECT id FROM legal_fee_codes WHERE project_id=? AND code=?", (pid, code)).fetchone()
+            if current:
+                conn.execute("UPDATE legal_fee_codes SET label=?,hourly_rate_cents=?,fixed_amount_cents=?,tax_bps=? WHERE id=?", (label, hourly, fixed, tax_bps, current["id"]))
+            else:
+                conn.execute("INSERT INTO legal_fee_codes (id,project_id,code,label,hourly_rate_cents,fixed_amount_cents,tax_bps) VALUES (?,?,?,?,?,?,?)", (secrets.token_hex(16), pid, code, label, hourly, fixed, tax_bps))
+        return
+    if action == "subscription.save":
+        matter = _legal_row(conn, "legal_matters", pid, p.get("matter_id"))
+        cadence = p.get("cadence")
+        if cadence not in ("monthly", "semiannual", "annual"):
+            raise ValueError("Périodicité d'abonnement invalide")
+        starts_on = _legal_date(p.get("starts_on"))
+        next_on = _legal_date(p.get("next_invoice_on") or starts_on)
+        ends_on = _legal_date(p["ends_on"]) if p.get("ends_on") else ""
+        if next_on < starts_on or (ends_on and ends_on < next_on):
+            raise ValueError("Dates d'abonnement incohérentes")
+        amount = _legal_integer(p.get("amount_cents"), low=1)
+        tax_bps = _legal_integer(p.get("tax_bps", 0), high=10000)
+        status = p.get("status", "active")
+        if status not in ("active", "paused", "ended"):
+            raise ValueError("Statut d'abonnement invalide")
+        sub_id = p.get("id") or secrets.token_hex(16)
+        if p.get("id"):
+            _legal_row(conn, "legal_subscriptions", pid, sub_id)
+            conn.execute("UPDATE legal_subscriptions SET matter_id=?,label=?,amount_cents=?,tax_bps=?,cadence=?,starts_on=?,ends_on=?,next_invoice_on=?,status=? WHERE id=? AND project_id=?", (matter["id"], _legal_text(p.get("label"), required=True, limit=200), amount, tax_bps, cadence, starts_on, ends_on, next_on, status, sub_id, pid))
+        else:
+            conn.execute("INSERT INTO legal_subscriptions VALUES (?,?,?,?,?,?,?,?,?,?,?)", (sub_id, pid, matter["id"], _legal_text(p.get("label"), required=True, limit=200), amount, tax_bps, cadence, starts_on, ends_on, next_on, status))
+        return
+    if action == "subscription.invoice":
+        sub = _legal_row(conn, "legal_subscriptions", pid, p.get("subscription_id"))
+        if sub["status"] != "active":
+            raise ValueError("Cet abonnement n'est pas actif")
+        period = sub["next_invoice_on"]
+        if period > date.today().isoformat():
+            raise ValueError("La prochaine échéance de cet abonnement n'est pas encore atteinte")
+        if sub["ends_on"] and period > sub["ends_on"]:
+            raise ValueError("L'abonnement est arrivé à son terme")
+        matter = _legal_row(conn, "legal_matters", pid, sub["matter_id"])
+        client = _legal_row(conn, "legal_clients", pid, matter["client_id"])
+        settings = conn.execute("SELECT * FROM legal_firm_settings WHERE id=1").fetchone()
+        if not settings or not settings["legal_name"] or not settings["address"] or not settings["siren"] or (settings["vat_regime"] == "standard" and not settings["vat_number"]):
+            raise ValueError("Complétez les paramètres de facturation avant de générer la facture")
+        if not client["address"].strip() or (client["customer_type"] == "professional" and len(client["siren"]) != 9):
+            raise ValueError("Complétez l'adresse du client et son SIREN professionnel avant la facture")
+        if settings["vat_regime"] == "franchise" and sub["tax_bps"]:
+            raise ValueError("La franchise en base ne peut pas facturer de TVA")
+        net = sub["amount_cents"]
+        tax = _legal_round(Decimal(net) * sub["tax_bps"] / 10000)
+        fee_id, doc_id = secrets.token_hex(16), secrets.token_hex(16)
+        description = f"Abonnement {sub['label']} — période du {period}"
+        conn.execute("INSERT INTO legal_fees (id,project_id,matter_id,description,kind,minutes,rate_cents,net_cents,tax_bps,tax_cents,invoice_id,responsible_user,activity_date,billing_code,activity_type,billable) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,'',?,'','subscription',1)", (fee_id, pid, matter["id"], description, "fixed", 0, 0, net, sub["tax_bps"], tax, period))
+        count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind='invoice'").fetchone()[0] + 1
+        ref = f"FAC-BROUILLON-{date.today().year}-{count:05d}"
+        due_on = max(period, date.today().isoformat())
+        template_id = p.get("template_id", "classique")
+        if template_id not in ("classique", "synthese", "detaille"):
+            raise ValueError("Modèle de document inconnu")
+        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{"description": description, "net_cents": net, "tax_bps": sub["tax_bps"], "tax_cents": tax}], "template_id": template_id, "purpose": "subscription", "jurisdiction": "FR", "issuer": {k: settings[k] for k in ("legal_name", "address", "siren", "vat_number", "vat_regime", "bar_name")}, "payment_terms": {"due_on": due_on, "delay_days": settings["payment_delay_days"], "late_penalty_rate": settings["late_penalty_rate"], "recovery_indemnity_cents": 4000}, "vat_notice": "TVA non applicable, article 293 B du CGI" if settings["vat_regime"] == "franchise" else ""}
+        conn.execute("INSERT INTO legal_documents (id,project_id,matter_id,kind,reference,created_on,due_on,snapshot,net_cents,tax_cents,total_cents,purpose,related_document_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)", (doc_id, pid, matter["id"], "invoice", ref, date.today().isoformat(), due_on, json.dumps(snapshot, ensure_ascii=False), net, tax, net + tax, "subscription"))
+        conn.execute("UPDATE legal_fees SET invoice_id=? WHERE id=?", (doc_id, fee_id))
+        from datetime import date as _date
+        from calendar import monthrange
+        months = {"monthly": 1, "semiannual": 6, "annual": 12}[sub["cadence"]]
+        year, month = int(period[:4]), int(period[5:7])
+        month += months
+        year += (month - 1) // 12
+        month = (month - 1) % 12 + 1
+        day = min(int(sub["starts_on"][8:10]), monthrange(year, month)[1])
+        next_on = _date(year, month, day).isoformat()
+        status = "ended" if sub["ends_on"] and next_on > sub["ends_on"] else "active"
+        conn.execute("UPDATE legal_subscriptions SET next_invoice_on=?,status=? WHERE id=?", (next_on, status, sub["id"]))
+        return
+    if action == "practice_document.create":
+        matter = _legal_row(conn, "legal_matters", pid, p.get("matter_id"))
+        client = _legal_row(conn, "legal_clients", pid, matter["client_id"])
+        template = next(((key, label) for key, label in LEGAL_PRACTICE_DOCUMENT_TEMPLATES if key == p.get("template_id")), None)
+        if not template:
+            raise ValueError("Modèle de document juridique inconnu")
+        ids = p.get("fee_ids") or []
+        if len(ids) != len(set(ids)) or len(ids) > 500:
+            raise ValueError("Sélection de lignes de facturation invalide")
+        fees = [_legal_row(conn, "legal_fees", pid, fee_id) for fee_id in ids]
+        if any(item["matter_id"] != matter["id"] for item in fees):
+            raise ValueError("Les lignes doivent appartenir au dossier sélectionné")
+        title = _legal_text(p.get("title") or template[1], required=True, limit=200)
+        lines = [f"# {title} — BROUILLON À RELIRE", "", f"Date : {date.today().strftime('%d/%m/%Y')}",
+                 f"Client : {client['name']}", f"Dossier : {matter['title']} ({matter['reference']})", "",
+                 "## Objet", f"{template[1]} lié au dossier {matter['reference'] or matter['title']}.", "",
+                 "## Informations et pièces à compléter", "- Vérifier les faits, dates, montants et destinataires.",
+                 "- Ajouter les pièces justificatives et les mentions propres à ce document."]
+        if fees:
+            lines.extend(["", "## Lignes de facturation associées"])
+            for item in fees:
+                lines.append(f"- {item['activity_date']} · {item['billing_code']} · {item['description']} · {item['net_cents'] / 100:.2f} € HT")
+        lines.extend(["", "BROUILLON INTERNE. Ce modèle de départ ne remplace pas les pièces ou mentions propres au document ; contrôler et compléter avant usage."])
+        conn.execute("INSERT INTO legal_practice_documents (id,project_id,matter_id,template_id,title,body,fee_ids,created_on) VALUES (?,?,?,?,?,?,?,?)", (secrets.token_hex(16), pid, matter["id"], template[0], title, "\n".join(lines), json.dumps(ids), date.today().isoformat()))
         return
     if action == "document.create":
         matter = _legal_row(conn, "legal_matters", pid, p.get("matter_id"))
@@ -409,7 +573,7 @@ def _legal_apply(conn, pid, action, p):
         fees = [_legal_row(conn, "legal_fees", pid, fee_id) for fee_id in ids]
         if kind == "invoice" and (not client["address"].strip() or (client["customer_type"] == "professional" and len(client["siren"]) != 9)):
             raise ValueError("Complétez l’adresse du client et, pour un client professionnel, son SIREN avant la facture.")
-        if any(f["matter_id"] != matter["id"] or (kind == "invoice" and f["invoice_id"]) for f in fees):
+        if any(f["matter_id"] != matter["id"] or not f["billable"] or (kind == "invoice" and f["invoice_id"]) for f in fees):
             raise ValueError("Honoraires d'un autre dossier ou déjà facturés")
         if kind == "invoice" and settings["vat_regime"] == "franchise" and any(f["tax_bps"] for f in fees):
             raise ValueError("Le régime de franchise en base ne peut pas facturer de TVA. Corrigez les honoraires avant de créer la facture.")

@@ -117,6 +117,40 @@ def test_legal_rpc_scopes_two_profile_homes_a_b_a(monkeypatch, tmp_path):
         reset_hermes_home_override(token)
 
 
+def test_legal_time_codes_subscriptions_and_linked_document_drafts(tmp_path):
+    pid = call("projects.create", name="Cabinet temps", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    call("legal.workspace.set", **p, domain="social")
+    call("legal.firm.settings.set", **p, legal_name="Cabinet Test", address="1 rue Test", siren="123456789",
+         vat_number="FR00123456789", vat_regime="standard")
+    client = call("legal.client.save", **p, name="Client", address="10 rue Test")["clients"][0]
+    matter = call("legal.matter.save", **p, client_id=client["id"], title="Dossier", matter_type="Rupture du contrat")["matters"][0]
+    code = call("legal.fee_code.save", **p, request_id="code-1", code="TEL", label="Appel", hourly_rate_cents=18000, fixed_amount_cents=2500, tax_bps=2000)["fee_codes"][0]
+    call("legal.fee_code.save", **p, request_id="code-2", id=code["id"], code="TEL", label="Appel client", hourly_rate_cents=20000, fixed_amount_cents=2500, tax_bps=2000)
+    assert call("legal.snapshot", **p)["fee_codes"][0]["hourly_rate_cents"] == 20000
+    time_params = {**p, "request_id": "time-1", "matter_id": matter["id"], "description": "Appel au client", "kind": "time", "minutes": 30, "rate_cents": 20000, "tax_bps": 2000, "responsible_user": "Avocate A", "activity_date": date.today().isoformat(), "activity_type": "phone", "billing_code": "TEL", "billable": True}
+    fee = call("legal.fee.add", **time_params)["fees"][0]
+    assert (fee["net_cents"], fee["activity_type"], fee["billing_code"], fee["responsible_user"]) == (10000, "phone", "TEL", "Avocate A")
+    unbillable = call("legal.fee.add", **{**time_params, "request_id": "time-nonbillable", "description": "Suivi interne", "billable": False})["fees"][-1]
+    assert unbillable["billable"] is False
+    assert call("legal.snapshot", **p)["firm_totals"]["fees_cents"] == 10000
+    fail("legal.document.create", **{**p, "request_id": "nonbillable-invoice", "matter_id": matter["id"], "kind": "invoice", "fee_ids": [unbillable["id"]], "due_on": date.today().isoformat()})
+    form = call("legal.practice_document.create", **p, request_id="form-1", matter_id=matter["id"], template_id="document_communication", fee_ids=[fee["id"]])
+    assert form["practice_documents"][0]["fee_ids"] == [fee["id"]]
+    assert "Client : Client" in form["practice_documents"][0]["body"]
+    today = date.today().isoformat()
+    subscription_params = {**p, "request_id": "sub-1", "matter_id": matter["id"], "label": "Conseil récurrent", "amount_cents": 50000, "tax_bps": 2000, "cadence": "annual", "starts_on": today, "next_invoice_on": today}
+    sub = call("legal.subscription.save", **subscription_params)["subscriptions"][0]
+    invoice_params = {**p, "request_id": "sub-invoice-1", "subscription_id": sub["id"]}
+    invoiced = call("legal.subscription.invoice", **invoice_params)
+    assert len(invoiced["documents"]) == 1
+    assert invoiced["documents"][0]["purpose"] == "subscription"
+    assert invoiced["documents"][0]["total_cents"] == 60000
+    assert invoiced["subscriptions"][0]["next_invoice_on"][:4] == str(date.today().year + 1)
+    assert len(call("legal.subscription.invoice", **invoice_params)["documents"]) == 1
+    assert len(call("legal.snapshot", **p)["fees"]) == 3
+
+
 def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
     expected = [
         "Droit Pénal et Procédure", "Contentieux Judiciaire", "Droit des Affaires",

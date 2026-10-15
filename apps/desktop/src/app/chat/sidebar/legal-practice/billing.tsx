@@ -34,6 +34,23 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [paymentDelay, setPaymentDelay] = useState(String(data.firm_settings.payment_delay_days))
   const [latePenalty, setLatePenalty] = useState(data.firm_settings.late_penalty_rate)
   const [responsibleUser, setResponsibleUser] = useState('')
+  const [activityDate, setActivityDate] = useState(today)
+  const [activityType, setActivityType] = useState('other')
+  const [billable, setBillable] = useState(true)
+  const [timeUserFilter, setTimeUserFilter] = useState('')
+  const [timeFrom, setTimeFrom] = useState('')
+  const [timeTo, setTimeTo] = useState('')
+  const [billingCode, setBillingCode] = useState('')
+  const [code, setCode] = useState('')
+  const [editingCodeId, setEditingCodeId] = useState('')
+  const [codeLabel, setCodeLabel] = useState('')
+  const [codeHourly, setCodeHourly] = useState('')
+  const [codeFixed, setCodeFixed] = useState('')
+  const [subscriptionLabel, setSubscriptionLabel] = useState('')
+  const [subscriptionAmount, setSubscriptionAmount] = useState('')
+  const [subscriptionCadence, setSubscriptionCadence] = useState('monthly')
+  const [subscriptionStart, setSubscriptionStart] = useState(today)
+  const [practiceTemplateId, setPracticeTemplateId] = useState('')
   const [templateId, setTemplateId] = useState<'classique' | 'synthese' | 'detaille'>('classique')
   const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([])
   const [createKind, setCreateKind] = useState<'quote' | 'invoice'>('invoice')
@@ -65,9 +82,18 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   }))
 
   const fees = data.fees.filter(fee => fee.matter_id === matterId)
-  const unbilled = fees.filter(fee => !fee.invoice_id)
+
+  const timeEntries = fees.filter(
+    fee =>
+      fee.kind === 'time' &&
+      (!timeUserFilter || fee.responsible_user === timeUserFilter) &&
+      (!timeFrom || (fee.activity_date ?? '') >= timeFrom) &&
+      (!timeTo || (fee.activity_date ?? '') <= timeTo)
+  )
+
+  const unbilled = fees.filter(fee => fee.billable && !fee.invoice_id)
   const invoices = data.documents.filter(doc => doc.kind === 'invoice')
-  const availableFees = fees.filter(fee => createKind === 'quote' || !fee.invoice_id)
+  const availableFees = fees.filter(fee => fee.billable && (createKind === 'quote' || !fee.invoice_id))
   const selectedFees = availableFees.filter(fee => selectedFeeIds.includes(fee.id))
   const selectedTotal = selectedFees.reduce((sum, fee) => sum + fee.net_cents + fee.tax_cents, 0)
 
@@ -161,7 +187,11 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
                 ? { minutes: Number(minutes), rate_cents: legalDecimal(amount) }
                 : { amount_cents: legalDecimal(amount) }),
               tax_bps: legalDecimal(tax),
-              responsible_user: responsibleUser
+              responsible_user: responsibleUser,
+              activity_date: activityDate,
+              activity_type: activityType,
+              billing_code: billingCode,
+              billable
             })
           ) {
             setDescription('')
@@ -188,6 +218,49 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             onChange={setResponsibleUser}
             value={responsibleUser}
           />
+          <TextField label="Date de l'activité" onChange={setActivityDate} required type="date" value={activityDate} />
+          <Choice
+            items={[
+              { id: 'phone', label: 'Appel téléphonique' },
+              { id: 'meeting', label: 'Rendez-vous / réunion' },
+              { id: 'email', label: 'Courriel' },
+              { id: 'drafting', label: 'Rédaction' },
+              { id: 'research', label: 'Recherche / analyse' },
+              { id: 'hearing', label: 'Audience' },
+              { id: 'travel', label: 'Déplacement' },
+              { id: 'other', label: 'Autre activité' }
+            ]}
+            label="Nature de l'activité"
+            onChange={setActivityType}
+            value={activityType}
+          />
+          <Choice
+            items={data.fee_codes.map(item => ({ id: item.code, label: `${item.code} — ${item.label}` }))}
+            label="Code de facturation"
+            onChange={value => {
+              setBillingCode(value)
+              const selected = data.fee_codes.find(item => item.code === value)
+
+              if (selected) {
+                if (feeKind === 'time' && selected.hourly_rate_cents) {
+                  setAmount((selected.hourly_rate_cents / 100).toFixed(2))
+                }
+
+                if (feeKind !== 'time' && selected.fixed_amount_cents) {
+                  setAmount((selected.fixed_amount_cents / 100).toFixed(2))
+                }
+
+                setTax(String(selected.tax_bps / 100))
+              }
+            }}
+            value={billingCode}
+          />
+          <Field label="Facturable">
+            <label className="flex h-9 items-center gap-2 text-sm">
+              <input checked={billable} onChange={event => setBillable(event.target.checked)} type="checkbox" /> Inclure
+              dans les devis et factures
+            </label>
+          </Field>
           <TextField
             label={
               feeKind === 'time'
@@ -209,6 +282,222 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
           Ajouter les honoraires
         </Button>
       </form>
+      <section className="space-y-3 rounded-md border border-(--ui-stroke-secondary) p-4">
+        <h3 className="font-semibold">Feuille de temps — activités du dossier</h3>
+        <p>
+          Chaque ligne conserve date, auteur, nature et code. Elle reste dans l'historique même si elle n'est pas
+          facturable.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Choice
+            items={[
+              ...new Set(data.fees.map(fee => fee.responsible_user).filter((user): user is string => Boolean(user)))
+            ].map(user => ({ id: user, label: user }))}
+            label="Filtrer par utilisateur"
+            onChange={setTimeUserFilter}
+            value={timeUserFilter}
+          />
+          <TextField label="Depuis le" onChange={setTimeFrom} type="date" value={timeFrom} />
+          <TextField label="Jusqu'au" onChange={setTimeTo} type="date" value={timeTo} />
+        </div>
+        <p className="text-sm">
+          Temps suivi : {timeEntries.reduce((sum, fee) => sum + fee.minutes, 0)} min · Montant facturable affiché :{' '}
+          {legalMoney(timeEntries.reduce((sum, fee) => sum + (fee.billable ? fee.net_cents : 0), 0))} HT
+        </p>
+        <ul className="max-h-52 space-y-2 overflow-auto">
+          {timeEntries.map(fee => (
+            <li className="rounded border border-(--ui-stroke-secondary) p-2 text-sm" key={fee.id}>
+              {fee.activity_date || 'Date inconnue'} · {fee.responsible_user || 'Utilisateur non attribué'} ·{' '}
+              {fee.activity_type || 'activité'} · {fee.billing_code || 'sans code'} · {fee.description} · {fee.minutes}{' '}
+              min · {legalMoney(fee.net_cents)} HT ·{' '}
+              {fee.billable ? (fee.invoice_id ? 'Facturé' : 'À facturer') : 'Non facturable'}
+            </li>
+          ))}
+          {!fees.some(fee => fee.kind === 'time') && <li>Aucune activité chronométrée pour ce dossier.</li>}
+        </ul>
+      </section>
+      <section className="space-y-3 rounded-md border border-(--ui-stroke-secondary) p-4">
+        <h3 className="font-semibold">Codes et tarifs du cabinet</h3>
+        <form
+          className="grid gap-3 sm:grid-cols-2"
+          onSubmit={submit(async () => {
+            await write('legal.fee_code.save', {
+              ...(editingCodeId ? { id: editingCodeId } : {}),
+              code,
+              label: codeLabel,
+              hourly_rate_cents: legalDecimal(codeHourly || '0'),
+              fixed_amount_cents: legalDecimal(codeFixed || '0'),
+              tax_bps: legalDecimal(tax)
+            })
+            setEditingCodeId('')
+            setCode('')
+            setCodeLabel('')
+            setCodeHourly('')
+            setCodeFixed('')
+          })}
+        >
+          <TextField label="Code modifiable (ex. TEL)" onChange={setCode} required value={code} />
+          <TextField label="Libellé" onChange={setCodeLabel} required value={codeLabel} />
+          <TextField label="Taux horaire HT (€)" onChange={setCodeHourly} value={codeHourly} />
+          <TextField label="Forfait HT (€)" onChange={setCodeFixed} value={codeFixed} />
+          <TextField label="TVA (%)" onChange={setTax} required value={tax} />
+          <Button type="submit">Enregistrer le code</Button>
+        </form>
+        <ul className="space-y-1 text-sm">
+          {data.fee_codes.map(item => (
+            <li key={item.id}>
+              <button
+                className="text-left underline"
+                onClick={() => {
+                  setEditingCodeId(item.id)
+                  setCode(item.code)
+                  setCodeLabel(item.label)
+                  setCodeHourly((item.hourly_rate_cents / 100).toFixed(2))
+                  setCodeFixed((item.fixed_amount_cents / 100).toFixed(2))
+                  setTax(String(item.tax_bps / 100))
+                }}
+                type="button"
+              >
+                {item.code} — {item.label} · {legalMoney(item.hourly_rate_cents)}/h · forfait{' '}
+                {legalMoney(item.fixed_amount_cents)} HT · Modifier
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="space-y-3 rounded-md border border-(--ui-stroke-secondary) p-4">
+        <h3 className="font-semibold">Forfaits et abonnements</h3>
+        <form
+          className="grid gap-3 sm:grid-cols-2"
+          onSubmit={submit(async () => {
+            await write('legal.subscription.save', {
+              matter_id: matterId,
+              label: subscriptionLabel,
+              amount_cents: legalDecimal(subscriptionAmount),
+              tax_bps: legalDecimal(tax),
+              cadence: subscriptionCadence as 'monthly' | 'semiannual' | 'annual',
+              starts_on: subscriptionStart,
+              next_invoice_on: subscriptionStart
+            })
+            setSubscriptionLabel('')
+            setSubscriptionAmount('')
+          })}
+        >
+          <TextField
+            label="Libellé de l'abonnement"
+            onChange={setSubscriptionLabel}
+            required
+            value={subscriptionLabel}
+          />
+          <TextField
+            label="Montant HT (€) par période"
+            onChange={setSubscriptionAmount}
+            required
+            value={subscriptionAmount}
+          />
+          <Choice
+            items={[
+              { id: 'monthly', label: 'Mensuel' },
+              { id: 'semiannual', label: 'Semestriel' },
+              { id: 'annual', label: 'Annuel' }
+            ]}
+            label="Périodicité"
+            onChange={setSubscriptionCadence}
+            value={subscriptionCadence}
+          />
+          <TextField
+            label="Début / prochaine période"
+            onChange={setSubscriptionStart}
+            required
+            type="date"
+            value={subscriptionStart}
+          />
+          <Button disabled={!matterId} type="submit">
+            Créer l'abonnement sur ce dossier
+          </Button>
+        </form>
+        <ul className="space-y-2 text-sm">
+          {data.subscriptions.map(item => (
+            <li className="flex flex-wrap items-center justify-between gap-2" key={item.id}>
+              <span>
+                {item.label} · {item.cadence} · {legalMoney(item.amount_cents)} HT · prochaine période{' '}
+                {item.next_invoice_on} · {item.status}
+              </span>
+              <form
+                onSubmit={submit(async () => {
+                  await write('legal.subscription.invoice', { subscription_id: item.id, template_id: templateId })
+                })}
+              >
+                <Button
+                  disabled={item.status !== 'active' || item.next_invoice_on > today()}
+                  type="submit"
+                  variant="outline"
+                >
+                  Créer la facture de période
+                </Button>
+              </form>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="space-y-3 rounded-md border border-(--ui-stroke-secondary) p-4">
+        <h3 className="font-semibold">Modèles de documents du dossier</h3>
+        <p>
+          Création de brouillons avec les informations du client et du dossier. Les modèles d'origine n'étant pas
+          fournis, ces trames restent à compléter et à vérifier.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Choice
+            items={data.practice_document_templates.map(item => ({ id: item.id, label: item.label }))}
+            label="Type de document"
+            onChange={setPracticeTemplateId}
+            value={practiceTemplateId}
+          />
+          <Button
+            disabled={!matterId || !practiceTemplateId}
+            onClick={() => {
+              void write('legal.practice_document.create', {
+                matter_id: matterId,
+                template_id: practiceTemplateId,
+                fee_ids: fees.filter(fee => fee.billable).map(fee => fee.id)
+              })
+            }}
+            type="button"
+            variant="outline"
+          >
+            Créer le brouillon lié aux prestations
+          </Button>
+        </div>
+        <ul className="space-y-2">
+          {data.practice_documents
+            .filter(item => !matterId || item.matter_id === matterId)
+            .map(item => (
+              <li
+                className="flex flex-wrap items-center justify-between gap-2 rounded border border-(--ui-stroke-secondary) p-2"
+                key={item.id}
+              >
+                <div className="min-w-0 flex-1">
+                  <span>
+                    {item.title} · {item.created_on} · {item.fee_ids.length} prestation(s) associée(s)
+                  </span>
+                  <details className="mt-1 text-sm">
+                    <summary className="cursor-pointer">Prévisualiser</summary>
+                    <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-muted p-3">
+                      {item.body}
+                    </pre>
+                  </details>
+                </div>
+                <Button
+                  onClick={() => downloadLegalText(`${item.title}.md`, item.body)}
+                  type="button"
+                  variant="outline"
+                >
+                  Télécharger le brouillon
+                </Button>
+              </li>
+            ))}
+        </ul>
+      </section>
       <ul className="space-y-2">
         {fees.map(fee => (
           <li className="break-words" key={fee.id}>
@@ -560,9 +849,9 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
                 Créer un avoir d’annulation
               </Button>
             )}
-            {doc.kind === 'invoice' && doc.refund_due_cents > 0 && (
+            {doc.kind === 'invoice' && (doc.refund_due_cents ?? 0) > 0 && (
               <span className="text-sm text-(--ui-text-secondary)">
-                Remboursement à suivre : {legalMoney(doc.refund_due_cents)}
+                Remboursement à suivre : {legalMoney(doc.refund_due_cents ?? 0)}
               </span>
             )}
           </li>

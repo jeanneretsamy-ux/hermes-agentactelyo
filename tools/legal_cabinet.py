@@ -12,7 +12,7 @@ from tools.registry import registry
 
 _ACTIONS = (
     "snapshot", "workspace.set", "firm.settings.set", "client.save",
-    "matter.save", "act.save", "fee.add", "document.create", "document.credit", "payment.add", "payment.allocate",
+    "matter.save", "act.save", "fee.add", "fee_code.save", "subscription.save", "subscription.invoice", "practice_document.create", "document.create", "document.credit", "payment.add", "payment.allocate",
 )
 
 
@@ -51,6 +51,8 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
                 result = legal.legal_mutate(conn, target.id, action, values)
                 if action in ("document.create", "document.credit") and result["documents"]:
                     result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
+                elif action == "practice_document.create" and result["practice_documents"]:
+                    result["rendered_document"] = result["practice_documents"][-1]["body"]
             else:
                 return json.dumps({"success": False, "error": f"Action inconnue. Actions disponibles : {', '.join(_ACTIONS)}"}, ensure_ascii=False)
             return json.dumps({"success": True, "project": {
@@ -72,7 +74,7 @@ registry.register(
             "Manage the legal workspace of a Desktop Project from chat. First use desktop_project(action='list') "
             "when the active project is unclear, then call snapshot before changes. Actions: snapshot; workspace.set "
             "(domain + matter_types); firm.settings.set (FR firm identity); client.save; matter.save; act.save; "
-            "fee.add; document.create (quote or invoice working draft; optional purpose: standard, provision_fees, provision_expenses_fees; optional template_id: classique, synthese, detaille); document.credit (linked cancellation credit note draft); payment.add or payment.allocate (allocate one receipt to one or more invoices atomically). Pass project as its name, slug, "
+            "fee.add (dated, assigned, billable or trace-only time/activity); fee_code.save (editable billing code with hourly/fixed prices); subscription.save (monthly, semiannual or annual); subscription.invoice (idempotent invoice draft for a due subscription period); practice_document.create (create a dossier-linked internal draft from a template_id found in snapshot.practice_document_templates, optionally with fee_ids); document.create (quote or invoice working draft; optional purpose: standard, provision_fees, provision_expenses_fees; optional template_id: classique, synthese, detaille); document.credit (linked cancellation credit note draft); payment.add or payment.allocate (allocate one receipt to one or more invoices atomically). Pass project as its name, slug, "
             "or id, or omit it to use this session's active project. This creates internal drafts only: never claim "
             "a document was issued, signed, sent, or paid. Use explicit amounts from the user/source records, never guess. "
             "Before drafting, inspect snapshot, search/read the user's local files and supplied examples with the file tools, "
@@ -110,11 +112,19 @@ registry.register(
                 "rate_cents": {"type": "integer"}, "tax_bps": {"type": "integer"},
                 "responsible_user": {"type": "string"}, "fee_ids": {"type": "array", "items": {"type": "string"}},
                 "due_on": {"type": "string"}, "document_id": {"type": "string"},
-                "template_id": {"type": "string", "enum": ["classique", "synthese", "detaille"]},
+                "template_id": {"type": "string"},
                 "purpose": {"type": "string", "enum": ["standard", "provision_fees", "provision_expenses_fees"]},
                 "reason": {"type": "string"},
                 "allocations": {"type": "array", "items": {"type": "object", "properties": {"document_id": {"type": "string"}, "amount_cents": {"type": "integer"}}, "required": ["document_id", "amount_cents"]}},
                 "paid_on": {"type": "string"},
+                "activity_date": {"type": "string", "description": "fee.add: date of work/activity YYYY-MM-DD"},
+                "billing_code": {"type": "string"}, "activity_type": {"type": "string"}, "billable": {"type": "boolean"},
+                "code": {"type": "string"}, "label": {"type": "string"},
+                "hourly_rate_cents": {"type": "integer"}, "fixed_amount_cents": {"type": "integer"},
+                "cadence": {"type": "string", "enum": ["monthly", "semiannual", "annual"]},
+                "starts_on": {"type": "string"}, "ends_on": {"type": "string"}, "next_invoice_on": {"type": "string"},
+                "subscription_id": {"type": "string"},
+                "fee_ids": {"type": "array", "items": {"type": "string"}},
             },
             "required": ["action"],
         },

@@ -1009,7 +1009,8 @@ export interface ConnectionOperationTarget {
 export type ConnectionTargetKind = 'connector' | 'mcp' | 'plugin' | 'skill'
 export type ConnectionTargetAction = 'authorize' | 'connect' | 'enable' | 'install' | 'reconnect'
 /** ``tools/connectors/contract.py::TargetState``. */
-export type ConnectionTargetState = 'pending' | 'initiated' | 'connected' | 'skipped' | 'failed' | 'expired' | 'not_connected'
+export type ConnectionTargetState =
+  'pending' | 'initiated' | 'connected' | 'skipped' | 'failed' | 'expired' | 'not_connected'
 /** One credential an MCP install still needs; the card renders a field per entry and sends the values back with the approval. */
 export interface ConnectionTargetEnvField {
   name: string
@@ -1154,12 +1155,17 @@ export interface ConnectorAccountsRemoveResult {
 }
 export interface ConnectorPolicyGetResult {
   layers: ConnectorPolicyLayer[]
-  effective: ConnectorPolicyEffectiveUnrestricted | ConnectorPolicyEffectiveDenyAll | ConnectorPolicyEffectiveAllow | ConnectorPolicyEffectiveDeny
+  effective:
+    | ConnectorPolicyEffectiveUnrestricted
+    | ConnectorPolicyEffectiveDenyAll
+    | ConnectorPolicyEffectiveAllow
+    | ConnectorPolicyEffectiveDeny
 }
 export interface ConnectorPolicyLayer {
   kind: ConnectorPolicyLayerKind
   revision: string
-  body: ConnectorPolicyUnrestrictedBody | ConnectorPolicyDenyAllBody | ConnectorPolicyAllowBody | ConnectorPolicyDenyBody
+  body:
+    ConnectorPolicyUnrestrictedBody | ConnectorPolicyDenyAllBody | ConnectorPolicyAllowBody | ConnectorPolicyDenyBody
 }
 export type ConnectorPolicyLayerKind = 'org' | 'role' | 'member'
 export interface ConnectorPolicyUnrestrictedBody {
@@ -1231,7 +1237,11 @@ export interface ConnectorChange {
 }
 export interface ConnectorPolicySetResult {
   revision: string
-  effective: ConnectorPolicyEffectiveUnrestricted | ConnectorPolicyEffectiveDenyAll | ConnectorPolicyEffectiveAllow | ConnectorPolicyEffectiveDeny
+  effective:
+    | ConnectorPolicyEffectiveUnrestricted
+    | ConnectorPolicyEffectiveDenyAll
+    | ConnectorPolicyEffectiveAllow
+    | ConnectorPolicyEffectiveDeny
 }
 /** ``tools/bot_desktop/runtime.py::DesktopStatus`` plus the lease and the profile it speaks for. */
 export interface DisplayStatus {
@@ -1847,6 +1857,10 @@ export interface LegalSnapshot {
   matters: LegalMatter[]
   acts: LegalAct[]
   fees: LegalFee[]
+  fee_codes: LegalFeeCode[]
+  subscriptions: LegalSubscription[]
+  practice_documents: LegalPracticeDocument[]
+  practice_document_templates: LegalPracticeDocumentTemplate[]
   documents: LegalDocument[]
   payments: LegalPayment[]
   firm_settings: LegalFirmSettings
@@ -1892,6 +1906,43 @@ export interface LegalFee {
   rate_cents: number
   invoice_id: string | null
   responsible_user?: string
+  activity_date: string
+  billing_code: string
+  activity_type: string
+  billable: boolean
+}
+export interface LegalFeeCode {
+  id: string
+  code: string
+  label: string
+  hourly_rate_cents: number
+  fixed_amount_cents: number
+  tax_bps: number
+}
+export interface LegalSubscription {
+  id: string
+  matter_id: string
+  label: string
+  amount_cents: number
+  tax_bps: number
+  cadence: 'monthly' | 'semiannual' | 'annual'
+  starts_on: string
+  ends_on: string
+  next_invoice_on: string
+  status: 'active' | 'paused' | 'ended'
+}
+export interface LegalPracticeDocument {
+  id: string
+  matter_id: string
+  template_id: string
+  title: string
+  body: string
+  fee_ids: string[]
+  created_on: string
+}
+export interface LegalPracticeDocumentTemplate {
+  id: string
+  label: string
 }
 export interface LegalDocument {
   id: string
@@ -1906,11 +1957,11 @@ export interface LegalDocument {
   total_cents: number
   paid_cents: number
   balance_cents: number
-  credited_cents: number
-  cancelled: boolean
-  refund_due_cents: number
-  purpose: string
-  related_document_id: string | null
+  credited_cents?: number
+  cancelled?: boolean
+  refund_due_cents?: number
+  purpose?: string
+  related_document_id?: string | null
 }
 export interface LegalDocumentSnapshot {
   client: LegalClientSnapshot
@@ -2056,6 +2107,52 @@ export interface LegalFeeParams {
   rate_cents?: number
   tax_bps?: number
   responsible_user?: string
+  activity_date?: string
+  billing_code?: string
+  activity_type?: string
+  billable?: boolean
+}
+export interface LegalFeeCodeParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  id?: string | null
+  code: string
+  label: string
+  hourly_rate_cents?: number
+  fixed_amount_cents?: number
+  tax_bps?: number
+}
+export interface LegalSubscriptionParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  id?: string | null
+  matter_id: string
+  label: string
+  amount_cents: number
+  tax_bps?: number
+  cadence: 'monthly' | 'semiannual' | 'annual'
+  starts_on: string
+  ends_on?: string
+  next_invoice_on?: string
+  status?: 'active' | 'paused' | 'ended'
+}
+export interface LegalSubscriptionInvoiceParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  subscription_id: string
+  template_id?: 'classique' | 'synthese' | 'detaille'
+}
+export interface LegalPracticeDocumentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  template_id: string
+  title?: string
+  fee_ids?: string[]
 }
 export interface LegalDocumentParams {
   profile?: string | null
@@ -2075,9 +2172,14 @@ export interface LegalCreditParams {
   document_id: string
   reason: string
 }
-export interface LegalPaymentAllocation {
+export interface LegalPaymentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
   document_id: string
   amount_cents: number
+  paid_on: string
+  reference: string
 }
 export interface LegalAllocatePaymentParams {
   profile?: string | null
@@ -2088,14 +2190,9 @@ export interface LegalAllocatePaymentParams {
   reference: string
   allocations: LegalPaymentAllocation[]
 }
-export interface LegalPaymentParams {
-  profile?: string | null
-  project_id: string
-  request_id: string
+export interface LegalPaymentAllocation {
   document_id: string
   amount_cents: number
-  paid_on: string
-  reference: string
 }
 /** ``word`` is the token under the cursor (``@`` prefix = context reference); ``cwd`` / ``session_id`` pick the directory the listing resolves against. */
 export interface CompletePathParams {
@@ -4545,7 +4642,16 @@ export interface PluginServerRow {
   state: PluginServerState
   sentence: string
 }
-export type PluginServerState = 'connected' | 'app_not_running' | 'hermes_not_connected' | 'endpoint_unavailable' | 'no_interactive_session' | 'version_too_old' | 'missing_app' | 'unsupported_gpu' | 'unknown'
+export type PluginServerState =
+  | 'connected'
+  | 'app_not_running'
+  | 'hermes_not_connected'
+  | 'endpoint_unavailable'
+  | 'no_interactive_session'
+  | 'version_too_old'
+  | 'missing_app'
+  | 'unsupported_gpu'
+  | 'unknown'
 /** One ``config_schema`` key of a plugin manifest, rendered by the Plugins hub (``hermes_cli.plugins_settings.plugin_settings_fields``). ``secret`` fields carry no value: ``env`` names the ``.env`` variable and ``has_value`` whether it is set. */
 export interface PluginSettingField {
   key: string
@@ -5137,7 +5243,30 @@ export interface PetHatchProgressPayload {
 }
 /** ``change_watcher._CHANGE_WATCHES`` payload fn — ``{}`` for every watch except pet.changed. */
 export type ChangeSignalPayload = Record<string, unknown>
-export type ConnectorErrorReason = 'INVALID_PARAMS' | 'NOT_OWNER' | 'UNSUPPORTED_RUNTIME' | 'CONNECTOR_REQUEST_FAILED' | 'INVALID_CONNECTOR_RESPONSE' | 'UNKNOWN_TARGET' | 'LINK_STILL_VALID' | 'REISSUE_REFUSED' | 'UNKNOWN_OPERATION' | 'INVALID_ANSWER' | 'NEEDS_NOUS_AUTH' | 'CONNECTOR_NOT_FOUND' | 'TOOLS_UNAVAILABLE' | 'CONNECTORS_UNAVAILABLE' | 'CATALOG_UNAVAILABLE' | 'ACCOUNTS_UNAVAILABLE' | 'CONNECTION_NOT_FOUND' | 'POLICY_UNAVAILABLE' | 'POLICY_CONFLICT' | 'FORBIDDEN_SCOPE' | 'ORG_REQUIRED' | 'ORG_ACCESS_DENIED' | 'INVALID_POLICY'
+export type ConnectorErrorReason =
+  | 'INVALID_PARAMS'
+  | 'NOT_OWNER'
+  | 'UNSUPPORTED_RUNTIME'
+  | 'CONNECTOR_REQUEST_FAILED'
+  | 'INVALID_CONNECTOR_RESPONSE'
+  | 'UNKNOWN_TARGET'
+  | 'LINK_STILL_VALID'
+  | 'REISSUE_REFUSED'
+  | 'UNKNOWN_OPERATION'
+  | 'INVALID_ANSWER'
+  | 'NEEDS_NOUS_AUTH'
+  | 'CONNECTOR_NOT_FOUND'
+  | 'TOOLS_UNAVAILABLE'
+  | 'CONNECTORS_UNAVAILABLE'
+  | 'CATALOG_UNAVAILABLE'
+  | 'ACCOUNTS_UNAVAILABLE'
+  | 'CONNECTION_NOT_FOUND'
+  | 'POLICY_UNAVAILABLE'
+  | 'POLICY_CONFLICT'
+  | 'FORBIDDEN_SCOPE'
+  | 'ORG_REQUIRED'
+  | 'ORG_ACCESS_DENIED'
+  | 'INVALID_POLICY'
 
 // ── Client→server methods ──
 export interface RpcMethods {
@@ -5330,11 +5459,15 @@ export interface RpcMethods {
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
   'legal.document.credit': { params: LegalCreditParams; result: LegalSnapshot }
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
+  'legal.fee_code.save': { params: LegalFeeCodeParams; result: LegalSnapshot }
   'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
   'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
   'legal.payment.allocate': { params: LegalAllocatePaymentParams; result: LegalSnapshot }
+  'legal.practice_document.create': { params: LegalPracticeDocumentParams; result: LegalSnapshot }
   'legal.snapshot': { params: LegalProjectParams; result: LegalSnapshot }
+  'legal.subscription.invoice': { params: LegalSubscriptionInvoiceParams; result: LegalSnapshot }
+  'legal.subscription.save': { params: LegalSubscriptionParams; result: LegalSnapshot }
   'legal.workspace.set': { params: LegalWorkspaceParams; result: LegalSnapshot }
   /** Stateless one-shot LLM completion (titles, ideas) on the session's or the task backend. */
   'llm.oneshot': { params: LlmOneshotParams; result: LlmOneshotResult }
@@ -5569,7 +5702,10 @@ export interface RpcMethods {
   /** Count one user-typed slash command (fire-and-forget; a no-op unless shared metrics are on). */
   'shared_metrics.slash_command': { params: SharedMetricsSlashCommandParams; result: SharedMetricsSlashCommandResult }
   /** Record one client launch-to-ready latency (fire-and-forget; a no-op unless shared metrics are on). */
-  'shared_metrics.startup_latency': { params: SharedMetricsStartupLatencyParams; result: SharedMetricsStartupLatencyResult }
+  'shared_metrics.startup_latency': {
+    params: SharedMetricsStartupLatencyParams
+    result: SharedMetricsStartupLatencyResult
+  }
   /** Pure read of the focused profile's shared-metrics opt-ins (collection, upload, answered). */
   'shared_metrics.status': { params: ProfileParams; result: SharedMetricsConsentResult }
   /** Count one Desktop packaged self-update outcome (fire-and-forget; a no-op unless shared metrics are on). */
@@ -5754,11 +5890,15 @@ export const RPC_METHODS = [
   'legal.document.create',
   'legal.document.credit',
   'legal.fee.add',
+  'legal.fee_code.save',
   'legal.firm.settings.set',
   'legal.matter.save',
   'legal.payment.add',
   'legal.payment.allocate',
+  'legal.practice_document.create',
   'legal.snapshot',
+  'legal.subscription.invoice',
+  'legal.subscription.save',
   'legal.workspace.set',
   'llm.oneshot',
   'mcp.catalog',

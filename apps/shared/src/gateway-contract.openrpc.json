@@ -368,7 +368,7 @@
     },
     {
       "name": "client.capabilities",
-      "summary": "What the calling client handles, sent once per connection (after gateway.ready); returns the server→client request methods this backend may send.",
+      "summary": "What the calling client handles, sent once per connection (after gateway.ready); returns the server\u2192client request methods this backend may send.",
       "params": [
         {
           "name": "params",
@@ -1466,7 +1466,7 @@
     },
     {
       "name": "i18n.languages",
-      "summary": "Every language some layer supplies (bundled ∪ user overlay ∪ plugin packs), en first.",
+      "summary": "Every language some layer supplies (bundled \u222a user overlay \u222a plugin packs), en first.",
       "params": [
         {
           "name": "params",
@@ -1753,6 +1753,24 @@
       }
     },
     {
+      "name": "legal.fee_code.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalFeeCodeParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "legal.firm.settings.set",
       "summary": "",
       "params": [
@@ -1825,6 +1843,24 @@
       }
     },
     {
+      "name": "legal.practice_document.create",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalPracticeDocumentParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "legal.snapshot",
       "summary": "",
       "params": [
@@ -1832,6 +1868,42 @@
           "name": "params",
           "schema": {
             "$ref": "#/components/schemas/LegalProjectParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.subscription.invoice",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalSubscriptionInvoiceParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.subscription.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalSubscriptionParams"
           }
         }
       ],
@@ -2060,7 +2132,7 @@
     },
     {
       "name": "mcp.servers.test",
-      "summary": "Connect, list tools, disconnect — an OAuth server with no token on disk is reported as not ok.",
+      "summary": "Connect, list tools, disconnect \u2014 an OAuth server with no token on disk is reported as not ok.",
       "params": [
         {
           "name": "params",
@@ -2834,7 +2906,7 @@
     },
     {
       "name": "projects.discover_repos",
-      "summary": "Repos for the desktop overview: scanned-from-disk (cached) ∪ session-derived.",
+      "summary": "Repos for the desktop overview: scanned-from-disk (cached) \u222a session-derived.",
       "params": [
         {
           "name": "params",
@@ -2996,7 +3068,7 @@
     },
     {
       "name": "projects.tree",
-      "summary": "Project → repo → lane overview with counts and a few preview sessions per project.",
+      "summary": "Project \u2192 repo \u2192 lane overview with counts and a few preview sessions per project.",
       "params": [
         {
           "name": "params",
@@ -3122,7 +3194,7 @@
     },
     {
       "name": "request.answer",
-      "summary": "Answer an open server→client request from a client that never received the frame.",
+      "summary": "Answer an open server\u2192client request from a client that never received the frame.",
       "params": [
         {
           "name": "params",
@@ -4761,7 +4833,7 @@
       },
       "ActiveSubagent": {
         "additionalProperties": true,
-        "description": "One live child from ``tools/delegate_tool_registry.py::list_active_subagents`` (the record\nis extended by the child runner — ``missed_steer`` etc. — so it stays open).",
+        "description": "One live child from ``tools/delegate_tool_registry.py::list_active_subagents`` (the record\nis extended by the child runner \u2014 ``missed_steer`` etc. \u2014 so it stays open).",
         "properties": {
           "subagent_id": {
             "title": "Subagent Id",
@@ -5108,7 +5180,7 @@
       },
       "ApprovalCancelledPayload": {
         "additionalProperties": false,
-        "description": "``session_lifecycle._announce_cancelled_gateway_approvals`` (broadcast).\n\nOne frame for every pending approval dropped by an interrupt / reap / teardown (#106678) — the\ndeny-resolve is silent without it, so a reconnecting client's prompt looks lost rather than cancelled.\n``cancelled_count`` is the number of dropped entries; ``request_ids`` omits empty/missing ids, so the\ntwo can disagree when an entry has no request_id.",
+        "description": "``session_lifecycle._announce_cancelled_gateway_approvals`` (broadcast).\n\nOne frame for every pending approval dropped by an interrupt / reap / teardown (#106678) \u2014 the\ndeny-resolve is silent without it, so a reconnecting client's prompt looks lost rather than cancelled.\n``cancelled_count`` is the number of dropped entries; ``request_ids`` omits empty/missing ids, so the\ntwo can disagree when an entry has no request_id.",
         "properties": {
           "session_id": {
             "title": "Session Id",
@@ -5244,7 +5316,7 @@
       },
       "ApprovalRequestParams": {
         "additionalProperties": true,
-        "description": "``tui_gateway/server.py::_approval_request_payload`` — the command is redacted server-side.",
+        "description": "``tui_gateway/server.py::_approval_request_payload`` \u2014 the command is redacted server-side.",
         "properties": {
           "session_id": {
             "title": "Session Id",
@@ -5944,7 +6016,7 @@
       },
       "BillingChargeResult": {
         "additionalProperties": false,
-        "description": "``202 {chargeId}`` — money is not confirmed yet; poll ``billing.charge_status``.",
+        "description": "``202 {chargeId}`` \u2014 money is not confirmed yet; poll ``billing.charge_status``.",
         "properties": {
           "ok": {
             "title": "Ok",
@@ -7777,7 +7849,7 @@
       },
       "ChangeSignalPayload": {
         "additionalProperties": true,
-        "description": "``change_watcher._CHANGE_WATCHES`` payload fn — ``{}`` for every watch except pet.changed.",
+        "description": "``change_watcher._CHANGE_WATCHES`` payload fn \u2014 ``{}`` for every watch except pet.changed.",
         "properties": {},
         "title": "ChangeSignalPayload",
         "type": "object"
@@ -7819,7 +7891,7 @@
       },
       "ClarifyLockResult": {
         "additionalProperties": false,
-        "description": "``remaining`` lists the qids still unanswered; the lock that empties it resolves the request.\n``expired``: the wait already ended (timeout / cancel) — not an error.",
+        "description": "``remaining`` lists the qids still unanswered; the lock that empties it resolves the request.\n``expired``: the wait already ended (timeout / cancel) \u2014 not an error.",
         "properties": {
           "status": {
             "$ref": "#/components/schemas/ClarifyLockStatus"
@@ -11927,7 +11999,7 @@
       },
       "CronManageResult": {
         "additionalProperties": true,
-        "description": "Pass-through of ``tools/cronjob_tools.py::cronjob`` JSON: ``list`` → ``jobs``/``count``\n(+ ``scoped`` when profile-scoped); ``add`` → the created job's summary + ``job``; ``remove`` →\n``removed_job``; ``pause``/``resume`` → ``job``. A tool-level failure lands in ``error``.",
+        "description": "Pass-through of ``tools/cronjob_tools.py::cronjob`` JSON: ``list`` \u2192 ``jobs``/``count``\n(+ ``scoped`` when profile-scoped); ``add`` \u2192 the created job's summary + ``job``; ``remove`` \u2192\n``removed_job``; ``pause``/``resume`` \u2192 ``job``. A tool-level failure lands in ``error``.",
         "properties": {
           "success": {
             "anyOf": [
@@ -13803,7 +13875,7 @@
       },
       "ErrorPayload": {
         "additionalProperties": false,
-        "description": "Every ``_emit(\"error\", …)`` site sets exactly ``message``.",
+        "description": "Every ``_emit(\"error\", \u2026)`` site sets exactly ``message``.",
         "properties": {
           "message": {
             "title": "Message",
@@ -13818,7 +13890,7 @@
       },
       "ErrorSurface": {
         "additionalProperties": true,
-        "description": "``agent/error_surface.py::_surface`` — advisory {layer, code, retryable} (+ identity, + auth hint,\n+ ``resets_at`` epoch seconds when the provider named when its limit lifts).",
+        "description": "``agent/error_surface.py::_surface`` \u2014 advisory {layer, code, retryable} (+ identity, + auth hint,\n+ ``resets_at`` epoch seconds when the provider named when its limit lifts).",
         "properties": {
           "layer": {
             "title": "Layer",
@@ -14047,7 +14119,7 @@
       },
       "ForeignSessionRow": {
         "additionalProperties": false,
-        "description": "``hermes_cli/foreign_sessions_browser.py::list_foreign_sessions`` — ``id`` is an opaque\nhandle, never a path.",
+        "description": "``hermes_cli/foreign_sessions_browser.py::list_foreign_sessions`` \u2014 ``id`` is an opaque\nhandle, never a path.",
         "properties": {
           "id": {
             "title": "Id",
@@ -14423,7 +14495,7 @@
       },
       "GoalSnapshot": {
         "additionalProperties": false,
-        "description": "``methods_session_control.py::_safe_goal_snapshot`` — the frontend-safe GoalState subset.",
+        "description": "``methods_session_control.py::_safe_goal_snapshot`` \u2014 the frontend-safe GoalState subset.",
         "properties": {
           "title": {
             "title": "Title",
@@ -15030,7 +15102,7 @@
       },
       "GroupsLogResult": {
         "additionalProperties": false,
-        "description": "``gateway/hosted_rooms.py::read_events`` page — also the ``page`` ``groups.replicate`` ingests.",
+        "description": "``gateway/hosted_rooms.py::read_events`` page \u2014 also the ``page`` ``groups.replicate`` ingests.",
         "properties": {
           "events": {
             "items": {
@@ -16102,7 +16174,7 @@
       },
       "I18nCatalogResult": {
         "additionalProperties": false,
-        "description": "``messages`` is ONLY the pack + user-overlay layer for that surface (flat dotted keys); the\nclient merges it over its bundled ``en``/``<lang>``. ``lang`` is the canonical id the request\nresolved to (``pt-BR`` → ``pt-br``; an unknown id resolves to ``en`` with an empty layer).",
+        "description": "``messages`` is ONLY the pack + user-overlay layer for that surface (flat dotted keys); the\nclient merges it over its bundled ``en``/``<lang>``. ``lang`` is the canonical id the request\nresolved to (``pt-BR`` \u2192 ``pt-br``; an unknown id resolves to ``en`` with an empty layer).",
         "properties": {
           "lang": {
             "title": "Lang",
@@ -16146,7 +16218,7 @@
       },
       "ImageAttachBytesParams": {
         "additionalProperties": false,
-        "description": "``content_base64`` (or the ``data`` alias) carries the bytes; ``filename`` / ``ext`` only hint\nthe extension — magic bytes decide.",
+        "description": "``content_base64`` (or the ``data`` alias) carries the bytes; ``filename`` / ``ext`` only hint\nthe extension \u2014 magic bytes decide.",
         "properties": {
           "session_id": {
             "title": "Session Id",
@@ -16757,7 +16829,7 @@
       },
       "LanguageOption": {
         "additionalProperties": false,
-        "description": "``agent.i18n_languages.language_options`` row. ``source`` is ``bundled``, ``overlay`` or\n``plugin:<name>`` — the highest layer that supplies the language.",
+        "description": "``agent.i18n_languages.language_options`` row. ``source`` is ``bundled``, ``overlay`` or\n``plugin:<name>`` \u2014 the highest layer that supplies the language.",
         "properties": {
           "id": {
             "title": "Id",
@@ -17193,7 +17265,7 @@
       },
       "LearningMutationResult": {
         "additionalProperties": false,
-        "description": "``agent.learning_mutations`` — ``ok: false`` carries the reason in ``message``.",
+        "description": "``agent.learning_mutations`` \u2014 ``ok: false`` carries the reason in ``message``.",
         "properties": {
           "ok": {
             "title": "Ok",
@@ -17396,6 +17468,67 @@
         "title": "LegalActParams",
         "type": "object"
       },
+      "LegalAllocatePaymentParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "paid_on": {
+            "title": "Paid On",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "allocations": {
+            "items": {
+              "$ref": "#/components/schemas/LegalPaymentAllocation"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Allocations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "amount_cents",
+          "paid_on",
+          "reference",
+          "allocations"
+        ],
+        "title": "LegalAllocatePaymentParams",
+        "type": "object"
+      },
       "LegalBillingGroup": {
         "additionalProperties": false,
         "properties": {
@@ -17569,6 +17702,52 @@
         "title": "LegalClientSnapshot",
         "type": "object"
       },
+      "LegalCreditParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "document_id",
+          "reason"
+        ],
+        "title": "LegalCreditParams",
+        "type": "object"
+      },
       "LegalDocument": {
         "additionalProperties": false,
         "properties": {
@@ -17601,16 +17780,6 @@
             "title": "Due On",
             "type": "string"
           },
-          "template_id": {
-            "default": "classique",
-            "enum": [
-              "classique",
-              "synthese",
-              "detaille"
-            ],
-            "title": "Template Id",
-            "type": "string"
-          },
           "snapshot": {
             "$ref": "#/components/schemas/LegalDocumentSnapshot"
           },
@@ -17635,14 +17804,22 @@
             "type": "integer"
           },
           "credited_cents": {
+            "default": 0,
             "title": "Credited Cents",
             "type": "integer"
           },
           "cancelled": {
+            "default": false,
             "title": "Cancelled",
             "type": "boolean"
           },
+          "refund_due_cents": {
+            "default": 0,
+            "title": "Refund Due Cents",
+            "type": "integer"
+          },
           "purpose": {
+            "default": "standard",
             "title": "Purpose",
             "type": "string"
           },
@@ -17655,11 +17832,8 @@
                 "type": "null"
               }
             ],
+            "default": null,
             "title": "Related Document Id"
-          },
-          "refund_due_cents": {
-            "title": "Refund Due Cents",
-            "type": "integer"
           }
         },
         "required": [
@@ -17674,12 +17848,7 @@
           "tax_cents",
           "total_cents",
           "paid_cents",
-          "balance_cents",
-          "credited_cents",
-          "cancelled",
-          "purpose",
-          "related_document_id",
-          "refund_due_cents"
+          "balance_cents"
         ],
         "title": "LegalDocument",
         "type": "object"
@@ -17733,6 +17902,16 @@
           },
           "due_on": {
             "title": "Due On",
+            "type": "string"
+          },
+          "template_id": {
+            "default": "classique",
+            "enum": [
+              "classique",
+              "synthese",
+              "detaille"
+            ],
+            "title": "Template Id",
             "type": "string"
           },
           "purpose": {
@@ -17956,6 +18135,22 @@
             "default": "",
             "title": "Responsible User",
             "type": "string"
+          },
+          "activity_date": {
+            "title": "Activity Date",
+            "type": "string"
+          },
+          "billing_code": {
+            "title": "Billing Code",
+            "type": "string"
+          },
+          "activity_type": {
+            "title": "Activity Type",
+            "type": "string"
+          },
+          "billable": {
+            "title": "Billable",
+            "type": "boolean"
           }
         },
         "required": [
@@ -17968,9 +18163,129 @@
           "kind",
           "minutes",
           "rate_cents",
-          "invoice_id"
+          "invoice_id",
+          "activity_date",
+          "billing_code",
+          "activity_type",
+          "billable"
         ],
         "title": "LegalFee",
+        "type": "object"
+      },
+      "LegalFeeCode": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "hourly_rate_cents": {
+            "title": "Hourly Rate Cents",
+            "type": "integer"
+          },
+          "fixed_amount_cents": {
+            "title": "Fixed Amount Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "title": "Tax Bps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "label",
+          "hourly_rate_cents",
+          "fixed_amount_cents",
+          "tax_bps"
+        ],
+        "title": "LegalFeeCode",
+        "type": "object"
+      },
+      "LegalFeeCodeParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "hourly_rate_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Hourly Rate Cents",
+            "type": "integer"
+          },
+          "fixed_amount_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Fixed Amount Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "default": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Tax Bps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "code",
+          "label"
+        ],
+        "title": "LegalFeeCodeParams",
         "type": "object"
       },
       "LegalFeeParams": {
@@ -18048,6 +18363,26 @@
             "default": "",
             "title": "Responsible User",
             "type": "string"
+          },
+          "activity_date": {
+            "default": "",
+            "title": "Activity Date",
+            "type": "string"
+          },
+          "billing_code": {
+            "default": "",
+            "title": "Billing Code",
+            "type": "string"
+          },
+          "activity_type": {
+            "default": "",
+            "title": "Activity Type",
+            "type": "string"
+          },
+          "billable": {
+            "default": true,
+            "title": "Billable",
+            "type": "boolean"
           }
         },
         "required": [
@@ -18183,7 +18518,7 @@
             "type": "integer"
           },
           "late_penalty_rate": {
-            "default": "3 fois le taux d’intérêt légal",
+            "default": "3 fois le taux d\u2019int\u00e9r\u00eat l\u00e9gal",
             "title": "Late Penalty Rate",
             "type": "string"
           }
@@ -18530,6 +18865,27 @@
         "title": "LegalPayment",
         "type": "object"
       },
+      "LegalPaymentAllocation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Amount Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id",
+          "amount_cents"
+        ],
+        "title": "LegalPaymentAllocation",
+        "type": "object"
+      },
       "LegalPaymentParams": {
         "additionalProperties": false,
         "properties": {
@@ -18584,6 +18940,129 @@
           "reference"
         ],
         "title": "LegalPaymentParams",
+        "type": "object"
+      },
+      "LegalPracticeDocument": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "fee_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fee Ids",
+            "type": "array"
+          },
+          "created_on": {
+            "title": "Created On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "matter_id",
+          "template_id",
+          "title",
+          "body",
+          "fee_ids",
+          "created_on"
+        ],
+        "title": "LegalPracticeDocument",
+        "type": "object"
+      },
+      "LegalPracticeDocumentParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "fee_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "title": "Fee Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "template_id"
+        ],
+        "title": "LegalPracticeDocumentParams",
+        "type": "object"
+      },
+      "LegalPracticeDocumentTemplate": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "LegalPracticeDocumentTemplate",
         "type": "object"
       },
       "LegalProjectBillingGroup": {
@@ -18702,6 +19181,34 @@
             "title": "Fees",
             "type": "array"
           },
+          "fee_codes": {
+            "items": {
+              "$ref": "#/components/schemas/LegalFeeCode"
+            },
+            "title": "Fee Codes",
+            "type": "array"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/LegalSubscription"
+            },
+            "title": "Subscriptions",
+            "type": "array"
+          },
+          "practice_documents": {
+            "items": {
+              "$ref": "#/components/schemas/LegalPracticeDocument"
+            },
+            "title": "Practice Documents",
+            "type": "array"
+          },
+          "practice_document_templates": {
+            "items": {
+              "$ref": "#/components/schemas/LegalPracticeDocumentTemplate"
+            },
+            "title": "Practice Document Templates",
+            "type": "array"
+          },
           "documents": {
             "items": {
               "$ref": "#/components/schemas/LegalDocument"
@@ -18732,12 +19239,239 @@
           "matters",
           "acts",
           "fees",
+          "fee_codes",
+          "subscriptions",
+          "practice_documents",
+          "practice_document_templates",
           "documents",
           "payments",
           "firm_settings",
           "firm_totals"
         ],
         "title": "LegalSnapshot",
+        "type": "object"
+      },
+      "LegalSubscription": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "amount_cents": {
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "cadence": {
+            "enum": [
+              "monthly",
+              "semiannual",
+              "annual"
+            ],
+            "title": "Cadence",
+            "type": "string"
+          },
+          "starts_on": {
+            "title": "Starts On",
+            "type": "string"
+          },
+          "ends_on": {
+            "title": "Ends On",
+            "type": "string"
+          },
+          "next_invoice_on": {
+            "title": "Next Invoice On",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "paused",
+              "ended"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "matter_id",
+          "label",
+          "amount_cents",
+          "tax_bps",
+          "cadence",
+          "starts_on",
+          "ends_on",
+          "next_invoice_on",
+          "status"
+        ],
+        "title": "LegalSubscription",
+        "type": "object"
+      },
+      "LegalSubscriptionInvoiceParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "subscription_id": {
+            "title": "Subscription Id",
+            "type": "string"
+          },
+          "template_id": {
+            "default": "classique",
+            "enum": [
+              "classique",
+              "synthese",
+              "detaille"
+            ],
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "subscription_id"
+        ],
+        "title": "LegalSubscriptionInvoiceParams",
+        "type": "object"
+      },
+      "LegalSubscriptionParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "default": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "cadence": {
+            "enum": [
+              "monthly",
+              "semiannual",
+              "annual"
+            ],
+            "title": "Cadence",
+            "type": "string"
+          },
+          "starts_on": {
+            "title": "Starts On",
+            "type": "string"
+          },
+          "ends_on": {
+            "default": "",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "next_invoice_on": {
+            "default": "",
+            "title": "Next Invoice On",
+            "type": "string"
+          },
+          "status": {
+            "default": "active",
+            "enum": [
+              "active",
+              "paused",
+              "ended"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "label",
+          "amount_cents",
+          "cadence",
+          "starts_on"
+        ],
+        "title": "LegalSubscriptionParams",
         "type": "object"
       },
       "LegalWorkspaceParams": {
@@ -18941,7 +19675,7 @@
       },
       "LoopSnapshot": {
         "additionalProperties": false,
-        "description": "``_safe_loop_snapshot`` — persisted LoopState fields, never its route.",
+        "description": "``_safe_loop_snapshot`` \u2014 persisted LoopState fields, never its route.",
         "properties": {
           "prompt": {
             "title": "Prompt",
@@ -19641,7 +20375,7 @@
       },
       "McpServerSummary": {
         "additionalProperties": false,
-        "description": "``tui_gateway/mcp_rpc_helpers.summarize_server`` — a server's config without secret values.",
+        "description": "``tui_gateway/mcp_rpc_helpers.summarize_server`` \u2014 a server's config without secret values.",
         "properties": {
           "name": {
             "title": "Name",
@@ -20962,7 +21696,7 @@
       },
       "ModelPricing": {
         "additionalProperties": false,
-        "description": "``hermes_cli/inventory.py::_apply_pricing`` — formatted $/Mtok strings (``\"\"`` unknown,\n``\"free\"``); the sale fields are Nous Portal-only.",
+        "description": "``hermes_cli/inventory.py::_apply_pricing`` \u2014 formatted $/Mtok strings (``\"\"`` unknown,\n``\"free\"``); the sale fields are Nous Portal-only.",
         "properties": {
           "input": {
             "title": "Input",
@@ -21181,7 +21915,7 @@
       },
       "OnboardingAnswers": {
         "additionalProperties": true,
-        "description": "``tui_gateway/onboarding_personalization.py`` — the facts agreed during onboarding.",
+        "description": "``tui_gateway/onboarding_personalization.py`` \u2014 the facts agreed during onboarding.",
         "properties": {
           "name": {
             "anyOf": [
@@ -21395,7 +22129,7 @@
       },
       "OpenRequestEntry": {
         "additionalProperties": false,
-        "description": "One unanswered server→client request (``server_requests.Request.snapshot``); the reconnecting\nclient re-delivers it to its request handlers.",
+        "description": "One unanswered server\u2192client request (``server_requests.Request.snapshot``); the reconnecting\nclient re-delivers it to its request handlers.",
         "properties": {
           "id": {
             "title": "Id",
@@ -21454,7 +22188,7 @@
       },
       "Params": {
         "additionalProperties": false,
-        "description": "Client→server method params / server→client request params. Unknown keys are rejected.",
+        "description": "Client\u2192server method params / server\u2192client request params. Unknown keys are rejected.",
         "properties": {},
         "title": "Params",
         "type": "object"
@@ -22020,7 +22754,7 @@
       },
       "PetCellsResult": {
         "additionalProperties": false,
-        "description": "Unicode: ``frames`` is frame → row → cell ``[tr,tg,tb,ta, br,bg,bb,ba]``; kitty (``graphics``\nset): ``frames`` are transmit escapes and ``placeholder`` the text grid.",
+        "description": "Unicode: ``frames`` is frame \u2192 row \u2192 cell ``[tr,tg,tb,ta, br,bg,bb,ba]``; kitty (``graphics``\nset): ``frames`` are transmit escapes and ``placeholder`` the text grid.",
         "properties": {
           "enabled": {
             "title": "Enabled",
@@ -22200,7 +22934,7 @@
       },
       "PetChangedPayload": {
         "additionalProperties": true,
-        "description": "``change_watcher._pet_changed_payload`` — ``pet.info.meta``-shaped; ``{enabled: false}`` when off.",
+        "description": "``change_watcher._pet_changed_payload`` \u2014 ``pet.info.meta``-shaped; ``{enabled: false}`` when off.",
         "properties": {
           "enabled": {
             "title": "Enabled",
@@ -23478,7 +24212,7 @@
       },
       "PluginActivation": {
         "additionalProperties": false,
-        "description": "What a plugin loaded mid-run does NOW vs later (``hermes_cli.plugins_activation``). ``activated_now``\nkinds (``{kind: [names]}``): ``gateway_commands`` (slash names), ``locales`` (``<lang>.<surface>``\nlanguage-pack layers), ``gateway_transforms`` / ``hooks`` (hook\nnames), ``callbacks`` (platforms / ``slack:<action_id>``) — live in the running gateway once it reloaded\n(``gateway_reloaded``). ``live_now``: the plugin's MCP servers (connected, with their tools, or the\nerror) and skills, usable in every open chat of the profile from its next turn — the chats also get a\nnote listing them. ``deferred`` kinds: ``tools`` (Python tool names) and ``prompt`` (section ids)\napply from the next session.",
+        "description": "What a plugin loaded mid-run does NOW vs later (``hermes_cli.plugins_activation``). ``activated_now``\nkinds (``{kind: [names]}``): ``gateway_commands`` (slash names), ``locales`` (``<lang>.<surface>``\nlanguage-pack layers), ``gateway_transforms`` / ``hooks`` (hook\nnames), ``callbacks`` (platforms / ``slack:<action_id>``) \u2014 live in the running gateway once it reloaded\n(``gateway_reloaded``). ``live_now``: the plugin's MCP servers (connected, with their tools, or the\nerror) and skills, usable in every open chat of the profile from its next turn \u2014 the chats also get a\nnote listing them. ``deferred`` kinds: ``tools`` (Python tool names) and ``prompt`` (section ids)\napply from the next session.",
         "properties": {
           "name": {
             "title": "Name",
@@ -23933,7 +24667,7 @@
       },
       "PluginsManageResult": {
         "additionalProperties": false,
-        "description": "``list`` → ``plugins`` + counts; ``toggle`` → ``ok``/``unchanged``/``restart_required``/``name``\n(the canonical key written)/``plugin``; ``install`` → ``hermes_cli.plugins_cmd.dashboard_install_plugin``'s\nok payload; ``toggle``/``install``/``update`` that loaded a plugin also carry ``gateway_reloaded`` (the\nrunning gateway picked it up and re-wired its handlers) and ``activation`` — the honest split of what is\nlive now vs deferred, so ``restart_required`` is True only when no gateway answered; ``update`` → ``ok``/``unchanged``/``sha``, or ``ok=false`` + ``consent_required`` with the\n``delta`` (``{surface: [added...]}``) / ``delta_lines`` a widened pin adds — nothing changed until the\nclient retries with ``accept_capabilities``; ``remove`` → ``ok``/``name`` plus\n``cleared_memory_provider`` when the removed plugin was the live ``memory.provider``.",
+        "description": "``list`` \u2192 ``plugins`` + counts; ``toggle`` \u2192 ``ok``/``unchanged``/``restart_required``/``name``\n(the canonical key written)/``plugin``; ``install`` \u2192 ``hermes_cli.plugins_cmd.dashboard_install_plugin``'s\nok payload; ``toggle``/``install``/``update`` that loaded a plugin also carry ``gateway_reloaded`` (the\nrunning gateway picked it up and re-wired its handlers) and ``activation`` \u2014 the honest split of what is\nlive now vs deferred, so ``restart_required`` is True only when no gateway answered; ``update`` \u2192 ``ok``/``unchanged``/``sha``, or ``ok=false`` + ``consent_required`` with the\n``delta`` (``{surface: [added...]}``) / ``delta_lines`` a widened pin adds \u2014 nothing changed until the\nclient retries with ``accept_capabilities``; ``remove`` \u2192 ``ok``/``name`` plus\n``cleared_memory_provider`` when the removed plugin was the live ``memory.provider``.",
         "properties": {
           "plugins": {
             "anyOf": [
@@ -26294,7 +27028,7 @@
       },
       "ProjectFacts": {
         "additionalProperties": false,
-        "description": "``agent/coding_context.py::project_facts_for`` — the system prompt's coding-context detection.",
+        "description": "``agent/coding_context.py::project_facts_for`` \u2014 the system prompt's coding-context detection.",
         "properties": {
           "root": {
             "title": "Root",
@@ -26493,7 +27227,7 @@
       },
       "ProjectInfo": {
         "additionalProperties": false,
-        "description": "``hermes_cli/projects_db.py::Project.to_dict`` — one stored project with its folders.",
+        "description": "``hermes_cli/projects_db.py::Project.to_dict`` \u2014 one stored project with its folders.",
         "properties": {
           "id": {
             "title": "Id",
@@ -26699,7 +27433,7 @@
       },
       "ProjectTreeNode": {
         "additionalProperties": false,
-        "description": "``project_tree._project_node`` — explicit, auto (git root) or the synthetic Home bucket.",
+        "description": "``project_tree._project_node`` \u2014 explicit, auto (git root) or the synthetic Home bucket.",
         "properties": {
           "id": {
             "title": "Id",
@@ -28517,7 +29251,7 @@
       },
       "RepoDiscoveryPolicy": {
         "additionalProperties": false,
-        "description": "``methods_projects._repo_discovery_policy`` — the effective ``desktop.repo_scan_*`` config.",
+        "description": "``methods_projects._repo_discovery_policy`` \u2014 the effective ``desktop.repo_scan_*`` config.",
         "properties": {
           "enabled": {
             "title": "Enabled",
@@ -29826,7 +30560,7 @@
       },
       "SeedMessage": {
         "additionalProperties": true,
-        "description": "One create-time transcript row (``session_history._coerce_seed_history``); ``text`` is the\nlegacy alias of ``content``; only ``display_kind: \"hidden\"`` is accepted from the wire. Clients\nforward stored rows verbatim (``_row_id``, ``timestamp``, …) and the coercer drops what it does\nnot use, so the row stays open.",
+        "description": "One create-time transcript row (``session_history._coerce_seed_history``); ``text`` is the\nlegacy alias of ``content``; only ``display_kind: \"hidden\"`` is accepted from the wire. Clients\nforward stored rows verbatim (``_row_id``, ``timestamp``, \u2026) and the coercer drops what it does\nnot use, so the row stays open.",
         "properties": {
           "role": {
             "title": "Role",
@@ -31010,7 +31744,7 @@
       },
       "SessionControlDispatch": {
         "additionalProperties": false,
-        "description": "``_dispatch_envelope`` — the command result's user-visible envelope, every key always present.",
+        "description": "``_dispatch_envelope`` \u2014 the command result's user-visible envelope, every key always present.",
         "properties": {
           "type": {
             "anyOf": [
@@ -31179,7 +31913,7 @@
       },
       "SessionControlSnapshot": {
         "additionalProperties": false,
-        "description": "``_snapshot_control`` — ``revision`` is a hash of the visible state (``\"\"`` when empty);\n``updated_at`` is the newest persisted timestamp (``0`` when none).",
+        "description": "``_snapshot_control`` \u2014 ``revision`` is a hash of the visible state (``\"\"`` when empty);\n``updated_at`` is the newest persisted timestamp (``0`` when none).",
         "properties": {
           "goal": {
             "anyOf": [
@@ -32414,7 +33148,7 @@
       },
       "SessionLiveInfo": {
         "additionalProperties": true,
-        "description": "``tui_gateway/server.py::_session_info`` — the ``session.info`` event and the ``info`` field of\n``session.create`` / ``session.resume`` / ``session.activate`` results.",
+        "description": "``tui_gateway/server.py::_session_info`` \u2014 the ``session.info`` event and the ``info`` field of\n``session.create`` / ``session.resume`` / ``session.activate`` results.",
         "properties": {
           "model": {
             "default": "",
@@ -34252,7 +34986,7 @@
       },
       "SharedMetricsDesktopDislikeParams": {
         "additionalProperties": false,
-        "description": "``signal`` quick_close|cancelled|setting_off_default|rage_click|undo|feature_disabled; ``target`` a\nclosed code-defined id for that signal (area, flow, action, undo path, feature toggle); ``setting`` a\nconfig key for setting_off_default only (the value is never sent — the backend compares it to the\ndefault).",
+        "description": "``signal`` quick_close|cancelled|setting_off_default|rage_click|undo|feature_disabled; ``target`` a\nclosed code-defined id for that signal (area, flow, action, undo path, feature toggle); ``setting`` a\nconfig key for setting_off_default only (the value is never sent \u2014 the backend compares it to the\ndefault).",
         "properties": {
           "profile": {
             "anyOf": [
@@ -34296,7 +35030,7 @@
       },
       "SharedMetricsDesktopFeatureUseParams": {
         "additionalProperties": false,
-        "description": "``area`` is a Desktop surface id (``command_palette``, ``terminal_pane``, ``settings_<view>`` …);\nthe backend collapses anything outside its closed set to ``other``.",
+        "description": "``area`` is a Desktop surface id (``command_palette``, ``terminal_pane``, ``settings_<view>`` \u2026);\nthe backend collapses anything outside its closed set to ``other``.",
         "properties": {
           "profile": {
             "anyOf": [
@@ -35032,7 +35766,7 @@
       },
       "SkillsManageResult": {
         "additionalProperties": false,
-        "description": "Shape follows the action: ``list`` → ``skills`` (category → names); ``search`` → ``results``;\n``install`` → ``installed`` + ``name``; ``browse`` → ``items`` + paging; ``inspect`` → ``info``.",
+        "description": "Shape follows the action: ``list`` \u2192 ``skills`` (category \u2192 names); ``search`` \u2192 ``results``;\n``install`` \u2192 ``installed`` + ``name``; ``browse`` \u2192 ``items`` + paging; ``inspect`` \u2192 ``info``.",
         "properties": {
           "skills": {
             "anyOf": [
@@ -35248,7 +35982,7 @@
       },
       "SkinPayload": {
         "additionalProperties": true,
-        "description": "``tui_gateway/change_watcher.py::resolve_skin`` — the resolved active skin (``HermesSkin``).\n``{}`` when the skin engine failed to load. Colour maps are token → colour string.",
+        "description": "``tui_gateway/change_watcher.py::resolve_skin`` \u2014 the resolved active skin (``HermesSkin``).\n``{}`` when the skin engine failed to load. Colour maps are token \u2192 colour string.",
         "properties": {
           "name": {
             "default": "",
@@ -35345,7 +36079,7 @@
       },
       "SlashExecResult": {
         "additionalProperties": false,
-        "description": "Plain worker/plugin text in ``output`` (+ ``warning``), or — when the command was rerouted to\n``command.dispatch`` — that method's directive fields with ``type`` set.",
+        "description": "Plain worker/plugin text in ``output`` (+ ``warning``), or \u2014 when the command was rerouted to\n``command.dispatch`` \u2014 that method's directive fields with ``type`` set.",
         "properties": {
           "output": {
             "anyOf": [
@@ -35840,7 +36574,7 @@
       },
       "SubagentEventPayload": {
         "additionalProperties": false,
-        "description": "``tool_progress._progress_subagent`` — every ``subagent.*`` frame; identity fields are optional\nbecause older emitters omit them and the TUI spawn tree falls back to flat rendering.",
+        "description": "``tool_progress._progress_subagent`` \u2014 every ``subagent.*`` frame; identity fields are optional\nbecause older emitters omit them and the TUI spawn tree falls back to flat rendering.",
         "properties": {
           "goal": {
             "title": "Goal",
@@ -37442,7 +38176,7 @@
       },
       "TodoUpdatedPayload": {
         "additionalProperties": false,
-        "description": "``tool_progress._normalize_todo_state`` — full task snapshot.",
+        "description": "``tool_progress._normalize_todo_state`` \u2014 full task snapshot.",
         "properties": {
           "todos": {
             "items": {},
@@ -37603,7 +38337,7 @@
       },
       "ToolLabel": {
         "additionalProperties": false,
-        "description": "``tools.tool_labels.ToolLabel`` — what one call executed through the tool_search bridge is,\nin words. Clients render ``text`` (or ``app``/``action`` in their own columns) and never parse\nthe tool name themselves.",
+        "description": "``tools.tool_labels.ToolLabel`` \u2014 what one call executed through the tool_search bridge is,\nin words. Clients render ``text`` (or ``app``/``action`` in their own columns) and never parse\nthe tool name themselves.",
         "properties": {
           "kind": {
             "$ref": "#/components/schemas/ToolLabelKind"
@@ -38240,7 +38974,7 @@
       },
       "TranscriptMessage": {
         "additionalProperties": true,
-        "description": "One transcript row as the gateway PROJECTS it for renderers (``session_history._project_history``):\n``text``, display-only ``timestamp`` / ``display_kind`` / ``display_metadata``, the durable ``row_id``\nrewind targets, and for tool rows raw ``content``, ``tool_call_id``, ``name``, ``context`` and ``args``.\nAssistant detail sidecars (``reasoning``, …) ride as extra keys.",
+        "description": "One transcript row as the gateway PROJECTS it for renderers (``session_history._project_history``):\n``text``, display-only ``timestamp`` / ``display_kind`` / ``display_metadata``, the durable ``row_id``\nrewind targets, and for tool rows raw ``content``, ``tool_call_id``, ``name``, ``context`` and ``args``.\nAssistant detail sidecars (``reasoning``, \u2026) ride as extra keys.",
         "properties": {
           "role": {
             "title": "Role",
@@ -38715,7 +39449,7 @@
       },
       "UsageModel": {
         "additionalProperties": false,
-        "description": "``_serialize_usage_model`` — also embedded as ``usage`` in the billing / subscription states,\nwhere the fail-open form is a bare ``{available: false}`` (no ``ok``).",
+        "description": "``_serialize_usage_model`` \u2014 also embedded as ``usage`` in the billing / subscription states,\nwhere the fail-open form is a bare ``{available: false}`` (no ``ok``).",
         "properties": {
           "ok": {
             "anyOf": [
@@ -39777,7 +40511,7 @@
       },
       "VoiceStatusPayload": {
         "additionalProperties": false,
-        "description": "``methods_voice._vr_on_status``; states come from the recorder (idle / listening / transcribing …).",
+        "description": "``methods_voice._vr_on_status``; states come from the recorder (idle / listening / transcribing \u2026).",
         "properties": {
           "state": {
             "title": "State",
@@ -40199,7 +40933,7 @@
       },
       "WakeInputDevice": {
         "additionalProperties": true,
-        "description": "``tools/wake_word.py::_describe_input_device`` — PortAudio diagnostics for the configured mic.",
+        "description": "``tools/wake_word.py::_describe_input_device`` \u2014 PortAudio diagnostics for the configured mic.",
         "properties": {
           "selector": {
             "anyOf": [
@@ -40778,134 +41512,6 @@
           "ORG_ACCESS_DENIED",
           "INVALID_POLICY"
         ]
-      },
-      "LegalCreditParams": {
-        "additionalProperties": false,
-        "properties": {
-          "profile": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Profile"
-          },
-          "project_id": {
-            "minLength": 1,
-            "title": "Project Id",
-            "type": "string"
-          },
-          "request_id": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "Request Id",
-            "type": "string"
-          },
-          "document_id": {
-            "title": "Document Id",
-            "type": "string"
-          },
-          "reason": {
-            "maxLength": 500,
-            "minLength": 1,
-            "title": "Reason",
-            "type": "string"
-          }
-        },
-        "required": [
-          "project_id",
-          "request_id",
-          "document_id",
-          "reason"
-        ],
-        "title": "LegalCreditParams",
-        "type": "object"
-      },
-      "LegalPaymentAllocation": {
-        "additionalProperties": false,
-        "properties": {
-          "document_id": {
-            "title": "Document Id",
-            "type": "string"
-          },
-          "amount_cents": {
-            "maximum": 1000000000,
-            "minimum": 1,
-            "title": "Amount Cents",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "document_id",
-          "amount_cents"
-        ],
-        "title": "LegalPaymentAllocation",
-        "type": "object"
-      },
-      "LegalAllocatePaymentParams": {
-        "additionalProperties": false,
-        "properties": {
-          "profile": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Profile"
-          },
-          "project_id": {
-            "minLength": 1,
-            "title": "Project Id",
-            "type": "string"
-          },
-          "request_id": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "Request Id",
-            "type": "string"
-          },
-          "amount_cents": {
-            "maximum": 1000000000,
-            "minimum": 1,
-            "title": "Amount Cents",
-            "type": "integer"
-          },
-          "paid_on": {
-            "title": "Paid On",
-            "type": "string"
-          },
-          "reference": {
-            "title": "Reference",
-            "type": "string"
-          },
-          "allocations": {
-            "items": {
-              "$ref": "#/components/schemas/LegalPaymentAllocation"
-            },
-            "maxItems": 100,
-            "minItems": 1,
-            "title": "Allocations",
-            "type": "array"
-          }
-        },
-        "required": [
-          "project_id",
-          "request_id",
-          "amount_cents",
-          "paid_on",
-          "reference",
-          "allocations"
-        ],
-        "title": "LegalAllocatePaymentParams",
-        "type": "object"
       }
     }
   },
@@ -41689,7 +42295,7 @@
     },
     {
       "name": "request.cancel",
-      "summary": "The backend withdrew an open server→client request; clear the matching card only.",
+      "summary": "The backend withdrew an open server\u2192client request; clear the matching card only.",
       "params": [
         {
           "name": "payload",
@@ -41821,7 +42427,7 @@
     },
     {
       "name": "status.update",
-      "summary": "Transient status line (kind: status, lifecycle, compacting, goal, loop, heartbeat, process, …).",
+      "summary": "Transient status line (kind: status, lifecycle, compacting, goal, loop, heartbeat, process, \u2026).",
       "params": [
         {
           "name": "payload",
