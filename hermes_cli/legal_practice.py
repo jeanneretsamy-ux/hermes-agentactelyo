@@ -441,6 +441,8 @@ def _legal_apply(conn, pid, action, p):
         billing_code = _legal_text(p.get("billing_code"), limit=40)
         activity_type = _legal_text(p.get("activity_type"), limit=40)
         activity_date = _legal_date(p.get("activity_date") or date.today().isoformat())
+        if activity_date > date.today().isoformat():
+            raise ValueError("Une activité déjà réalisée ne peut pas être datée dans le futur")
         if billing_code and not conn.execute("SELECT 1 FROM legal_fee_codes WHERE project_id=? AND code=?", (pid, billing_code)).fetchone():
             raise ValueError("Code de facturation inconnu dans le cabinet")
         billable = p.get("billable", True)

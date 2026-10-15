@@ -1,5 +1,5 @@
 """Real project/RPC/SQLite boundaries: billing arithmetic, retry safety and profile ownership."""
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 
@@ -135,6 +135,7 @@ def test_legal_time_codes_subscriptions_and_linked_document_drafts(tmp_path):
     assert unbillable["billable"] is False
     assert call("legal.snapshot", **p)["firm_totals"]["fees_cents"] == 10000
     fail("legal.document.create", **{**p, "request_id": "nonbillable-invoice", "matter_id": matter["id"], "kind": "invoice", "fee_ids": [unbillable["id"]], "due_on": date.today().isoformat()})
+    fail("legal.fee.add", **{**time_params, "request_id": "future-time", "activity_date": (date.today() + timedelta(days=1)).isoformat()})
     form = call("legal.practice_document.create", **p, request_id="form-1", matter_id=matter["id"], template_id="document_communication", fee_ids=[fee["id"]])
     assert form["practice_documents"][0]["fee_ids"] == [fee["id"]]
     assert "Client : Client" in form["practice_documents"][0]["body"]
