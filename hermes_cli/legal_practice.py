@@ -75,7 +75,8 @@ CREATE TABLE IF NOT EXISTS legal_documents (
  matter_id TEXT NOT NULL REFERENCES legal_matters(id), kind TEXT NOT NULL,
  reference TEXT NOT NULL, created_on TEXT NOT NULL, due_on TEXT NOT NULL,
  snapshot TEXT NOT NULL, net_cents INTEGER NOT NULL, tax_cents INTEGER NOT NULL,
- total_cents INTEGER NOT NULL
+ total_cents INTEGER NOT NULL, purpose TEXT NOT NULL DEFAULT 'standard',
+ related_document_id TEXT REFERENCES legal_documents(id)
 );
 CREATE TABLE IF NOT EXISTS legal_payments (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -99,6 +100,11 @@ def initialize_legal(conn):
         conn.execute("ALTER TABLE legal_clients ADD COLUMN customer_type TEXT NOT NULL DEFAULT 'individual'")
     if "siren" not in client_columns:
         conn.execute("ALTER TABLE legal_clients ADD COLUMN siren TEXT NOT NULL DEFAULT ''")
+    document_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_documents)")}
+    if "purpose" not in document_columns:
+        conn.execute("ALTER TABLE legal_documents ADD COLUMN purpose TEXT NOT NULL DEFAULT 'standard'")
+    if "related_document_id" not in document_columns:
+        conn.execute("ALTER TABLE legal_documents ADD COLUMN related_document_id TEXT REFERENCES legal_documents(id)")
 
 
 def legal_domain(domain_id):
@@ -149,7 +155,11 @@ def legal_snapshot(conn, project_id):
     for document in result["documents"]:
         document["snapshot"] = json.loads(document["snapshot"])
         document["paid_cents"] = sum(p["amount_cents"] for p in result["payments"] if p["document_id"] == document["id"])
-        document["balance_cents"] = document["total_cents"] - document["paid_cents"]
+        credited = sum(d["total_cents"] for d in result["documents"] if d.get("related_document_id") == document["id"])
+        document["credited_cents"] = credited
+        document["balance_cents"] = max(0, document["total_cents"] - document["paid_cents"] - credited)
+        document["cancelled"] = document["kind"] == "invoice" and credited >= document["total_cents"]
+        document["refund_due_cents"] = max(0, document["paid_cents"] + credited - document["total_cents"])
     settings = conn.execute("SELECT * FROM legal_firm_settings WHERE id=1").fetchone()
     result["firm_settings"] = {k: settings[k] for k in settings.keys() if k != "id"} if settings else {
         "jurisdiction": "FR", "legal_name": "", "address": "", "siren": "", "vat_number": "",
@@ -179,7 +189,11 @@ def render_legal_document(document):
 
     is_invoice = document["kind"] == "invoice"
     template_id = snapshot.get("template_id", "classique")
-    title = "Facture" if is_invoice else "Devis"
+    purpose_labels = {
+        "provision_fees": "Facture de provision sur honoraires",
+        "provision_expenses_fees": "Facture de provision sur frais et honoraires",
+    }
+    title = "Avoir d'annulation" if document["kind"] == "credit_note" else purpose_labels.get(document.get("purpose"), "Facture" if is_invoice else "Devis")
     template_titles = {
         "classique": "Présentation classique",
         "synthese": "Présentation synthèse",
@@ -269,9 +283,9 @@ def _firm_totals(conn):
       GROUP BY m.project_id,p.name,m.id,m.title ORDER BY p.name,m.title""").fetchall()
     totals = conn.execute("""SELECT COALESCE(SUM(net_cents),0) AS fees_cents,
       COUNT(*) AS fee_count FROM legal_fees""").fetchone()
-    docs = conn.execute("""SELECT COALESCE(SUM(d.total_cents),0) AS invoiced_cents,
+    docs = conn.execute("""SELECT COALESCE(SUM(CASE WHEN d.kind='invoice' THEN d.total_cents WHEN d.kind='credit_note' THEN -d.total_cents ELSE 0 END),0) AS invoiced_cents,
       COALESCE((SELECT SUM(amount_cents) FROM legal_payments),0) AS paid_cents
-      FROM legal_documents d WHERE d.kind='invoice'""").fetchone()
+      FROM legal_documents d WHERE d.kind IN ('invoice','credit_note')""").fetchone()
     return {"fees_cents": totals["fees_cents"], "fee_count": totals["fee_count"],
             "invoiced_cents": docs["invoiced_cents"], "paid_cents": docs["paid_cents"],
             "balance_cents": docs["invoiced_cents"] - docs["paid_cents"],
@@ -284,7 +298,7 @@ def legal_mutate(conn, project_id, action, params):
     payload = json.dumps({"action": action, **{k: v for k, v in params.items() if k not in ("profile", "project_id")}}, sort_keys=True, ensure_ascii=False)
     request_id = params.get("request_id")
     with write_txn(conn):
-        if action in ("fee.add", "document.create", "payment.add"):
+        if action in ("fee.add", "document.create", "payment.add", "payment.allocate", "document.credit"):
             request_id = _legal_text(request_id, required=True, limit=100)
             existing = conn.execute("SELECT payload FROM legal_requests WHERE project_id=? AND request_id=?", (project_id, request_id)).fetchone()
             if existing:
@@ -365,7 +379,7 @@ def _legal_apply(conn, pid, action, p):
     if action == "fee.add":
         _legal_row(conn, "legal_matters", pid, p.get("matter_id"))
         kind = p.get("kind")
-        if kind not in ("fixed", "time"):
+        if kind not in ("fixed", "time", "expense"):
             raise ValueError("Type d'honoraires invalide")
         minutes = _legal_integer(p.get("minutes", 0), high=1_000_000)
         rate = _legal_integer(p.get("rate_cents", 0))
@@ -414,9 +428,59 @@ def _legal_apply(conn, pid, action, p):
             snapshot["payment_terms"] = {"due_on": due_on, "delay_days": settings["payment_delay_days"],
                 "late_penalty_rate": settings["late_penalty_rate"], "recovery_indemnity_cents": 4000}
             snapshot["vat_notice"] = "TVA non applicable, article 293 B du CGI" if settings["vat_regime"] == "franchise" else ""
-        conn.execute("INSERT INTO legal_documents VALUES (?,?,?,?,?,?,?,?,?,?,?)", (doc_id, pid, matter["id"], kind, ref, today, due_on, json.dumps(snapshot, ensure_ascii=False), net, tax, net + tax))
+        purpose = p.get("purpose", "standard")
+        if purpose not in ("standard", "provision_fees", "provision_expenses_fees"):
+            raise ValueError("Type de facture inconnu")
+        if kind != "invoice" and purpose != "standard":
+            raise ValueError("Les provisions concernent les factures")
+        snapshot["purpose"] = purpose
+        conn.execute("INSERT INTO legal_documents (id,project_id,matter_id,kind,reference,created_on,due_on,snapshot,net_cents,tax_cents,total_cents,purpose,related_document_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)", (doc_id, pid, matter["id"], kind, ref, today, due_on, json.dumps(snapshot, ensure_ascii=False), net, tax, net + tax, purpose))
         if kind == "invoice":
             conn.executemany("UPDATE legal_fees SET invoice_id=? WHERE id=? AND project_id=?", [(doc_id, f["id"], pid) for f in fees])
+        return
+    if action == "document.credit":
+        original = _legal_row(conn, "legal_documents", pid, p.get("document_id"))
+        if original["kind"] != "invoice":
+            raise ValueError("Un avoir doit référencer une facture")
+        credited = conn.execute("SELECT COALESCE(SUM(total_cents),0) FROM legal_documents WHERE project_id=? AND kind='credit_note' AND related_document_id=?", (pid, original["id"])).fetchone()[0]
+        if credited >= original["total_cents"]:
+            raise ValueError("Cette facture est déjà entièrement annulée par un avoir")
+        reason = _legal_text(p.get("reason"), required=True, limit=500)
+        today = date.today().isoformat()
+        doc_id = secrets.token_hex(16)
+        count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind='credit_note'").fetchone()[0] + 1
+        ref = f"AVO-BROUILLON-{date.today().year}-{count:05d}"
+        snapshot = json.loads(original["snapshot"])
+        snapshot["credit_reason"] = reason
+        snapshot["credited_invoice_reference"] = original["reference"]
+        snapshot["purpose"] = "annulation"
+        conn.execute("INSERT INTO legal_documents (id,project_id,matter_id,kind,reference,created_on,due_on,snapshot,net_cents,tax_cents,total_cents,purpose,related_document_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (doc_id, pid, original["matter_id"], "credit_note", ref, today, today, json.dumps(snapshot, ensure_ascii=False), original["net_cents"], original["tax_cents"], original["total_cents"] - credited, "annulation", original["id"]))
+        return
+    if action == "payment.allocate":
+        amount = _legal_integer(p.get("amount_cents"), low=1)
+        paid_on = _legal_date(p.get("paid_on"))
+        if paid_on > date.today().isoformat():
+            raise ValueError("Un règlement reçu ne peut pas être daté dans le futur")
+        reference = _legal_text(p.get("reference"), required=True)
+        allocations = p.get("allocations") or []
+        if not allocations or len(allocations) > 100:
+            raise ValueError("Affecter le règlement à au moins une facture")
+        seen = set()
+        allocated = 0
+        for allocation in allocations:
+            doc = _legal_row(conn, "legal_documents", pid, allocation.get("document_id"))
+            if doc["kind"] != "invoice" or doc["id"] in seen:
+                raise ValueError("Chaque facture doit être sélectionnée une seule fois")
+            seen.add(doc["id"])
+            part = _legal_integer(allocation.get("amount_cents"), low=1)
+            previous = conn.execute("SELECT COALESCE(SUM(amount_cents),0) FROM legal_payments WHERE document_id=?", (doc["id"],)).fetchone()[0]
+            credits = conn.execute("SELECT COALESCE(SUM(total_cents),0) FROM legal_documents WHERE kind='credit_note' AND related_document_id=?", (doc["id"],)).fetchone()[0]
+            if part > max(0, doc["total_cents"] - previous - credits):
+                raise ValueError("Une affectation dépasse le solde de la facture")
+            allocated += part
+        if allocated != amount:
+            raise ValueError("La somme des affectations doit correspondre exactement au règlement reçu")
+        conn.executemany("INSERT INTO legal_payments VALUES (?,?,?,?,?,?)", [(secrets.token_hex(16), pid, allocation["document_id"], allocation["amount_cents"], paid_on, reference) for allocation in allocations])
         return
     if action == "payment.add":
         doc = _legal_row(conn, "legal_documents", pid, p.get("document_id"))
@@ -424,7 +488,8 @@ def _legal_apply(conn, pid, action, p):
             raise ValueError("Enregistrer un règlement sur une facture de travail")
         amount = _legal_integer(p.get("amount_cents"), low=1)
         paid = conn.execute("SELECT COALESCE(SUM(amount_cents),0) FROM legal_payments WHERE document_id=?", (doc["id"],)).fetchone()[0]
-        if amount > doc["total_cents"] - paid:
+        credits = conn.execute("SELECT COALESCE(SUM(total_cents),0) FROM legal_documents WHERE kind='credit_note' AND related_document_id=?", (doc["id"],)).fetchone()[0]
+        if amount > max(0, doc["total_cents"] - paid - credits):
             raise ValueError("Le règlement dépasse le solde")
         paid_on = _legal_date(p.get("paid_on"))
         if paid_on > date.today().isoformat():
@@ -432,4 +497,3 @@ def _legal_apply(conn, pid, action, p):
         conn.execute("INSERT INTO legal_payments VALUES (?,?,?,?,?,?)", (secrets.token_hex(16), pid, doc["id"], amount, paid_on, _legal_text(p.get("reference"), required=True)))
         return
     raise ValueError("Opération juridique inconnue")
-

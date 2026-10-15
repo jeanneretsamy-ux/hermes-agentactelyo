@@ -1887,7 +1887,7 @@ export interface LegalFee {
   tax_cents: number
   id: string
   matter_id: string
-  kind: 'fixed' | 'time'
+  kind: 'fixed' | 'time' | 'expense'
   minutes: number
   rate_cents: number
   invoice_id: string | null
@@ -1896,7 +1896,7 @@ export interface LegalFee {
 export interface LegalDocument {
   id: string
   matter_id: string
-  kind: 'quote' | 'invoice'
+  kind: 'quote' | 'invoice' | 'credit_note'
   reference: string
   created_on: string
   due_on: string
@@ -1906,6 +1906,11 @@ export interface LegalDocument {
   total_cents: number
   paid_cents: number
   balance_cents: number
+  credited_cents: number
+  cancelled: boolean
+  refund_due_cents: number
+  purpose: string
+  related_document_id: string | null
 }
 export interface LegalDocumentSnapshot {
   client: LegalClientSnapshot
@@ -1916,6 +1921,9 @@ export interface LegalDocumentSnapshot {
   payment_terms?: Record<string, unknown> | null
   vat_notice?: string
   template_id?: 'classique' | 'synthese' | 'detaille'
+  purpose?: string
+  credited_invoice_reference?: string | null
+  credit_reason?: string | null
 }
 export interface LegalClientSnapshot {
   name: string
@@ -2042,7 +2050,7 @@ export interface LegalFeeParams {
   request_id: string
   matter_id: string
   description: string
-  kind: 'fixed' | 'time'
+  kind: 'fixed' | 'time' | 'expense'
   amount_cents?: number
   minutes?: number
   rate_cents?: number
@@ -2058,6 +2066,27 @@ export interface LegalDocumentParams {
   fee_ids: string[]
   due_on: string
   template_id?: 'classique' | 'synthese' | 'detaille'
+  purpose?: 'standard' | 'provision_fees' | 'provision_expenses_fees'
+}
+export interface LegalCreditParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  document_id: string
+  reason: string
+}
+export interface LegalPaymentAllocation {
+  document_id: string
+  amount_cents: number
+}
+export interface LegalAllocatePaymentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  amount_cents: number
+  paid_on: string
+  reference: string
+  allocations: LegalPaymentAllocation[]
 }
 export interface LegalPaymentParams {
   profile?: string | null
@@ -5299,10 +5328,12 @@ export interface RpcMethods {
   'legal.act.save': { params: LegalActParams; result: LegalSnapshot }
   'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
+  'legal.document.credit': { params: LegalCreditParams; result: LegalSnapshot }
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
   'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
   'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
+  'legal.payment.allocate': { params: LegalAllocatePaymentParams; result: LegalSnapshot }
   'legal.snapshot': { params: LegalProjectParams; result: LegalSnapshot }
   'legal.workspace.set': { params: LegalWorkspaceParams; result: LegalSnapshot }
   /** Stateless one-shot LLM completion (titles, ideas) on the session's or the task backend. */
@@ -5721,10 +5752,12 @@ export const RPC_METHODS = [
   'legal.act.save',
   'legal.client.save',
   'legal.document.create',
+  'legal.document.credit',
   'legal.fee.add',
   'legal.firm.settings.set',
   'legal.matter.save',
   'legal.payment.add',
+  'legal.payment.allocate',
   'legal.snapshot',
   'legal.workspace.set',
   'llm.oneshot',
@@ -6165,4 +6198,3 @@ export const GATEWAY_EVENT_TYPES = [
   'voice.transcript',
   'wake.detected'
 ] as const satisfies readonly BackendGatewayEventName[]
-

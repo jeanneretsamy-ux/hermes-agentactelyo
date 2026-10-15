@@ -56,7 +56,7 @@ class LegalLine(Result):
 class LegalFee(LegalLine):
     id: str
     matter_id: str
-    kind: Literal["fixed", "time"]
+    kind: Literal["fixed", "time", "expense"]
     minutes: int
     rate_cents: int
     invoice_id: str | None
@@ -126,12 +126,15 @@ class LegalDocumentSnapshot(Result):
     payment_terms: dict[str, object] | None = None
     vat_notice: str = ""
     template_id: Literal["classique", "synthese", "detaille"] = "classique"
+    purpose: str = "standard"
+    credited_invoice_reference: str | None = None
+    credit_reason: str | None = None
 
 
 class LegalDocument(Result):
     id: str
     matter_id: str
-    kind: Literal["quote", "invoice"]
+    kind: Literal["quote", "invoice", "credit_note"]
     reference: str
     created_on: str
     due_on: str
@@ -141,6 +144,11 @@ class LegalDocument(Result):
     total_cents: int
     paid_cents: int
     balance_cents: int
+    credited_cents: int = 0
+    cancelled: bool = False
+    refund_due_cents: int = 0
+    purpose: str = "standard"
+    related_document_id: str | None = None
 
 
 class LegalPayment(Result):
@@ -231,6 +239,13 @@ class LegalDocumentParams(LegalProjectParams):
     fee_ids: list[str] = Field(min_length=1, max_length=500)
     due_on: str
     template_id: Literal["classique", "synthese", "detaille"] = "classique"
+    purpose: Literal["standard", "provision_fees", "provision_expenses_fees"] = "standard"
+
+
+class LegalCreditParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    document_id: str
+    reason: str = Field(min_length=1, max_length=500)
 
 
 class LegalPaymentParams(LegalProjectParams):
@@ -241,6 +256,19 @@ class LegalPaymentParams(LegalProjectParams):
     reference: str
 
 
+class LegalPaymentAllocation(Result):
+    document_id: str
+    amount_cents: int = Field(ge=1, le=1_000_000_000, strict=True)
+
+
+class LegalAllocatePaymentParams(LegalProjectParams):
+    request_id: str = Field(min_length=1, max_length=100)
+    amount_cents: int = Field(ge=1, le=1_000_000_000, strict=True)
+    paid_on: str
+    reference: str
+    allocations: list[LegalPaymentAllocation] = Field(min_length=1, max_length=100)
+
+
 method("legal.snapshot", params=LegalProjectParams, result=LegalSnapshot)
 method("legal.workspace.set", params=LegalWorkspaceParams, result=LegalSnapshot)
 method("legal.firm.settings.set", params=LegalFirmSettingsParams, result=LegalSnapshot)
@@ -249,5 +277,6 @@ method("legal.matter.save", params=LegalMatterParams, result=LegalSnapshot)
 method("legal.act.save", params=LegalActParams, result=LegalSnapshot)
 method("legal.fee.add", params=LegalFeeParams, result=LegalSnapshot)
 method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot)
+method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
-
+method("legal.payment.allocate", params=LegalAllocatePaymentParams, result=LegalSnapshot)

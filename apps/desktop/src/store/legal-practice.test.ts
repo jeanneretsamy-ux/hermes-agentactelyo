@@ -19,7 +19,12 @@ const document: LegalDocument = {
   tax_cents: 2000,
   total_cents: 12000,
   paid_cents: 0,
-  balance_cents: 12000
+  balance_cents: 12000,
+  credited_cents: 0,
+  cancelled: false,
+  refund_due_cents: 0,
+  purpose: 'standard',
+  related_document_id: null
 }
 
 describe('legalDocumentText template selection', () => {
@@ -41,5 +46,17 @@ describe('legalDocumentText template selection', () => {
 
     expect(new Set([classic, summary, detailed]).size).toBe(3)
   })
-})
 
+  it('labels provision invoices and linked cancellation credits clearly', () => {
+    const provision = legalDocumentText({ ...document, kind: 'invoice', purpose: 'provision_expenses_fees' })
+
+    const credit = legalDocumentText({
+      ...document,
+      kind: 'credit_note',
+      snapshot: { ...document.snapshot, credited_invoice_reference: 'FAC-2026-00001' }
+    })
+
+    expect(provision).toContain('Facture de provision sur frais et honoraires')
+    expect(credit).toContain('Avoir d’annulation de FAC-2026-00001')
+  })
+})

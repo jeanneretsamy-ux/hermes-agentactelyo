@@ -23,8 +23,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [tax, setTax] = useState('0')
   const [dueOn, setDueOn] = useState(today)
   const [paidOn, setPaidOn] = useState(today)
-  const [documentId, setDocumentId] = useState('')
-  const [paymentAmount, setPaymentAmount] = useState('')
+  const [allocations, setAllocations] = useState<Record<string, string>>({})
   const [paymentRef, setPaymentRef] = useState('')
   const [legalName, setLegalName] = useState(data.firm_settings.legal_name)
   const [firmAddress, setFirmAddress] = useState(data.firm_settings.address)
@@ -36,9 +35,19 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [latePenalty, setLatePenalty] = useState(data.firm_settings.late_penalty_rate)
   const [responsibleUser, setResponsibleUser] = useState('')
   const [templateId, setTemplateId] = useState<'classique' | 'synthese' | 'detaille'>('classique')
+  const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([])
+  const [createKind, setCreateKind] = useState<'quote' | 'invoice'>('invoice')
+
+  const [createPurpose, setCreatePurpose] = useState<'standard' | 'provision_fees' | 'provision_expenses_fees'>(
+    'standard'
+  )
+
+  const [createStep, setCreateStep] = useState<'general' | 'items' | 'payment'>('general')
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewDocId, setPreviewDocId] = useState('')
-  const [previewKind, setPreviewKind] = useState<'quote' | 'invoice'>('quote')
+  const [creditOpen, setCreditOpen] = useState(false)
+  const [creditTargetId, setCreditTargetId] = useState('')
+  const [creditReason, setCreditReason] = useState('')
   useEffect(() => {
     setLegalName(data.firm_settings.legal_name)
     setFirmAddress(data.firm_settings.address)
@@ -58,6 +67,17 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const fees = data.fees.filter(fee => fee.matter_id === matterId)
   const unbilled = fees.filter(fee => !fee.invoice_id)
   const invoices = data.documents.filter(doc => doc.kind === 'invoice')
+  const availableFees = fees.filter(fee => createKind === 'quote' || !fee.invoice_id)
+  const selectedFees = availableFees.filter(fee => selectedFeeIds.includes(fee.id))
+  const selectedTotal = selectedFees.reduce((sum, fee) => sum + fee.net_cents + fee.tax_cents, 0)
+
+  const openDocumentWizard = (kind: 'quote' | 'invoice', purpose: typeof createPurpose = 'standard') => {
+    setCreateKind(kind)
+    setCreatePurpose(purpose)
+    setCreateStep('general')
+    setSelectedFeeIds(kind === 'quote' ? fees.map(fee => fee.id) : unbilled.map(fee => fee.id))
+    setPreviewOpen(true)
+  }
 
   return (
     <>
@@ -136,7 +156,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             await write('legal.fee.add', {
               matter_id: matterId,
               description,
-              kind: feeKind === 'time' ? 'time' : 'fixed',
+              kind: feeKind === 'time' ? 'time' : feeKind === 'expense' ? 'expense' : 'fixed',
               ...(feeKind === 'time'
                 ? { minutes: Number(minutes), rate_cents: legalDecimal(amount) }
                 : { amount_cents: legalDecimal(amount) }),
@@ -155,7 +175,8 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
           <Choice
             items={[
               { id: 'fixed', label: 'Forfait' },
-              { id: 'time', label: 'Temps passé' }
+              { id: 'time', label: 'Temps passé' },
+              { id: 'expense', label: 'Frais de dossier' }
             ]}
             label="Mode de facturation"
             onChange={setFeeKind}
@@ -168,7 +189,13 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             value={responsibleUser}
           />
           <TextField
-            label={feeKind === 'time' ? 'Tarif horaire HT (€)' : 'Montant HT (€)'}
+            label={
+              feeKind === 'time'
+                ? 'Tarif horaire HT (€)'
+                : feeKind === 'expense'
+                  ? 'Montant du frais (€)'
+                  : 'Montant HT (€)'
+            }
             onChange={setAmount}
             required
             value={amount}
@@ -223,7 +250,6 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
         <Button
           onClick={() => {
             setPreviewDocId('')
-            setPreviewKind('quote')
             setPreviewOpen(true)
           }}
           type="button"
@@ -236,84 +262,250 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
         Le modèle choisi est conservé sur le brouillon. Vous pourrez aussi comparer les présentations avant le
         téléchargement.
       </p>
-      <div className="flex flex-wrap gap-2">
-        <Button
-          disabled={!fees.length}
-          onClick={() =>
-            void write('legal.document.create', {
-              matter_id: matterId,
-              kind: 'quote',
-              fee_ids: fees.map(fee => fee.id),
-              due_on: dueOn,
-              template_id: templateId
-            })
-          }
-          type="button"
-          variant="outline"
-        >
-          Créer le devis brouillon
-        </Button>
-        <Button
-          disabled={!unbilled.length}
-          onClick={() =>
-            void write('legal.document.create', {
-              matter_id: matterId,
-              kind: 'invoice',
-              fee_ids: unbilled.map(fee => fee.id),
-              due_on: dueOn,
-              template_id: templateId
-            })
-          }
-          type="button"
-        >
-          Créer la facture brouillon
-        </Button>
-      </div>
-      <h3 className="font-semibold">Documents</h3>
-      <Dialog onOpenChange={setPreviewOpen} open={previewOpen}>
-        <DialogContent className="w-[min(58rem,calc(100vw-2rem))] max-w-none" bodyClassName="min-w-0">
-          <DialogHeader>
-            <DialogTitle>Prévisualisation du document</DialogTitle>
-            <DialogDescription>
-              Choisissez une présentation et relisez le brouillon avant de le télécharger ou de le transmettre.
-            </DialogDescription>
-          </DialogHeader>
-          <Choice
-            items={LEGAL_DOCUMENT_TEMPLATES.map(({ id, label }) => ({ id, label }))}
-            label="Présentation"
-            onChange={value => setTemplateId(value as typeof templateId)}
-            value={templateId}
-          />
-          {!previewDocId && (
-            <Choice
-              items={[
-                { id: 'quote', label: 'Devis' },
-                { id: 'invoice', label: 'Facture' }
-              ]}
-              label="Type de document à prévisualiser"
-              onChange={value => setPreviewKind(value as typeof previewKind)}
-              value={previewKind}
-            />
-          )}
-          <p className="text-(--ui-text-tertiary)">
-            {LEGAL_DOCUMENT_TEMPLATES.find(template => template.id === templateId)?.description}
-          </p>
-          <LegalDocumentPreview
-            document={data.documents.find(doc => doc.id === previewDocId)}
-            templateId={templateId}
-            kind={data.documents.find(doc => doc.id === previewDocId)?.kind ?? previewKind}
-          />
-          {data.documents.find(doc => doc.id === previewDocId) && (
+      <section className="space-y-3 rounded-lg border border-(--ui-stroke-secondary) p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-semibold">Factures et devis</h3>
+            <p className="text-sm text-(--ui-text-secondary)">Créer, prévisualiser et suivre les pièces du cabinet.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
             <Button
-              onClick={() => {
-                const doc = data.documents.find(item => item.id === previewDocId)
-                if (doc) downloadLegalText(`${doc.reference}.md`, legalDocumentText(doc, templateId))
-              }}
+              disabled={!matterId || !fees.length}
+              onClick={() => openDocumentWizard('quote')}
+              type="button"
+              variant="outline"
+            >
+              Nouveau devis
+            </Button>
+            <Button
+              disabled={!matterId || !unbilled.length}
+              onClick={() => openDocumentWizard('invoice')}
               type="button"
             >
-              Télécharger cette présentation
+              Nouvelle facture
             </Button>
-          )}
+          </div>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {[
+            ['Encaissé', invoices.reduce((sum, doc) => sum + doc.paid_cents, 0)],
+            ['À encaisser', invoices.reduce((sum, doc) => sum + doc.balance_cents, 0)],
+            [
+              'En retard',
+              invoices
+                .filter(doc => doc.balance_cents > 0 && doc.due_on < today())
+                .reduce((sum, doc) => sum + doc.balance_cents, 0)
+            ]
+          ].map(([label, cents]) => (
+            <div className="rounded-md border border-(--ui-stroke-secondary) p-3" key={label}>
+              <p className="text-sm text-(--ui-text-secondary)">{label}</p>
+              <strong>{legalMoney(Number(cents))}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+      <h3 className="font-semibold">Documents</h3>
+      <Dialog onOpenChange={setPreviewOpen} open={previewOpen}>
+        <DialogContent
+          bodyClassName="min-w-0 overflow-auto"
+          className="h-[min(54rem,calc(100vh-2rem))] w-[min(78rem,calc(100vw-2rem))] max-w-none overflow-hidden"
+        >
+          <DialogHeader>
+            <DialogTitle>
+              Création d’un{' '}
+              {createKind === 'quote'
+                ? 'devis'
+                : createPurpose === 'provision_fees'
+                  ? 'provision sur honoraires'
+                  : createPurpose === 'provision_expenses_fees'
+                    ? 'provision sur frais et honoraires'
+                    : 'facture'}
+            </DialogTitle>
+            <DialogDescription>
+              Le document reste un brouillon à vérifier. Choisissez le modèle puis contrôlez l’aperçu à droite.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid min-h-0 gap-4 lg:grid-cols-[minmax(19rem,0.85fr)_minmax(0,1.15fr)]">
+            <section className="min-h-0 space-y-4 overflow-y-auto pr-1">
+              <nav aria-label="Étapes de création" className="flex gap-2 border-b border-(--ui-stroke-secondary) pb-3">
+                {(['general', 'items', 'payment'] as const).map((step, index) => (
+                  <Button
+                    key={step}
+                    onClick={() => setCreateStep(step)}
+                    type="button"
+                    variant={createStep === step ? 'default' : 'outline'}
+                  >
+                    {index + 1}. {step === 'general' ? 'Général' : step === 'items' ? 'Prestations' : 'Paiement'}
+                  </Button>
+                ))}
+              </nav>
+              {createStep === 'general' && (
+                <div className="space-y-3">
+                  <Choice
+                    items={[
+                      { id: 'quote', label: 'Devis' },
+                      { id: 'invoice', label: 'Facture' }
+                    ]}
+                    label="Type de pièce"
+                    onChange={value => {
+                      const kind = value as 'quote' | 'invoice'
+                      setCreateKind(kind)
+                      setSelectedFeeIds(kind === 'quote' ? fees.map(fee => fee.id) : unbilled.map(fee => fee.id))
+                    }}
+                    value={createKind}
+                  />
+                  {createKind === 'invoice' && (
+                    <Choice
+                      items={[
+                        { id: 'standard', label: 'Facture d’honoraires' },
+                        { id: 'provision_fees', label: 'Provision sur honoraires' },
+                        { id: 'provision_expenses_fees', label: 'Provision sur frais et honoraires' }
+                      ]}
+                      label="Nature de la facture"
+                      onChange={value => setCreatePurpose(value as typeof createPurpose)}
+                      value={createPurpose}
+                    />
+                  )}
+                  <Choice
+                    items={matterChoices}
+                    label="Dossier client"
+                    onChange={value => {
+                      setMatterId(value)
+
+                      const matterFees = data.fees.filter(
+                        fee => fee.matter_id === value && (createKind === 'quote' || !fee.invoice_id)
+                      )
+
+                      setSelectedFeeIds(matterFees.map(fee => fee.id))
+                    }}
+                    value={matterId}
+                  />
+                  <Choice
+                    items={LEGAL_DOCUMENT_TEMPLATES.map(({ id, label }) => ({ id, label }))}
+                    label="Modèle du document"
+                    onChange={value => setTemplateId(value as typeof templateId)}
+                    value={templateId}
+                  />
+                </div>
+              )}
+              {createStep === 'items' && (
+                <div className="space-y-2">
+                  <p className="text-sm text-(--ui-text-secondary)">
+                    Sélectionnez les honoraires déjà saisis pour ce dossier. Les provisions ne sont pas imputées
+                    automatiquement à une facture finale.
+                  </p>
+                  {availableFees.map(fee => (
+                    <label
+                      className="flex items-start gap-2 rounded-md border border-(--ui-stroke-secondary) p-3"
+                      key={fee.id}
+                    >
+                      <input
+                        checked={selectedFeeIds.includes(fee.id)}
+                        onChange={event =>
+                          setSelectedFeeIds(current =>
+                            event.target.checked ? [...current, fee.id] : current.filter(id => id !== fee.id)
+                          )
+                        }
+                        type="checkbox"
+                      />
+                      <span>
+                        {fee.description}
+                        <span className="block text-sm text-(--ui-text-secondary)">
+                          {legalMoney(fee.net_cents + fee.tax_cents)} TTC · {fee.responsible_user || 'Non attribué'}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                  {!availableFees.length && (
+                    <p>Aucune prestation disponible. Ajoutez des honoraires au dossier avant de continuer.</p>
+                  )}
+                </div>
+              )}
+              {createStep === 'payment' && (
+                <div className="space-y-3">
+                  <TextField label="Date d’échéance" onChange={setDueOn} type="date" value={dueOn} />
+                  <p className="rounded-md bg-(--ui-bg-quaternary) p-3 text-sm">
+                    Les coordonnées et conditions de paiement proviennent des réglages du cabinet. Vérifiez le régime de
+                    TVA et les mentions avant validation.
+                  </p>
+                </div>
+              )}
+              <div className="flex flex-wrap justify-between gap-2 border-t border-(--ui-stroke-secondary) pt-3">
+                <span className="font-semibold">Total TTC : {legalMoney(selectedTotal)}</span>
+                {createStep !== 'payment' ? (
+                  <Button onClick={() => setCreateStep(createStep === 'general' ? 'items' : 'payment')} type="button">
+                    Suivant →
+                  </Button>
+                ) : (
+                  <Button
+                    disabled={!selectedFeeIds.length}
+                    onClick={() =>
+                      void write('legal.document.create', {
+                        matter_id: matterId,
+                        kind: createKind,
+                        fee_ids: selectedFeeIds,
+                        due_on: dueOn,
+                        template_id: templateId,
+                        purpose: createPurpose
+                      }).then(ok => {
+                        if (ok) {
+                          setPreviewOpen(false)
+                        }
+                      })
+                    }
+                    type="button"
+                  >
+                    Créer le brouillon
+                  </Button>
+                )}
+              </div>
+            </section>
+            <aside className="min-h-0 overflow-auto rounded-md bg-(--ui-bg-quaternary) p-3 sm:p-5">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h3 className="font-semibold">Aperçu du modèle</h3>
+                <span className="text-sm text-(--ui-text-secondary)">
+                  {LEGAL_DOCUMENT_TEMPLATES.find(template => template.id === templateId)?.label}
+                </span>
+              </div>
+              <LegalDocumentPreview
+                document={data.documents.find(doc => doc.id === previewDocId)}
+                kind={
+                  previewDocId
+                    ? data.documents.find(doc => doc.id === previewDocId)?.kind === 'quote'
+                      ? 'quote'
+                      : 'invoice'
+                    : createKind
+                }
+                templateId={templateId}
+              />
+            </aside>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog onOpenChange={setCreditOpen} open={creditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Créer un avoir d’annulation</DialogTitle>
+            <DialogDescription>
+              La facture reste conservée dans l’historique. L’avoir sera lié à cette pièce et ajustera le solde du
+              brouillon.
+            </DialogDescription>
+          </DialogHeader>
+          <TextField label="Motif de l’avoir" onChange={setCreditReason} required value={creditReason} />
+          <Button
+            disabled={!creditReason.trim()}
+            onClick={() =>
+              void write('legal.document.credit', { document_id: creditTargetId, reason: creditReason }).then(ok => {
+                if (ok) {
+                  setCreditOpen(false)
+                  setCreditReason('')
+                }
+              })
+            }
+            type="button"
+          >
+            Créer l’avoir brouillon
+          </Button>
         </DialogContent>
       </Dialog>
       <ul className="space-y-2">
@@ -324,12 +516,17 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
           >
             <span className="min-w-0 break-words">
               {doc.reference} — {doc.snapshot.client.name} — {legalMoney(doc.total_cents)} TTC
-              {doc.kind === 'invoice' ? ` — solde ${legalMoney(doc.balance_cents)}` : ''}
+              {doc.kind === 'invoice'
+                ? ` — solde ${legalMoney(doc.balance_cents)}${doc.cancelled ? ' — annulée par avoir' : doc.credited_cents ? ` — avoirs ${legalMoney(doc.credited_cents)}` : ''}`
+                : doc.kind === 'credit_note'
+                  ? ` — annulation de ${doc.snapshot.credited_invoice_reference}`
+                  : ''}
             </span>
             <Button
               onClick={() => {
                 setPreviewDocId(doc.id)
-                setPreviewKind(doc.kind)
+                setCreateKind(doc.kind === 'quote' ? 'quote' : 'invoice')
+                setCreatePurpose(doc.purpose as typeof createPurpose)
                 setTemplateId(doc.snapshot.template_id ?? 'classique')
                 setPreviewOpen(true)
               }}
@@ -350,41 +547,102 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             >
               Télécharger le brouillon
             </Button>
+            {doc.kind === 'invoice' && !doc.cancelled && (
+              <Button
+                onClick={() => {
+                  setCreditTargetId(doc.id)
+                  setCreditReason('')
+                  setCreditOpen(true)
+                }}
+                type="button"
+                variant="outline"
+              >
+                Créer un avoir d’annulation
+              </Button>
+            )}
+            {doc.kind === 'invoice' && doc.refund_due_cents > 0 && (
+              <span className="text-sm text-(--ui-text-secondary)">
+                Remboursement à suivre : {legalMoney(doc.refund_due_cents)}
+              </span>
+            )}
           </li>
         ))}
       </ul>
       <form
-        className="space-y-3"
+        className="space-y-3 rounded-lg border border-(--ui-stroke-secondary) p-4"
         onSubmit={submit(async () => {
+          const parts = Object.entries(allocations).flatMap(([id, value]) => {
+            if (!value.trim()) {
+              return []
+            }
+
+            return [{ document_id: id, amount_cents: legalDecimal(value) }]
+          })
+
+          const amountCents = parts.reduce((sum, part) => sum + part.amount_cents, 0)
+
           if (
-            await write('legal.payment.add', {
-              document_id: documentId,
-              amount_cents: legalDecimal(paymentAmount),
+            parts.length &&
+            amountCents > 0 &&
+            (await write('legal.payment.allocate', {
+              amount_cents: amountCents,
+              allocations: parts,
               paid_on: paidOn,
               reference: paymentRef
-            })
+            }))
           ) {
-            setPaymentAmount('')
+            setAllocations({})
             setPaymentRef('')
           }
         })}
       >
-        <h3 className="font-semibold">Règlement reçu</h3>
-        <Choice
-          items={invoices
+        <h3 className="font-semibold">Règlement reçu et lettrage</h3>
+        <p className="text-sm text-(--ui-text-secondary)">
+          Répartissez le même encaissement entre une ou plusieurs factures ouvertes. La somme affectée doit couvrir
+          exactement le montant reçu.
+        </p>
+        <div className="space-y-2">
+          {invoices
             .filter(doc => doc.balance_cents > 0)
-            .map(doc => ({ id: doc.id, label: `${doc.reference} — ${doc.snapshot.client.name}` }))}
-          label="Facture du règlement"
-          onChange={setDocumentId}
-          value={documentId}
-        />
+            .map(doc => (
+              <div
+                className="grid items-center gap-2 rounded-md border border-(--ui-stroke-secondary) p-3 sm:grid-cols-[minmax(0,1fr)_12rem]"
+                key={doc.id}
+              >
+                <span className="min-w-0">
+                  {doc.reference} · {doc.snapshot.client.name}
+                  <span className="block text-sm text-(--ui-text-secondary)">
+                    Solde : {legalMoney(doc.balance_cents)}
+                  </span>
+                </span>
+                <TextField
+                  label="Affecter (€)"
+                  onChange={value => setAllocations(current => ({ ...current, [doc.id]: value }))}
+                  value={allocations[doc.id] ?? ''}
+                />
+              </div>
+            ))}
+          {!invoices.some(doc => doc.balance_cents > 0) && <p>Aucune facture ne reste à lettrer.</p>}
+        </div>
         <div className="grid gap-3 md:grid-cols-3">
-          <TextField label="Montant reçu (€)" onChange={setPaymentAmount} required value={paymentAmount} />
+          <Field label="Total affecté">
+            <output className="h-9 rounded-md border border-(--ui-stroke-secondary) px-2 py-2">
+              {legalMoney(
+                Object.values(allocations).reduce((sum, value) => {
+                  try {
+                    return sum + (value.trim() ? legalDecimal(value) : 0)
+                  } catch {
+                    return sum
+                  }
+                }, 0)
+              )}
+            </output>
+          </Field>
           <TextField label="Date du règlement" onChange={setPaidOn} required type="date" value={paidOn} />
           <TextField label="Référence du règlement" onChange={setPaymentRef} required value={paymentRef} />
         </div>
-        <Button disabled={!documentId} type="submit">
-          Enregistrer le règlement
+        <Button disabled={!Object.values(allocations).some(value => value.trim())} type="submit">
+          Enregistrer et lettrer le règlement
         </Button>
       </form>
       <ul className="space-y-1">
@@ -411,10 +669,21 @@ function LegalDocumentPreview({
   const client = document?.snapshot.client
   const issuer = document?.snapshot.issuer
   const matter = document?.snapshot.matter
+
   const lines = document?.snapshot.lines ?? [
     { description: 'Prestation juridique — exemple', net_cents: 10000, tax_bps: 2000, tax_cents: 2000 }
   ]
-  const title = kind === 'quote' ? 'Devis' : 'Facture'
+
+  const title =
+    document?.kind === 'credit_note'
+      ? `Avoir d’annulation de ${document.snapshot.credited_invoice_reference ?? 'facture'}`
+      : document?.purpose === 'provision_fees'
+        ? 'Facture de provision sur honoraires'
+        : document?.purpose === 'provision_expenses_fees'
+          ? 'Facture de provision sur frais et honoraires'
+          : kind === 'quote'
+            ? 'Devis'
+            : 'Facture'
 
   return (
     <article
@@ -494,4 +763,3 @@ function LegalDocumentPreview({
     </article>
   )
 }
-

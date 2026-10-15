@@ -102,7 +102,17 @@ export function legalDocumentText(
   const { client, matter, lines } = doc.snapshot
   const issuer = doc.snapshot.issuer
   const terms = doc.snapshot.payment_terms
-  const title = doc.kind === 'quote' ? 'Devis' : 'Facture'
+
+  const title =
+    doc.kind === 'quote'
+      ? 'Devis'
+      : doc.kind === 'credit_note'
+        ? `Avoir d’annulation de ${doc.snapshot.credited_invoice_reference ?? 'facture'}`
+        : doc.purpose === 'provision_fees'
+          ? 'Facture de provision sur honoraires'
+          : doc.purpose === 'provision_expenses_fees'
+            ? 'Facture de provision sur frais et honoraires'
+            : 'Facture'
 
   const header =
     template === 'synthese'
@@ -167,4 +177,3 @@ export function downloadLegalText(name: string, text: string): void {
   link.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
-

@@ -12,7 +12,7 @@ from tools.registry import registry
 
 _ACTIONS = (
     "snapshot", "workspace.set", "firm.settings.set", "client.save",
-    "matter.save", "act.save", "fee.add", "document.create", "payment.add",
+    "matter.save", "act.save", "fee.add", "document.create", "document.credit", "payment.add", "payment.allocate",
 )
 
 
@@ -49,7 +49,7 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
                     }.items():
                         values.setdefault(key, default)
                 result = legal.legal_mutate(conn, target.id, action, values)
-                if action == "document.create" and result["documents"]:
+                if action in ("document.create", "document.credit") and result["documents"]:
                     result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
             else:
                 return json.dumps({"success": False, "error": f"Action inconnue. Actions disponibles : {', '.join(_ACTIONS)}"}, ensure_ascii=False)
@@ -72,7 +72,7 @@ registry.register(
             "Manage the legal workspace of a Desktop Project from chat. First use desktop_project(action='list') "
             "when the active project is unclear, then call snapshot before changes. Actions: snapshot; workspace.set "
             "(domain + matter_types); firm.settings.set (FR firm identity); client.save; matter.save; act.save; "
-            "fee.add; document.create (quote or invoice working draft; optional template_id: classique, synthese, detaille); payment.add. Pass project as its name, slug, "
+            "fee.add; document.create (quote or invoice working draft; optional purpose: standard, provision_fees, provision_expenses_fees; optional template_id: classique, synthese, detaille); document.credit (linked cancellation credit note draft); payment.add or payment.allocate (allocate one receipt to one or more invoices atomically). Pass project as its name, slug, "
             "or id, or omit it to use this session's active project. This creates internal drafts only: never claim "
             "a document was issued, signed, sent, or paid. Use explicit amounts from the user/source records, never guess. "
             "Before drafting, inspect snapshot, search/read the user's local files and supplied examples with the file tools, "
@@ -105,12 +105,15 @@ registry.register(
                 "status": {"type": "string", "enum": ["open", "closed"]},
                 "act_type": {"type": "string"}, "body": {"type": "string"},
                 "request_id": {"type": "string"}, "matter_id": {"type": "string"},
-                "description": {"type": "string"}, "kind": {"type": "string", "enum": ["fixed", "time", "quote", "invoice"]},
+                "description": {"type": "string"}, "kind": {"type": "string", "enum": ["fixed", "time", "expense", "quote", "invoice"]},
                 "amount_cents": {"type": "integer"}, "minutes": {"type": "integer"},
                 "rate_cents": {"type": "integer"}, "tax_bps": {"type": "integer"},
                 "responsible_user": {"type": "string"}, "fee_ids": {"type": "array", "items": {"type": "string"}},
                 "due_on": {"type": "string"}, "document_id": {"type": "string"},
                 "template_id": {"type": "string", "enum": ["classique", "synthese", "detaille"]},
+                "purpose": {"type": "string", "enum": ["standard", "provision_fees", "provision_expenses_fees"]},
+                "reason": {"type": "string"},
+                "allocations": {"type": "array", "items": {"type": "object", "properties": {"document_id": {"type": "string"}, "amount_cents": {"type": "integer"}}, "required": ["document_id", "amount_cents"]}},
                 "paid_on": {"type": "string"},
             },
             "required": ["action"],
@@ -121,4 +124,3 @@ registry.register(
         **{key: value for key, value in args.items() if key not in {"action", "project"}},
     ),
 )
-
