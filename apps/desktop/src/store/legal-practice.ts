@@ -103,6 +103,7 @@ export function legalDocumentText(
   const issuer = doc.snapshot.issuer
   const terms = doc.snapshot.payment_terms
   const title = doc.kind === 'quote' ? 'Devis' : 'Facture'
+
   const header =
     template === 'synthese'
       ? [
@@ -115,6 +116,7 @@ export function legalDocumentText(
           `Référence : ${doc.reference}`,
           `Date : ${doc.created_on} | Échéance : ${doc.due_on}`
         ]
+
   const itemLines =
     template === 'synthese'
       ? lines.map(
