@@ -38,6 +38,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [templateId, setTemplateId] = useState<'classique' | 'synthese' | 'detaille'>('classique')
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewDocId, setPreviewDocId] = useState('')
+  const [previewKind, setPreviewKind] = useState<'quote' | 'invoice'>('quote')
   useEffect(() => {
     setLegalName(data.firm_settings.legal_name)
     setFirmAddress(data.firm_settings.address)
@@ -222,6 +223,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
         <Button
           onClick={() => {
             setPreviewDocId('')
+            setPreviewKind('quote')
             setPreviewOpen(true)
           }}
           type="button"
@@ -282,13 +284,24 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             onChange={value => setTemplateId(value as typeof templateId)}
             value={templateId}
           />
+          {!previewDocId && (
+            <Choice
+              items={[
+                { id: 'quote', label: 'Devis' },
+                { id: 'invoice', label: 'Facture' }
+              ]}
+              label="Type de document à prévisualiser"
+              onChange={value => setPreviewKind(value as typeof previewKind)}
+              value={previewKind}
+            />
+          )}
           <p className="text-(--ui-text-tertiary)">
             {LEGAL_DOCUMENT_TEMPLATES.find(template => template.id === templateId)?.description}
           </p>
           <LegalDocumentPreview
             document={data.documents.find(doc => doc.id === previewDocId)}
             templateId={templateId}
-            kind={data.documents.find(doc => doc.id === previewDocId)?.kind ?? 'quote'}
+            kind={data.documents.find(doc => doc.id === previewDocId)?.kind ?? previewKind}
           />
           {data.documents.find(doc => doc.id === previewDocId) && (
             <Button
@@ -316,6 +329,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
             <Button
               onClick={() => {
                 setPreviewDocId(doc.id)
+                setPreviewKind(doc.kind)
                 setTemplateId(doc.snapshot.template_id ?? 'classique')
                 setPreviewOpen(true)
               }}
