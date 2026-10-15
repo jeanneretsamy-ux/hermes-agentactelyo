@@ -241,8 +241,8 @@ def test_agricultural_profile_matches_exploitation_conventions_and_aid_menus(tmp
         "conventions": {"availability_agreements": "Convention de mise à disposition 2024", "rural_leases": "Bail rural signé en 2020", "sharefarming": "Fermage annuel 1 200 EUR", "commodat": "Prêt à usage de matériel", "company_availability": "Mise à disposition à l’EARL"},
         "msa": {"msa_statements": "Relevé MSA T2", "social_contributions": "Cotisations 2026", "msa_declarations": "Déclaration annuelle déposée"},
         "pac_aids": {"pac_declaration": "Déclaration PAC 2026", "payment_entitlements": "DPB associés aux parcelles", "coupled_aid": "Aide protéagineux", "maec": "MAEC engagée jusqu’en 2028"},
-        "installation_transmission": {"installation": "Installation en 2020", "transmission": "Transmission familiale envisagée", "safer": "Déclaration SAFER à vérifier"},
-        "environment": {"environmental_permits": "Zone vulnérable nitrates", "environmental_proceedings": "Aucune procédure déclarée"},
+        "installation_transmission": {"installation": "Dossier d’installation ouvert en 2020", "structural_control": "Autorisation obtenue", "transmission": "Transmission familiale envisagée", "safer": "Déclaration SAFER à vérifier"},
+        "environment": {"icpe_livestock": "ICPE enregistrée", "nitrates_directive": "Plan d’action en cours", "water_management": "Prélèvement autorisé", "hedges_and_coppice": "Haies protégées", "environmental_permits": "Zone vulnérable nitrates", "environmental_proceedings": "Aucune procédure déclarée"},
         "rural_contention": {"dispute": "Contestation de fermage", "parties": "EARL Exemple / bailleur", "deadlines": "Réponse avant le 15/12/2026", "evidence": "Bail et quittances"},
     }
     matter = call("legal.matter.save", **p, client_id=client["id"], title="Exploitation des Prés", matter_type="Bail rural", matter_profile=profile)["matters"][0]
@@ -254,6 +254,44 @@ def test_agricultural_profile_matches_exploitation_conventions_and_aid_menus(tmp
     assert "Parcelles AB 12, AB 13" in draft["body"]
     assert "Convention de mise à disposition 2024" in draft["body"]
     assert "Déclaration PAC 2026" in draft["body"] and "Contestation de fermage" in draft["body"]
+    assert "Dossier d’installation ouvert en 2020" in draft["body"]
+    assert "ICPE enregistrée" in draft["body"] and "Haies protégées" in draft["body"]
+
+
+def test_contentious_and_transport_menus_flow_into_draft_context(tmp_path):
+    pid = call("projects.create", name="Cabinet contentieux et transport", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    client = call("legal.client.save", **p, name="Client Exemple")['clients'][0]
+    examples = {
+        "contentieux-judiciaire": {
+            "profile": {
+                "procedure_tracking": {"parties_and_counsel": "Demandeur / Cabinet Exemple", "jurisdiction": "TJ de Lyon", "procedural_calendar": "Mise en état le 12/12/2026", "hearings": "Audience le 15/01/2027", "deadlines": "Conclusions avant le 30/11/2026"},
+                "case_pieces": {"claimant_pieces": "Pièce demandeur 1", "defendant_pieces": "Pièce défendeur 2", "pleadings": "Conclusions récapitulatives", "expert_reports": "Rapport d’expertise"},
+                "decision": {"judgment": "Jugement du 01/02/2027", "appeal": "Appel à examiner", "execution": "Exécution provisoire"},
+            },
+            "sections": {"procedure_tracking", "case_pieces", "decision"},
+            "values": ("TJ de Lyon", "Pièce demandeur 1", "Jugement du 01/02/2027"),
+        },
+        "transport": {
+            "profile": {
+                "transport_contracts": {"cmr": "CMR 2026-100", "bill_of_lading": "B/L 55", "air_waybill": "LTA 77", "charter": "Affrètement du 10/10", "freight_forwarding": "Commission Exemple", "subcontracting": "Sous-traitant ABC"},
+                "responsibilities": {"damage_and_loss": "Avarie palettes 2-4", "delivery_delays": "Retard de 48 h", "liability_limits": "Convention applicable à vérifier", "transport_insurance": "Police assureur XYZ", "recourse_subrogation": "Recours notifié"},
+                "regulation": {"licenses": "Licence communautaire", "professional_capacity": "Capacité attestée", "driving_rest_time": "Chronotachygraphe joint", "dangerous_goods": "ADR classe 3", "cabotage": "Opération contrôlée"},
+                "transport_litigation": {"expertises": "Expertise contradictoire", "arbitration": "Clause CCI", "limitation_period": "Prescription au 31/12/2026", "compensation": "Indemnisation demandée"},
+            },
+            "sections": {"transport_contracts", "responsibilities", "regulation", "transport_litigation"},
+            "values": ("CMR 2026-100", "Avarie palettes 2-4", "Licence communautaire", "Indemnisation demandée"),
+        },
+    }
+    for index, (domain, example) in enumerate(examples.items()):
+        call("legal.workspace.set", **p, domain=domain)
+        schema = call("legal.snapshot", **p)["matter_profile_schema"]
+        assert example["sections"] <= {section["id"] for section in schema}
+        matter = call("legal.matter.save", **p, client_id=client["id"], title=f"Dossier {domain}",
+                      matter_type=call("legal.snapshot", **p)["matter_types"][0], matter_profile=example["profile"])["matters"][-1]
+        draft = call("legal.practice_document.create", **p, request_id=f"transport-court-draft-{index}",
+                     matter_id=matter["id"], template_id="quick_letter")["practice_documents"][-1]
+        assert all(value in draft["body"] for value in example["values"])
 
 
 def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
