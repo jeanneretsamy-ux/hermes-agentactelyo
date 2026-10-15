@@ -27,17 +27,21 @@ Le serveur MCP versionné est `mcp-servers/actelyo-rag/actelyo_rag_mcp.py`. Il e
 - `actelyo_rag_query`
 - `actelyo_rag_vector_search`
 
-Exemple de configuration locale dans le profil Hermes/Actelyo :
+Configuration du serveur MCP dans le profil Hermes/Actelyo (installation Windows par défaut) :
 
 ```yaml
 mcp_servers:
   actelyo-rag:
-    command: python
+    command: ${LOCALAPPDATA}/Programs/ActelyoLawHarness/resources/agent-payload/venv/Scripts/python.exe
     args:
-      - <CHEMIN_D_INSTALLATION>\mcp-servers\actelyo-rag\actelyo_rag_mcp.py
+      - ${LOCALAPPDATA}/Programs/ActelyoLawHarness/resources/agent-payload/hermes-agent/mcp-servers/actelyo-rag/actelyo_rag_mcp.py
+    env:
+      ACTELYO_RAG_BASE_URL: ${ACTELYO_RAG_BASE_URL}
+      ACTELYO_RAG_WORKSPACE: ${ACTELYO_RAG_WORKSPACE}
+      ACTELYO_RAG_API_KEY: ${ACTELYO_RAG_API_KEY}
 ```
 
-Adaptez le chemin si le harness est installé ailleurs. Le serveur lit `ACTELYO_RAG_BASE_URL`, `ACTELYO_RAG_WORKSPACE` et `ACTELYO_RAG_API_KEY` depuis l'environnement local.
+Hermes résout les valeurs `${...}` depuis le `.env` du profil actif et les transmet au processus MCP. Placez les trois variables `ACTELYO_RAG_*` dans le `.env` du profil Hermes utilisé par Law Harness. La clé reste sur le poste et n'est transmise qu'au serveur MCP local. Après configuration, redémarrez la session ou rechargez MCP. Si l'installation utilise un répertoire personnalisé, remplacez les deux chemins `LOCALAPPDATA/Programs/ActelyoLawHarness` par ce répertoire. Le serveur lit les variables depuis son environnement.
 
 ## Utilisation attendue
 
