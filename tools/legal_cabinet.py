@@ -48,7 +48,10 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
                     result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
             else:
                 return json.dumps({"success": False, "error": f"Action inconnue. Actions disponibles : {', '.join(_ACTIONS)}"}, ensure_ascii=False)
-            return json.dumps({"success": True, "project": {"id": target.id, "slug": target.slug, "name": target.name}, "action": action, "data": result}, ensure_ascii=False)
+            return json.dumps({"success": True, "project": {
+                "id": target.id, "slug": target.slug, "name": target.name,
+                "primary_path": target.primary_path,
+            }, "action": action, "data": result}, ensure_ascii=False)
     except (ValueError, TypeError) as exc:
         return json.dumps({"success": False, "error": str(exc)}, ensure_ascii=False)
     except Exception as exc:
@@ -69,8 +72,9 @@ registry.register(
             "a document was issued, signed, sent, or paid. Use explicit amounts from the user/source records, never guess. "
             "Before drafting, inspect snapshot, search/read the user's local files and supplied examples with the file tools, "
             "and preserve their factual details and requested structure; ask for missing material rather than inventing it. "
-            "Identify missing client/cabinet fields. After creating a quote/invoice record, prepare a clearly structured "
-            "French document from the returned snapshot and save it in the active project folder with write_file when asked. "
+            "Identify missing client/cabinet fields. After creating a quote/invoice record, save the returned "
+            "rendered_document with write_file under project.primary_path using a clear filename; if primary_path is empty, "
+            "ask where to save it. "
             "Label it BROUILLON until reviewed. Monetary writes require a fresh unique request_id."
         ),
         "parameters": {
