@@ -42,6 +42,8 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
                 result = legal.legal_snapshot(conn, target.id)
             elif action in _ACTIONS[1:]:
                 result = legal.legal_mutate(conn, target.id, action, values)
+                if action == "document.create" and result["documents"]:
+                    result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
             else:
                 return json.dumps({"success": False, "error": f"Action inconnue. Actions disponibles : {', '.join(_ACTIONS)}"}, ensure_ascii=False)
             return json.dumps({"success": True, "project": {"id": target.id, "slug": target.slug, "name": target.name}, "action": action, "data": result}, ensure_ascii=False)
@@ -104,3 +106,4 @@ registry.register(
         **{key: value for key, value in args.items() if key not in {"action", "project"}},
     ),
 )
+
