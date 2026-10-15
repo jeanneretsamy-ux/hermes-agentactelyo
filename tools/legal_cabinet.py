@@ -42,7 +42,12 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
                 result = legal.legal_snapshot(conn, target.id)
             elif action in _ACTIONS[1:]:
                 if action == "firm.settings.set":
-                    values.setdefault("jurisdiction", "FR")
+                    for key, default in {
+                        "jurisdiction": "FR", "vat_regime": "standard", "vat_number": "",
+                        "bar_name": "", "payment_delay_days": 30,
+                        "late_penalty_rate": "3 fois le taux d’intérêt légal",
+                    }.items():
+                        values.setdefault(key, default)
                 result = legal.legal_mutate(conn, target.id, action, values)
                 if action == "document.create" and result["documents"]:
                     result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
