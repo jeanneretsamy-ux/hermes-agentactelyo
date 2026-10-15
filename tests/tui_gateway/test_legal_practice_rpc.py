@@ -172,6 +172,11 @@ def test_company_matter_profile_is_editable_and_flows_into_drafts(tmp_path):
     assert {"matter_organization", "company_details", "capital_rights", "associates", "management", "tax"} <= profile_sections
     closed = call("legal.matter.save", **p, **{**matter, "status": "closed"})["matters"][0]
     assert closed["company_profile"] == profile
+    updated_profile = call("legal.matter.save", **p, id=matter["id"], client_id=client["id"], title=matter["title"],
+                           matter_type=matter["matter_type"], reference=matter["reference"], status="closed",
+                           matter_profile={"management": {"president": "Alice Exemple — mise à jour"}})["matters"][0]
+    assert updated_profile["matter_profile"]["management"]["president"] == "Alice Exemple — mise à jour"
+    assert updated_profile["matter_profile"]["company_details"] == profile["company_details"]
     fee = call("legal.fee.add", **p, request_id="company-fee-1", matter_id=matter["id"], description="Conseil juridique", kind="fixed", amount_cents=10000, tax_bps=2000)["fees"][0]
     form = call("legal.practice_document.create", **p, request_id="company-draft-1", matter_id=matter["id"], template_id="end_of_mission")["practice_documents"][0]
     assert "Informations société du dossier" in form["body"]
@@ -193,6 +198,30 @@ def test_company_profile_rejects_non_text_and_excessive_content(tmp_path):
     fail("legal.matter.save", **params, company_profile={"company_details": {"siren": "x" * 20_001}})
 
 
+def test_real_estate_profile_matches_dossier_menu_and_flows_to_document(tmp_path):
+    pid = call("projects.create", name="Cabinet baux", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    call("legal.workspace.set", **p, domain="immobilier")
+    client = call("legal.client.save", **p, name="Société locataire")['clients'][0]
+    profile = {
+        "matter_organization": {"summary": "Renouvellement du bail commercial", "cote": "BAIL-2026-01"},
+        "parties": {"tenant": "Société locataire — 12 rue Exemple, Lyon"},
+        "guarantee": {"guarantor": "Mme Exemple", "guarantee_type": "Caution solidaire"},
+        "lease_transfer": {"assignor": "Ancien preneur", "assignee": "Nouveau preneur", "transfer_date": "À définir"},
+        "lease": {"lease_type": "Bail commercial", "landlord": "SCI Exemple", "rent": "2 000 EUR / mois"},
+        "premises": {"address": "12 rue Exemple, Lyon", "surface": "85 m²"},
+        "notice": {"notice_from": "Bailleur", "effective_date": "30/09/2026"},
+        "billable_clients": {"third_parties": "Société locataire — facturation"},
+    }
+    matter = call("legal.matter.save", **p, client_id=client["id"], title="Bail commercial", matter_type="Bail commercial", matter_profile=profile)["matters"][0]
+    assert matter["matter_profile"] == profile
+    section_ids = {section["id"] for section in call("legal.snapshot", **p)["matter_profile_schema"]}
+    assert {"matter_organization", "parties", "guarantee", "lease_transfer", "lease", "premises", "notice", "billable_clients"} <= section_ids
+    draft = call("legal.practice_document.create", **p, request_id="lease-draft-1", matter_id=matter["id"], template_id="quick_letter")["practice_documents"][0]
+    assert "Preneur" in draft["body"] and "Caution" in draft["body"] and "Cession de droit au bail" in draft["body"]
+    assert "Locaux" in draft["body"] and "Congé" in draft["body"] and "Société locataire" in draft["body"]
+
+
 def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
     expected = [
         "Droit Pénal et Procédure", "Contentieux Judiciaire", "Droit des Affaires",
@@ -211,3 +240,61 @@ def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
         state = call("legal.workspace.set", project_id=pid, domain=domain["id"])
         assert state["domain"] == domain["id"]
         assert state["matter_types"] == domain["matter_types"]
+        schema = call("legal.snapshot", project_id=pid)["matter_profile_schema"]
+        assert len(schema) >= 3
+        assert {section["id"] for section in schema} >= {"matter_organization", "evidence_register", "document_generator", "billable_clients"}
+
+
+def test_tax_family_and_social_profiles_follow_supplied_dossier_menus(tmp_path):
+    pid = call("projects.create", name="Cabinet exemples de dossiers", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    client = call("legal.client.save", **p, name="Client Exemple")['clients'][0]
+    examples = {
+        "fiscal": {
+            "sections": {"tax_dashboard", "tax_declarations", "tax_packages", "tax_integration", "tax_controls", "tax_litigation", "tax_ruling"},
+            "profile": {
+                "tax_dashboard": {"created_on": "15/10/2026", "imported_documents": "12", "tax_regime": "IS", "fiscal_stakes": "45 000 EUR", "fiscal_year": "2025"},
+                "tax_declarations": {"declaration_type": "IS", "tax_year": "2025", "filing_status": "À préparer"},
+                "tax_packages": {"package_type": "Liasse IS", "fiscal_year": "2025"},
+                "tax_integration": {"group_parent": "Holding Exemple", "group_members": "Filiale Exemple"},
+                "tax_controls": {"control_type": "Vérification de comptabilité", "reply_deadline": "30/11/2026"},
+                "tax_litigation": {"decision_contested": "Proposition de rectification"},
+                "tax_ruling": {"question": "Régime applicable à l’opération"},
+            },
+            "expected_text": ("45 000 EUR", "Liasse IS", "Vérification de comptabilité"),
+        },
+        "patrimonial-famille": {
+            "sections": {"civil_status", "property_liquidation", "children_authority", "family_procedure", "family_finances", "family_tools"},
+            "profile": {
+                "civil_status": {"spouse_identity": "Alice et Benoît Exemple", "marriage_contract": "Séparation de biens"},
+                "property_liquidation": {"community_assets": "Maison de Lyon", "liquidation_proposal": "Vente puis partage"},
+                "children_authority": {"children_identity": "Camille, 8 ans", "residence": "Alternée", "parental_authority": "Conjointe"},
+                "family_procedure": {"proceedings": "Divorce par consentement mutuel"},
+                "family_finances": {"income_by_party": "Revenus mensuels des deux parties"},
+                "family_tools": {"missing_documents": "Relevés bancaires"},
+            },
+            "expected_text": ("Alice et Benoît Exemple", "Maison de Lyon", "Camille, 8 ans"),
+        },
+        "social": {
+            "sections": {"employees", "social_information", "representative_institutions", "urssaf", "labor_inspection", "contracts", "litigation"},
+            "profile": {
+                "employees": {"employee_list": "Camille Exemple", "employee_count": "42"},
+                "social_information": {"collective_agreement_details": "IDCC 1486"},
+                "representative_institutions": {"social_economic_committee": "CSE élu le 10/01/2026", "union_representatives": "Sam Exemple"},
+                "urssaf": {"urssaf_office": "URSSAF Rhône-Alpes", "deadline": "20/11/2026"},
+                "labor_inspection": {"inspection_office": "Inspection du travail de Lyon"},
+                "contracts": {"contract_types": "CDI et avenant"},
+                "litigation": {"court": "Conseil de prud’hommes de Lyon"},
+            },
+            "expected_text": ("Camille Exemple", "IDCC 1486", "URSSAF Rhône-Alpes"),
+        },
+    }
+    for index, (domain, example) in enumerate(examples.items()):
+        call("legal.workspace.set", **p, domain=domain)
+        snapshot = call("legal.snapshot", **p)
+        assert example["sections"] <= {section["id"] for section in snapshot["matter_profile_schema"]}
+        matter = call("legal.matter.save", **p, client_id=client["id"], title=f"Dossier {domain}",
+                      matter_type=snapshot["matter_types"][0], matter_profile=example["profile"])["matters"][-1]
+        draft = call("legal.practice_document.create", **p, request_id=f"menu-example-{index}",
+                     matter_id=matter["id"], template_id="quick_letter")["practice_documents"][-1]
+        assert all(text in draft["body"] for text in example["expected_text"])

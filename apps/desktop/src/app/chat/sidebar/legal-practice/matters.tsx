@@ -5,143 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 import { Choice, Field, type LegalSectionProps, TextField } from './fields'
 
-const COMPANY_SECTIONS = [
-  {
-    id: 'matter_organization',
-    label: 'Résumé, cote et documents du dossier',
-    fields: [
-      ['summary', 'Résumé'],
-      ['cote', 'Cote'],
-      ['secondary_sections', 'Rubriques secondaires'],
-      ['formulas', 'Formules'],
-      ['documents', 'Documents liés'],
-      ['models', 'Modèles'],
-      ['headers', 'En-têtes']
-    ]
-  },
-  {
-    id: 'company_details',
-    label: 'Détail société',
-    fields: [
-      ['registered_name', 'Dénomination sociale'],
-      ['legal_form', 'Forme juridique'],
-      ['trade_name', 'Nom commercial'],
-      ['registration_number', 'RCS / registre et ville'],
-      ['siren', 'SIREN'],
-      ['siret', 'SIRET'],
-      ['vat_number', 'N° TVA intracommunautaire'],
-      ['registered_office', 'Siège social'],
-      ['activity', 'Activité / objet social'],
-      ['financial_year', 'Exercice social'],
-      ['duration', 'Durée de la société']
-    ]
-  },
-  {
-    id: 'capital_rights',
-    label: 'Capital et droits sociaux',
-    fields: [
-      ['capital', 'Capital social'],
-      ['shares', 'Parts / actions et valeur nominale'],
-      ['voting_rights', 'Droits de vote'],
-      ['special_rights', 'Droits particuliers'],
-      ['capital_changes', 'Variations de capital']
-    ]
-  },
-  { id: 'history', label: 'Historique', fields: [['events', 'Événements et modifications']] },
-  { id: 'dividends', label: 'Dividendes', fields: [['decisions', 'Décisions et distributions']] },
-  {
-    id: 'current_accounts',
-    label: 'Intérêts de compte courant',
-    fields: [['accounts', 'Associé, solde, taux et périodes']]
-  },
-  {
-    id: 'share_transfers',
-    label: 'Cessions de parts',
-    fields: [['transfers', 'Cédant, cessionnaire, titres, prix et dates']]
-  },
-  {
-    id: 'remuneration',
-    label: 'Rémunérations',
-    fields: [['remuneration', 'Bénéficiaire, fonction, montants et décisions']]
-  },
-  {
-    id: 'associates',
-    label: 'Associés',
-    fields: [['members', 'Identité, coordonnées, titres et droits de chaque associé']]
-  },
-  {
-    id: 'management',
-    label: 'Administration',
-    fields: [
-      ['president', 'Président'],
-      ['vice_president', 'Vice-président'],
-      ['general_managers', 'Directeurs généraux'],
-      ['deputy_general_managers', 'Directeurs généraux délégués'],
-      ['manager_details', 'Infos générales DG / DGD']
-    ]
-  },
-  {
-    id: 'agreements',
-    label: 'Conventions',
-    fields: [['agreements', 'Conventions réglementées et autres conventions']]
-  },
-  {
-    id: 'delegations',
-    label: 'Délégation de pouvoirs',
-    fields: [['delegations', 'Délégant, délégataire, pouvoirs et durée']]
-  },
-  {
-    id: 'meetings',
-    label: 'Assemblées du dossier',
-    fields: [['meetings', 'Date, type, convocations, décisions et procès-verbaux']]
-  },
-  {
-    id: 'control_bodies',
-    label: 'Organes de contrôle',
-    fields: [
-      ['statutory_auditors', 'Commissaires aux comptes titulaires'],
-      ['alternate_auditors', 'Commissaires aux comptes suppléants'],
-      ['contribution_auditors', 'Commissaires aux apports'],
-      ['accountants', 'Experts-comptables'],
-      ['supervisory_board_president', 'Président du conseil de surveillance'],
-      ['supervisory_board_vice_president', 'Vice-président du conseil de surveillance'],
-      ['supervisory_board_members', 'Membres du conseil de surveillance'],
-      ['supervisory_board_details', 'Informations sur le conseil de surveillance']
-    ]
-  },
-  {
-    id: 'assets',
-    label: 'Patrimoine',
-    fields: [
-      ['goods', 'Biens'],
-      ['establishments', 'Établissements secondaires'],
-      ['subsidiaries', 'Filiales'],
-      ['contracts', 'Contrats en cours'],
-      ['leases', 'Baux'],
-      ['patents', 'Brevets'],
-      ['trademarks', 'Marques'],
-      ['designs', 'Dessins et modèles'],
-      ['works_council', 'Membres du CSE']
-    ]
-  },
-  {
-    id: 'billable_clients',
-    label: 'Clients facturés / Tiers',
-    fields: [['third_parties', 'Clients facturés et tiers']]
-  },
-  {
-    id: 'tax',
-    label: 'Fiscal',
-    fields: [
-      ['tax_regime', 'Régime fiscal'],
-      ['tax_ids', 'Identifiants fiscaux'],
-      ['tax_calendar', 'Échéances et obligations fiscales'],
-      ['tax_notes', 'Autres informations fiscales']
-    ]
-  }
-] as const
-
-type CompanyProfile = Record<string, Record<string, string>>
+type MatterProfile = Record<string, Record<string, string>>
 
 export function LegalMattersSection({ data, write, submit }: LegalSectionProps) {
   const [clientName, setClientName] = useState('')
@@ -154,7 +18,7 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
   const [matterType, setMatterType] = useState('')
   const [reference, setReference] = useState('')
   const [editingMatterId, setEditingMatterId] = useState('')
-  const [companyProfile, setCompanyProfile] = useState<CompanyProfile>({})
+  const [matterProfile, setMatterProfile] = useState<MatterProfile>({})
 
   const editMatter = (matter: (typeof data.matters)[number]) => {
     setEditingMatterId(matter.id)
@@ -162,11 +26,11 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
     setClientId(matter.client_id)
     setMatterType(matter.matter_type)
     setReference(matter.reference)
-    setCompanyProfile(matter.company_profile ?? {})
+    setMatterProfile(matter.matter_profile ?? matter.company_profile ?? {})
   }
 
-  const updateCompanyField = (section: string, key: string, value: string) => {
-    setCompanyProfile(current => ({ ...current, [section]: { ...current[section], [key]: value } }))
+  const updateMatterField = (section: string, key: string, value: string) => {
+    setMatterProfile(current => ({ ...current, [section]: { ...current[section], [key]: value } }))
   }
 
   return (
@@ -224,7 +88,7 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
                 ...(editingMatterId
                   ? { status: data.matters.find(item => item.id === editingMatterId)?.status ?? 'open' }
                   : {}),
-                ...(data.domain === 'societes' ? { company_profile: companyProfile } : {})
+                matter_profile: matterProfile
               })
             ) {
               setEditingMatterId('')
@@ -232,7 +96,7 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
               setClientId('')
               setMatterType('')
               setReference('')
-              setCompanyProfile({})
+              setMatterProfile({})
             }
           })}
         >
@@ -252,22 +116,24 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
             onChange={setMatterType}
             value={matterType}
           />
-          {data.domain === 'societes' && (
+          {data.domain && (
             <section className="space-y-2 rounded-md border border-(--ui-stroke-secondary) p-3">
-              <h4 className="font-medium">Fiche société</h4>
+              <h4 className="font-medium">
+                Fiche de dossier — {data.domains.find(domain => domain.id === data.domain)?.label}
+              </h4>
               <p className="text-sm text-(--ui-text-secondary)">
-                Renseignez les informations connues. L’agent pourra les reprendre dans les brouillons du dossier et
-                signalera les champs manquants.
+                Saisissez les informations connues pour ce type de dossier. L’agent pourra les reprendre dans les
+                brouillons et signalera les éléments manquants.
               </p>
-              {COMPANY_SECTIONS.map(section => (
+              {data.matter_profile_schema.map(section => (
                 <details className="rounded border border-(--ui-stroke-secondary) p-2" key={section.id}>
                   <summary className="cursor-pointer font-medium">{section.label}</summary>
                   <div className="mt-3 space-y-3">
-                    {section.fields.map(([key, label]) => (
+                    {section.fields.map(({ id: key, label }) => (
                       <Field key={key} label={label}>
                         <Textarea
-                          onChange={event => updateCompanyField(section.id, key, event.target.value)}
-                          value={companyProfile[section.id]?.[key] ?? ''}
+                          onChange={event => updateMatterField(section.id, key, event.target.value)}
+                          value={matterProfile[section.id]?.[key] ?? ''}
                         />
                       </Field>
                     ))}
@@ -287,7 +153,7 @@ export function LegalMattersSection({ data, write, submit }: LegalSectionProps) 
                 setClientId('')
                 setMatterType('')
                 setReference('')
-                setCompanyProfile({})
+                setMatterProfile({})
               }}
               type="button"
               variant="outline"

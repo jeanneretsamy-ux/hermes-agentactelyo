@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS legal_matters (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
  client_id TEXT NOT NULL REFERENCES legal_clients(id), title TEXT NOT NULL,
  matter_type TEXT NOT NULL, reference TEXT NOT NULL, status TEXT NOT NULL,
- company_profile TEXT NOT NULL DEFAULT '{}'
+ company_profile TEXT NOT NULL DEFAULT '{}', matter_profile TEXT NOT NULL DEFAULT '{}'
 );
 CREATE TABLE IF NOT EXISTS legal_acts (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -151,6 +151,9 @@ def initialize_legal(conn):
     matter_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_matters)")}
     if "company_profile" not in matter_columns:
         conn.execute("ALTER TABLE legal_matters ADD COLUMN company_profile TEXT NOT NULL DEFAULT '{}' ")
+    if "matter_profile" not in matter_columns:
+        conn.execute("ALTER TABLE legal_matters ADD COLUMN matter_profile TEXT NOT NULL DEFAULT '{}' ")
+    conn.execute("UPDATE legal_matters SET matter_profile=company_profile WHERE matter_profile='{}' AND company_profile!='{}'")
     for name, definition in (("activity_date", "TEXT NOT NULL DEFAULT ''"), ("billing_code", "TEXT NOT NULL DEFAULT ''"),
                              ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1")):
         if name not in fee_columns:
@@ -190,7 +193,7 @@ def _legal_integer(value, low=0, high=1_000_000_000):
     return value
 
 
-COMPANY_PROFILE_LABELS = {
+SOCIETY_PROFILE_LABELS = {
     "matter_organization": ("Organisation du dossier", {"summary": "Résumé", "cote": "Cote", "secondary_sections": "Rubriques secondaires", "formulas": "Formules", "documents": "Documents liés", "models": "Modèles", "headers": "En-têtes"}),
     "company_details": ("Détail société", {"legal_form": "Forme juridique", "registered_name": "Dénomination sociale", "trade_name": "Nom commercial", "registration_number": "RCS / registre et ville", "siren": "SIREN", "siret": "SIRET", "vat_number": "N° TVA intracommunautaire", "registered_office": "Siège social", "activity": "Activité / objet social", "financial_year": "Exercice social", "duration": "Durée de la société"}),
     "capital_rights": ("Capital et droits sociaux", {"capital": "Capital social", "shares": "Parts / actions et valeur nominale", "voting_rights": "Droits de vote", "special_rights": "Droits particuliers", "capital_changes": "Variations de capital"}),
@@ -211,14 +214,148 @@ COMPANY_PROFILE_LABELS = {
 }
 
 
-def _company_profile(value):
+COMMON_MATTER_PROFILE = {
+    "matter_organization": ("Menu du dossier", {"summary": "Résumé", "cote": "Cote", "secondary_sections": "Rubriques secondaires", "formulas": "Formules", "documents": "Documents", "models": "Modèles", "headers": "En-têtes"}),
+    "evidence_register": ("Bordereau / Pièces", {"piece_list": "Liste des pièces et numéros", "received_pieces": "Pièces reçues", "missing_pieces": "Pièces à demander", "piece_notes": "Notes sur les pièces"}),
+    "document_generator": ("Générateur", {"document_to_create": "Document à générer", "drafting_instructions": "Consignes de rédaction", "reference_examples": "Exemples de référence", "sections_to_rework": "Parties à modifier ou compléter"}),
+    "billable_clients": ("Clients facturés / Tiers", {"third_parties": "Clients facturés / Tiers"}),
+}
+
+
+DOMAIN_MATTER_PROFILE = {
+    "penal": {
+        "people": ("Personnes", {"client": "Client / mis en cause / victime", "opposing_parties": "Parties adverses", "witnesses": "Témoins", "lawyers": "Avocats et coordonnées"}),
+        "procedure": ("Procédure pénale", {"offence": "Qualification / faits reprochés", "court": "Juridiction", "police_unit": "Service enquêteur", "case_reference": "Références parquet / enquête", "custody": "Garde à vue / détention", "hearing": "Audiences et échéances", "appeal": "Voies de recours"}),
+        "evidence": ("Pièces et demandes", {"evidence": "Pièces et preuves", "requests": "Demandes d'actes", "experts": "Expertises", "damages": "Préjudices / demandes civiles"}),
+    },
+    "contentieux-judiciaire": {
+        "parties": ("Parties", {"claimant": "Demandeur", "defendant": "Défendeur", "third_parties": "Tiers / intervenants", "lawyers": "Avocats"}),
+        "procedure": ("Procédure et juridiction", {"court": "Juridiction / chambre", "case_number": "N° RG / Portalis", "procedure_type": "Procédure", "filing_date": "Date de saisine", "hearings": "Audiences et calendrier", "decisions": "Décisions et recours"}),
+        "claims": ("Demandes et pièces", {"claims": "Demandes principales et subsidiaires", "amounts": "Montants réclamés", "evidence": "Pièces / bordereau", "experts": "Expertise", "execution": "Exécution de la décision"}),
+    },
+    "commercial": {
+        "parties": ("Parties et entreprises", {"client_entity": "Entreprise cliente", "counterparty": "Cocontractant / partie adverse", "contacts": "Contacts et représentants", "guarantors": "Garants / cautions"}),
+        "contract": ("Contrats et relation commerciale", {"contract_type": "Type de contrat", "signature_date": "Date de signature", "term": "Durée / renouvellement", "termination": "Résiliation / préavis", "governing_law": "Droit applicable / juridiction"}),
+        "dispute": ("Litige et créances", {"subject": "Objet du différend", "amounts": "Montants / factures", "deadlines": "Échéances", "evidence": "Pièces et échanges", "settlement": "Négociation / transaction"}),
+    },
+    "social": {
+        "parties": ("Employeur et salarié", {"employer": "Employeur", "employee": "Salarié", "representatives": "Représentants / conseils", "contacts": "Contacts utiles"}),
+        "employment": ("Relation de travail", {"job_title": "Emploi / classification", "contract_type": "Type et date du contrat", "seniority": "Ancienneté", "workplace": "Lieu de travail", "collective_agreement": "Convention collective", "salary": "Rémunération et avantages", "working_time": "Temps de travail"}),
+        "procedure": ("Rupture et procédure", {"procedure_type": "Procédure / motif", "key_dates": "Dates clés", "letters": "Courriers et convocations", "claims": "Demandes et indemnités", "court": "Conseil de prud'hommes / juridiction", "evidence": "Pièces"}),
+        "employees": ("Salariés", {"employee_list": "Liste des salariés concernés", "employee_count": "Effectif", "individual_records": "Informations individuelles utiles", "employee_status": "Statut et catégorie"}),
+        "social_information": ("Informations sociales générales", {"employer_id": "Identifiants employeur", "establishments": "Établissements concernés", "collective_agreement_details": "Convention collective et IDCC", "payroll_context": "Paie et avantages", "social_calendar": "Échéances sociales"}),
+        "representative_institutions": ("Institutions représentatives du personnel", {"union_representatives": "Représentants syndicaux", "social_economic_committee": "Membres du comité social et économique", "establishment_cse": "Membres du CSE d’établissement", "central_cse": "Membres du CSE central", "company_board": "Membres du conseil d’entreprise", "local_representatives": "Représentants de proximité", "other_representatives": "Autres représentants"}),
+        "urssaf": ("Demandes URSSAF", {"urssaf_office": "Organisme / service URSSAF", "request_type": "Demande ou contrôle", "reference": "Référence du dossier", "period": "Période concernée", "amounts": "Cotisations et montants", "deadline": "Échéance de réponse", "correspondence": "Échanges et pièces"}),
+        "labor_inspection": ("Déclarations inspection du travail", {"inspection_office": "Service compétent", "declaration_type": "Déclaration / signalement", "incident_date": "Date des faits", "response_deadline": "Échéance", "correspondence": "Courriers et réponses", "evidence": "Pièces justificatives"}),
+        "contracts": ("Contrats", {"contract_types": "Contrats concernés", "contract_dates": "Dates de signature et d’effet", "amendments": "Avenants", "termination_terms": "Rupture / préavis", "contract_documents": "Documents contractuels"}),
+        "litigation": ("Contentieux", {"dispute_subject": "Objet du contentieux", "court": "Juridiction", "case_reference": "Référence de procédure", "hearings": "Audiences et délais", "claims": "Demandes et montants", "evidence": "Pièces et preuves"}),
+    },
+    "fiscal": {
+        "taxpayer": ("Contribuable", {"taxpayer_name": "Nom / dénomination", "tax_id": "Identifiant fiscal", "tax_address": "Adresse fiscale", "representatives": "Représentants"}),
+        "tax_case": ("Impôt et période", {"tax_type": "Impôt / taxe", "period": "Période concernée", "tax_regime": "Régime fiscal", "amounts": "Montants / pénalités", "return_reference": "Déclaration / avis concerné"}),
+        "procedure": ("Contrôle et recours", {"authority": "Administration / service", "notice_date": "Date de notification", "response_deadline": "Délai de réponse", "meetings": "Échanges / rendez-vous", "claims": "Réclamation / recours", "evidence": "Pièces justificatives"}),
+        "tax_dashboard": ("Repères du dossier fiscal", {"created_on": "Date de création", "imported_documents": "Documents importés", "tax_regime": "Régime fiscal", "fiscal_stakes": "Enjeu fiscal", "fiscal_year": "Exercice"}),
+        "tax_declarations": ("Déclarations IS/IR", {"declaration_type": "Déclaration (IS / IR / autre)", "taxpayer": "Contribuable concerné", "tax_year": "Année fiscale", "filing_deadline": "Date limite de dépôt", "filing_status": "État de la déclaration", "amount_due": "Impôt dû / crédit", "attachments": "Annexes et justificatifs"}),
+        "tax_packages": ("Liasses fiscales", {"package_type": "Type de liasse", "fiscal_year": "Exercice", "accounting_period": "Période comptable", "forms": "Formulaires concernés", "figures_to_check": "Montants à vérifier", "submission_status": "État du dépôt"}),
+        "tax_integration": ("Intégration fiscale", {"group_parent": "Société mère", "group_members": "Sociétés membres", "integration_start": "Début de l’intégration", "tax_consolidation": "Convention et calcul d’ensemble", "group_events": "Entrées / sorties du groupe"}),
+        "tax_controls": ("Contrôle fiscal et vérifications", {"control_type": "Type de contrôle", "tax_authority": "Service vérificateur", "control_period": "Périodes vérifiées", "audit_start": "Début du contrôle", "audit_documents": "Documents demandés", "findings": "Constats / rectifications", "reply_deadline": "Délai de réponse"}),
+        "tax_litigation": ("Contentieux fiscal", {"decision_contested": "Avis ou décision contestée", "claim_date": "Date de réclamation", "claim_arguments": "Moyens et demandes", "litigation_stage": "Étape de la procédure", "court": "Juridiction", "deadlines": "Délais et audiences"}),
+        "tax_ruling": ("Optimisation & rescrit", {"question": "Question fiscale", "transaction": "Opération concernée", "legal_basis": "Fondement envisagé", "ruling_authority": "Administration saisie", "submission_date": "Date de saisine", "response_deadline": "Échéance de réponse", "response": "Réponse / position obtenue"}),
+    },
+    "notarie": {
+        "parties": ("Parties et intervenants", {"parties": "Vendeur / acquéreur / donateur / bénéficiaires", "notary": "Notaire", "advisers": "Conseils et intervenants", "family_status": "État civil / situation familiale"}),
+        "asset": ("Bien et opération", {"asset_description": "Désignation du bien", "address": "Adresse / références cadastrales", "price": "Prix / évaluation", "financing": "Financement", "conditions": "Conditions suspensives", "dates": "Dates et échéances"}),
+        "deed": ("Acte et formalités", {"deed_type": "Type d'acte", "draft_status": "État du projet", "documents": "Pièces et diagnostics", "registrations": "Formalités / enregistrement", "succession": "Actifs, passifs et ayants droit"}),
+    },
+    "immobilier": {
+        "parties": ("Preneur", {"tenant": "Preneur / locataire", "tenant_contacts": "Coordonnées et représentants du preneur"}),
+        "guarantee": ("Caution", {"guarantor": "Caution / garant", "guarantee_type": "Type et étendue de la garantie", "guarantee_documents": "Acte et pièces de caution"}),
+        "lease_transfer": ("Cession de droit au bail", {"assignor": "Cédant", "assignee": "Cessionnaire", "transfer_date": "Date envisagée / réalisée", "consent": "Agrément / autorisation", "transfer_price": "Prix et modalités"}),
+        "lease": ("Bail", {"lease_type": "Type de bail", "landlord": "Bailleur", "signature_date": "Date de signature", "start_date": "Prise d'effet", "term": "Durée / échéance", "rent": "Loyer", "charges": "Charges", "revision": "Révision / indexation", "deposit": "Dépôt de garantie", "termination": "Congé / renouvellement"}),
+        "premises": ("Locaux", {"address": "Adresse", "description": "Description / destination", "surface": "Surface", "lot_numbers": "Lots / références cadastrales", "condition": "État / travaux", "inventory": "État des lieux / diagnostics"}),
+        "notice": ("Congé", {"notice_from": "Auteur du congé", "recipient": "Destinataire", "service_date": "Date et mode de notification", "effective_date": "Date d'effet", "grounds": "Motif", "dispute_deadline": "Délai / contestation"}),
+    },
+    "sport": {
+        "people": ("Sportif et organisation", {"athlete": "Sportif", "club": "Club / employeur", "agent": "Agent", "federation": "Fédération / ligue"}),
+        "contract": ("Contrat sportif", {"contract_type": "Type de contrat", "start_date": "Date de début", "end_date": "Date de fin", "compensation": "Rémunération / primes", "image_rights": "Droits à l'image", "exclusivity": "Exclusivité / obligations"}),
+        "competition": ("Compétition et discipline", {"competition": "Compétition", "season": "Saison", "disciplinary_body": "Organe disciplinaire", "decision": "Décision contestée", "deadlines": "Délais et audiences", "evidence": "Pièces"}),
+    },
+    "agricole": {
+        "parties": ("Exploitant et propriétaires", {"operator": "Exploitant", "landlord": "Bailleur / propriétaire", "company": "Structure agricole", "contacts": "Interlocuteurs"}),
+        "holding": ("Exploitation et foncier", {"activity": "Activité / production", "parcels": "Parcelles et références", "buildings": "Bâtiments et équipements", "environmental": "Autorisations / contraintes environnementales"}),
+        "lease_aid": ("Bail rural et aides", {"lease_type": "Type de bail", "term": "Durée / renouvellement", "rent": "Fermage", "subsidies": "Aides / subventions", "administration": "Organismes concernés", "dispute": "Litige / échéances"}),
+    },
+    "transport": {
+        "parties": ("Intervenants", {"shipper": "Expéditeur", "carrier": "Transporteur", "recipient": "Destinataire", "insurer": "Assureur"}),
+        "shipment": ("Transport", {"transport_type": "Mode de transport", "goods": "Marchandises", "weight_value": "Poids / valeur déclarée", "origin": "Lieu de départ", "destination": "Destination", "dates": "Dates de prise en charge / livraison", "documents": "Lettre de voiture / connaissement"}),
+        "incident": ("Incident et réclamation", {"incident_date": "Date de l'incident", "damage": "Perte / avarie / retard", "reservations": "Réserves et notifications", "claim_amount": "Montant réclamé", "deadlines": "Délais", "evidence": "Pièces et expertises"}),
+    },
+    "douane": {
+        "operator": ("Opérateur", {"importer_exporter": "Importateur / exportateur", "customs_broker": "Représentant en douane", "eori": "N° EORI", "contacts": "Contacts"}),
+        "goods_declaration": ("Marchandises et déclaration", {"goods": "Désignation / code douanier", "origin": "Origine / provenance", "customs_office": "Bureau de douane", "declaration_number": "N° de déclaration", "operation_date": "Date d'opération", "duties": "Droits / taxes"}),
+        "control": ("Contrôle et recours", {"authority": "Autorité / service", "control_date": "Date de contrôle", "notice": "Notification / décision", "deadline": "Délai de réponse", "amounts": "Rappel / pénalités", "evidence": "Documents justificatifs"}),
+    },
+    "medical": {
+        "people": ("Personnes et établissements", {"patient": "Patient / ayant droit", "practitioner": "Professionnel de santé", "establishment": "Établissement", "insurer": "Assureur", "opposing_parties": "Parties concernées"}),
+        "care_event": ("Prise en charge et faits", {"care_dates": "Dates de soins", "facts": "Faits / dommage allégué", "injuries": "Préjudices", "medical_records": "Dossier médical / pièces", "complaint": "Réclamation / plainte"}),
+        "expertise_procedure": ("Expertise et procédure", {"expert": "Expert", "expert_meetings": "Dates d'expertise", "court": "Juridiction / commission", "deadlines": "Délais", "claims": "Demandes et chiffrage"}),
+    },
+    "recouvrement": {
+        "creditor_debtor": ("Créancier et débiteur", {"creditor": "Créancier", "debtor": "Débiteur", "guarantors": "Cautions / garants", "contacts": "Coordonnées"}),
+        "claim": ("Créance", {"origin": "Origine de la créance", "invoices": "Factures / échéances", "principal": "Principal", "interest": "Intérêts / pénalités", "payments": "Règlements reçus", "dispute": "Contestations"}),
+        "recovery": ("Démarches et exécution", {"reminders": "Relances et mises en demeure", "title": "Titre exécutoire", "bailiff": "Commissaire de justice", "enforcement": "Mesures d'exécution", "deadlines": "Délais / audiences", "costs": "Frais"}),
+    },
+    "patrimonial-famille": {
+        "family": ("Situation familiale", {"spouses": "Époux / partenaires", "children": "Enfants et situation", "heirs": "Héritiers / bénéficiaires", "notary": "Notaire / conseils"}),
+        "assets_liabilities": ("Patrimoine", {"real_estate": "Biens immobiliers", "accounts": "Comptes et placements", "business_assets": "Parts sociales / entreprises", "debts": "Dettes / emprunts", "valuations": "Évaluations et dates"}),
+        "family_procedure": ("Procédure", {"marital_regime": "Régime matrimonial / union", "marriage_date": "Date et lieu de l'union", "separation_date": "Séparation / décès", "support": "Prestation / pension", "proceedings": "Procédure / ONC et juridiction", "deadlines": "Échéances", "orders_and_measures": "Ordonnances et mesures provisoires", "agreements": "Accords et conventions"}),
+        "civil_status": ("État Civil", {"spouse_identity": "Identité des époux / partenaires", "birth_details": "Dates et lieux de naissance", "marriage_or_union": "Date et lieu du mariage / PACS", "marriage_contract": "Contrat de mariage", "family_documents": "Actes d’état civil et justificatifs"}),
+        "property_liquidation": ("Patrimoine & Liquidation", {"assets_before_union": "Biens propres / antérieurs", "community_assets": "Biens communs / indivis", "liabilities": "Dettes et passif", "asset_valuations": "Évaluations des biens", "liquidation_proposal": "Projet de liquidation", "notary": "Notaire chargé de la liquidation"}),
+        "children_authority": ("Enfants & Autorité Parentale", {"children_identity": "Identité et âge des enfants", "residence": "Résidence habituelle", "parental_authority": "Exercice de l’autorité parentale", "visitation": "Droit de visite et d’hébergement", "child_support": "Contribution à l’entretien", "child_needs": "Besoins et frais particuliers"}),
+        "family_finances": ("Finances", {"income_by_party": "Ressources par partie", "monthly_expenses": "Charges mensuelles", "assets_and_debts": "Actif et passif", "support_calculation": "Éléments de calcul des pensions", "tax_position": "Situation fiscale"}),
+        "family_tools": ("Outils et suivi", {"asset_schedule": "Tableau des biens et valeurs", "proposed_agreements": "Propositions d’accord", "missing_documents": "Documents manquants", "next_actions": "Prochaines démarches"}),
+    },
+    "personnes-protegees": {
+        "protected_person": ("Personne protégée", {"identity": "Identité", "birth": "Date / lieu de naissance", "address": "Adresse", "health_context": "Éléments utiles communiqués", "relatives": "Proches / personnes à prévenir"}),
+        "measure": ("Mesure et intervenants", {"measure_type": "Tutelle / curatelle / autre mesure", "representative": "Tuteur / curateur / mandataire", "judge": "Juge / juridiction", "decision_date": "Date de décision", "start_end": "Durée / renouvellement", "permissions": "Pouvoirs / autorisations"}),
+        "assets_accounts": ("Patrimoine et comptes", {"inventory": "Inventaire des biens", "income": "Ressources", "expenses": "Charges", "accounts": "Comptes / opérations", "annual_report": "Comptes rendus de gestion", "deadlines": "Échéances"}),
+    },
+    "civil": {
+        "parties": ("Parties", {"claimant": "Demandeur", "defendant": "Défendeur", "third_parties": "Tiers", "insurers": "Assureurs"}),
+        "facts": ("Faits et obligations", {"relationship": "Relation / contrat", "events": "Chronologie", "breach": "Manquement / fait générateur", "damages": "Préjudices", "amounts": "Montants", "evidence": "Pièces"}),
+        "procedure": ("Procédure", {"court": "Juridiction", "case_number": "N° de dossier", "acts": "Actes / décisions", "hearings": "Audiences / délais", "remedies": "Demandes / recours"}),
+    },
+    "ntic-propriete-intellectuelle": {
+        "rights_holders": ("Titulaires et parties", {"rights_holder": "Titulaire des droits", "counterparty": "Partie adverse / utilisateur", "creators": "Auteurs / inventeurs", "platforms": "Plateformes concernées"}),
+        "protected_assets": ("Œuvre, marque ou technologie", {"asset_type": "Type d'actif", "title": "Titre / description", "registration": "Dépôt / enregistrement", "territory": "Territoire", "ownership": "Chaîne de titularité", "licence": "Licence / cession"}),
+        "digital_case": ("Données et contentieux numérique", {"systems": "Systèmes / services", "personal_data": "Données personnelles en cause", "incident_date": "Date / durée", "infringement": "Atteinte alléguée", "evidence": "Constats / preuves", "remedies": "Mesures demandées"}),
+    },
+    "esport": {
+        "participants": ("Joueur et structure", {"player": "Joueur", "team": "Équipe / organisation", "publisher": "Éditeur du jeu", "agent": "Agent / représentant"}),
+        "competition_contract": ("Contrat et compétition", {"game": "Jeu", "competition": "Compétition / saison", "contract_type": "Type de contrat", "term": "Durée", "compensation": "Rémunération / gains", "sponsorship": "Sponsors"}),
+        "digital_rights_dispute": ("Droits et litige", {"image_rights": "Image / diffusion", "transfer": "Transfert", "discipline": "Règlement / sanction", "body": "Fédération / organe compétent", "deadlines": "Délais", "evidence": "Pièces"}),
+    },
+    "aerien": {
+        "passengers": ("Passager et réservation", {"passengers": "Passagers", "airline": "Compagnie aérienne", "booking_reference": "Référence de réservation", "ticket_numbers": "N° de billets", "travel_agency": "Agence / intermédiaire"}),
+        "flight": ("Vol", {"flight_number": "N° de vol", "route": "Trajet", "scheduled_times": "Horaires prévus", "actual_times": "Horaires réels", "disruption": "Retard / annulation / refus d'embarquement", "baggage": "Bagages"}),
+        "claim": ("Réclamation et préjudice", {"claim_date": "Date de réclamation", "response": "Réponse de la compagnie", "expenses": "Frais engagés", "injury": "Préjudice / dommage", "insurer": "Assureur", "deadlines": "Délais / procédure"}),
+    },
+    "administratif": {
+        "administration": ("Administration et administré", {"authority": "Administration / organisme", "applicant": "Administré / entreprise", "contacts": "Interlocuteurs", "contractors": "Cocontractants / tiers"}),
+        "decision_contract": ("Décision ou contrat public", {"decision_type": "Type de décision", "decision_date": "Date de décision / notification", "public_contract": "Marché / concession", "procurement_reference": "Référence de consultation", "amounts": "Montants", "territory": "Commune / périmètre"}),
+        "administrative_procedure": ("Recours et procédure", {"recourse_type": "Recours / référé", "court": "Juridiction", "filing_deadline": "Délai de recours", "prior_claim": "Recours préalable", "evidence": "Pièces", "remedies": "Conclusions / mesures demandées"}),
+    },
+}
+
+
+def _matter_profile(value):
     if not isinstance(value, dict) or len(value) > 40:
-        raise ValueError("La fiche société doit être un objet de rubriques valide")
+        raise ValueError("La fiche dossier doit être un objet de rubriques valide")
     cleaned, total = {}, 0
     for section, fields in value.items():
         section = _legal_text(section, required=True, limit=80)
         if not isinstance(fields, dict) or len(fields) > 80:
-            raise ValueError("Rubrique de fiche société invalide")
+            raise ValueError("Rubrique de fiche dossier invalide")
         cleaned[section] = {}
         for key, text in fields.items():
             key = _legal_text(key, required=True, limit=100)
@@ -227,15 +364,26 @@ def _company_profile(value):
             cleaned[section][key] = text.strip()
             total += len(text)
     if total > 250_000:
-        raise ValueError("La fiche société dépasse 250 000 caractères")
+        raise ValueError("La fiche dossier dépasse 250 000 caractères")
     return cleaned
 
 
-def _company_profile_lines(profile):
+def _matter_profile_schema(domain_id):
+    sections = dict(COMMON_MATTER_PROFILE)
+    if domain_id == "societes":
+        sections.update(SOCIETY_PROFILE_LABELS)
+    else:
+        sections.update(DOMAIN_MATTER_PROFILE.get(domain_id, {}))
+    return [{"id": section, "label": label, "fields": [{"id": key, "label": field_label} for key, field_label in fields.items()]}
+            for section, (label, fields) in sections.items()]
+
+
+def _matter_profile_lines(profile, schema):
     lines = []
+    labels = {section["id"]: (section["label"], {field["id"]: field["label"] for field in section["fields"]}) for section in schema}
     for section, fields in profile.items():
-        section_label, labels = COMPANY_PROFILE_LABELS.get(section, (section.replace("_", " ").title(), {}))
-        values = [(labels.get(key, key.replace("_", " ").capitalize()), value) for key, value in fields.items() if value]
+        section_label, field_labels = labels.get(section, (section.replace("_", " ").title(), {}))
+        values = [(field_labels.get(key, key.replace("_", " ").capitalize()), value) for key, value in fields.items() if value]
         if values:
             lines.append(f"### {section_label}")
             lines.extend(f"- **{label} :** {value}" for label, value in values)
@@ -251,13 +399,18 @@ def legal_snapshot(conn, project_id):
     result = {"project_id": project_id, "domain": workspace["domain"] if workspace else None,
               "matter_types": json.loads(workspace["matter_types"]) if workspace else [],
               "domains": list(LEGAL_DOMAINS)}
-    result["company_profile_schema"] = [{"id": section, "label": label, "fields": [{"id": key, "label": field_label} for key, field_label in fields.items()]}
-                                         for section, (label, fields) in COMPANY_PROFILE_LABELS.items()]
+    result["matter_profile_schema"] = _matter_profile_schema(result["domain"])
+    # Retained as a wire alias for clients released before the matter-profile generalization.
+    result["company_profile_schema"] = result["matter_profile_schema"]
     for key in ("clients", "matters", "acts", "fees", "fee_codes", "subscriptions", "documents", "payments"):
         rows = conn.execute(f"SELECT * FROM legal_{key} WHERE project_id=? ORDER BY rowid", (project_id,)).fetchall()
         result[key] = [{k: row[k] for k in row.keys() if k != "project_id"} for row in rows]
     for matter in result["matters"]:
-        matter["company_profile"] = json.loads(matter.get("company_profile") or "{}")
+        profile = json.loads(matter.get("matter_profile") or "{}")
+        if not profile:
+            profile = json.loads(matter.get("company_profile") or "{}")
+        matter["matter_profile"] = profile
+        matter["company_profile"] = profile
     for document in result["documents"]:
         document["snapshot"] = json.loads(document["snapshot"])
         document["paid_cents"] = sum(p["amount_cents"] for p in result["payments"] if p["document_id"] == document["id"])
@@ -332,7 +485,7 @@ def render_legal_document(document):
     if client.get("customer_type") == "professional" and client.get("siren"):
         lines.append(f"SIREN client : {cell(client['siren'])}")
     lines.extend(["", "## Dossier", f"{cell(matter['title'])}" + (f" — réf. {cell(matter['reference'])}" if matter.get("reference") else "")])
-    company = matter.get("company_profile", {}).get("company_details", {})
+    company = matter.get("matter_profile", matter.get("company_profile", {})).get("company_details", {})
     company_fields = [(label, company.get(key)) for key, label in (("registered_name", "Dénomination sociale"), ("legal_form", "Forme juridique"), ("registered_office", "Siège social"), ("registration_number", "RCS / registre"), ("siren", "SIREN"), ("siret", "SIRET"), ("vat_number", "N° TVA")) if company.get(key)]
     if company_fields:
         lines.extend(["", "### Société concernée par le dossier"])
@@ -462,8 +615,11 @@ def _legal_apply(conn, pid, action, p):
     if action in ("client.save", "matter.save", "act.save"):
         row_id = p.get("id") or secrets.token_hex(16)
         table = {"client.save": "legal_clients", "matter.save": "legal_matters", "act.save": "legal_acts"}[action]
+        previous_matter = None
         if p.get("id"):
-            _legal_row(conn, table, pid, row_id)
+            existing = _legal_row(conn, table, pid, row_id)
+            if action == "matter.save":
+                previous_matter = existing
         if action == "client.save":
             customer_type = p.get("customer_type", "individual")
             if customer_type not in ("individual", "professional"):
@@ -482,8 +638,15 @@ def _legal_apply(conn, pid, action, p):
             if p.get("status", "open") not in ("open", "closed"):
                 raise ValueError("Statut de dossier invalide")
             values = {"client_id": p["client_id"], "title": _legal_text(p.get("title"), required=True), "matter_type": p["matter_type"], "reference": _legal_text(p.get("reference")), "status": p.get("status", "open")}
-            if "company_profile" in p:
-                values["company_profile"] = json.dumps(_company_profile(p["company_profile"]), ensure_ascii=False)
+            if "matter_profile" in p or "company_profile" in p:
+                profile = _matter_profile(p.get("matter_profile", p.get("company_profile")))
+                if previous_matter:
+                    prior = json.loads(previous_matter.get("matter_profile") or "{}")
+                    if not prior:
+                        prior = json.loads(previous_matter.get("company_profile") or "{}")
+                    profile = {**prior, **{section: {**prior.get(section, {}), **fields} for section, fields in profile.items()}}
+                values["matter_profile"] = json.dumps(profile, ensure_ascii=False)
+                values["company_profile"] = values["matter_profile"]
         if p.get("id"):
             columns = ",".join(f"{key}=?" for key in values)
             conn.execute(f"UPDATE {table} SET {columns} WHERE id=? AND project_id=?", (*values.values(), row_id, pid))
@@ -617,8 +780,8 @@ def _legal_apply(conn, pid, action, p):
                  "## Objet", f"{template[1]} lié au dossier {matter['reference'] or matter['title']}.", "",
                  "## Informations et pièces à compléter", "- Vérifier les faits, dates, montants et destinataires.",
                  "- Ajouter les pièces justificatives et les mentions propres à ce document."]
-        profile = json.loads(matter.get("company_profile") or "{}")
-        profile_lines = _company_profile_lines(profile)
+        profile = json.loads(matter.get("matter_profile") or matter.get("company_profile") or "{}")
+        profile_lines = _matter_profile_lines(profile, legal_snapshot(conn, pid)["matter_profile_schema"])
         if profile_lines:
             lines.extend(["", "## Informations société du dossier — à vérifier", *profile_lines])
         if fees:
@@ -658,7 +821,8 @@ def _legal_apply(conn, pid, action, p):
         count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind=?", (kind,)).fetchone()[0] + 1
         ref = f"{'DEV' if kind == 'quote' else 'FAC'}-BROUILLON-{date.today().year}-{count:05d}"
         net, tax = sum(f["net_cents"] for f in fees), sum(f["tax_cents"] for f in fees)
-        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {**{k: matter[k] for k in ("title", "reference", "matter_type")}, "company_profile": json.loads(matter.get("company_profile") or "{}")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees], "template_id": template_id}
+        matter_profile = json.loads(matter.get("matter_profile") or matter.get("company_profile") or "{}")
+        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {**{k: matter[k] for k in ("title", "reference", "matter_type")}, "matter_profile": matter_profile, "company_profile": matter_profile}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees], "template_id": template_id}
         if kind == "invoice":
             snapshot["jurisdiction"] = "FR"
             snapshot["issuer"] = {k: settings[k] for k in ("legal_name", "address", "siren", "vat_number", "vat_regime", "bar_name")}

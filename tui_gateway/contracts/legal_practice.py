@@ -31,6 +31,7 @@ class LegalMatterSnapshot(Result):
     title: str
     reference: str
     matter_type: str = ""
+    matter_profile: dict[str, dict[str, str]] = Field(default_factory=dict)
     company_profile: dict[str, dict[str, str]] = Field(default_factory=dict)
 
 
@@ -218,6 +219,7 @@ class LegalSnapshot(Result):
     domain: str | None
     matter_types: list[str]
     domains: list[LegalDomain]
+    matter_profile_schema: list[LegalCompanyProfileSection]
     company_profile_schema: list[LegalCompanyProfileSection]
     clients: list[LegalClient]
     matters: list[LegalMatter]
@@ -258,6 +260,7 @@ class LegalMatterParams(LegalProjectParams):
     matter_type: str
     reference: str = ""
     status: Literal["open", "closed"] = "open"
+    matter_profile: dict[str, dict[str, str]] | None = None
     company_profile: dict[str, dict[str, str]] | None = None
 
 
