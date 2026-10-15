@@ -72,11 +72,14 @@ registry.register(
             "Manage the legal workspace of a Desktop Project from chat. First use desktop_project(action='list') "
             "when the active project is unclear, then call snapshot before changes. Actions: snapshot; workspace.set "
             "(domain + matter_types); firm.settings.set (FR firm identity); client.save; matter.save; act.save; "
-            "fee.add; document.create (quote or invoice working draft); payment.add. Pass project as its name, slug, "
+            "fee.add; document.create (quote or invoice working draft; optional template_id: classique, synthese, detaille); payment.add. Pass project as its name, slug, "
             "or id, or omit it to use this session's active project. This creates internal drafts only: never claim "
             "a document was issued, signed, sent, or paid. Use explicit amounts from the user/source records, never guess. "
             "Before drafting, inspect snapshot, search/read the user's local files and supplied examples with the file tools, "
             "and preserve their factual details and requested structure; ask for missing material rather than inventing it. "
+            "When asked to use an example, identify it as a reference, compare its structure with the client matter, and replace only fields supported by that matter. "
+            "When asked to enrich or revise a section of an act, read the saved act and relevant case facts, change only the named section, preserve accepted clauses and return a concise change summary before saving with act.save. "
+            "Do not present generated acts as legally validated; flag missing facts, legal citations and review points. "
             "Identify missing client/cabinet fields. After creating a quote/invoice record, save the returned "
             "rendered_document with write_file under project.primary_path using a clear filename; if primary_path is empty, "
             "ask where to save it. "
@@ -107,6 +110,7 @@ registry.register(
                 "rate_cents": {"type": "integer"}, "tax_bps": {"type": "integer"},
                 "responsible_user": {"type": "string"}, "fee_ids": {"type": "array", "items": {"type": "string"}},
                 "due_on": {"type": "string"}, "document_id": {"type": "string"},
+                "template_id": {"type": "string", "enum": ["classique", "synthese", "detaille"]},
                 "paid_on": {"type": "string"},
             },
             "required": ["action"],
