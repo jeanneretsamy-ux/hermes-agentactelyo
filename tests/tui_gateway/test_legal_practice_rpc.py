@@ -211,15 +211,49 @@ def test_real_estate_profile_matches_dossier_menu_and_flows_to_document(tmp_path
         "lease": {"lease_type": "Bail commercial", "landlord": "SCI Exemple", "rent": "2 000 EUR / mois"},
         "premises": {"address": "12 rue Exemple, Lyon", "surface": "85 m²"},
         "notice": {"notice_from": "Bailleur", "effective_date": "30/09/2026"},
+        "real_property": {"identification": "Appartement lot 12", "title": "Acte du 4 mai 2018", "cadastre": "Section AB parcelle 42", "diagnostics": "DPE à jour", "easements": "Servitude de passage", "mortgages": "Hypothèque levée"},
+        "transactions": {"precontract": "Compromis signé", "conditions": "Prêt avant le 30/11", "financing": "Prêt bancaire", "sale_deed": "Signature prévue", "vefa": "Sans objet"},
+        "urbanism": {"building_permit": "PC-2026-01", "prior_declaration": "Sans objet", "planning_documents": "PLU zone U", "appeals": "Aucun recours connu", "demolition": "Sans objet"},
+        "condominium": {"bylaws": "Règlement 2018", "meetings": "AG du 15/06/2026", "property_manager": "Syndic Exemple", "charges": "900 EUR / trimestre", "works": "Ravalement voté"},
+        "lease_types": {"residential_lease": "Sans objet", "commercial_lease": "Bail 3/6/9", "professional_lease": "Sans objet", "leave_notice": "Préavis à vérifier", "unpaid_rent": "Aucun impayé déclaré"},
         "billable_clients": {"third_parties": "Société locataire — facturation"},
     }
     matter = call("legal.matter.save", **p, client_id=client["id"], title="Bail commercial", matter_type="Bail commercial", matter_profile=profile)["matters"][0]
     assert matter["matter_profile"] == profile
     section_ids = {section["id"] for section in call("legal.snapshot", **p)["matter_profile_schema"]}
-    assert {"matter_organization", "parties", "guarantee", "lease_transfer", "lease", "premises", "notice", "billable_clients"} <= section_ids
+    assert {"matter_organization", "parties", "guarantee", "lease_transfer", "lease", "premises", "notice", "real_property", "transactions", "urbanism", "condominium", "lease_types", "billable_clients"} <= section_ids
+    assert {"correspondence", "expenses", "misc_documents"} <= {field["id"] for field in next(s for s in call("legal.snapshot", **p)["matter_profile_schema"] if s["id"] == "matter_organization")["fields"]}
     draft = call("legal.practice_document.create", **p, request_id="lease-draft-1", matter_id=matter["id"], template_id="quick_letter")["practice_documents"][0]
     assert "Preneur" in draft["body"] and "Caution" in draft["body"] and "Cession de droit au bail" in draft["body"]
     assert "Locaux" in draft["body"] and "Congé" in draft["body"] and "Société locataire" in draft["body"]
+    assert "Bien immobilier" in draft["body"] and "Compromis signé" in draft["body"]
+    assert "Syndic Exemple" in draft["body"] and "Bail 3/6/9" in draft["body"]
+
+
+def test_agricultural_profile_matches_exploitation_conventions_and_aid_menus(tmp_path):
+    pid = call("projects.create", name="Cabinet agricole", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    call("legal.workspace.set", **p, domain="agricole")
+    client = call("legal.client.save", **p, name="Ferme Exemple")['clients'][0]
+    profile = {
+        "parties": {"operator": "Ferme Exemple", "landlord": "Indivision Exemple", "company": "EARL Exemple"},
+        "farm_operations": {"operations": "Exploitation des Prés", "parcels": "Parcelles AB 12, AB 13", "crop_rotation": "Blé / colza", "farm_buildings": "Grange cadastrée AB 90"},
+        "conventions": {"availability_agreements": "Convention de mise à disposition 2024", "rural_leases": "Bail rural signé en 2020", "sharefarming": "Fermage annuel 1 200 EUR", "commodat": "Prêt à usage de matériel", "company_availability": "Mise à disposition à l’EARL"},
+        "msa": {"msa_statements": "Relevé MSA T2", "social_contributions": "Cotisations 2026", "msa_declarations": "Déclaration annuelle déposée"},
+        "pac_aids": {"pac_declaration": "Déclaration PAC 2026", "payment_entitlements": "DPB associés aux parcelles", "coupled_aid": "Aide protéagineux", "maec": "MAEC engagée jusqu’en 2028"},
+        "installation_transmission": {"installation": "Installation en 2020", "transmission": "Transmission familiale envisagée", "safer": "Déclaration SAFER à vérifier"},
+        "environment": {"environmental_permits": "Zone vulnérable nitrates", "environmental_proceedings": "Aucune procédure déclarée"},
+        "rural_contention": {"dispute": "Contestation de fermage", "parties": "EARL Exemple / bailleur", "deadlines": "Réponse avant le 15/12/2026", "evidence": "Bail et quittances"},
+    }
+    matter = call("legal.matter.save", **p, client_id=client["id"], title="Exploitation des Prés", matter_type="Bail rural", matter_profile=profile)["matters"][0]
+    assert matter["matter_profile"] == profile
+    schema = call("legal.snapshot", **p)["matter_profile_schema"]
+    section_ids = {section["id"] for section in schema}
+    assert {"farm_operations", "conventions", "msa", "pac_aids", "installation_transmission", "environment", "rural_contention", "billable_clients"} <= section_ids
+    draft = call("legal.practice_document.create", **p, request_id="farm-draft-1", matter_id=matter["id"], template_id="quick_letter")["practice_documents"][0]
+    assert "Parcelles AB 12, AB 13" in draft["body"]
+    assert "Convention de mise à disposition 2024" in draft["body"]
+    assert "Déclaration PAC 2026" in draft["body"] and "Contestation de fermage" in draft["body"]
 
 
 def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):

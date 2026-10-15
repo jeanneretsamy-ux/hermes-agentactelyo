@@ -215,7 +215,7 @@ SOCIETY_PROFILE_LABELS = {
 
 
 COMMON_MATTER_PROFILE = {
-    "matter_organization": ("Menu du dossier", {"summary": "Résumé", "cote": "Cote", "secondary_sections": "Rubriques secondaires", "formulas": "Formules", "documents": "Documents", "models": "Modèles", "headers": "En-têtes"}),
+    "matter_organization": ("Menu du dossier", {"summary": "Résumé", "cote": "Cote", "secondary_sections": "Rubriques secondaires", "formulas": "Formules", "documents": "Documents", "models": "Modèles", "headers": "En-têtes", "correspondence": "Courriers", "expenses": "Frais", "misc_documents": "Documents divers"}),
     "evidence_register": ("Bordereau / Pièces", {"piece_list": "Liste des pièces et numéros", "received_pieces": "Pièces reçues", "missing_pieces": "Pièces à demander", "piece_notes": "Notes sur les pièces"}),
     "document_generator": ("Générateur", {"document_to_create": "Document à générer", "drafting_instructions": "Consignes de rédaction", "reference_examples": "Exemples de référence", "sections_to_rework": "Parties à modifier ou compléter"}),
     "billable_clients": ("Clients facturés / Tiers", {"third_parties": "Clients facturés / Tiers"}),
@@ -274,6 +274,11 @@ DOMAIN_MATTER_PROFILE = {
         "lease": ("Bail", {"lease_type": "Type de bail", "landlord": "Bailleur", "signature_date": "Date de signature", "start_date": "Prise d'effet", "term": "Durée / échéance", "rent": "Loyer", "charges": "Charges", "revision": "Révision / indexation", "deposit": "Dépôt de garantie", "termination": "Congé / renouvellement"}),
         "premises": ("Locaux", {"address": "Adresse", "description": "Description / destination", "surface": "Surface", "lot_numbers": "Lots / références cadastrales", "condition": "État / travaux", "inventory": "État des lieux / diagnostics"}),
         "notice": ("Congé", {"notice_from": "Auteur du congé", "recipient": "Destinataire", "service_date": "Date et mode de notification", "effective_date": "Date d'effet", "grounds": "Motif", "dispute_deadline": "Délai / contestation"}),
+        "real_property": ("Bien immobilier", {"identification": "Identification du bien", "title": "Titre de propriété", "cadastre": "Cadastre / parcelles", "diagnostics": "Diagnostics", "easements": "Servitudes", "mortgages": "Hypothèques"}),
+        "transactions": ("Transactions", {"precontract": "Avant-contrat / compromis", "conditions": "Conditions suspensives", "financing": "Financement", "sale_deed": "Acte de vente", "vefa": "Vente en l’état futur d’achèvement (VEFA)"}),
+        "urbanism": ("Urbanisme", {"building_permit": "Permis de construire", "prior_declaration": "Déclaration préalable", "planning_documents": "PLU / documents d’urbanisme", "appeals": "Recours", "demolition": "Démolition"}),
+        "condominium": ("Copropriété", {"bylaws": "Règlement de copropriété", "meetings": "Assemblées générales", "property_manager": "Syndic", "charges": "Charges", "works": "Travaux"}),
+        "lease_types": ("Baux", {"residential_lease": "Bail d’habitation", "commercial_lease": "Bail commercial", "professional_lease": "Bail professionnel", "leave_notice": "Congés et préavis", "unpaid_rent": "Loyers impayés"}),
     },
     "sport": {
         "people": ("Sportif et organisation", {"athlete": "Sportif", "club": "Club / employeur", "agent": "Agent", "federation": "Fédération / ligue"}),
@@ -284,6 +289,13 @@ DOMAIN_MATTER_PROFILE = {
         "parties": ("Exploitant et propriétaires", {"operator": "Exploitant", "landlord": "Bailleur / propriétaire", "company": "Structure agricole", "contacts": "Interlocuteurs"}),
         "holding": ("Exploitation et foncier", {"activity": "Activité / production", "parcels": "Parcelles et références", "buildings": "Bâtiments et équipements", "environmental": "Autorisations / contraintes environnementales"}),
         "lease_aid": ("Bail rural et aides", {"lease_type": "Type de bail", "term": "Durée / renouvellement", "rent": "Fermage", "subsidies": "Aides / subventions", "administration": "Organismes concernés", "dispute": "Litige / échéances"}),
+        "farm_operations": ("Exploitations", {"operations": "Liste des exploitations", "parcels": "Parcellaire agricole", "crop_rotation": "Assolement", "farm_buildings": "Bâtiments agricoles"}),
+        "conventions": ("Conventions", {"availability_agreements": "Conventions de mise à disposition", "rural_leases": "Baux ruraux", "sharefarming": "Fermage", "commodat": "Commodat / prêt à usage", "company_availability": "Mise à disposition à une société"}),
+        "msa": ("MSA et cotisations", {"msa_statements": "Relevés MSA", "social_contributions": "Cotisations sociales", "msa_declarations": "Déclarations MSA"}),
+        "pac_aids": ("PAC et aides", {"pac_declaration": "Déclaration PAC", "payment_entitlements": "Droits à paiement", "coupled_aid": "Aides couplées", "maec": "Mesures agro-environnementales et climatiques (MAEC)"}),
+        "installation_transmission": ("Installation et transmission", {"installation": "Installation", "transmission": "Transmission d’exploitation", "safer": "SAFER et préemption"}),
+        "environment": ("Environnement", {"environmental_permits": "Autorisations et contraintes", "environmental_proceedings": "Procédures environnementales"}),
+        "rural_contention": ("Contentieux rural", {"dispute": "Objet du contentieux", "parties": "Parties concernées", "deadlines": "Délais et échéances", "evidence": "Pièces et preuves"}),
     },
     "transport": {
         "parties": ("Intervenants", {"shipper": "Expéditeur", "carrier": "Transporteur", "recipient": "Destinataire", "insurer": "Assureur"}),
