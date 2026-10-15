@@ -158,6 +158,8 @@ def initialize_legal(conn):
                              ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1")):
         if name not in fee_columns:
             conn.execute(f"ALTER TABLE legal_fees ADD COLUMN {name} {definition}")
+    # Finish the legacy-profile backfill before the RPC write path opens its own transaction.
+    conn.commit()
 
 
 def legal_domain(domain_id):
