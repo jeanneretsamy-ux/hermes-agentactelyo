@@ -30,6 +30,8 @@ class LegalClient(LegalClientSnapshot):
 class LegalMatterSnapshot(Result):
     title: str
     reference: str
+    matter_type: str = ""
+    company_profile: dict[str, dict[str, str]] = Field(default_factory=dict)
 
 
 class LegalMatter(LegalMatterSnapshot):
@@ -200,11 +202,23 @@ class LegalPracticeDocument(Result):
     created_on: str
 
 
+class LegalCompanyProfileField(Result):
+    id: str
+    label: str
+
+
+class LegalCompanyProfileSection(Result):
+    id: str
+    label: str
+    fields: list[LegalCompanyProfileField]
+
+
 class LegalSnapshot(Result):
     project_id: str
     domain: str | None
     matter_types: list[str]
     domains: list[LegalDomain]
+    company_profile_schema: list[LegalCompanyProfileSection]
     clients: list[LegalClient]
     matters: list[LegalMatter]
     acts: list[LegalAct]
@@ -244,6 +258,7 @@ class LegalMatterParams(LegalProjectParams):
     matter_type: str
     reference: str = ""
     status: Literal["open", "closed"] = "open"
+    company_profile: dict[str, dict[str, str]] | None = None
 
 
 class LegalActParams(LegalProjectParams):

@@ -155,6 +155,21 @@ export function legalDocumentText(
       ? [`Client professionnel — SIREN ${client.siren}`]
       : []),
     `Dossier : ${matter.title} (${matter.reference})`,
+    ...(() => {
+      const company = matter.company_profile?.company_details
+      if (!company) return []
+      const fields = [
+        ['registered_name', 'Dénomination sociale'],
+        ['legal_form', 'Forme juridique'],
+        ['registered_office', 'Siège social'],
+        ['registration_number', 'RCS / registre'],
+        ['siren', 'SIREN'],
+        ['siret', 'SIRET'],
+        ['vat_number', 'N° TVA']
+      ] as const
+      const lines = fields.filter(([key]) => company[key]).map(([key, label]) => `- ${label} : ${company[key]}`)
+      return lines.length ? ['Société concernée par le dossier', ...lines] : []
+    })(),
     ...(template === 'detaille' ? ['Détail des prestations'] : []),
     ...itemLines,
     `Total HT : ${legalMoney(doc.net_cents)}\nTVA : ${legalMoney(doc.tax_cents)}\nTotal TTC : ${legalMoney(doc.total_cents)}`,

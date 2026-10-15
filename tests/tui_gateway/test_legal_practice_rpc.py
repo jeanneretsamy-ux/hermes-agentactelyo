@@ -152,6 +152,47 @@ def test_legal_time_codes_subscriptions_and_linked_document_drafts(tmp_path):
     assert len(call("legal.snapshot", **p)["fees"]) == 3
 
 
+def test_company_matter_profile_is_editable_and_flows_into_drafts(tmp_path):
+    pid = call("projects.create", name="Cabinet sociétés", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    call("legal.workspace.set", **p, domain="societes")
+    call("legal.firm.settings.set", **p, legal_name="Cabinet Test", address="1 rue Test", siren="123456789",
+         vat_number="FR00123456789", vat_regime="standard")
+    client = call("legal.client.save", **p, name="Holding cliente", address="10 rue Client", customer_type="professional", siren="987654321")["clients"][0]
+    profile = {
+        "company_details": {"registered_name": "Société Exemple SAS", "legal_form": "SAS", "siren": "111222333", "registered_office": "2 rue des Sociétés, Lyon"},
+        "capital_rights": {"capital": "10 000 EUR"},
+        "associates": {"members": "Alice Exemple — 60 actions\nBob Exemple — 40 actions"},
+        "management": {"president": "Alice Exemple"},
+        "tax": {"tax_regime": "IS"},
+    }
+    matter = call("legal.matter.save", **p, client_id=client["id"], title="Vie sociale", matter_type="Vie sociale", reference="SOC-42", company_profile=profile)["matters"][0]
+    assert matter["company_profile"] == profile
+    profile_sections = {item["id"] for item in call("legal.snapshot", **p)["company_profile_schema"]}
+    assert {"matter_organization", "company_details", "capital_rights", "associates", "management", "tax"} <= profile_sections
+    closed = call("legal.matter.save", **p, **{**matter, "status": "closed"})["matters"][0]
+    assert closed["company_profile"] == profile
+    fee = call("legal.fee.add", **p, request_id="company-fee-1", matter_id=matter["id"], description="Conseil juridique", kind="fixed", amount_cents=10000, tax_bps=2000)["fees"][0]
+    form = call("legal.practice_document.create", **p, request_id="company-draft-1", matter_id=matter["id"], template_id="end_of_mission")["practice_documents"][0]
+    assert "Informations société du dossier" in form["body"]
+    assert "Société Exemple SAS" in form["body"] and "Alice Exemple" in form["body"]
+    invoice = call("legal.document.create", **p, request_id="company-invoice-1", matter_id=matter["id"], kind="invoice", fee_ids=[fee["id"]], due_on=date.today().isoformat())["documents"][0]
+    assert invoice["snapshot"]["matter"]["company_profile"] == profile
+    assert "Société concernée par le dossier" in invoice["rendered_document"]
+    assert "SIREN : 111222333" in invoice["rendered_document"]
+    assert "SIREN client : 987654321" in invoice["rendered_document"]
+
+
+def test_company_profile_rejects_non_text_and_excessive_content(tmp_path):
+    pid = call("projects.create", name="Cabinet validité", folders=[str(tmp_path)])['project']['id']
+    p = {"project_id": pid}
+    call("legal.workspace.set", **p, domain="societes")
+    client = call("legal.client.save", **p, name="Client")["clients"][0]
+    params = {**p, "client_id": client["id"], "title": "Dossier", "matter_type": "Constitution"}
+    fail("legal.matter.save", **params, company_profile={"company_details": {"siren": 123456789}})
+    fail("legal.matter.save", **params, company_profile={"company_details": {"siren": "x" * 20_001}})
+
+
 def test_legal_catalog_contains_requested_practice_areas_and_presets(tmp_path):
     expected = [
         "Droit Pénal et Procédure", "Contentieux Judiciaire", "Droit des Affaires",

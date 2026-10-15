@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS legal_clients (
 CREATE TABLE IF NOT EXISTS legal_matters (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
  client_id TEXT NOT NULL REFERENCES legal_clients(id), title TEXT NOT NULL,
- matter_type TEXT NOT NULL, reference TEXT NOT NULL, status TEXT NOT NULL
+ matter_type TEXT NOT NULL, reference TEXT NOT NULL, status TEXT NOT NULL,
+ company_profile TEXT NOT NULL DEFAULT '{}'
 );
 CREATE TABLE IF NOT EXISTS legal_acts (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -147,6 +148,9 @@ def initialize_legal(conn):
     if "related_document_id" not in document_columns:
         conn.execute("ALTER TABLE legal_documents ADD COLUMN related_document_id TEXT REFERENCES legal_documents(id)")
     fee_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_fees)")}
+    matter_columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_matters)")}
+    if "company_profile" not in matter_columns:
+        conn.execute("ALTER TABLE legal_matters ADD COLUMN company_profile TEXT NOT NULL DEFAULT '{}' ")
     for name, definition in (("activity_date", "TEXT NOT NULL DEFAULT ''"), ("billing_code", "TEXT NOT NULL DEFAULT ''"),
                              ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1")):
         if name not in fee_columns:
@@ -186,6 +190,58 @@ def _legal_integer(value, low=0, high=1_000_000_000):
     return value
 
 
+COMPANY_PROFILE_LABELS = {
+    "matter_organization": ("Organisation du dossier", {"summary": "Résumé", "cote": "Cote", "secondary_sections": "Rubriques secondaires", "formulas": "Formules", "documents": "Documents liés", "models": "Modèles", "headers": "En-têtes"}),
+    "company_details": ("Détail société", {"legal_form": "Forme juridique", "registered_name": "Dénomination sociale", "trade_name": "Nom commercial", "registration_number": "RCS / registre et ville", "siren": "SIREN", "siret": "SIRET", "vat_number": "N° TVA intracommunautaire", "registered_office": "Siège social", "activity": "Activité / objet social", "financial_year": "Exercice social", "duration": "Durée de la société"}),
+    "capital_rights": ("Capital et droits sociaux", {"capital": "Capital social", "shares": "Parts / actions et valeur nominale", "voting_rights": "Droits de vote", "special_rights": "Droits particuliers", "capital_changes": "Variations de capital"}),
+    "history": ("Historique", {"events": "Événements et modifications"}),
+    "dividends": ("Dividendes", {"decisions": "Décisions et distributions"}),
+    "current_accounts": ("Intérêts de compte courant", {"accounts": "Associé, solde, taux et périodes"}),
+    "share_transfers": ("Cessions de parts", {"transfers": "Cédant, cessionnaire, titres, prix et dates"}),
+    "remuneration": ("Rémunérations", {"remuneration": "Bénéficiaire, fonction, montants et décisions"}),
+    "associates": ("Associés", {"members": "Identité, coordonnées, titres et droits de chaque associé"}),
+    "management": ("Administration", {"president": "Président", "vice_president": "Vice-président", "general_managers": "Directeurs généraux", "deputy_general_managers": "Directeurs généraux délégués", "manager_details": "Infos générales DG / DGD"}),
+    "agreements": ("Conventions", {"agreements": "Conventions réglementées et autres conventions"}),
+    "delegations": ("Délégation de pouvoirs", {"delegations": "Délégant, délégataire, pouvoirs et durée"}),
+    "meetings": ("Assemblées du dossier", {"meetings": "Date, type, convocations, décisions et procès-verbaux"}),
+    "control_bodies": ("Organes de contrôle", {"statutory_auditors": "Commissaires aux comptes titulaires", "alternate_auditors": "Commissaires aux comptes suppléants", "contribution_auditors": "Commissaires aux apports", "accountants": "Experts-comptables", "supervisory_board_president": "Président du conseil de surveillance", "supervisory_board_vice_president": "Vice-président du conseil de surveillance", "supervisory_board_members": "Membres du conseil de surveillance", "supervisory_board_details": "Informations sur le conseil de surveillance"}),
+    "assets": ("Patrimoine", {"goods": "Biens", "establishments": "Établissements secondaires", "subsidiaries": "Filiales", "contracts": "Contrats en cours", "leases": "Baux", "patents": "Brevets", "trademarks": "Marques", "designs": "Dessins et modèles", "works_council": "Membres du CSE"}),
+    "billable_clients": ("Clients facturés / Tiers", {"third_parties": "Clients facturés et tiers"}),
+    "tax": ("Fiscal", {"tax_regime": "Régime fiscal", "tax_ids": "Identifiants fiscaux", "tax_calendar": "Échéances et obligations fiscales", "tax_notes": "Autres informations fiscales"}),
+}
+
+
+def _company_profile(value):
+    if not isinstance(value, dict) or len(value) > 40:
+        raise ValueError("La fiche société doit être un objet de rubriques valide")
+    cleaned, total = {}, 0
+    for section, fields in value.items():
+        section = _legal_text(section, required=True, limit=80)
+        if not isinstance(fields, dict) or len(fields) > 80:
+            raise ValueError("Rubrique de fiche société invalide")
+        cleaned[section] = {}
+        for key, text in fields.items():
+            key = _legal_text(key, required=True, limit=100)
+            if not isinstance(text, str) or len(text) > 20_000:
+                raise ValueError("Chaque information doit être un texte de 20 000 caractères maximum")
+            cleaned[section][key] = text.strip()
+            total += len(text)
+    if total > 250_000:
+        raise ValueError("La fiche société dépasse 250 000 caractères")
+    return cleaned
+
+
+def _company_profile_lines(profile):
+    lines = []
+    for section, fields in profile.items():
+        section_label, labels = COMPANY_PROFILE_LABELS.get(section, (section.replace("_", " ").title(), {}))
+        values = [(labels.get(key, key.replace("_", " ").capitalize()), value) for key, value in fields.items() if value]
+        if values:
+            lines.append(f"### {section_label}")
+            lines.extend(f"- **{label} :** {value}" for label, value in values)
+    return lines
+
+
 def _legal_round(value):
     return int(value.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
@@ -195,9 +251,13 @@ def legal_snapshot(conn, project_id):
     result = {"project_id": project_id, "domain": workspace["domain"] if workspace else None,
               "matter_types": json.loads(workspace["matter_types"]) if workspace else [],
               "domains": list(LEGAL_DOMAINS)}
+    result["company_profile_schema"] = [{"id": section, "label": label, "fields": [{"id": key, "label": field_label} for key, field_label in fields.items()]}
+                                         for section, (label, fields) in COMPANY_PROFILE_LABELS.items()]
     for key in ("clients", "matters", "acts", "fees", "fee_codes", "subscriptions", "documents", "payments"):
         rows = conn.execute(f"SELECT * FROM legal_{key} WHERE project_id=? ORDER BY rowid", (project_id,)).fetchall()
         result[key] = [{k: row[k] for k in row.keys() if k != "project_id"} for row in rows]
+    for matter in result["matters"]:
+        matter["company_profile"] = json.loads(matter.get("company_profile") or "{}")
     for document in result["documents"]:
         document["snapshot"] = json.loads(document["snapshot"])
         document["paid_cents"] = sum(p["amount_cents"] for p in result["payments"] if p["document_id"] == document["id"])
@@ -272,6 +332,11 @@ def render_legal_document(document):
     if client.get("customer_type") == "professional" and client.get("siren"):
         lines.append(f"SIREN client : {cell(client['siren'])}")
     lines.extend(["", "## Dossier", f"{cell(matter['title'])}" + (f" — réf. {cell(matter['reference'])}" if matter.get("reference") else "")])
+    company = matter.get("company_profile", {}).get("company_details", {})
+    company_fields = [(label, company.get(key)) for key, label in (("registered_name", "Dénomination sociale"), ("legal_form", "Forme juridique"), ("registered_office", "Siège social"), ("registration_number", "RCS / registre"), ("siren", "SIREN"), ("siret", "SIRET"), ("vat_number", "N° TVA")) if company.get(key)]
+    if company_fields:
+        lines.extend(["", "### Société concernée par le dossier"])
+        lines.extend(f"- {label} : {cell(value)}" for label, value in company_fields)
     if template_id == "synthese":
         lines.extend(["", "## Prestations", ""])
         for item in snapshot["lines"]:
@@ -417,6 +482,8 @@ def _legal_apply(conn, pid, action, p):
             if p.get("status", "open") not in ("open", "closed"):
                 raise ValueError("Statut de dossier invalide")
             values = {"client_id": p["client_id"], "title": _legal_text(p.get("title"), required=True), "matter_type": p["matter_type"], "reference": _legal_text(p.get("reference")), "status": p.get("status", "open")}
+            if "company_profile" in p:
+                values["company_profile"] = json.dumps(_company_profile(p["company_profile"]), ensure_ascii=False)
         if p.get("id"):
             columns = ",".join(f"{key}=?" for key in values)
             conn.execute(f"UPDATE {table} SET {columns} WHERE id=? AND project_id=?", (*values.values(), row_id, pid))
@@ -550,6 +617,10 @@ def _legal_apply(conn, pid, action, p):
                  "## Objet", f"{template[1]} lié au dossier {matter['reference'] or matter['title']}.", "",
                  "## Informations et pièces à compléter", "- Vérifier les faits, dates, montants et destinataires.",
                  "- Ajouter les pièces justificatives et les mentions propres à ce document."]
+        profile = json.loads(matter.get("company_profile") or "{}")
+        profile_lines = _company_profile_lines(profile)
+        if profile_lines:
+            lines.extend(["", "## Informations société du dossier — à vérifier", *profile_lines])
         if fees:
             lines.extend(["", "## Lignes de facturation associées"])
             for item in fees:
@@ -587,7 +658,7 @@ def _legal_apply(conn, pid, action, p):
         count = conn.execute("SELECT COUNT(*) FROM legal_documents WHERE kind=?", (kind,)).fetchone()[0] + 1
         ref = f"{'DEV' if kind == 'quote' else 'FAC'}-BROUILLON-{date.today().year}-{count:05d}"
         net, tax = sum(f["net_cents"] for f in fees), sum(f["tax_cents"] for f in fees)
-        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {k: matter[k] for k in ("title", "reference")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees], "template_id": template_id}
+        snapshot = {"client": {k: client[k] for k in ("name", "email", "address", "customer_type", "siren")}, "matter": {**{k: matter[k] for k in ("title", "reference", "matter_type")}, "company_profile": json.loads(matter.get("company_profile") or "{}")}, "lines": [{k: f[k] for k in ("description", "net_cents", "tax_bps", "tax_cents")} for f in fees], "template_id": template_id}
         if kind == "invoice":
             snapshot["jurisdiction"] = "FR"
             snapshot["issuer"] = {k: settings[k] for k in ("legal_name", "address", "siren", "vat_number", "vat_regime", "bar_name")}
