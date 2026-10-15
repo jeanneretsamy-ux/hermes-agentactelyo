@@ -33,10 +33,12 @@ describe('legalDocumentText template selection', () => {
       `Consultation** — ${legalMoney(10000)} HT, TVA 20 % (${legalMoney(2000)}), soit ${legalMoney(12000)} TTC`
     )
     expect(detailed).toContain('Détail des prestations')
+
     for (const text of [classic, summary, detailed]) {
       expect(text).toContain(`Total TTC : ${legalMoney(12000)}`)
       expect(text).toContain('BROUILLON')
     }
+
     expect(new Set([classic, summary, detailed]).size).toBe(3)
   })
 })
