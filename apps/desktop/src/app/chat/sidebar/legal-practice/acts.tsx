@@ -20,16 +20,20 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
 
   async function insertExample(file: File, selectionStart?: number, selectionEnd?: number) {
     const extension = file.name.split('.').pop()?.toLowerCase()
+
     if (!['txt', 'md'].includes(extension ?? '') || file.size > 1_000_000) {
       setDropMessage(
         'Importez un exemple texte .txt ou .md de moins de 1 Mo. Les PDF/Word restent à joindre au chat ou à lire depuis le dossier du projet.'
       )
+
       return
     }
 
     const text = await file.text()
+
     if (!text.trim()) {
       setDropMessage('Ce fichier ne contient pas de texte exploitable.')
+
       return
     }
 
@@ -85,6 +89,7 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
         </div>
         <Field label="Texte du modèle — variables possibles : {{client}}, {{dossier}}">
           <Textarea
+            className={draggingExample ? 'border-primary bg-primary/5' : undefined}
             onChange={e => setBody(e.target.value)}
             onDragEnter={event => {
               event.preventDefault()
@@ -96,12 +101,12 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
               event.preventDefault()
               setDraggingExample(false)
               const file = event.dataTransfer.files[0]
-              if (file) void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)
+
+              if (file) {void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)}
             }}
             ref={bodyRef}
             rows={10}
             value={body}
-            className={draggingExample ? 'border-primary bg-primary/5' : undefined}
           />
         </Field>
         <div className="flex flex-wrap items-center gap-2">
@@ -110,7 +115,8 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
             className="sr-only"
             onChange={event => {
               const file = event.currentTarget.files?.[0]
-              if (file) void insertExample(file)
+
+              if (file) {void insertExample(file)}
               event.currentTarget.value = ''
             }}
             ref={fileRef}
@@ -195,3 +201,4 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
     </>
   )
 }
+
