@@ -41,6 +41,8 @@ def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **
             if action == "snapshot":
                 result = legal.legal_snapshot(conn, target.id)
             elif action in _ACTIONS[1:]:
+                if action == "firm.settings.set":
+                    values.setdefault("jurisdiction", "FR")
                 result = legal.legal_mutate(conn, target.id, action, values)
                 if action == "document.create" and result["documents"]:
                     result["rendered_document"] = legal.render_legal_document(result["documents"][-1])
