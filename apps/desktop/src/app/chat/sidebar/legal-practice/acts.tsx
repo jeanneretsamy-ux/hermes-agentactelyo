@@ -195,4 +195,3 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
     </>
   )
 }
-

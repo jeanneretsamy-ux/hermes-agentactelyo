@@ -50,4 +50,3 @@ def test_chat_tool_manages_project_workspace_and_invoice_draft(monkeypatch, tmp_
     assert "Détail des prestations" in invoice["data"]["rendered_document"]
     assert "BROUILLON INTERNE — NON ÉMIS" in invoice["data"]["rendered_document"]
     assert registry.get_entry("legal_cabinet").toolset == "project"
-
