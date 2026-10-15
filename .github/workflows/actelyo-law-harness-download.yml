@@ -22,6 +22,10 @@ on:
       - apps/desktop/scripts/run-electron-builder.test.mjs
       - optional-skills/finance/france-accounting-tax/**
       - agent/prompt_builder.py
+      - hermes_cli/legal_practice.py
+      - mcp-servers/actelyo-rag/**
+      - skills/legal/**
+      - tools/legal_cabinet.py
 permissions:
   contents: write
 concurrency:
