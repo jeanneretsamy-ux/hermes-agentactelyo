@@ -151,6 +151,7 @@ hermes skills uninstall <skill-name>
 
 | Skill | Description |
 |-------|-------------|
+| [**actelyo-feature-studio**](../user-guide/skills/optional/mcp/mcp-actelyo-feature-studio.md) | Turn authorized app analysis into tested Actelyo features. |
 | [**fastmcp**](../user-guide/skills/optional/mcp/mcp-fastmcp.md) | Build, test, and deploy Python MCP servers. |
 | [**mcp-oauth-remote-gateway**](../user-guide/skills/optional/mcp/mcp-mcp-oauth-remote-gateway.md) | Manual OAuth for remote MCP servers on headless gateways. |
 | [**mcporter**](../user-guide/skills/optional/mcp/mcp-mcporter.md) | List, auth, and call MCP servers/tools from the terminal. |
@@ -305,3 +306,4 @@ To add a new optional skill to the repository:
 2. Add a `SKILL.md` with standard frontmatter (name, description, version, author)
 3. Include any supporting files in `references/`, `templates/`, or `scripts/` subdirectories
 4. Submit a pull request — the skill will appear in this catalog and get its own docs page once merged
+

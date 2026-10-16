@@ -1,0 +1,50 @@
+# REA MCP catalog entry. The package version is pinned so installs are reproducible.
+manifest_version: 1
+
+name: rea
+description: Analyze local applications and trace feature behavior with evidence.
+source: https://github.com/morluto/rea
+
+# REA's stdio server runs on the Hermes backend host. Windows needs cmd.exe to
+# launch npm's .cmd shim; Hermes supplies its managed Node.js 26 runtime.
+transport:
+  type: stdio
+  command: cmd.exe
+  args:
+    - /d
+    - /c
+    - npx
+    - -y
+    - rea-agents@6.5.0
+    - mcp
+
+auth:
+  type: none
+
+# Start with application analysis and evidence navigation. Native reverse-
+# engineering tools remain opt-in through the server's tool configuration.
+tools:
+  default_enabled:
+    - binary_session
+    - analyze_javascript_application
+    - inspect_analysis_view
+    - trace_application_feature
+
+suggest:
+  keywords:
+    - rea
+    - reverse engineer
+    - application analysis
+    - LM Studio feature analysis
+  hosts:
+    - lmstudio.ai
+  examples:
+    - Analyze an authorized LM Studio feature and propose an original Actelyo implementation.
+
+post_install: |
+  The first connection downloads the pinned REA package from npm; an internet
+  connection is needed once. REA runs on the Hermes backend host, so use a local
+  Law Harness connection to inspect an application installed on this PC. Static
+  JavaScript/Electron analysis does not require Hopper or Ghidra. Install the
+  optional Actelyo Feature Studio skill for the guided analysis-to-code workflow.
+

@@ -78,8 +78,8 @@ registry.register(
             "or id, or omit it to use this session's active project. This creates internal drafts only: never claim "
             "a document was issued, signed, sent, or paid. Use explicit amounts from the user/source records, never guess. "
             "For every legal practice domain, inspect snapshot.matter_profile_schema for the matter-specific sections and fields, then save factual structured data in matter.save.matter_profile keyed by those ids. For example, real-estate matters expose the tenant, guarantor, lease transfer, lease, premises, and notice. Preserve existing profile fields when updating, never invent missing facts, and distinguish the billed client from other parties. Drafts include dossier facts; company identifiers are shown separately from the billed client where applicable. company_profile remains a legacy alias only. "
-            "Before drafting acts or invoices, consult the Actelyo RAG skill and retrieve matching precedents, examples, or clauses from the configured Actelyo RAG workspace when its MCP connection is available. Focus retrieval on the dossier domain, matter type, and requested document; never transfer facts from another client. The current matter profile and verified client/cabinet records remain the source of this client's facts. If the user asks for RAG-based drafting and the Actelyo RAG MCP connection is unavailable, explain that before drafting. "
-            "Before drafting, inspect snapshot, search/read the user's local files and supplied examples with the file tools, "
+            "Before drafting acts or invoices, consult the Actelyo RAG skill and retrieve matching precedents, examples, or clauses from the configured Actelyo RAG workspace when its MCP connection is available. Use the dossier domain, matter type, and requested document to focus retrieval; use retrieved documents for structure and clauses, never to transfer another client's facts. The current matter profile and verified client/cabinet records remain the only sources for this client's facts. If the user asks for RAG-based drafting and Actelyo RAG is unavailable, explain that the connection is missing before drafting. "
+            "Also inspect snapshot and search/read the user's local files and supplied examples with the file tools, "
             "and preserve their factual details and requested structure; ask for missing material rather than inventing it. "
             "When asked to use an example, identify it as a reference, compare its structure with the client matter, and replace only fields supported by that matter. "
             "When asked to enrich or revise a section of an act, read the saved act and relevant case facts, change only the named section, preserve accepted clauses and return a concise change summary before saving with act.save. "
@@ -138,3 +138,4 @@ registry.register(
         **{key: value for key, value in args.items() if key not in {"action", "project"}},
     ),
 )
+

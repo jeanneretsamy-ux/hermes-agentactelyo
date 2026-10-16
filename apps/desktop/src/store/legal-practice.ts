@@ -157,7 +157,11 @@ export function legalDocumentText(
     `Dossier : ${matter.title} (${matter.reference})`,
     ...(() => {
       const company = matter.company_profile?.company_details
-      if (!company) return []
+
+      if (!company) {
+        return []
+      }
+
       const fields = [
         ['registered_name', 'Dénomination sociale'],
         ['legal_form', 'Forme juridique'],
@@ -167,7 +171,9 @@ export function legalDocumentText(
         ['siret', 'SIRET'],
         ['vat_number', 'N° TVA']
       ] as const
+
       const lines = fields.filter(([key]) => company[key]).map(([key, label]) => `- ${label} : ${company[key]}`)
+
       return lines.length ? ['Société concernée par le dossier', ...lines] : []
     })(),
     ...(template === 'detaille' ? ['Détail des prestations'] : []),
@@ -192,3 +198,4 @@ export function downloadLegalText(name: string, text: string): void {
   link.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+

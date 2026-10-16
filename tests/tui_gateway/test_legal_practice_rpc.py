@@ -82,7 +82,10 @@ def test_legal_workflow_money_snapshot_and_retry_are_durable(tmp_path):
     assert state["firm_totals"]["fees_cents"] == 14333
     assert state["firm_totals"]["invoiced_cents"] == 16000
     assert state["firm_totals"]["paid_cents"] == 8000
-    assert state["firm_totals"]["by_user"] == [{"user": "Avocate A", "fees_cents": 8333, "fee_count": 1}]
+    assert state["firm_totals"]["by_user"] == [
+        {"user": "Avocate A", "fees_cents": 8333, "fee_count": 1},
+        {"user": "Non attribué", "fees_cents": 6000, "fee_count": 2},
+    ]
     assert state["firm_totals"]["by_matter"][0]["matter_id"] == matter["id"]
     # Every request reopened the real DB; deletion still observes the project FK boundary.
     call("projects.delete", id=pid)
@@ -182,7 +185,7 @@ def test_company_matter_profile_is_editable_and_flows_into_drafts(tmp_path):
     assert "Informations société du dossier" in form["body"]
     assert "Société Exemple SAS" in form["body"] and "Alice Exemple" in form["body"]
     invoice = call("legal.document.create", **p, request_id="company-invoice-1", matter_id=matter["id"], kind="invoice", fee_ids=[fee["id"]], due_on=date.today().isoformat())["documents"][0]
-    assert invoice["snapshot"]["matter"]["company_profile"] == profile
+    assert invoice["snapshot"]["matter"]["company_profile"] == updated_profile["company_profile"]
     assert "Société concernée par le dossier" in invoice["rendered_document"]
     assert "SIREN : 111222333" in invoice["rendered_document"]
     assert "SIREN client : 987654321" in invoice["rendered_document"]
@@ -284,12 +287,17 @@ def test_contentious_and_transport_menus_flow_into_draft_context(tmp_path):
         },
     }
     for index, (domain, example) in enumerate(examples.items()):
-        call("legal.workspace.set", **p, domain=domain)
-        schema = call("legal.snapshot", **p)["matter_profile_schema"]
+        domain_root = tmp_path / domain
+        domain_root.mkdir()
+        project_id = call("projects.create", name=f"Cabinet {domain}", folders=[str(domain_root)])["project"]["id"]
+        domain_params = {"project_id": project_id}
+        domain_client = call("legal.client.save", **domain_params, name="Client Exemple")["clients"][0]
+        call("legal.workspace.set", **domain_params, domain=domain)
+        schema = call("legal.snapshot", **domain_params)["matter_profile_schema"]
         assert example["sections"] <= {section["id"] for section in schema}
-        matter = call("legal.matter.save", **p, client_id=client["id"], title=f"Dossier {domain}",
-                      matter_type=call("legal.snapshot", **p)["matter_types"][0], matter_profile=example["profile"])["matters"][-1]
-        draft = call("legal.practice_document.create", **p, request_id=f"transport-court-draft-{index}",
+        matter = call("legal.matter.save", **domain_params, client_id=domain_client["id"], title=f"Dossier {domain}",
+                      matter_type=call("legal.snapshot", **domain_params)["matter_types"][0], matter_profile=example["profile"])["matters"][-1]
+        draft = call("legal.practice_document.create", **domain_params, request_id=f"transport-court-draft-{index}",
                      matter_id=matter["id"], template_id="quick_letter")["practice_documents"][-1]
         assert all(value in draft["body"] for value in example["values"])
 
@@ -362,11 +370,17 @@ def test_tax_family_and_social_profiles_follow_supplied_dossier_menus(tmp_path):
         },
     }
     for index, (domain, example) in enumerate(examples.items()):
-        call("legal.workspace.set", **p, domain=domain)
-        snapshot = call("legal.snapshot", **p)
+        domain_root = tmp_path / domain
+        domain_root.mkdir()
+        project_id = call("projects.create", name=f"Cabinet {domain}", folders=[str(domain_root)])["project"]["id"]
+        domain_params = {"project_id": project_id}
+        domain_client = call("legal.client.save", **domain_params, name="Client Exemple")["clients"][0]
+        call("legal.workspace.set", **domain_params, domain=domain)
+        snapshot = call("legal.snapshot", **domain_params)
         assert example["sections"] <= {section["id"] for section in snapshot["matter_profile_schema"]}
-        matter = call("legal.matter.save", **p, client_id=client["id"], title=f"Dossier {domain}",
+        matter = call("legal.matter.save", **domain_params, client_id=domain_client["id"], title=f"Dossier {domain}",
                       matter_type=snapshot["matter_types"][0], matter_profile=example["profile"])["matters"][-1]
-        draft = call("legal.practice_document.create", **p, request_id=f"menu-example-{index}",
+        draft = call("legal.practice_document.create", **domain_params, request_id=f"menu-example-{index}",
                      matter_id=matter["id"], template_id="quick_letter")["practice_documents"][-1]
         assert all(text in draft["body"] for text in example["expected_text"])
+

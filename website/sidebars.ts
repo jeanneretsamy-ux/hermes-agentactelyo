@@ -494,6 +494,7 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-optional-mcp',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/optional/mcp/mcp-actelyo-feature-studio',
                     'user-guide/skills/optional/mcp/mcp-fastmcp',
                     'user-guide/skills/optional/mcp/mcp-mcp-oauth-remote-gateway',
                     'user-guide/skills/optional/mcp/mcp-mcporter',
@@ -927,3 +928,4 @@ const sidebars: SidebarsConfig = {
 };
 
 export default sidebars;
+

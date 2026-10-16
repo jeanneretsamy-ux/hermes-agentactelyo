@@ -178,6 +178,7 @@ class LegalDocument(Result):
     refund_due_cents: int = 0
     purpose: str = "standard"
     related_document_id: str | None = None
+    rendered_document: str
 
 
 class LegalPayment(Result):
@@ -389,3 +390,4 @@ method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot
 method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
 method("legal.payment.allocate", params=LegalAllocatePaymentParams, result=LegalSnapshot)
+

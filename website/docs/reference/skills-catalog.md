@@ -63,7 +63,7 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 
 | Skill | Description | Path |
 |-------|-------------|------|
-| [`actelyo-rag-backend`](../user-guide/skills/bundled/legal/legal-actelyo-rag-backend.md) | Search, question and cite locally indexed documents. | `legal/actelyo-rag-backend` |
+| [`actelyo-rag-backend`](../user-guide/skills/bundled/legal/legal-actelyo-rag-backend.md) | Retrieve Actelyo precedents for legal drafting. | `legal/actelyo-rag-backend` |
 | [`legal-data-hunter`](../user-guide/skills/bundled/legal/legal-legal-data-hunter.md) | Research legal sources through authenticated MCP access. | `legal/legal-data-hunter` |
 | [`openlegi-official-sources`](../user-guide/skills/bundled/legal/legal-openlegi-official-sources.md) | Research official French legal sources via MCP. | `legal/openlegi-official-sources` |
 
@@ -138,3 +138,4 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 | Skill | Description | Path |
 |-------|-------------|------|
 | [`blocked-page-recovery`](../user-guide/skills/bundled/web/web-blocked-page-recovery.md) | Use when a fetch fails: 403/429, paywall, WAF, bot wall. | `web/blocked-page-recovery` |
+
