@@ -1,14 +1,37 @@
 #!/usr/bin/env python3
 import json
 import os
+import re
 import sys
+from pathlib import Path
 import urllib.error
 import urllib.parse
 import urllib.request
 
-API_BASE = os.environ.get("ACTELYO_RAG_BASE_URL", "http://127.0.0.1:61045/api").rstrip("/")
+API_BASE = os.environ.get("ACTELYO_RAG_BASE_URL", "").rstrip("/")
 API_KEY = os.environ.get("ACTELYO_RAG_API_KEY", "")
 DEFAULT_WORKSPACE = os.environ.get("ACTELYO_RAG_WORKSPACE", "mon-espace-de-travail")
+
+
+def api_base():
+    if API_BASE:
+        return API_BASE
+    # The desktop app allocates a fresh loopback port on every launch. Resolve
+    # it per request so an existing MCP process also follows a RAG restart.
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        log = Path(appdata) / "Actelyo RAG" / "desktop.log"
+        try:
+            with log.open("rb") as stream:
+                stream.seek(0, 2)
+                stream.seek(max(0, stream.tell() - 1024 * 1024))
+                text = stream.read().decode("utf-8", errors="replace")
+            ports = re.findall(r"Primary server in HTTP mode listening on port (\d+)", text)
+            if ports and 1024 <= int(ports[-1]) <= 65535:
+                return f"http://127.0.0.1:{ports[-1]}/api"
+        except OSError:
+            pass
+    return "http://127.0.0.1:61045/api"
 
 
 def _headers():
@@ -18,7 +41,7 @@ def _headers():
 
 
 def _request(method, path, payload=None):
-    url = f"{API_BASE}{path}"
+    url = f"{api_base()}{path}"
     data = None if payload is None else json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, method=method, headers=_headers())
     try:
