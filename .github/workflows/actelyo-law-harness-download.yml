@@ -56,6 +56,8 @@ jobs:
           toolchain: all
           extras: '[]'
           test-environment: 'true'
+      - name: Test installed-app readiness verifier
+        run: node --test scripts/actelyo-download/verify-installed.test.mjs
       - name: Install locked dependencies
         run: npm ci
       - name: Restore verified local runtime inputs

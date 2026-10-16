@@ -2,10 +2,14 @@ import { createRequire } from 'node:module'
 import fs from 'node:fs'
 import path from 'node:path'
 import assert from 'node:assert/strict'
+import { pathToFileURL } from 'node:url'
+async function main() {
 const { _electron } = createRequire(path.join(process.env.GITHUB_WORKSPACE || process.cwd(), 'apps/desktop/package.json'))('playwright')
 
-const [installed, proof] = process.argv.slice(2)
-assert(installed && proof, 'Usage: verify-installed.mjs installed-directory proof-directory')
+const [installedArg, proofArg] = process.argv.slice(2)
+assert(installedArg && proofArg, 'Usage: verify-installed.mjs installed-directory proof-directory')
+const installed = path.resolve(installedArg)
+const proof = path.resolve(proofArg)
 fs.mkdirSync(proof, { recursive: true })
 const exe = path.join(installed, 'Actelyo Law Harness.exe')
 assert(fs.existsSync(exe), 'Installed Actelyo executable missing')
@@ -23,54 +27,17 @@ const app = await _electron.launch({
   timeout: 180000
 })
 
-async function clearFirstRunOverlay(page) {
-  const capabilities = page.getByText(/^(Capabilities|Capacités)$/).first()
-  const overlay = page.locator('[data-glass-opaque]').last()
-  const exitAction = /choose.*later|plus tard|skip|ignore|ignorer|continue|continuer|next|suivant|start|commencer|got it|compris/i
 
-  // Let first-run state hydrate before treating an absent overlay as settled.
-  await page.waitForTimeout(2000)
-
-  for (let attempt = 0; attempt < 20; attempt++) {
-    if (await capabilities.isVisible().catch(() => false) &&
-        !(await overlay.isVisible().catch(() => false))) {
-      return
-    }
-
-    if (await overlay.isVisible().catch(() => false)) {
-      const buttons = await overlay.getByRole('button').all()
-      let clicked = false
-
-      for (const button of buttons) {
-        const label = (await button.innerText().catch(() => '')).trim()
-        if (exitAction.test(label) && await button.isEnabled().catch(() => false)) {
-          await button.click({ timeout: 10000 })
-          clicked = true
-          break
-        }
-      }
-
-      if (!clicked) {
-        // The initial welcome screen can expose a single unlabeled close/continue
-        // action. Escape is the same user-facing dismissal path as its close button.
-        await page.keyboard.press('Escape')
-      }
-
-      await page.waitForTimeout(500)
-      continue
-    }
-
-    // Wait for the first-run UI to mount before deciding it is absent. On Windows
-    // it can appear after the sidebar and otherwise intercept every navigation click.
-    await page.waitForTimeout(500)
-  }
-
-  const text = await overlay.innerText().catch(() => '')
-  throw new Error(`First-run onboarding still blocks the app after dismissal attempts: ${text.slice(0, 500)}`)
+let page
+const runtimeLogs = []
+for (const stream of [app.process().stdout, app.process().stderr]) {
+  stream?.on('data', chunk => {
+    runtimeLogs.push(chunk.toString())
+    if (runtimeLogs.length > 200) runtimeLogs.shift()
+  })
 }
-
 try {
-  const page = await app.firstWindow({ timeout: 180000 })
+  page = await app.firstWindow({ timeout: 180000 })
   await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
   await clearFirstRunOverlay(page)
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
@@ -88,6 +55,66 @@ try {
     localPayloadPresent: true, nativeCatalogVerified: true, logos,
     modelIncluded: false, codeSigned: false
   }, null, 2))
+} catch (error) {
+  const body = page ? await page.locator('body').innerText().catch(() => '') : ''
+  if (page) await page.screenshot({ path: path.join(proof, 'installed-failure.png') }).catch(() => {})
+  fs.writeFileSync(path.join(proof, 'failure.json'), JSON.stringify({
+    error: String(error.stack || error), body, runtimeLogs
+  }, null, 2))
+  console.error('Installed application verification failed:', body.slice(0, 2000))
+  throw error
 } finally {
   await app.close()
 }
+}
+
+export async function clearFirstRunOverlay(page, { timeout = 300000, pollInterval = 500 } = {}) {
+  const capabilities = page.getByText(/^(Capabilities|Capacités)$/).first()
+  const overlays = page.locator('[data-glass-opaque]')
+  const exitAction = /choose.*later|plus tard|skip|ignore|ignorer|continue|continuer|next|suivant|start|commencer|got it|compris/i
+  const deadline = Date.now() + timeout
+  let lastText = ''
+
+  while (Date.now() < deadline) {
+    // Actionability checks the actual hit target, including transparent exit
+    // animations. isVisible alone also matches opacity:0 CONNECTING overlays.
+    if (await capabilities.isVisible().catch(() => false)) {
+      try {
+        await capabilities.click({ trial: true, timeout: Math.min(1000, Math.max(1, deadline - Date.now())) })
+        return
+      } catch {
+        // First-run or boot overlays still intercept navigation.
+      }
+    }
+
+    for (const overlay of await overlays.all()) {
+      const blocking = await overlay.evaluate(node => {
+        const style = getComputedStyle(node)
+        return style.display !== 'none' && style.visibility !== 'hidden' &&
+          style.pointerEvents !== 'none' && Number(style.opacity) > 0
+      }).catch(() => false)
+      if (!blocking) continue
+      lastText = await overlay.innerText().catch(() => '')
+      // Startup is not onboarding: wait for the local backend, do not send Escape.
+      if (/^CONNECTING$/i.test(lastText.trim())) continue
+      if (/installation failed|failed to start|startup failed/i.test(lastText)) {
+        throw new Error('Installed application startup failed: ' + lastText.slice(0, 1000))
+      }
+      for (const button of await overlay.getByRole('button').all()) {
+        const label = (await button.innerText().catch(() => '')).trim()
+        if (exitAction.test(label) && await button.isEnabled().catch(() => false)) {
+          await button.click({ timeout: Math.min(10000, Math.max(1, deadline - Date.now())) })
+          break
+        }
+      }
+    }
+    await page.waitForTimeout(pollInterval)
+  }
+  throw new Error('Installed application did not become interactive within ' + timeout +
+    ' ms. Last blocking overlay: ' + lastText.slice(0, 1000))
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+  await main()
+}
+
