@@ -65,4 +65,3 @@ Use the actual input schema and availability reported by the connected `rea` ser
 - Confirm the selected REA tools were available and cite the returned evidence identifiers in the work summary when present.
 - Run the project's relevant tests/build and inspect the diff with `terminal` before describing the feature as implemented.
 - Mark runtime behavior, packaging, and deployment as unverified until each is actually exercised.
-

@@ -36,4 +36,3 @@ for _legal_action in (
 
 def register(server):
     bind_module(globals(), server)
-

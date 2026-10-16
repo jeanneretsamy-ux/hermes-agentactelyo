@@ -138,4 +138,3 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 | Skill | Description | Path |
 |-------|-------------|------|
 | [`blocked-page-recovery`](../user-guide/skills/bundled/web/web-blocked-page-recovery.md) | Use when a fetch fails: 403/429, paywall, WAF, bot wall. | `web/blocked-page-recovery` |
-

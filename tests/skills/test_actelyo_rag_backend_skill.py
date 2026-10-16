@@ -10,4 +10,3 @@ def test_actelyo_rag_skill_routes_legal_drafts_through_indexed_examples():
     assert "legal_cabinet(action=\"snapshot\")" in skill
     assert "never copy facts from a different client's dossier" in skill
     assert "untrusted source material" in skill
-

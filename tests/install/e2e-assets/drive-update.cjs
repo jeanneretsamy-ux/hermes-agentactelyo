@@ -210,4 +210,3 @@ main()
     console.error(`[drive-update] FAILED: ${err.message}`)
     process.exit(1)
   })
-

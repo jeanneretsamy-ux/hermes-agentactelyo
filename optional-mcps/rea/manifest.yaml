@@ -47,4 +47,3 @@ post_install: |
   Law Harness connection to inspect an application installed on this PC. Static
   JavaScript/Electron analysis does not require Hopper or Ghidra. Install the
   optional Actelyo Feature Studio skill for the guided analysis-to-code workflow.
-

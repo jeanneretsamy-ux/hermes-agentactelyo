@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 23911)
-Total output lines: 1757
-
 # ============================================================================
 # Windows Desktop GUI install + update E2E driver (the REAL user flow)
 # ============================================================================
@@ -737,7 +734,291 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
         Pop-Location
         $ErrorActionPreference = $prevEap
     }
-    Confirm-OldChat…3911 tokens truncated… "00-before-installer.png")
+    Confirm-OldChat $chatOut
+    $manualReceipt = Join-Path $chatOut 'manual-update.json'
+    if ($driveExit -eq 42) {
+        Invoke-ManualCardUpdate $manualReceipt $TargetSha
+        return
+    }
+    Assert-True ($driveExit -eq 0) "app driven via captured hermes desktop spec; update completed"
+
+    # The production updater relaunches Hermes. Close that verified window
+    # normally so the test-owned checkpoint starts and owns its own backend.
+    $desktopExe = Get-DesktopExe
+    $deadline = (Get-Date).AddMinutes(5)
+    $windows = @()
+    while ((Get-Date) -lt $deadline) {
+        $windows = @(Get-VerifiedDesktopWindows $desktopExe)
+        if ($windows.Count -eq 1) { break }
+        Start-Sleep -Seconds 2
+    }
+    Assert-True ($windows.Count -eq 1) "updated desktop relaunched exactly one verified window"
+    $script:ChatFailure = $true
+    Close-VerifiedDesktop $desktopExe $windows[0].Id
+}
+
+# Evidence for a GUI-driver failure, taken while the installer is still alive: which Hermes
+# processes exist (was Hermes.exe ever started, and by whom), the installer's thread states,
+# and a full memory dump of the installer. The installer's tracing log is buffered and never
+# reaches disk when the job kills it; the dump still holds it. A Launch that left the
+# installer on LAUNCHING had no other trace (tests/install/e2e-assets/install-and-launch.ahk).
+function Save-GuiDriverFailureEvidence([System.Diagnostics.Process]$Installer, [string]$OutDir) {
+    New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
+    Get-CimInstance Win32_Process |
+        Where-Object { $_.Name -match '^(hermes|msedgewebview2|python|uv|git|node)' -or $_.ParentProcessId -eq $Installer.Id } |
+        Sort-Object CreationDate |
+        Select-Object ProcessId, ParentProcessId, CreationDate, Name, CommandLine |
+        Format-Table -AutoSize -Wrap | Out-String -Width 400 |
+        Tee-Object -FilePath (Join-Path $OutDir "processes.txt") | Write-Host
+    if ($Installer.HasExited) {
+        Write-Host "  Hermes-Setup.exe already exited (code $($Installer.ExitCode) at $($Installer.ExitTime))"
+        return
+    }
+    $Installer.Refresh()
+    $Installer.Threads |
+        Select-Object Id, ThreadState, WaitReason, StartTime, TotalProcessorTime |
+        Format-Table -AutoSize | Out-String -Width 200 |
+        Tee-Object -FilePath (Join-Path $OutDir "installer-threads.txt") | Write-Host
+    if (-not ('HdE2E.Dump' -as [type])) {
+        Add-Type -Namespace HdE2E -Name Dump -MemberDefinition @'
+[DllImport("dbghelp.dll", SetLastError = true)]
+public static extern bool MiniDumpWriteDump(IntPtr hProcess, uint processId, Microsoft.Win32.SafeHandles.SafeFileHandle hFile, uint dumpType, IntPtr exceptionParam, IntPtr userStreamParam, IntPtr callbackParam);
+'@
+    }
+    $dumpPath = Join-Path $OutDir "Hermes-Setup.dmp"
+    $file = [System.IO.File]::Create($dumpPath)
+    try {
+        # MiniDumpWithFullMemory | MiniDumpWithHandleData | MiniDumpWithThreadInfo
+        $ok = [HdE2E.Dump]::MiniDumpWriteDump($Installer.Handle, [uint32]$Installer.Id, $file.SafeFileHandle, 0x1006, [IntPtr]::Zero, [IntPtr]::Zero, [IntPtr]::Zero)
+        $err = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
+    }
+    finally {
+        $file.Close()
+    }
+    if ($ok) { Write-Host "  Hermes-Setup.exe dump: $dumpPath ($([math]::Round((Get-Item $dumpPath).Length / 1MB, 1)) MB)" }
+    else { Write-Host "  Hermes-Setup.exe dump failed (Win32 error $err)" }
+}
+
+function Save-DesktopScreenshot([string]$OutFile) {
+    # Single full-desktop screenshot (primary screen).
+    try {
+        Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+        $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+        $bmp = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height)
+        $gfx = [System.Drawing.Graphics]::FromImage($bmp)
+        $gfx.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+        $bmp.Save($OutFile, [System.Drawing.Imaging.ImageFormat]::Png)
+        $gfx.Dispose(); $bmp.Dispose()
+        Write-Host "  desktop screenshot: $OutFile"
+    } catch {
+        Write-Host "  WARNING: desktop screenshot failed: $($_.Exception.Message)"
+    }
+}
+
+function Start-DesktopRecorder([string]$OutDir) {
+    # Rolling desktop capture: one PNG every 3s from a detached PowerShell,
+    # capped at 800 frames (~40 min). Proof that survives any step failure.
+    New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
+    $script = Join-Path $WorkRoot "recorder.ps1"
+    @'
+param([string]$OutDir)
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+for ($i = 0; $i -lt 800; $i++) {
+    if (Test-Path (Join-Path $OutDir "STOP")) { break }
+    try {
+        $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+        $bmp = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height)
+        $gfx = [System.Drawing.Graphics]::FromImage($bmp)
+        $gfx.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+        $bmp.Save((Join-Path $OutDir ("frame-{0:D4}.png" -f $i)), [System.Drawing.Imaging.ImageFormat]::Png)
+        $gfx.Dispose(); $bmp.Dispose()
+    } catch {}
+    Start-Sleep -Seconds 3
+}
+'@ | Set-Content -LiteralPath $script -Encoding UTF8
+    $proc = Start-Process -FilePath "powershell.exe" `
+        -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $script, "-OutDir", $OutDir `
+        -WindowStyle Hidden -PassThru
+    Write-Host "  desktop recorder started (pid $($proc.Id)) -> $OutDir"
+    return $proc
+}
+
+function Stop-DesktopRecorder($proc, [string]$OutDir) {
+    try { Set-Content -LiteralPath (Join-Path $OutDir "STOP") -Value "stop" } catch {}
+    if ($proc) {
+        try { $proc.WaitForExit(8000) | Out-Null } catch {}
+        try { if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force } } catch {}
+    }
+}
+
+function Stop-HermesAppProcesses([string]$Label) {
+    # Close the desktop app the blunt way between phases (a user quitting).
+    # Only Hermes.exe (Electron) -- never hermes.exe (the venv CLI shim).
+    $procs = @(Get-Process -Name @("Hermes", "Actelyo Law Harness") -ErrorAction SilentlyContinue)
+    foreach ($p in $procs) {
+        try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
+    }
+    if ($procs.Count -gt 0) {
+        Write-Host "  [$Label] stopped $($procs.Count) Hermes.exe process(es)"
+        Start-Sleep -Seconds 3
+    }
+}
+
+# ----------------------------------------------------------------------------
+# Phase: stage -- serve.git with `main` at OLD (advanced to HEAD by update-gui)
+# ----------------------------------------------------------------------------
+# Mirror of resolve_update_ref's NEXT arm in e2e-assets/installer-common.sh:
+# a synthetic child of $Parent whose tree adds one marker file (a real diff,
+# not an empty fast-forward), written to the object store only -- no ref, no
+# worktree change. A local `clone --bare` copies objects/ wholesale, which is
+# how it reaches serve.git. A throwaway index stands in for mktree so no
+# NUL-delimited stdin has to cross PowerShell's native pipe.
+function New-NextCommit([string]$Repo, [string]$Parent) {
+    $marker = Join-Path $WorkRoot "next-marker.txt"
+    Set-Content -LiteralPath $marker -Encoding ASCII -Value "synthetic next commit for the HEAD -> NEXT install E2E leg"
+    $blob = Invoke-Git @("-C", $Repo, "hash-object", "-w", "--no-filters", $marker)
+    $saved = @{}
+    $vars = @{
+        GIT_INDEX_FILE = (Join-Path $WorkRoot "next.index")
+        GIT_AUTHOR_NAME = "Hermes E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
+        GIT_COMMITTER_NAME = "Hermes E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
+    }
+    foreach ($k in $vars.Keys) { $saved[$k] = [Environment]::GetEnvironmentVariable($k); [Environment]::SetEnvironmentVariable($k, $vars[$k]) }
+    try {
+        Invoke-Git @("-C", $Repo, "read-tree", $Parent) | Out-Null
+        Invoke-Git @("-C", $Repo, "update-index", "--add", "--cacheinfo", "100644,$blob,.hermes-e2e-next") | Out-Null
+        $tree = Invoke-Git @("-C", $Repo, "write-tree")
+        return Invoke-Git @("-C", $Repo, "commit-tree", $tree, "-p", $Parent, "-m", "e2e: synthetic next commit")
+    } finally {
+        foreach ($k in $vars.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) }
+        Remove-Item -LiteralPath $vars.GIT_INDEX_FILE -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Invoke-PhaseStage {
+    Write-Step "STAGE: bare serve repo, main -> OLD (install base)"
+
+    if (Test-Path -LiteralPath $WorkRoot) {
+        Remove-Item -LiteralPath $WorkRoot -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $WorkRoot -Force | Out-Null
+    New-Item -ItemType Directory -Path (Join-Path $WorkRoot "logs") -Force | Out-Null
+    # The purge above deleted the redirect gitconfig; re-arm it so the
+    # bare-clone below (and everything after) sees the redirect file.
+    Set-GitRedirect
+
+    # OLD: explicit -InstallRef, or the newest release tag -- the version a
+    # user who installed on release day is on.
+    $oldRef = $InstallRef
+    if (-not $oldRef -or $oldRef -eq "auto") {
+        # Parens matter: without them PowerShell binds -split as an
+        # argument to Invoke-Git instead of an operator on its result.
+        $tagList = Invoke-Git @("-C", $RepoRoot, "tag", "--list", "v*", "--sort=-creatordate")
+        $oldRef = ($tagList -split "\r?\n" | Select-Object -First 1)
+        if (-not $oldRef) { throw "no v* release tags in the checkout and no -InstallRef given -- cannot pick an OLD version" }
+    }
+    $old = Invoke-Git @("-C", $RepoRoot, "rev-parse", "$oldRef^{commit}")
+    Write-Host "  OLD  ($oldRef): $old"
+    # NEXT is minted before the clone so it rides along into serve.git.
+    $targetLabel = $UpdateRef
+    $current = if ($UpdateRef -eq "NEXT") { New-NextCommit $RepoRoot $old } else {
+        Invoke-Git @("-C", $RepoRoot, "rev-parse", "${UpdateRef}^{commit}")
+    }
+    Write-Host "  update target ($targetLabel): $current"
+    Assert-True ($old -ne $current) "OLD differs from $targetLabel (an update is genuinely available)"
+
+    # Bare-clone the checkout: this is the repo the installer and updater
+    # actually talk to. Local-path clone hardlinks objects, so it's fast
+    # even for full history. The published installer carries NO commit pin
+    # (Pin { commit: None, branch: main }) -- it installs whatever `main`
+    # serves, so staging OLD means parking `main` there; the update phase
+    # advances it to HEAD.
+    Invoke-Git @("clone", "--bare", "--quiet", $RepoRoot, $ServeRepo) | Out-Null
+    Invoke-Git @("-C", $ServeRepo, "cat-file", "-e", "$current^{commit}") | Out-Null
+    Invoke-Git @("-C", $ServeRepo, "update-ref", "refs/heads/main", $old) | Out-Null
+    Invoke-Git @("-C", $ServeRepo, "symbolic-ref", "HEAD", "refs/heads/main") | Out-Null
+
+    # Belt-and-braces: SOME installer builds do bake a -Commit pin. A pinned
+    # sha is in serve.git's history but not at a ref tip, so the redirected
+    # fetch needs any-SHA1 upload-pack permission (GitHub grants the
+    # equivalent for fetch of reachable commits).
+    Invoke-Git @("-C", $ServeRepo, "config", "uploadpack.allowAnySHA1InWant", "true") | Out-Null
+    Write-Host "  serve.git: uploadpack.allowAnySHA1InWant=true (installer commit pin, if any)"
+
+    @{ old = $old; old_ref = $oldRef; current = $current; target_label = $targetLabel } |
+        ConvertTo-Json | Set-Content -LiteralPath $StatePath -Encoding UTF8
+    Write-Host "  state written: $StatePath"
+    New-Item -ItemType Directory -Path $ProofRoot -Force | Out-Null
+}
+
+# ----------------------------------------------------------------------------
+# Phase: install-gui -- website Hermes-Setup.exe, headed, AHK-driven
+# ----------------------------------------------------------------------------
+function Invoke-PhaseInstallGui {
+    param(
+        # "install" (first run, must land on OLD) or "update" (re-run over an
+        # existing install after serve.git advanced, must land on the target).
+        [string]$Mode = "install",
+        [string]$ExpectedSha = "",
+        [string]$ExpectedLabel = ""
+    )
+    $state = Read-State
+    if ($Mode -eq "install") {
+        $ExpectedSha = $state.old
+        $ExpectedLabel = "OLD ($($state.old_ref))"
+    }
+    Write-Step "$($Mode.ToUpper()) (GUI): Hermes-Setup.exe from the website, headed, AHK clicks"
+    $proof = Join-Path $ProofRoot $(if ($Mode -eq "install") { "install-gui" } else { "update-gui-installer" })
+    New-Item -ItemType Directory -Path $proof -Force | Out-Null
+
+    # The production installer binary comes from the website. Pair its script
+    # input with the source revision it will materialize. A branch-following
+    # installer can otherwise run today's install.ps1 against OLD, whose tree
+    # legitimately lacks helpers added later (for example
+    # apps/desktop/scripts/ensure-rolldown-binding.mjs). The bootstrap's public
+    # dev-source seam changes only script resolution. The GUI binary and cloned
+    # source remain the real artifacts under test.
+    $bootstrapRoot = Join-Path $WorkRoot "bootstrap-source-$Mode"
+    $bootstrapScripts = Join-Path $bootstrapRoot "scripts"
+    New-Item -ItemType Directory -Path $bootstrapScripts -Force | Out-Null
+    $installScript = Join-Path $bootstrapScripts "install.ps1"
+    (Invoke-Git @("-C", $RepoRoot, "show", "$ExpectedSha`:scripts/install.ps1")) -join "`n" |
+        Set-Content -LiteralPath $installScript -Encoding UTF8
+    Copy-Item $installScript (Join-Path $proof "bootstrap-install-script.ps1") -Force
+    $scriptBlob = Invoke-Git @("-C", $RepoRoot, "rev-parse", "$ExpectedSha`:scripts/install.ps1")
+    @(
+        "source_commit=$ExpectedSha"
+        "script_blob=$scriptBlob"
+    ) | Set-Content -LiteralPath (Join-Path $proof "bootstrap-install-script.txt") -Encoding ASCII
+    Write-Host "  bootstrap script is scripts/install.ps1 from $ExpectedLabel ($ExpectedSha)"
+
+    $setupExe = Join-Path $WorkRoot "Hermes-Setup.exe"
+    if (-not (Test-Path -LiteralPath $setupExe)) {
+        Write-Host "  downloading $SetupExeUrl"
+        Invoke-WebRequest -Uri $SetupExeUrl -OutFile $setupExe
+    }
+    Assert-True ((Get-Item $setupExe).Length -gt 1MB) "Hermes-Setup.exe downloaded ($([math]::Round((Get-Item $setupExe).Length / 1MB, 1)) MB)"
+
+    # AutoHotkey v2, portable zip (no installer, no winget flakes).
+    $ahkExe = Join-Path $AhkDir "AutoHotkey64.exe"
+    if (-not (Test-Path -LiteralPath $ahkExe)) {
+        $zip = Join-Path $WorkRoot "ahk.zip"
+        Invoke-WebRequest -Uri "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip" -OutFile $zip
+        Expand-Archive -Path $zip -DestinationPath $AhkDir -Force
+    }
+    Assert-True (Test-Path -LiteralPath $ahkExe) "AutoHotkey64.exe available"
+
+    # AHK script + button templates side by side (ImageSearch resolves
+    # relative to the script dir).
+    Copy-Item -Path (Join-Path $AssetsDir "install-and-launch.ahk"), (Join-Path $AssetsDir "install-button.png"), (Join-Path $AssetsDir "launch-button.png") -Destination $AhkDir -Force
+
+    $env:HERMES_HOME = $HermesHome
+    New-Item -ItemType Directory -Path $HermesHome -Force | Out-Null
+
+    $recorder = Start-DesktopRecorder (Join-Path $proof "desktop-frames")
+    $ahkLog = Join-Path $proof "ahk.log"
+    try {
+        Save-DesktopScreenshot (Join-Path $proof "00-before-installer.png")
 
         # Launch the real headed installer. Scope the paired script source to
         # this process only so later product launches cannot inherit it.
@@ -1473,4 +1754,3 @@ switch ($Phase) {
 }
 Write-Host ""
 Write-Host "Phase '$Phase' completed successfully."
-

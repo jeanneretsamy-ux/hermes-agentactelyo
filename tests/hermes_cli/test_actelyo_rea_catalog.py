@@ -31,4 +31,3 @@ def test_rea_default_tools_are_limited_to_application_evidence_workflow():
         "inspect_analysis_view",
         "trace_application_feature",
     ]
-

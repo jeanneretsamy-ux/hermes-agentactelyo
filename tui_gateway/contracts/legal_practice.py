@@ -390,4 +390,3 @@ method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot
 method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
 method("legal.payment.allocate", params=LegalAllocatePaymentParams, result=LegalSnapshot)
-

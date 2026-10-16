@@ -138,4 +138,3 @@ registry.register(
         **{key: value for key, value in args.items() if key not in {"action", "project"}},
     ),
 )
-

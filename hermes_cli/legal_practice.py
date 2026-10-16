@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 21677)
-Total output lines: 929
-
 """Project-owned legal workspaces and internal billing, stored in the profile projects.db.
 
 Documents are working drafts, never fiscal issuance or an external payment operation.
@@ -334,7 +331,56 @@ DOMAIN_MATTER_PROFILE = {
     "patrimonial-famille": {
         "family": ("Situation familiale", {"spouses": "Époux / partenaires", "children": "Enfants et situation", "heirs": "Héritiers / bénéficiaires", "notary": "Notaire / conseils"}),
         "assets_liabilities": ("Patrimoine", {"real_estate": "Biens immobiliers", "accounts": "Comptes et placements", "business_assets": "Parts sociales / entreprises", "debts": "Dettes / emprunts", "valuations": "Évaluations et dates"}),
-        "family_procedure": ("Procédure", {"marital_regime": "Régime matrimonial / union", "marriage_date": "Date et lieu de l'union", "separation_date": "Séparation / décès", "support": "Pre…1677 tokens truncated…ier invalide")
+        "family_procedure": ("Procédure", {"marital_regime": "Régime matrimonial / union", "marriage_date": "Date et lieu de l'union", "separation_date": "Séparation / décès", "support": "Prestation / pension", "proceedings": "Procédure / ONC et juridiction", "deadlines": "Échéances", "orders_and_measures": "Ordonnances et mesures provisoires", "agreements": "Accords et conventions"}),
+        "civil_status": ("État Civil", {"spouse_identity": "Identité des époux / partenaires", "birth_details": "Dates et lieux de naissance", "marriage_or_union": "Date et lieu du mariage / PACS", "marriage_contract": "Contrat de mariage", "family_documents": "Actes d’état civil et justificatifs"}),
+        "property_liquidation": ("Patrimoine & Liquidation", {"assets_before_union": "Biens propres / antérieurs", "community_assets": "Biens communs / indivis", "liabilities": "Dettes et passif", "asset_valuations": "Évaluations des biens", "liquidation_proposal": "Projet de liquidation", "notary": "Notaire chargé de la liquidation"}),
+        "children_authority": ("Enfants & Autorité Parentale", {"children_identity": "Identité et âge des enfants", "residence": "Résidence habituelle", "parental_authority": "Exercice de l’autorité parentale", "visitation": "Droit de visite et d’hébergement", "child_support": "Contribution à l’entretien", "child_needs": "Besoins et frais particuliers"}),
+        "family_finances": ("Finances", {"income_by_party": "Ressources par partie", "monthly_expenses": "Charges mensuelles", "assets_and_debts": "Actif et passif", "support_calculation": "Éléments de calcul des pensions", "tax_position": "Situation fiscale"}),
+        "family_tools": ("Outils et suivi", {"asset_schedule": "Tableau des biens et valeurs", "proposed_agreements": "Propositions d’accord", "missing_documents": "Documents manquants", "next_actions": "Prochaines démarches"}),
+    },
+    "personnes-protegees": {
+        "protected_person": ("Personne protégée", {"identity": "Identité", "birth": "Date / lieu de naissance", "address": "Adresse", "health_context": "Éléments utiles communiqués", "relatives": "Proches / personnes à prévenir"}),
+        "measure": ("Mesure et intervenants", {"measure_type": "Tutelle / curatelle / autre mesure", "representative": "Tuteur / curateur / mandataire", "judge": "Juge / juridiction", "decision_date": "Date de décision", "start_end": "Durée / renouvellement", "permissions": "Pouvoirs / autorisations"}),
+        "assets_accounts": ("Patrimoine et comptes", {"inventory": "Inventaire des biens", "income": "Ressources", "expenses": "Charges", "accounts": "Comptes / opérations", "annual_report": "Comptes rendus de gestion", "deadlines": "Échéances"}),
+    },
+    "civil": {
+        "parties": ("Parties", {"claimant": "Demandeur", "defendant": "Défendeur", "third_parties": "Tiers", "insurers": "Assureurs"}),
+        "facts": ("Faits et obligations", {"relationship": "Relation / contrat", "events": "Chronologie", "breach": "Manquement / fait générateur", "damages": "Préjudices", "amounts": "Montants", "evidence": "Pièces"}),
+        "procedure": ("Procédure", {"court": "Juridiction", "case_number": "N° de dossier", "acts": "Actes / décisions", "hearings": "Audiences / délais", "remedies": "Demandes / recours"}),
+    },
+    "ntic-propriete-intellectuelle": {
+        "rights_holders": ("Titulaires et parties", {"rights_holder": "Titulaire des droits", "counterparty": "Partie adverse / utilisateur", "creators": "Auteurs / inventeurs", "platforms": "Plateformes concernées"}),
+        "protected_assets": ("Œuvre, marque ou technologie", {"asset_type": "Type d'actif", "title": "Titre / description", "registration": "Dépôt / enregistrement", "territory": "Territoire", "ownership": "Chaîne de titularité", "licence": "Licence / cession"}),
+        "digital_case": ("Données et contentieux numérique", {"systems": "Systèmes / services", "personal_data": "Données personnelles en cause", "incident_date": "Date / durée", "infringement": "Atteinte alléguée", "evidence": "Constats / preuves", "remedies": "Mesures demandées"}),
+    },
+    "esport": {
+        "participants": ("Joueur et structure", {"player": "Joueur", "team": "Équipe / organisation", "publisher": "Éditeur du jeu", "agent": "Agent / représentant"}),
+        "competition_contract": ("Contrat et compétition", {"game": "Jeu", "competition": "Compétition / saison", "contract_type": "Type de contrat", "term": "Durée", "compensation": "Rémunération / gains", "sponsorship": "Sponsors"}),
+        "digital_rights_dispute": ("Droits et litige", {"image_rights": "Image / diffusion", "transfer": "Transfert", "discipline": "Règlement / sanction", "body": "Fédération / organe compétent", "deadlines": "Délais", "evidence": "Pièces"}),
+    },
+    "aerien": {
+        "passengers": ("Passager et réservation", {"passengers": "Passagers", "airline": "Compagnie aérienne", "booking_reference": "Référence de réservation", "ticket_numbers": "N° de billets", "travel_agency": "Agence / intermédiaire"}),
+        "flight": ("Vol", {"flight_number": "N° de vol", "route": "Trajet", "scheduled_times": "Horaires prévus", "actual_times": "Horaires réels", "disruption": "Retard / annulation / refus d'embarquement", "baggage": "Bagages"}),
+        "claim": ("Réclamation et préjudice", {"claim_date": "Date de réclamation", "response": "Réponse de la compagnie", "expenses": "Frais engagés", "injury": "Préjudice / dommage", "insurer": "Assureur", "deadlines": "Délais / procédure"}),
+    },
+    "administratif": {
+        "administration": ("Administration et administré", {"authority": "Administration / organisme", "applicant": "Administré / entreprise", "contacts": "Interlocuteurs", "contractors": "Cocontractants / tiers"}),
+        "decision_contract": ("Décision ou contrat public", {"decision_type": "Type de décision", "decision_date": "Date de décision / notification", "public_contract": "Marché / concession", "procurement_reference": "Référence de consultation", "amounts": "Montants", "territory": "Commune / périmètre"}),
+        "administrative_procedure": ("Recours et procédure", {"recourse_type": "Recours / référé", "court": "Juridiction", "filing_deadline": "Délai de recours", "prior_claim": "Recours préalable", "evidence": "Pièces", "remedies": "Conclusions / mesures demandées"}),
+    },
+}
+
+
+def _matter_profile(value):
+    if value is None:
+        value = {}
+    if not isinstance(value, dict) or len(value) > 40:
+        raise ValueError("La fiche dossier doit être un objet de rubriques valide")
+    cleaned, total = {}, 0
+    for section, fields in value.items():
+        section = _legal_text(section, required=True, limit=80)
+        if not isinstance(fields, dict) or len(fields) > 80:
+            raise ValueError("Rubrique de fiche dossier invalide")
         cleaned[section] = {}
         for key, text in fields.items():
             key = _legal_text(key, required=True, limit=100)
@@ -880,4 +926,3 @@ def _legal_apply(conn, pid, action, p):
         conn.execute("INSERT INTO legal_payments VALUES (?,?,?,?,?,?)", (secrets.token_hex(16), pid, doc["id"], amount, paid_on, _legal_text(p.get("reference"), required=True)))
         return
     raise ValueError("Opération juridique inconnue")
-

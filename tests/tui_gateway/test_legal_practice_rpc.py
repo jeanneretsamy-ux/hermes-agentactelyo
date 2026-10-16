@@ -383,4 +383,3 @@ def test_tax_family_and_social_profiles_follow_supplied_dossier_menus(tmp_path):
         draft = call("legal.practice_document.create", **domain_params, request_id=f"menu-example-{index}",
                      matter_id=matter["id"], template_id="quick_letter")["practice_documents"][-1]
         assert all(text in draft["body"] for text in example["expected_text"])
-

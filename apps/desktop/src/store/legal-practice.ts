@@ -198,4 +198,3 @@ export function downloadLegalText(name: string, text: string): void {
   link.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
-
