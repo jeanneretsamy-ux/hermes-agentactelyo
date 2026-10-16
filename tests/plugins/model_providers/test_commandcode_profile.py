@@ -140,7 +140,8 @@ class TestCommandCodeFetchModelsPickerContract:
     """
 
 
-    def test_resolve_provider_full(self):
+    @pytest.mark.parametrize("catalog_present", [False, True])
+    def test_resolve_provider_full(self, monkeypatch, commandcode_profile, catalog_present):
         """Both profiles must resolve through the model-switch path.
 
         Regression: ``resolve_provider_full`` only knew models.dev + overlay
@@ -149,11 +150,21 @@ class TestCommandCodeFetchModelsPickerContract:
         them.
         """
         from hermes_cli.providers import resolve_provider_full
+        from types import SimpleNamespace
+
+        catalog = SimpleNamespace(name="CommandCode", env=("CMD_API_KEY",),
+                                  api="https://catalog.example/v1", doc="")
+        monkeypatch.setattr("hermes_cli.providers._models_dev_info",
+                            lambda name, *args: catalog if catalog_present and name == "commandcode" else None)
 
         chat = resolve_provider_full("commandcode", {}, [])
         assert chat is not None and chat.id == "commandcode"
         assert chat.transport == "openai_chat"
         assert "COMMANDCODE_API_KEY" in chat.api_key_env_vars
+        assert chat.base_url == commandcode_profile.base_url
+        assert chat.base_url_env_var in commandcode_profile.env_vars
+        if catalog_present:
+            assert "CMD_API_KEY" in chat.api_key_env_vars
 
         anth = resolve_provider_full("commandcode-anthropic", {}, [])
         assert anth is not None and anth.id == "commandcode-anthropic"

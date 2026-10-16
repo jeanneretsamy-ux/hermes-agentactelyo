@@ -1965,6 +1965,7 @@ export interface LegalDocument {
   refund_due_cents?: number
   purpose?: string
   related_document_id?: string | null
+  rendered_document: string
 }
 export interface LegalDocumentSnapshot {
   client: LegalClientSnapshot

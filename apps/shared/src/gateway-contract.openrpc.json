@@ -17880,6 +17880,10 @@
             ],
             "default": null,
             "title": "Related Document Id"
+          },
+          "rendered_document": {
+            "title": "Rendered Document",
+            "type": "string"
           }
         },
         "required": [
@@ -17894,7 +17898,8 @@
           "tax_cents",
           "total_cents",
           "paid_cents",
-          "balance_cents"
+          "balance_cents",
+          "rendered_document"
         ],
         "title": "LegalDocument",
         "type": "object"

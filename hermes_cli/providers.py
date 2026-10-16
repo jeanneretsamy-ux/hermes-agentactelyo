@@ -42,6 +42,10 @@ HERMES_OVERLAYS: Dict[str, HermesOverlay] = {
     "copilot-acp": HermesOverlay(transport="codex_responses", auth_type="external_process",
                                  base_url_override="acp://copilot", base_url_env_var="COPILOT_ACP_BASE_URL"),
     "github-copilot": HermesOverlay(extra_env_vars=("COPILOT_GITHUB_TOKEN", "GH_TOKEN")),
+    # Keep the bundled profile's credentials and endpoint when models.dev adds this provider.
+    "commandcode": HermesOverlay(extra_env_vars=("COMMANDCODE_API_KEY",),
+                                 base_url_override="https://api.commandcode.ai/provider/v1",
+                                 base_url_env_var="COMMANDCODE_BASE_URL"),
     "anthropic": HermesOverlay(transport="anthropic_messages", extra_env_vars=("ANTHROPIC_TOKEN", "CLAUDE_CODE_OAUTH_TOKEN")),
     "zai": HermesOverlay(extra_env_vars=("GLM_API_KEY", "ZAI_API_KEY", "Z_AI_API_KEY"), base_url_env_var="GLM_BASE_URL"),
     "kimi-for-coding": HermesOverlay(base_url_env_var="KIMI_BASE_URL"),
