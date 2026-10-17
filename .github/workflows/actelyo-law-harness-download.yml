@@ -38,7 +38,7 @@ jobs:
     env:
       HERMES_DESKTOP_VARIANT: bundled
       # Keep the established product pin on its legacy branch; PR/manual builds use the selected source head.
-      ACTELYO_SOURCE_SHA: ${{ inputs.source_sha || (github.ref == 'refs/heads/codex/actelyo-local-modules-20261003' && '8a7c8e98fa5e9461e07d004cfd867a654619e52c' || github.sha) }}
+      ACTELYO_SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
       - name: Keep verifier and select exact product source
