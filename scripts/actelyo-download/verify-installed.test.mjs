@@ -45,3 +45,30 @@ test('a backend that never becomes ready still fails verification', async () => 
   await assert.rejects(clearFirstRunOverlay(fixture.page, { timeout: 30, pollInterval: 1 }), /did not become interactive.*CONNECTING/)
 })
 
+for (const label of ["I'll choose a provider later", 'Je choisirai un fournisseur plus tard']) {
+  test(`defers setup without selecting a provider: ${label}`, async () => {
+    let dismissed = false
+    const clicked = []
+    const buttons = ['Get started with a provider', 'Continue', label].map(text => ({
+      innerText: async () => text,
+      isEnabled: async () => true,
+      async click() { clicked.push(text); dismissed = text === label }
+    }))
+    const overlay = {
+      evaluate: async () => !dismissed,
+      innerText: async () => 'Connect a model provider to start chatting',
+      getByRole: () => ({ all: async () => buttons })
+    }
+    const page = {
+      getByText: () => ({ first: () => ({
+        isVisible: async () => true,
+        async click() { if (!dismissed) throw new Error('Setup blocks navigation') }
+      }) }),
+      locator: () => ({ all: async () => [overlay] }),
+      waitForTimeout: async () => {}
+    }
+    await clearFirstRunOverlay(page, { timeout: 100 })
+    assert.deepEqual(clicked, [label])
+  })
+}
+

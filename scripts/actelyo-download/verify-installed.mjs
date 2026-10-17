@@ -71,7 +71,9 @@ try {
 export async function clearFirstRunOverlay(page, { timeout = 300000, pollInterval = 500 } = {}) {
   const capabilities = page.getByText(/^(Capabilities|Capacités)$/).first()
   const overlays = page.locator('[data-glass-opaque]')
-  const exitAction = /choose.*later|plus tard|skip|ignore|ignorer|continue|continuer|next|suivant|start|commencer|got it|compris/i
+  // Only defer provider configuration. Generic words such as "start" can
+  // match a provider's marketing copy and open its credentials form instead.
+  const exitAction = /^(?:I'll choose a provider later|Je choisirai un fournisseur plus tard)$/i
   const deadline = Date.now() + timeout
   let lastText = ''
 
