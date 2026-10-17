@@ -11,8 +11,8 @@
 export const chatBitsEn = {
   chatBits: {
     branding: {
-      tagFull: "Actelyo Law Harness",
-      tagMid: "Actelyo Law Harness",
+      tagFull: 'Actelyo Law Harness',
+      tagMid: 'Actelyo Law Harness',
       scanningSkills: 'scanning skills',
       moreCategories: (count: number) => `(and ${count} more categories…)`,
       moreToolsets: (count: number) => `(and ${count} more toolsets…)`,
