@@ -300,7 +300,7 @@ function shouldPreserveConfiguredOnBootRace(runtime: RuntimeReadinessResult, sta
 }
 
 function notifyReady(provider: string) {
-  notify({ kind: 'success', title: "Actelyo Law Harness is ready", message: `${provider} connected.` })
+  notify({ kind: 'success', title: 'Actelyo Law Harness is ready', message: `${provider} connected.` })
 }
 
 // Human-friendly labels for tools auto-routed through the Nous Tool Gateway,
@@ -475,7 +475,7 @@ async function completeWithModelConfirm(
         return
       }
 
-      onFail(error instanceof Error ? error.message : "Actelyo Law Harness could not save the selected model.")
+      onFail(error instanceof Error ? error.message : 'Actelyo Law Harness could not save the selected model.')
 
       return
     }
@@ -516,7 +516,7 @@ function providerResolutionFailure(reason: null | string) {
 
   return detail
     ? `Connected, but Actelyo Law Harness still cannot resolve a usable provider. ${detail}`
-    : "Connected, but Actelyo Law Harness still cannot resolve a usable provider."
+    : 'Connected, but Actelyo Law Harness still cannot resolve a usable provider.'
 }
 
 /** Re-read the OAuth provider list into the onboarding cache. Exported so a
@@ -800,7 +800,7 @@ export async function refreshOnboarding(ctx: OnboardingContext, stillWanted?: ()
         kind: 'info',
         title: 'Runtime not ready',
         message:
-          "Actelyo Law Harness Desktop could not verify the running backend on startup. Some features may be unavailable until the gateway is reachable."
+          'Actelyo Law Harness Desktop could not verify the running backend on startup. Some features may be unavailable until the gateway is reachable.'
       })
     }
 

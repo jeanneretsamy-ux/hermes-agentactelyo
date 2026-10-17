@@ -541,7 +541,7 @@ async function requestOnPrimaryGateway<T>(
   const gateway = g.primaryGateway
 
   if (!gateway || !isOpen(gateway)) {
-    throw new Error("Actelyo Law Harness gateway unavailable")
+    throw new Error('Actelyo Law Harness gateway unavailable')
   }
 
   return timeoutMs === undefined && signal === undefined
@@ -1377,7 +1377,7 @@ export async function requestGatewayForAgent<T>(
   traceAgentRoute(scope, 'secondary')
 
   if (!window.hermesDesktop?.getConnectionFor) {
-    throw new Error("This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.")
+    throw new Error('This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.')
   }
 
   const entry = g.secondaries.get(scope) ?? createSecondary(key, connectionId)
@@ -1874,14 +1874,14 @@ export async function openGatewayForAgent(
 
   if (await ridesPrimaryBackend(connectionId, profile, spawnPriority)) {
     if (!isOpen(g.primaryGateway)) {
-      throw new Error("Actelyo Law Harness gateway unavailable")
+      throw new Error('Actelyo Law Harness gateway unavailable')
     }
 
     return
   }
 
   if (!window.hermesDesktop?.getConnectionFor) {
-    throw new Error("This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.")
+    throw new Error('This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.')
   }
 
   const entry = g.secondaries.get(scope) ?? createSecondary(profile, connectionId)
@@ -1935,7 +1935,7 @@ export async function ensureGatewayForAgent(
   }
 
   if (!window.hermesDesktop?.getConnectionFor) {
-    throw new Error("This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.")
+    throw new Error('This Desktop build cannot dial registry connections. Update Actelyo Law Harness Desktop.')
   }
 
   let entry = g.secondaries.get(scope)

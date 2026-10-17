@@ -3,7 +3,7 @@ import type { TranslationOverrides } from './define-locale'
 export const zhHantDiagnostics = {
   notifications: {
     sharedProfileWarning:
-      "另一個 Actelyo Law Harness 安裝實例正在使用此設定檔。兩個實例共用此設定檔的設定和資料，因此變更可能發生衝突。你可以繼續使用，也可以在變更前關閉另一個實例。",
+      '另一個 Actelyo Law Harness 安裝實例正在使用此設定檔。兩個實例共用此設定檔的設定和資料，因此變更可能發生衝突。你可以繼續使用，也可以在變更前關閉另一個實例。',
     region: '通知',
     hide: '隱藏',
     show: '顯示',
@@ -14,12 +14,13 @@ export const zhHantDiagnostics = {
     copyDetail: '複製詳情',
     copyDetailFailed: '無法複製通知詳情',
     backendOutOfDateTitle: '後端版本過舊',
-    backendOutOfDateMessage: "您的 Actelyo Law Harness 後端早於目前的桌面版本，可能無法正常運作。請更新以保持一致。",
+    backendOutOfDateMessage: '您的 Actelyo Law Harness 後端早於目前的桌面版本，可能無法正常運作。請更新以保持一致。',
     desktopOutOfDateTitle: '應用程式版本過舊',
-    desktopOutOfDateMessage: "此 Actelyo Law Harness 應用程式早於所連接的後端，可能無法正常運作。請更新應用程式以保持一致。",
+    desktopOutOfDateMessage:
+      '此 Actelyo Law Harness 應用程式早於所連接的後端，可能無法正常運作。請更新應用程式以保持一致。',
     updateDesktopApp: '更新應用程式',
     installMethodUnsupportedTitle: '不受支援的安裝方式',
-    updateHermes: "更新 Actelyo Law Harness",
+    updateHermes: '更新 Actelyo Law Harness',
     updateReadyTitle: '有可用更新',
     updateReadyMessage: count => `有 ${count} 項新變更可用。`,
     updateReadyMessageUnknown: '有新更新可用。',
@@ -40,7 +41,7 @@ export const zhHantDiagnostics = {
       elevenLabsRejectedKey: 'ElevenLabs 拒絕了該 API 金鑰 (401)。',
       diskFull: '磁碟已滿 — 請騰出一些空間後再試。',
       gatewayAuthFailed: '閘道認證失敗 — 請檢查你的 API_SERVER_KEY。',
-      methodNotAllowed: "桌面後端拒絕了該請求 (405 Method Not Allowed)。請嘗試重新啟動 Actelyo Law Harness Desktop。",
+      methodNotAllowed: '桌面後端拒絕了該請求 (405 Method Not Allowed)。請嘗試重新啟動 Actelyo Law Harness Desktop。',
       microphonePermission: '麥克風權限已被拒絕。',
       openaiRejectedApiKey: 'OpenAI 拒絕了該 API 金鑰。',
       openaiTtsNeedsKey: 'OpenAI TTS 需要 VOICE_TOOLS_OPENAI_KEY 或 OPENAI_API_KEY。',
@@ -73,8 +74,8 @@ export const zhHantDiagnostics = {
       rejectAction: '拒絕',
       inputTitle: '需要輸入',
       inputTitleNamed: session => `需要輸入 — ${session}`,
-      inputBody: "Actelyo Law Harness 正在等待你的回應。",
-      turnDoneTitle: "Actelyo Law Harness 已完成",
+      inputBody: 'Actelyo Law Harness 正在等待你的回應。',
+      turnDoneTitle: 'Actelyo Law Harness 已完成',
       turnDoneBody: '',
       turnErrorTitle: '本輪失敗',
       backgroundDoneTitle: '背景工作已完成',
@@ -84,9 +85,9 @@ export const zhHantDiagnostics = {
   },
 
   sendDiagnostics: {
-    title: "向 fournisseur externe 傳送診斷資訊",
+    title: '向 fournisseur externe 傳送診斷資訊',
     privacyNotice:
-      "這會將偵錯套件上傳到 fournisseur externe 內部儲存空間（並非公開貼上板）。內容包括系統資訊（作業系統、版本、服務商、已設定的 API 金鑰種類 — 絕不包含金鑰本身）以及完整的 agent、gateway 與桌面端日誌（每個最多 512 KB，很可能包含對話內容、工具輸出與檔案路徑）。上傳前會先遮罩機密資訊。僅 fournisseur externe 員工與獲准的 Discord 版主可檢視，14 天後自動刪除。",
+      '這會將偵錯套件上傳到 fournisseur externe 內部儲存空間（並非公開貼上板）。內容包括系統資訊（作業系統、版本、服務商、已設定的 API 金鑰種類 — 絕不包含金鑰本身）以及完整的 agent、gateway 與桌面端日誌（每個最多 512 KB，很可能包含對話內容、工具輸出與檔案路徑）。上傳前會先遮罩機密資訊。僅 fournisseur externe 員工與獲准的 Discord 版主可檢視，14 天後自動刪除。',
     upload: '上傳',
     uploading: '上傳中…',
     cancel: '取消',
@@ -101,7 +102,7 @@ export const zhHantDiagnostics = {
     handoffLead: '在以下位置繼續討論:',
     links: {
       github: 'GitHub Issues',
-      portal: "fournisseur externe Portal 支援",
+      portal: 'fournisseur externe Portal 支援',
       discord: 'Discord'
     }
   },

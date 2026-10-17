@@ -79,7 +79,10 @@ test('resolveServedDashboardToken propagates fetch errors so callers can fall ba
 })
 
 test('fetchPublicText rejects unsupported protocols', async () => {
-  await assert.rejects(() => fetchPublicText('file:///tmp/index.html'), /Unsupported Actelyo Law Harness backend URL protocol/)
+  await assert.rejects(
+    () => fetchPublicText('file:///tmp/index.html'),
+    /Unsupported Actelyo Law Harness backend URL protocol/
+  )
 })
 
 test('isForeignBackendToken only flags a mismatched token from a dead child', () => {

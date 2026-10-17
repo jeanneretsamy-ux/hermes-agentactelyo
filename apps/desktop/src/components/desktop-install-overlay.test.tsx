@@ -156,7 +156,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
     desktop.continueBootstrapLocal = undefined as never
     render(<DesktopInstallOverlay />)
 
-    const install = (await screen.findByText('Install Actelyo Law Harness locally')).closest('button') as HTMLButtonElement
+    const install = (await screen.findByText('Install Actelyo Law Harness locally')).closest(
+      'button'
+    ) as HTMLButtonElement
     fireEvent.click(install)
 
     expect(
@@ -190,7 +192,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
       await Promise.resolve()
     })
 
-    expect(screen.queryByText('Local installation could not start. Restart Actelyo Law Harness Desktop and try again.')).toBeTruthy()
+    expect(
+      screen.queryByText('Local installation could not start. Restart Actelyo Law Harness Desktop and try again.')
+    ).toBeTruthy()
   })
 
   it('clears a stale local-start error when a repair presents a different root', async () => {
@@ -208,7 +212,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
     desktop.continueBootstrapLocal = undefined as never
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click((await screen.findByText('Install Actelyo Law Harness locally')).closest('button') as HTMLButtonElement)
+    fireEvent.click(
+      (await screen.findByText('Install Actelyo Law Harness locally')).closest('button') as HTMLButtonElement
+    )
     expect(
       await screen.findByText('Local installation could not start. Restart Actelyo Law Harness Desktop and try again.')
     ).toBeTruthy()
@@ -222,7 +228,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
       })
     })
 
-    expect(screen.queryByText('Local installation could not start. Restart Actelyo Law Harness Desktop and try again.')).toBeNull()
+    expect(
+      screen.queryByText('Local installation could not start. Restart Actelyo Law Harness Desktop and try again.')
+    ).toBeNull()
   })
 
   it('opens the remote connection form from the first-run choice', async () => {

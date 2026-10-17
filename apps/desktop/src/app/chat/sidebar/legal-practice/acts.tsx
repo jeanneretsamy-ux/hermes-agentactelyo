@@ -102,7 +102,9 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
               setDraggingExample(false)
               const file = event.dataTransfer.files[0]
 
-              if (file) {void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)}
+              if (file) {
+                void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)
+              }
             }}
             ref={bodyRef}
             rows={10}
@@ -116,7 +118,9 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
             onChange={event => {
               const file = event.currentTarget.files?.[0]
 
-              if (file) {void insertExample(file)}
+              if (file) {
+                void insertExample(file)
+              }
               event.currentTarget.value = ''
             }}
             ref={fileRef}
