@@ -12,6 +12,7 @@ export interface LegalSectionProps {
   data: LegalSnapshot
   write: LegalWriter
   submit: (action: () => Promise<void>) => (event: FormEvent) => void
+  prepareDraft?: (matterId: string, documentType: string) => void
 }
 
 export function Field({ label, children }: { label: string; children: ReactNode }) {

@@ -5,6 +5,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { appendComposerDraft } from '@/store/composer'
 import { $gateway } from '@/store/gateway'
 import {
   $legalPractice,
@@ -18,6 +19,7 @@ import { $activeGatewayProfile } from '@/store/profile'
 
 import { LegalActsSection } from './legal-practice/acts'
 import { LegalBillingSection } from './legal-practice/billing'
+import { legalDraftRequest } from './legal-practice/drafting'
 import { LegalMattersSection } from './legal-practice/matters'
 import { LegalWorkspaceSection } from './legal-practice/workspace'
 
@@ -168,7 +170,19 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
           <LegalMattersSection data={data} submit={submit} write={write} />
         </section>
         <section hidden={tab !== 'acts'}>
-          <LegalActsSection data={data} submit={submit} write={write} />
+          <LegalActsSection
+            data={data}
+            prepareDraft={(matterId, documentType) => {
+              if (!isLegalOwnerCurrent(owner)) {
+                return
+              }
+
+              appendComposerDraft(legalDraftRequest(data, matterId, documentType))
+              $legalPractice.set(null)
+            }}
+            submit={submit}
+            write={write}
+          />
         </section>
         <section hidden={tab !== 'billing'}>
           <LegalBillingSection data={data} submit={submit} write={write} />

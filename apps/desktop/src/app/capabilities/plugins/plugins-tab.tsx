@@ -23,7 +23,7 @@ import { useI18n } from '@/i18n'
 import { DESKTOP_PLUGIN_TOOLSETS } from '@/lib/desktop-toolsets'
 import { triggerHaptic } from '@/lib/haptics'
 import { FolderOpen, Loader2, Monitor, Package, RefreshCw, Trash2 } from '@/lib/icons'
-import { CATALOG_ORIGIN, CATALOG_PICKER_URL } from '@/lib/plugin-catalog'
+import { CATALOG_ORIGIN } from '@/lib/plugin-catalog'
 import { queryClient } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
 import {
@@ -54,6 +54,7 @@ import { Pill } from '../../settings/primitives'
 import { useDeepLinkHighlight } from '../../settings/use-deep-link-highlight'
 import { TOOLSETS_QUERY_KEY } from '../toolsets/toolsets-data'
 
+import { NativePluginCatalog } from './native-plugin-catalog'
 import { mergePluginPackages, type PackageKind, type PluginPackage } from './plugin-packages'
 import { PluginSettingsForm } from './plugin-settings-form'
 
@@ -596,6 +597,40 @@ export const PluginsTab = memo(function PluginsTab({
   const height = heightOverride ?? CATALOG_DEFAULT_PX
   const open = height > CATALOG_COLLAPSED_PX
   const [pickerMounted, setPickerMounted] = useState(open)
+  useEffect(() => {
+    if (!open) {
+      return undefined
+    }
+
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== CATALOG_ORIGIN) {
+        return
+      }
+
+      const data = event.data as null | PluginPickMessage
+
+      if (!data || data.type !== 'hermes-plugin-pick' || !data.name || !data.repo) {
+        return
+      }
+
+      // Already-installed short-circuit + the dialog itself live in the shared
+      // helper so a catalog deep link behaves identically to this pick.
+      openCatalogPluginInstall(
+        {
+          name: String(data.name),
+          repo: String(data.repo),
+          sha: data.sha ? String(data.sha) : undefined,
+          subdir: data.subdir ? String(data.subdir) : undefined
+        },
+        scope
+      )
+    }
+
+    window.addEventListener('message', onMessage)
+
+    return () => window.removeEventListener('message', onMessage)
+  }, [open, p, scope])
+
   const [dragging, setDragging] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -631,40 +666,6 @@ export const PluginsTab = memo(function PluginsTab({
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp, { once: true })
   }
-
-  useEffect(() => {
-    if (!open) {
-      return undefined
-    }
-
-    const onMessage = (event: MessageEvent) => {
-      if (event.origin !== CATALOG_ORIGIN) {
-        return
-      }
-
-      const data = event.data as null | PluginPickMessage
-
-      if (!data || data.type !== 'hermes-plugin-pick' || !data.name || !data.repo) {
-        return
-      }
-
-      // Already-installed short-circuit + the dialog itself live in the shared
-      // helper so a catalog deep link behaves identically to this pick.
-      openCatalogPluginInstall(
-        {
-          name: String(data.name),
-          repo: String(data.repo),
-          sha: data.sha ? String(data.sha) : undefined,
-          subdir: data.subdir ? String(data.subdir) : undefined
-        },
-        scope
-      )
-    }
-
-    window.addEventListener('message', onMessage)
-
-    return () => window.removeEventListener('message', onMessage)
-  }, [open, p, scope])
 
   const agentBusy = (row: AgentPluginRow) => busyKey === (row.key ?? row.name) || busyKey === row.name
 
@@ -880,20 +881,7 @@ export const PluginsTab = memo(function PluginsTab({
                 width: '100%'
               }}
             >
-              <iframe
-                sandbox="allow-scripts allow-same-origin"
-                src={CATALOG_PICKER_URL}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  height: '133.34%',
-                  pointerEvents: dragging ? 'none' : 'auto',
-                  transform: 'scale(0.75)',
-                  transformOrigin: 'top left',
-                  width: '133.34%'
-                }}
-                title={p.catalogTitle}
-              />
+              <NativePluginCatalog profile={scope} />
             </div>
             <p className="shrink-0 px-1 text-[0.65rem] leading-4 text-(--ui-text-quaternary)">{p.catalogHint}</p>
           </div>
