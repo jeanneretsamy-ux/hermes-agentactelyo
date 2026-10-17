@@ -660,17 +660,22 @@ def _install_engine_job(job: Dict[str, Any], backend: str):
 
 @router.post("/api/local-models/runtime/install")
 def local_models_runtime_install(body: RuntimeInstallBody, profile: Optional[str] = None):
-    tag, backend = _runtime_target(body.backend)
+    with _config_profile_scope(profile):
+        return install_runtime_in_current_profile(body.backend)
+
+
+def install_runtime_in_current_profile(backend: str | None = None):
+    """Shared UI/agent installation; worker inherits the caller's profile scope."""
+    tag, backend = _runtime_target(backend)
     job = _job("runtime-install", f"llama.cpp {tag} ({backend})")
 
     def run():
-        with _config_profile_scope(profile):
-            previous = binaries.installed_engine(backend)
-            engine = _install_engine_job(job, backend)
-            running = bootstrap.get_supervisor()
-            if running is not None and previous != engine:
-                _step(job, "restarting", "Switching the running server to the pinned build")
-                bootstrap.refresh_local_runtime()
+        previous = binaries.installed_engine(backend)
+        engine = _install_engine_job(job, backend)
+        running = bootstrap.get_supervisor()
+        if running is not None and previous != engine:
+            _step(job, "restarting", "Switching the running server to the pinned build")
+            bootstrap.refresh_local_runtime()
         _finish(job, f"llama.cpp {tag} ready ({backend})")
 
     _spawn_job(job, "lr-runtime-install", run, fail_msg="runtime install failed: %s", resumable=True)
@@ -894,22 +899,23 @@ async def local_models_activate(body: ModelActivateBody, profile: Optional[str] 
     """Make a downloaded model the default for new chats: a config write via the same machinery as
     /api/model/set plus making sure the server is up. NO model loading (residency v2: models load on first
     inference; an empty router costs nothing). Kept as a job for UI continuity."""
-    # Split variants stage under their first part — resolve like the other routes.
-    if body.model_id not in bootstrap.staged_model_ids():
-        raise HTTPException(status_code=404, detail=f"{body.model_id} is not downloaded")
-    job = _job("model-activate", body.model_id, model_id=body.model_id)
+    with _config_profile_scope(profile):
+        return activate_model_in_current_profile(body.model_id)
+
+
+def activate_model_in_current_profile(model_id: str):
+    """Shared UI/agent entrypoint; the worker inherits the caller's profile context."""
+    if model_id not in bootstrap.staged_model_ids():
+        raise HTTPException(status_code=404, detail=f"{model_id} is not downloaded")
+    job = _job("model-activate", model_id, model_id=model_id)
 
     def _run():
-        # The llama runtime is one host-wide process, but "my default model" is a
-        # config.yaml write — scope it to the profile the request names, inside the job
-        # thread (the contextvar override must be set where the write happens).
-        with _config_profile_scope(profile):
-            _ensure_server(job, config_mod.load_config(), body.model_id,
-                           fail_detail=_SERVER_START_FAILED, skip_msg="activate rescan check skipped")
-            _step(job, "setting-default", "Making it your default")
-            _set_runtime_enabled(True)
-            _assign_default(job, body.model_id)
-            _finish(job, f"{body.model_id} is the default for new chats")
+        _ensure_server(job, config_mod.load_config(), model_id,
+                       fail_detail=_SERVER_START_FAILED, skip_msg="activate rescan check skipped")
+        _step(job, "setting-default", "Making it your default")
+        _set_runtime_enabled(True)
+        _assign_default(job, model_id)
+        _finish(job, f"{model_id} is the default for new chats")
 
     _spawn_job(job, "lr-model-activate", _run, fail_msg="model activate failed: %s")
     return {"job_id": job["job_id"]}

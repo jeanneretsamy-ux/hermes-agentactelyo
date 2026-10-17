@@ -54,6 +54,9 @@ interface InsertReplyDetail {
 interface AttachImagesDetail {
   blobs: Blob[]
   target: ComposerTarget
+  surfaceId?: string
+  isCurrent?: () => boolean
+  onComplete?: (ok: boolean) => void
 }
 
 const FOCUS_EVENT = 'hermes:composer-focus'
@@ -374,10 +377,18 @@ export const onComposerInsertRequest = (handler: (detail: InsertDetail) => void)
  *  resolving to `'edit'` is dropped by that surface's target filter. */
 export const requestComposerAttachImages = (
   blobs: Blob[],
-  { target = 'active' }: { target?: ComposerTarget | 'active' } = {}
+  {
+    target = 'active',
+    ...options
+  }: {
+    target?: ComposerTarget | 'active'
+    surfaceId?: string
+    isCurrent?: () => boolean
+    onComplete?: (ok: boolean) => void
+  } = {}
 ) => {
   if (blobs.length) {
-    dispatch<AttachImagesDetail>(ATTACH_IMAGES_EVENT, { blobs, target: resolve(target) })
+    dispatch<AttachImagesDetail>(ATTACH_IMAGES_EVENT, { blobs, target: resolve(target), ...options })
   }
 }
 

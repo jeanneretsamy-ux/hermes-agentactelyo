@@ -150,6 +150,7 @@ import {
 import type { SidebarNavItem } from '../../types'
 import { type NewSessionSplitHandler, startNewSessionDrag } from '../new-session-drag'
 
+import { ActelyoWorkbench } from './actelyo-workbench'
 import { SidebarSectionAddButton } from './chrome'
 import { SidebarCronJobsSection } from './cron-jobs-section'
 import { SidebarFilterMenu } from './filter-menu'
@@ -1727,6 +1728,7 @@ export function ChatSidebar({
                   </SidebarMenuItem>
                 )
               })}
+              <ActelyoWorkbench />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

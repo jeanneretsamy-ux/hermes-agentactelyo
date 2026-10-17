@@ -33,6 +33,13 @@ export function LocalModelsSettings(): ReactElement {
 
   return (
     <LocalModelsOwnerProvider key={JSON.stringify(localModelsKey(owner))} value={owner}>
+      <header className="mb-4" data-testid="actelyo-studio">
+        <h2 className="text-lg font-semibold">Actelyo Studio</h2>
+        <p className="text-muted-foreground">
+          Modèles locaux GGUF, mémoire et serveur d’inférence. L’agent dispose de l’outil actelyo_studio pour consulter
+          et gérer ce moteur sur la machine connectée. Un modèle activé s’applique aux nouvelles conversations.
+        </p>
+      </header>
       <ScopedLocalModelsSettings />
     </LocalModelsOwnerProvider>
   )
