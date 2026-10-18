@@ -78,6 +78,11 @@ CREATE TABLE IF NOT EXISTS legal_acts (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
  title TEXT NOT NULL, act_type TEXT NOT NULL, body TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS legal_library_imports (
+ project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+ digest TEXT NOT NULL, act_id TEXT NOT NULL REFERENCES legal_acts(id) ON DELETE CASCADE,
+ PRIMARY KEY(project_id,digest)
+);
 CREATE TABLE IF NOT EXISTS legal_fees (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
  matter_id TEXT NOT NULL REFERENCES legal_matters(id), description TEXT NOT NULL,
@@ -607,6 +612,10 @@ def legal_mutate(conn, project_id, action, params):
 
 
 def _legal_apply(conn, pid, action, p):
+    if action == "library.import":
+        from hermes_cli.legal_library import import_library
+        import_library(conn, pid, p)
+        return
     if action == "firm.settings.set":
         if p.get("jurisdiction") != "FR":
             raise ValueError("La juridiction France est disponible. Les autres juridictions ne sont pas encore prises en charge.")

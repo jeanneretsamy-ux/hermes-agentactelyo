@@ -43,7 +43,7 @@ def _register_legal_method(action):
 
 
 for _legal_action in (
-    "snapshot", "workspace.set", "firm.settings.set", "client.save", "matter.save", "act.save",
+    "snapshot", "workspace.set", "firm.settings.set", "client.save", "matter.save", "act.save", "library.import",
     "fee.add", "fee_code.save", "subscription.save", "subscription.invoice",
     "practice_document.create", "document.create", "document.credit",
     "payment.add", "payment.allocate",

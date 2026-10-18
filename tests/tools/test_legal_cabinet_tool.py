@@ -50,3 +50,27 @@ def test_chat_tool_manages_project_workspace_and_invoice_draft(monkeypatch, tmp_
     assert "Détail des prestations" in invoice["data"]["rendered_document"]
     assert "BROUILLON INTERNE — NON ÉMIS" in invoice["data"]["rendered_document"]
     assert registry.get_entry("legal_cabinet").toolset == "project"
+
+
+def test_private_library_import_retry_read_and_atomic_rejection(monkeypatch, tmp_path):
+    original = pdb.connect_closing
+    db_path = tmp_path / 'library.db'
+    monkeypatch.setattr(pdb, 'connect_closing', lambda: original(db_path=db_path))
+    with original(db_path=db_path) as conn:
+        pid = pdb.create_project(conn, name='Bibliothèque privée')
+    def call(action, **params):
+        return json.loads(legal_cabinet.legal_cabinet(action, project=pid, **params))
+    call('workspace.set', domain='societes')
+    entries = [{'title': 'Statuts témoin', 'act_type': 'Statuts', 'body': 'ARTICLE 1 — [*Société]\nARTICLE 2 — [*Objet]'}]
+    result = call('library.import', domain='societes', entries=entries)
+    assert result['success']
+    act = result['data']['acts'][0]
+    assert 'body' not in act
+    assert call('act.read', id=act['id'])['data']['act']['body'] == entries[0]['body']
+    assert call('act.search', query='témoin')['data']['total_matches'] == 1
+    call('act.save', **act, body='Version relue [*Société]')
+    assert len(call('library.import', domain='societes', entries=entries)['data']['acts']) == 1
+    assert call('act.read', id=act['id'])['data']['act']['body'] == 'Version relue [*Société]'
+    assert not call('library.import', domain='social', entries=entries)['success']
+    assert not call('library.import', domain='societes', entries=[{**entries[0], 'title': 'Autre'}, {**entries[0], 'body': ''}])['success']
+    assert len(call('snapshot')['data']['acts']) == 1

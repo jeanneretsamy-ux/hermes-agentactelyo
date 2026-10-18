@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { downloadLegalText } from '@/store/legal-practice'
 
 import { Choice, Field, type LegalSectionProps, TextField } from './fields'
+import { LegalLibraryImport } from './library-import-panel'
 
 export function LegalActsSection({ data, write, submit, prepareDraft }: LegalSectionProps) {
   const [matterId, setMatterId] = useState('')
@@ -52,6 +53,7 @@ export function LegalActsSection({ data, write, submit, prepareDraft }: LegalSec
 
   return (
     <>
+      <LegalLibraryImport data={data} write={write} />
       <section className="space-y-3 rounded border p-3">
         <h3 className="font-semibold">Rédiger à partir d’un dossier</h3>
         <Choice

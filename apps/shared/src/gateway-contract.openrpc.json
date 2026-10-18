@@ -1807,6 +1807,24 @@
       }
     },
     {
+      "name": "legal.library.import",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalLibraryImportParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "legal.matter.save",
       "summary": "",
       "params": [
@@ -18725,6 +18743,78 @@
           "bar_name"
         ],
         "title": "LegalInvoiceIssuer",
+        "type": "object"
+      },
+      "LegalLibraryEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "act_type": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Act Type",
+            "type": "string"
+          },
+          "body": {
+            "maxLength": 200000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "act_type",
+          "body"
+        ],
+        "title": "LegalLibraryEntry",
+        "type": "object"
+      },
+      "LegalLibraryImportParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/LegalLibraryEntry"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Entries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "domain",
+          "entries"
+        ],
+        "title": "LegalLibraryImportParams",
         "type": "object"
       },
       "LegalLine": {

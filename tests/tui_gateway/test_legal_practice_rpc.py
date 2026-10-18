@@ -107,6 +107,9 @@ def test_legal_rpc_scopes_two_profile_homes_a_b_a(monkeypatch, tmp_path):
             p = {"profile": profile, "project_id": project["id"]}
             call("legal.workspace.set", **p, domain=domain)
             call("legal.client.save", **p, name=profile)
+            call("legal.library.import", **p, domain=domain, entries=[{
+                "title": "Référence privée", "act_type": "Modèle", "body": f"{profile} : [*Date]"
+            }])
             states[profile] = (p, call("legal.snapshot", **p))
         for profile in ("default", "legal-b", "default"):
             p, expected = states[profile]

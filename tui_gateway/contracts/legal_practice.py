@@ -283,6 +283,17 @@ class LegalActParams(LegalProjectParams):
     body: str
 
 
+class LegalLibraryEntry(Result):
+    title: str = Field(min_length=1, max_length=500)
+    act_type: str = Field(min_length=1, max_length=100)
+    body: str = Field(min_length=1, max_length=200_000)
+
+
+class LegalLibraryImportParams(LegalProjectParams):
+    domain: str
+    entries: list[LegalLibraryEntry] = Field(min_length=1, max_length=500)
+
+
 class LegalFeeParams(LegalProjectParams):
     request_id: str = Field(min_length=1, max_length=100)
     matter_id: str
@@ -393,6 +404,7 @@ method("legal.firm.settings.set", params=LegalFirmSettingsParams, result=LegalSn
 method("legal.client.save", params=LegalClientParams, result=LegalSnapshot)
 method("legal.matter.save", params=LegalMatterParams, result=LegalSnapshot)
 method("legal.act.save", params=LegalActParams, result=LegalSnapshot)
+method("legal.library.import", params=LegalLibraryImportParams, result=LegalSnapshot)
 method("legal.fee.add", params=LegalFeeParams, result=LegalSnapshot)
 method("legal.fee_code.save", params=LegalFeeCodeParams, result=LegalSnapshot)
 method("legal.subscription.save", params=LegalSubscriptionParams, result=LegalSnapshot)

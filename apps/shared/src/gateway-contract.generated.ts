@@ -2113,6 +2113,17 @@ export interface LegalActParams {
   act_type: string
   body: string
 }
+export interface LegalLibraryImportParams {
+  profile?: string | null
+  project_id: string
+  domain: string
+  entries: LegalLibraryEntry[]
+}
+export interface LegalLibraryEntry {
+  title: string
+  act_type: string
+  body: string
+}
 export interface LegalFeeParams {
   profile?: string | null
   project_id: string
@@ -5448,6 +5459,7 @@ export interface RpcMethods {
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
   'legal.fee_code.save': { params: LegalFeeCodeParams; result: LegalSnapshot }
   'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
+  'legal.library.import': { params: LegalLibraryImportParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
   'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
   'legal.payment.allocate': { params: LegalAllocatePaymentParams; result: LegalSnapshot }
@@ -5877,6 +5889,7 @@ export const RPC_METHODS = [
   'legal.fee.add',
   'legal.fee_code.save',
   'legal.firm.settings.set',
+  'legal.library.import',
   'legal.matter.save',
   'legal.payment.add',
   'legal.payment.allocate',

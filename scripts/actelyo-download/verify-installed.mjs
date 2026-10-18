@@ -48,6 +48,17 @@ try {
     await cabinet.getByRole('button', { name: '+ Créer un espace Droit des Sociétés', exact: true }).click()
     await page.getByRole('heading', { name: 'Cabinet juridique — Droit des Sociétés', exact: true }).waitFor({ timeout: 30000 })
     await page.getByRole('heading', { name: 'Nouveau dossier', exact: true }).waitFor()
+    await page.getByRole('button', { name: 'Bibliothèque d’actes', exact: true }).click()
+    await page.getByLabel('Fichier de bibliothèque privée').setInputFiles({
+      name: 'bibliotheque-qa.json', mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ format: 'actelyo-private-library-v1', entries: [{
+        title: 'Modèle QA privé', act_type: 'Statuts', domain: 'societes', body: 'ARTICLE 1 — [*Société]',
+        sources: [{ archive: 'qa.zip', member: 'fixture.docx', sha256: '0'.repeat(64) }]
+      }] }))
+    })
+    await page.getByRole('button', { name: 'Importer les actes sélectionnés', exact: true }).click()
+    await page.getByText('Import enregistré.', { exact: false }).waitFor({ timeout: 30000 })
+    await page.getByText('Modèle QA privé — Statuts', { exact: true }).waitFor()
     await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
     await page.keyboard.press('Escape')
   await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
@@ -109,6 +120,7 @@ try {
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
     localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
       nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true, legalCabinetNavigationVerified: true,
+      privateLibraryImportVerified: true,
     modelInferenceVerified: false, reaAnalysisVerified: false, skillReplayVerified: false,
     modelIncluded: false, codeSigned: false
   }, null, 2))
