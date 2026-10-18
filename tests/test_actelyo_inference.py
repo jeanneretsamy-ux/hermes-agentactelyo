@@ -7,6 +7,8 @@ from hermes_cli.local_runtime import inference_check, bootstrap, endpoint
 
 
 def test_real_http_completion_and_empty_response(monkeypatch):
+    from agent import model_metadata
+    monkeypatch.setattr(model_metadata, '_query_local_context_length_uncached', lambda *_: 8192)
     observed = []
     replies = ['ACTELYO_OK', 'Autre réponse', '']
     class Handler(BaseHTTPRequestHandler):
@@ -23,7 +25,10 @@ def test_real_http_completion_and_empty_response(monkeypatch):
     monkeypatch.setattr(bootstrap,'staged_model_ids',lambda:['fixture'])
     monkeypatch.setattr(endpoint,'_state_endpoint',lambda:{'base_url':f'http://127.0.0.1:{server.server_port}/v1'})
     try:
-        assert inference_check.check('fixture')['instruction_followed']
+        result = inference_check.check('fixture')
+        assert result['instruction_followed']
+        assert result['context_tokens'] == 8192
+        assert 'inférieur' in result['context_diagnostic']
         assert not inference_check.check('fixture')['instruction_followed']
         with pytest.raises(ValueError,match='aucun texte'):
             inference_check.check('fixture')

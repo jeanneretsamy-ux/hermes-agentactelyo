@@ -1021,7 +1021,7 @@ def test_inference_in_current_profile(model_id: str):
         result = check(model_id)
         verdict = "Consigne respectée." if result["instruction_followed"] else "Consigne non respectée."
         _finish(job, f"Inférence réussie en {result['elapsed_seconds']} s. {verdict} "
-                    + result["limitations"])
+                    + result["context_diagnostic"] + " " + result["limitations"])
 
     _spawn_job(job, "lr-inference-test", run)
     return {"job_id": job["job_id"]}

@@ -6,6 +6,7 @@ import urllib.request
 
 
 def check(model_id):
+    from agent.model_metadata import MINIMUM_CONTEXT_LENGTH, _query_local_context_length_uncached
     from hermes_cli.local_runtime import bootstrap
     from hermes_cli.local_runtime.endpoint import _state_endpoint
     if model_id not in bootstrap.staged_model_ids():
@@ -38,7 +39,18 @@ def check(model_id):
     content = choices[0].get("message", {}).get("content") if choices else None
     if not isinstance(content, str) or not content.strip():
         raise ValueError("Le moteur n’a retourné aucun texte. Vérifiez le modèle de chat, son format et le journal du moteur.")
+    window = _query_local_context_length_uncached(model_id, endpoint['base_url'], endpoint.get('api_key', ''))
+    if window is None:
+        context_verdict = "Fenêtre de contexte non déterminée ; compatibilité avec l’agent complet non vérifiée."
+    elif window < MINIMUM_CONTEXT_LENGTH:
+        context_verdict = (f"Contexte annoncé : {window} tokens, inférieur aux {MINIMUM_CONTEXT_LENGTH} requis par l’agent complet. "
+                           "Une réponse courte fonctionne mais pas nécessairement le Harness complet. "
+                           "Utilisez un modèle avec une fenêtre suffisante ; ne déclarez pas une capacité fictive dans la configuration.")
+    else:
+        context_verdict = (f"Contexte annoncé : {window} tokens. Le seuil de l’agent complet est atteint, "
+                           "mais une conversation longue peut encore le dépasser : compressez l’historique et limitez les documents joints.")
     return {"model_id": model_id, "inference_ok": True,
+            "context_tokens": window, "context_diagnostic": context_verdict,
             "instruction_followed": content.strip() == "ACTELYO_OK",
             "response": content[:2000], "elapsed_seconds": round(time.monotonic() - started, 2),
             "limitations": "Ce test ne valide ni les appels d’outils, ni la vision, ni la qualité juridique."}
