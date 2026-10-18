@@ -111,6 +111,9 @@ def test_legal_rpc_scopes_two_profile_homes_a_b_a(monkeypatch, tmp_path):
         for profile in ("default", "legal-b", "default"):
             p, expected = states[profile]
             assert call("legal.snapshot", **p) == expected
+            catalog = call("legal.catalog", profile=profile)
+            assert catalog["workspaces"] == [{"id": p["project_id"], "name": expected["domain"], "domain": expected["domain"]}]
+            assert {item["id"] for item in catalog["domains"]} >= {"societes", "social"}
         wrong = {**states["default"][0], "profile": "legal-b"}
         assert server._methods["legal.snapshot"](1, wrong)["error"]["code"] == 5062
         with pytest.raises(ValueError):

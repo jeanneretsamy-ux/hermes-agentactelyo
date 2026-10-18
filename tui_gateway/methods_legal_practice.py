@@ -4,6 +4,23 @@ from .method_ctx import HandlerRegistry, bind_module
 _registry = HandlerRegistry()
 
 
+@_registry.method("legal.catalog")
+@_registry.profile_scoped
+def legal_catalog(rid, params):
+    from hermes_cli import legal_practice as legal, projects_db as pdb
+
+    try:
+        with pdb.connect_closing() as conn:
+            legal.initialize_legal(conn)
+            rows = conn.execute("""SELECT p.id, p.name, w.domain FROM projects p
+                LEFT JOIN legal_workspaces w ON w.project_id=p.id
+                WHERE p.archived=0 ORDER BY p.name, p.id""").fetchall()
+            return _ok(rid, {"domains": list(legal.LEGAL_DOMAINS),
+                              "workspaces": [dict(row) for row in rows]})
+    except Exception as error:
+        return _err(rid, 5061, str(error))
+
+
 def _register_legal_method(action):
     @_registry.method(f"legal.{action}")
     @_registry.profile_scoped

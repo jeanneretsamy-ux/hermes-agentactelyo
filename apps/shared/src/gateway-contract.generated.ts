@@ -1834,6 +1834,21 @@ export interface ClientCapabilitiesResult {
   server_requests: string[]
   declines_not_shown?: boolean
 }
+export interface LegalCatalog {
+  domains: LegalDomain[]
+  workspaces: LegalWorkspaceEntry[]
+}
+export interface LegalDomain {
+  id: string
+  label: string
+  matter_types: string[]
+  act_types: string[]
+}
+export interface LegalWorkspaceEntry {
+  id: string
+  name: string
+  domain: string | null
+}
 export interface LegalProjectParams {
   profile?: string | null
   project_id: string
@@ -1857,12 +1872,6 @@ export interface LegalSnapshot {
   payments: LegalPayment[]
   firm_settings: LegalFirmSettings
   firm_totals: LegalFirmTotals
-}
-export interface LegalDomain {
-  id: string
-  label: string
-  matter_types: string[]
-  act_types: string[]
 }
 export interface LegalCompanyProfileSection {
   id: string
@@ -5432,6 +5441,7 @@ export interface RpcMethods {
   /** Pre-render the /journey timeline (frames + legend/summary) so the TUI walks it locally. */
   'learning.frames': { params: LearningFramesParams; result: LearningFramesResult }
   'legal.act.save': { params: LegalActParams; result: LegalSnapshot }
+  'legal.catalog': { params: ProfileParams; result: LegalCatalog }
   'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
   'legal.document.credit': { params: LegalCreditParams; result: LegalSnapshot }
@@ -5860,6 +5870,7 @@ export const RPC_METHODS = [
   'learning.edit',
   'learning.frames',
   'legal.act.save',
+  'legal.catalog',
   'legal.client.save',
   'legal.document.create',
   'legal.document.credit',

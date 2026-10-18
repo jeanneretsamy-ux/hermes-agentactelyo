@@ -15,6 +15,17 @@ class LegalDomain(Result):
     act_types: list[str]
 
 
+class LegalWorkspaceEntry(Result):
+    id: str
+    name: str
+    domain: str | None
+
+
+class LegalCatalog(Result):
+    domains: list[LegalDomain]
+    workspaces: list[LegalWorkspaceEntry]
+
+
 class LegalClientSnapshot(Result):
     name: str
     email: str
@@ -375,6 +386,7 @@ class LegalAllocatePaymentParams(LegalProjectParams):
     allocations: list[LegalPaymentAllocation] = Field(min_length=1, max_length=100)
 
 
+method("legal.catalog", params=ProfileParams, result=LegalCatalog)
 method("legal.snapshot", params=LegalProjectParams, result=LegalSnapshot)
 method("legal.workspace.set", params=LegalWorkspaceParams, result=LegalSnapshot)
 method("legal.firm.settings.set", params=LegalFirmSettingsParams, result=LegalSnapshot)

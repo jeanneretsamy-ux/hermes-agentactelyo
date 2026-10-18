@@ -43,6 +43,13 @@ try {
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
+    const cabinet = page.getByRole('navigation', { name: 'Domaines du cabinet juridique' })
+    await cabinet.getByText('Droit des Sociétés', { exact: true }).click()
+    await cabinet.getByRole('button', { name: '+ Créer un espace Droit des Sociétés', exact: true }).click()
+    await page.getByRole('heading', { name: 'Cabinet juridique — Droit des Sociétés', exact: true }).waitFor({ timeout: 30000 })
+    await page.getByRole('heading', { name: 'Nouveau dossier', exact: true }).waitFor()
+    await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
+    await page.keyboard.press('Escape')
   await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
   await page.getByTestId('actelyo-studio').waitFor({ timeout: 30000 })
   await page.screenshot({ path: path.join(proof, 'installed-studio.png') })
@@ -101,7 +108,7 @@ try {
   fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
     localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
-    nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true,
+      nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true, legalCabinetNavigationVerified: true,
     modelInferenceVerified: false, reaAnalysisVerified: false, skillReplayVerified: false,
     modelIncluded: false, codeSigned: false
   }, null, 2))

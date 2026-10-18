@@ -1681,6 +1681,24 @@
       }
     },
     {
+      "name": "legal.catalog",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ProfileParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalCatalog"
+        }
+      }
+    },
+    {
       "name": "legal.client.save",
       "summary": "",
       "params": [
@@ -17553,6 +17571,31 @@
         "title": "LegalBillingGroup",
         "type": "object"
       },
+      "LegalCatalog": {
+        "additionalProperties": false,
+        "properties": {
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/LegalDomain"
+            },
+            "title": "Domains",
+            "type": "array"
+          },
+          "workspaces": {
+            "items": {
+              "$ref": "#/components/schemas/LegalWorkspaceEntry"
+            },
+            "title": "Workspaces",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains",
+          "workspaces"
+        ],
+        "title": "LegalCatalog",
+        "type": "object"
+      },
       "LegalClient": {
         "additionalProperties": false,
         "properties": {
@@ -19620,6 +19663,37 @@
           "starts_on"
         ],
         "title": "LegalSubscriptionParams",
+        "type": "object"
+      },
+      "LegalWorkspaceEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "domain"
+        ],
+        "title": "LegalWorkspaceEntry",
         "type": "object"
       },
       "LegalWorkspaceParams": {

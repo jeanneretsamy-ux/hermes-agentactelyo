@@ -49,7 +49,7 @@ export function LegalPracticeDialog() {
             <DialogTitle>Cabinet juridique — {owner.name}</DialogTitle>
             <DialogDescription>Espaces, dossiers, bibliothèque d’actes et facturation du projet.</DialogDescription>
           </DialogHeader>
-          <LegalPracticeContent key={`${owner.profile}:${owner.projectId}`} owner={owner} />
+          <LegalPracticeContent key={`${owner.profile}:${owner.projectId}:${owner.section ?? 'workspace'}`} owner={owner} />
         </DialogContent>
       )}
     </Dialog>
@@ -61,7 +61,7 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
   // Object identity pins the connection; profile and project pin the business data.
   const queryKey = legalQueryKey(owner)
   const state = useQuery({ queryKey, queryFn: () => legalRequest(owner, 'legal.snapshot', {}), retry: false })
-  const [tab, setTab] = useState('workspace')
+  const [tab, setTab] = useState<string>(owner.section ?? 'workspace')
   const [localError, setLocalError] = useState('')
   const pendingIds = useRef(new Map<string, string>())
 
@@ -75,6 +75,7 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
     onSuccess: snapshot => {
       if (isLegalOwnerCurrent(owner)) {
         client.setQueryData(queryKey, snapshot)
+        void client.invalidateQueries({ queryKey: [...legalQueryKey({ ...owner, projectId: '' }), 'catalog'] })
       }
     },
     retry: false
