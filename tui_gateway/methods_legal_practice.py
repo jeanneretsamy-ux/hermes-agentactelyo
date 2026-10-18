@@ -7,7 +7,7 @@ _registry = HandlerRegistry()
 @_registry.method("legal.catalog")
 @_registry.profile_scoped
 def legal_catalog(rid, params):
-    from hermes_cli import legal_practice as legal, projects_db as pdb
+    from hermes_cli import legal_practice as legal, projects_db as pdb, legal_workflow
 
     try:
         with pdb.connect_closing() as conn:
@@ -16,7 +16,7 @@ def legal_catalog(rid, params):
                 LEFT JOIN legal_workspaces w ON w.project_id=p.id
                 WHERE p.archived=0 ORDER BY p.name, p.id""").fetchall()
             return _ok(rid, {"domains": list(legal.LEGAL_DOMAINS),
-                              "workspaces": [dict(row) for row in rows]})
+                              "workspaces": [{**dict(row), "due_tasks": sum(bool(t["alert"]) for t in legal_workflow.rows(conn, row["id"]))} for row in rows]})
     except Exception as error:
         return _err(rid, 5061, str(error))
 
@@ -43,7 +43,7 @@ def _register_legal_method(action):
 
 
 for _legal_action in (
-    "snapshot", "workspace.set", "firm.settings.set", "client.save", "matter.save", "act.save", "library.import",
+    "task.save", "workflow.apply", "snapshot", "workspace.set", "firm.settings.set", "client.save", "matter.save", "act.save", "library.import",
     "fee.add", "fee_code.save", "subscription.save", "subscription.invoice",
     "practice_document.create", "document.create", "document.credit",
     "payment.add", "payment.allocate",

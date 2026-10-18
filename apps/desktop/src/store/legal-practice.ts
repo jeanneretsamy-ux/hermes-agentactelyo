@@ -14,7 +14,7 @@ export interface LegalPracticeOwner {
   section?: LegalPracticeSection
 }
 
-export type LegalPracticeSection = 'workspace' | 'matters' | 'acts' | 'billing'
+export type LegalPracticeSection = 'workspace' | 'matters' | 'acts' | 'billing' | 'tasks'
 
 export const $legalPractice = atom<LegalPracticeOwner | null>(null)
 const gatewayIds = new WeakMap<HermesGateway, number>()

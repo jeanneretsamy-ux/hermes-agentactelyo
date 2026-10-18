@@ -14,7 +14,7 @@ from tools.registry import registry
 
 _jobs: dict[str, str] = {}
 _lock = threading.Lock()
-_ACTIONS = ["status", "catalog", "install_runtime", "start", "stop", "activate", "eject", "import", "download", "job"]
+_ACTIONS = ["status", "catalog", "test_inference", "install_runtime", "start", "stop", "activate", "eject", "import", "download", "job"]
 
 
 async def handle_studio(args: dict, **_kwargs) -> str:
@@ -32,6 +32,8 @@ async def handle_studio(args: dict, **_kwargs) -> str:
             result = await asyncio.to_thread(service.install_runtime_in_current_profile)
         elif action in ("start", "stop"):
             result = await service.local_models_server(service.ServerActionBody(action=action))
+        elif action == "test_inference":
+            result = service.test_inference_in_current_profile(model)
         elif action == "activate":
             result = service.activate_model_in_current_profile(model)
         elif action == "eject":
@@ -65,6 +67,7 @@ registry.register(
         "Read status/catalog before mutations; use exact returned model IDs. Import an existing absolute GGUF path, "
         "install the managed runtime or download a catalog model only when requested, start/stop the server, activate a model for NEW chats, "
         "or eject a model from memory. Activation does not change this conversation or prove inference works. "
+        "test_inference performs a bounded real completion with an installed model; it may load weights and consume memory. Poll the job: this verifies text generation and a simple instruction, not tools, vision or legal accuracy. "
         "Jobs are asynchronous: poll job until done/error; never claim success from a job_id alone. "
         "Stopping/ejecting can affect other chats on this machine. Does not manage an external LM Studio process "
         "or load embedding/classifier adapters as chat models. Do not download or copy large files without user intent."

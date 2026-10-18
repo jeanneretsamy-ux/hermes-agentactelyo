@@ -1003,3 +1003,25 @@ async def local_models_sideload(body: SideloadBody):
             await run_in_threadpool(shutil.copyfile, src, dest)
     _refresh_runtime("post-sideload runtime refresh skipped")
     return {"ok": True, "model_id": dest.stem}
+
+
+@router.post("/api/local-models/test-inference")
+def local_models_test_inference(body: ModelActivateBody, profile: Optional[str] = None):
+    with _config_profile_scope(profile):
+        return test_inference_in_current_profile(body.model_id)
+
+
+def test_inference_in_current_profile(model_id: str):
+    if model_id not in bootstrap.staged_model_ids():
+        raise HTTPException(status_code=404, detail="Modèle absent de Studio")
+    job = _job("model-inference-test", model_id, model_id=model_id)
+
+    def run():
+        from hermes_cli.local_runtime.inference_check import check
+        result = check(model_id)
+        verdict = "Consigne respectée." if result["instruction_followed"] else "Consigne non respectée."
+        _finish(job, f"Inférence réussie en {result['elapsed_seconds']} s. {verdict} "
+                    + result["limitations"])
+
+    _spawn_job(job, "lr-inference-test", run)
+    return {"job_id": job["job_id"]}

@@ -59,6 +59,22 @@ try {
     await page.getByRole('button', { name: 'Importer les actes sélectionnés', exact: true }).click()
     await page.getByText('Import enregistré.', { exact: false }).waitFor({ timeout: 30000 })
     await page.getByText('Modèle QA privé — Statuts', { exact: true }).waitFor()
+    await page.getByRole('button', { name: 'Clients et dossiers', exact: true }).click()
+    await page.getByLabel('Nom du client', { exact: true }).fill('Client QA synthétique')
+    await page.getByRole('button', { name: 'Ajouter le client', exact: true }).click()
+    await page.getByLabel('Client du dossier', { exact: true }).selectOption({ label: 'Client QA synthétique' })
+    await page.getByLabel('Intitulé du dossier', { exact: true }).fill('Dossier QA échéances')
+    await page.getByLabel('Type de dossier', { exact: true }).selectOption({ index: 1 })
+    await page.getByRole('button', { name: 'Créer le dossier', exact: true }).click()
+    await page.getByRole('button', { name: 'Processus et échéances', exact: true }).click()
+    await page.getByLabel('Dossier du processus', { exact: true }).selectOption({ label: 'Dossier QA échéances' })
+    await page.getByRole('button', { name: 'Ajouter les étapes du domaine', exact: true }).click()
+    await page.getByText('Vérifier les parties, pièces et informations du dossier', { exact: true }).waitFor()
+    await page.getByLabel('Étape', { exact: true }).fill('Échéance QA synthétique')
+    await page.getByLabel('Échéance', { exact: true }).fill('2020-01-02')
+    await page.getByLabel('Rappel à partir du', { exact: true }).fill('2020-01-01')
+    await page.getByRole('button', { name: 'Enregistrer l’étape', exact: true }).click()
+    await page.getByText('Échéance dépassée', { exact: true }).waitFor()
     await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
     await page.keyboard.press('Escape')
   await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
@@ -120,7 +136,7 @@ try {
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
     localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
       nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true, legalCabinetNavigationVerified: true,
-      privateLibraryImportVerified: true,
+      privateLibraryImportVerified: true, workflowAndDeadlineVerified: true,
     modelInferenceVerified: false, reaAnalysisVerified: false, skillReplayVerified: false,
     modelIncluded: false, codeSigned: false
   }, null, 2))

@@ -21,6 +21,7 @@ import { PanelEmpty } from '../overlays/panel'
 import { isActiveStatus } from './local-models-actions'
 import { LocalModelsBrowseSection } from './local-models-browse'
 import { LocalModelsHardwareSection } from './local-models-hardware-section'
+import { LocalModelsInference } from './local-models-inference'
 import { LocalModelsModelsSection } from './local-models-models-section'
 import { LocalModelsOwnerProvider, useScopedLocalModelsOwner } from './local-models-owner'
 import { LocalModelsQuickstart } from './local-models-quickstart'
@@ -157,6 +158,7 @@ function ScopedLocalModelsSettings(): ReactElement {
     <SettingsContent>
       <ActiveProfileNote className="mb-5" />
       <LocalModelsRuntimeSection jobs={jobs} lastError={lastError} status={status} />
+      <LocalModelsInference jobs={jobs} modelId={status.active_model_id} />
       <LocalModelsHardwareSection hardware={hardware} />
       <LocalModelsModelsSection catalog={catalog} jobs={jobs} lastError={lastError} status={status} />
       <LocalModelsBrowseSection />

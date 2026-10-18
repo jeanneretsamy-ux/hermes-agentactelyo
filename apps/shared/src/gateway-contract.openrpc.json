@@ -1951,6 +1951,42 @@
       }
     },
     {
+      "name": "legal.task.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalTaskParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.workflow.apply",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalWorkflowParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "legal.workspace.set",
       "summary": "",
       "params": [
@@ -19439,6 +19475,20 @@
             "title": "Clients",
             "type": "array"
           },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/LegalTask"
+            },
+            "title": "Tasks",
+            "type": "array"
+          },
+          "workflow_templates": {
+            "items": {
+              "$ref": "#/components/schemas/LegalWorkflowTemplate"
+            },
+            "title": "Workflow Templates",
+            "type": "array"
+          },
           "matters": {
             "items": {
               "$ref": "#/components/schemas/LegalMatter"
@@ -19755,6 +19805,195 @@
         "title": "LegalSubscriptionParams",
         "type": "object"
       },
+      "LegalTask": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "remind_on": {
+            "title": "Remind On",
+            "type": "string"
+          },
+          "responsible_user": {
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "template_key": {
+            "title": "Template Key",
+            "type": "string"
+          },
+          "alert": {
+            "title": "Alert",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "matter_id",
+          "title",
+          "status",
+          "due_on",
+          "remind_on",
+          "responsible_user",
+          "notes",
+          "template_key",
+          "alert"
+        ],
+        "title": "LegalTask",
+        "type": "object"
+      },
+      "LegalTaskParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "task_status": {
+            "default": "pending",
+            "enum": [
+              "pending",
+              "done",
+              "cancelled"
+            ],
+            "title": "Task Status",
+            "type": "string"
+          },
+          "due_on": {
+            "default": "",
+            "title": "Due On",
+            "type": "string"
+          },
+          "remind_on": {
+            "default": "",
+            "title": "Remind On",
+            "type": "string"
+          },
+          "responsible_user": {
+            "default": "",
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "matter_id",
+          "title"
+        ],
+        "title": "LegalTaskParams",
+        "type": "object"
+      },
+      "LegalWorkflowParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "matter_id"
+        ],
+        "title": "LegalWorkflowParams",
+        "type": "object"
+      },
+      "LegalWorkflowTemplate": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "LegalWorkflowTemplate",
+        "type": "object"
+      },
       "LegalWorkspaceEntry": {
         "additionalProperties": false,
         "properties": {
@@ -19776,6 +20015,11 @@
               }
             ],
             "title": "Domain"
+          },
+          "due_tasks": {
+            "default": 0,
+            "title": "Due Tasks",
+            "type": "integer"
           }
         },
         "required": [

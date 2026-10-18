@@ -138,7 +138,8 @@ CREATE TABLE IF NOT EXISTS legal_requests (
 
 
 def initialize_legal(conn):
-    conn.executescript(_LEGAL_SCHEMA)
+    from hermes_cli import legal_workflow
+    conn.executescript(_LEGAL_SCHEMA + legal_workflow.SCHEMA)
     columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_fees)")}
     if "responsible_user" not in columns:
         conn.execute("ALTER TABLE legal_fees ADD COLUMN responsible_user TEXT NOT NULL DEFAULT ''")
@@ -429,6 +430,9 @@ def legal_snapshot(conn, project_id):
     result = {"project_id": project_id, "domain": workspace["domain"] if workspace else None,
               "matter_types": json.loads(workspace["matter_types"]) if workspace else [],
               "domains": list(LEGAL_DOMAINS)}
+    from hermes_cli import legal_workflow
+    result["tasks"] = legal_workflow.rows(conn, project_id)
+    result["workflow_templates"] = legal_workflow.templates(legal_domain(result["domain"])) if workspace else []
     result["matter_profile_schema"] = _matter_profile_schema(result["domain"])
     # Retained as a wire alias for clients released before the matter-profile generalization.
     result["company_profile_schema"] = result["matter_profile_schema"]
@@ -612,6 +616,10 @@ def legal_mutate(conn, project_id, action, params):
 
 
 def _legal_apply(conn, pid, action, p):
+    if action in ("task.save", "workflow.apply"):
+        from hermes_cli.legal_workflow import apply
+        apply(conn, pid, action, p)
+        return
     if action == "library.import":
         from hermes_cli.legal_library import import_library
         import_library(conn, pid, p)
@@ -691,6 +699,9 @@ def _legal_apply(conn, pid, action, p):
             columns = ",".join(values)
             marks = ",".join("?" for _ in values)
             conn.execute(f"INSERT INTO {table} (id,project_id,{columns}) VALUES (?, ?,{marks})", (row_id, pid, *values.values()))
+            if action == "matter.save":
+                from hermes_cli.legal_workflow import apply
+                apply(conn, pid, "workflow.apply", {"matter_id": row_id})
         return
     if action == "fee.add":
         _legal_row(conn, "legal_matters", pid, p.get("matter_id"))

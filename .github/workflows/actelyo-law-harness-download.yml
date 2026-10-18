@@ -24,6 +24,9 @@ on:
       - agent/prompt_builder.py
       - hermes_cli/legal_practice.py
       - hermes_cli/legal_library.py
+      - hermes_cli/legal_workflow.py
+      - hermes_cli/local_runtime/inference_check.py
+      - apps/desktop/src/app/settings/local-models-inference*
       - scripts/actelyo_library_pack.py
       - apps/desktop/src/app/chat/sidebar/legal-practice/**
       - mcp-servers/actelyo-rag/**
@@ -72,9 +75,9 @@ jobs:
         run: npm ci
       - name: Test Actelyo workbench UI
         working-directory: apps/desktop
-        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
+        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
       - name: Test private library import and extraction
-        run: node scripts/build/python.mjs -m pytest tests/test_actelyo_library_pack.py tests/tools/test_legal_cabinet_tool.py tests/tui_gateway/test_legal_practice_rpc.py -q
+        run: node scripts/build/python.mjs -m pytest tests/test_actelyo_workflow.py tests/test_actelyo_inference.py tests/test_actelyo_library_pack.py tests/tools/test_legal_cabinet_tool.py tests/tui_gateway/test_legal_practice_rpc.py -q
       - name: Test window capture consent and limits
         working-directory: apps/desktop
         run: npx vitest run --project electron electron/procedure-capture.test.ts --maxWorkers=1

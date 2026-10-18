@@ -19,6 +19,7 @@ class LegalWorkspaceEntry(Result):
     id: str
     name: str
     domain: str | None
+    due_tasks: int = 0
 
 
 class LegalCatalog(Result):
@@ -226,6 +227,24 @@ class LegalCompanyProfileSection(Result):
     fields: list[LegalCompanyProfileField]
 
 
+class LegalTask(Result):
+    id: str
+    matter_id: str
+    title: str
+    status: str
+    due_on: str
+    remind_on: str
+    responsible_user: str
+    notes: str
+    template_key: str
+    alert: str
+
+
+class LegalWorkflowTemplate(Result):
+    id: str
+    title: str
+
+
 class LegalSnapshot(Result):
     project_id: str
     domain: str | None
@@ -234,6 +253,8 @@ class LegalSnapshot(Result):
     matter_profile_schema: list[LegalCompanyProfileSection]
     company_profile_schema: list[LegalCompanyProfileSection]
     clients: list[LegalClient]
+    tasks: list[LegalTask] = Field(default_factory=list)
+    workflow_templates: list[LegalWorkflowTemplate] = Field(default_factory=list)
     matters: list[LegalMatter]
     acts: list[LegalAct]
     fees: list[LegalFee]
@@ -414,3 +435,21 @@ method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot
 method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
 method("legal.payment.allocate", params=LegalAllocatePaymentParams, result=LegalSnapshot)
+
+
+class LegalWorkflowParams(LegalProjectParams):
+    matter_id: str
+
+
+class LegalTaskParams(LegalWorkflowParams):
+    id: str | None = None
+    title: str
+    task_status: Literal["pending", "done", "cancelled"] = "pending"
+    due_on: str = ""
+    remind_on: str = ""
+    responsible_user: str = ""
+    notes: str = ""
+
+
+method("legal.workflow.apply", params=LegalWorkflowParams, result=LegalSnapshot)
+method("legal.task.save", params=LegalTaskParams, result=LegalSnapshot)
