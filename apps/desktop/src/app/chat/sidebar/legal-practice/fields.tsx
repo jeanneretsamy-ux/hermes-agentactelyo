@@ -38,6 +38,7 @@ export function Choice({
   return (
     <Field label={label}>
       <select
+        aria-label={label}
         className="h-9 w-full rounded-md border border-(--ui-stroke-secondary) bg-(--ui-chat-bubble-background) px-2"
         onChange={e => onChange(e.target.value)}
         value={value}
