@@ -381,7 +381,7 @@ export const TurnActivityIndicator: FC = () => {
       className={cn(!active && 'sr-only')}
       data-slot="aui_turn-activity"
       data-state={active ? 'active' : 'idle'}
-      label={active ? hint || "Actelyo Law Harness is working" : ''}
+      label={active ? hint || 'Actelyo Law Harness is working' : ''}
     >
       {active && (
         <>
