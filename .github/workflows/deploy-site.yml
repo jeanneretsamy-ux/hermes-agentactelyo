@@ -46,8 +46,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Check optional Vercel configuration
+        id: vercel
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Vercel deployment skipped: VERCEL_DEPLOY_HOOK is not configured."
+            echo "### Vercel deployment skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "No VERCEL_DEPLOY_HOOK secret is configured for this repository. No deployment was requested." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Trigger Vercel Deploy
-        run: curl -fsS --retry 3 --retry-delay 10 -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+        if: steps.vercel.outputs.enabled == 'true'
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: curl -fsS --retry 3 --retry-delay 10 -X POST "$VERCEL_DEPLOY_HOOK"
 
   deploy-docs:
     if: github.repository == 'NousResearch/hermes-agent'

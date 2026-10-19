@@ -3,7 +3,9 @@ from types import SimpleNamespace
 
 from agent.prompt_builder import DEFAULT_AGENT_IDENTITY
 from agent.system_prompt import _identity_parts
-from hermes_cli.default_soul import DEFAULT_SOUL_MD, is_legacy_template_soul
+from hermes_cli.default_soul import (
+    DEFAULT_SOUL_MD, _PRE_DOCUMENT_DEFAULT_SOUL_MD, is_legacy_template_soul,
+)
 
 
 def test_default_and_seeded_persona_use_the_same_identity(tmp_path, monkeypatch):
@@ -31,3 +33,10 @@ def test_profile_identity_is_scoped_and_does_not_mutate_default(tmp_path, monkey
     assert _identity_parts(agent, 8192) == ([custom], True)
     agent._session_db.db_path = str(a / 'state.db')
     assert _identity_parts(agent, 8192) == (before, True)
+
+
+def test_previous_actelyo_seed_is_upgradeable_but_custom_text_is_preserved():
+    for previous in (_PRE_DOCUMENT_DEFAULT_SOUL_MD,
+                     _PRE_DOCUMENT_DEFAULT_SOUL_MD.replace("\u2014", "--")):
+        assert is_legacy_template_soul(previous)
+        assert not is_legacy_template_soul(previous + "\nMy personal instructions.")
