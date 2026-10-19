@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -43,24 +44,26 @@ const sessionRows = [
 
 const renderSidebar = (pathname: string, currentView: AppView, onRetrySessions: () => Promise<void> = noopAsync) =>
   render(
-    <MemoryRouter initialEntries={[pathname]}>
-      <SidebarProvider>
-        <ChatSidebar
-          currentView={currentView}
-          onArchiveSession={noop}
-          onBranchSession={noop}
-          onDeleteSession={noop}
-          onLoadMoreSessions={noop}
-          onManageCronJob={noop}
-          onNavigate={noop}
-          onNewSessionInWorkspace={noop}
-          onNewSessionSplit={noop}
-          onResumeSession={noop}
-          onRetrySessions={onRetrySessions}
-          onTriggerCronJob={noopAsync}
-        />
-      </SidebarProvider>
-    </MemoryRouter>
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <MemoryRouter initialEntries={[pathname]}>
+        <SidebarProvider>
+          <ChatSidebar
+            currentView={currentView}
+            onArchiveSession={noop}
+            onBranchSession={noop}
+            onDeleteSession={noop}
+            onLoadMoreSessions={noop}
+            onManageCronJob={noop}
+            onNavigate={noop}
+            onNewSessionInWorkspace={noop}
+            onNewSessionSplit={noop}
+            onResumeSession={noop}
+            onRetrySessions={onRetrySessions}
+            onTriggerCronJob={noopAsync}
+          />
+        </SidebarProvider>
+      </MemoryRouter>
+    </QueryClientProvider>
   )
 
 const currentButtons = () =>
