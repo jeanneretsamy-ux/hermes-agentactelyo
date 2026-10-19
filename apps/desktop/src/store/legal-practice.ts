@@ -11,7 +11,10 @@ export interface LegalPracticeOwner {
   profile: string
   projectId: string
   name: string
+  section?: LegalPracticeSection
 }
+
+export type LegalPracticeSection = 'workspace' | 'matters' | 'acts' | 'billing' | 'tasks'
 
 export const $legalPractice = atom<LegalPracticeOwner | null>(null)
 const gatewayIds = new WeakMap<HermesGateway, number>()
@@ -28,7 +31,7 @@ export function legalQueryKey(owner: LegalPracticeOwner): (string | number)[] {
   return ['legal-practice', id, owner.profile, owner.projectId]
 }
 
-export function openLegalPractice(project: { id: string; name: string }): void {
+export function openLegalPractice(project: { id: string; name: string }, section: LegalPracticeSection = 'workspace'): void {
   const gateway = activeGateway()
   const profile = projectProfile()
 
@@ -36,7 +39,7 @@ export function openLegalPractice(project: { id: string; name: string }): void {
     return
   }
 
-  $legalPractice.set({ gateway, profile, projectId: project.id, name: project.name })
+  $legalPractice.set({ gateway, profile, projectId: project.id, name: project.name, section })
 }
 
 export function isLegalOwnerCurrent(owner: LegalPracticeOwner): boolean {
@@ -48,7 +51,7 @@ export function isLegalOwnerCurrent(owner: LegalPracticeOwner): boolean {
 }
 
 export type LegalMethod = Extract<keyof RpcMethods, `legal.${string}`>
-export type LegalWrite = Exclude<LegalMethod, 'legal.snapshot'>
+export type LegalWrite = Exclude<LegalMethod, 'legal.snapshot' | 'legal.catalog'>
 
 export function legalRequest<M extends LegalMethod>(
   owner: LegalPracticeOwner,

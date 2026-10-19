@@ -1834,6 +1834,22 @@ export interface ClientCapabilitiesResult {
   server_requests: string[]
   declines_not_shown?: boolean
 }
+export interface LegalCatalog {
+  domains: LegalDomain[]
+  workspaces: LegalWorkspaceEntry[]
+}
+export interface LegalDomain {
+  id: string
+  label: string
+  matter_types: string[]
+  act_types: string[]
+}
+export interface LegalWorkspaceEntry {
+  id: string
+  name: string
+  domain: string | null
+  due_tasks?: number
+}
 export interface LegalProjectParams {
   profile?: string | null
   project_id: string
@@ -1846,6 +1862,8 @@ export interface LegalSnapshot {
   matter_profile_schema: LegalCompanyProfileSection[]
   company_profile_schema: LegalCompanyProfileSection[]
   clients: LegalClient[]
+  tasks?: LegalTask[]
+  workflow_templates?: LegalWorkflowTemplate[]
   matters: LegalMatter[]
   acts: LegalAct[]
   fees: LegalFee[]
@@ -1857,12 +1875,6 @@ export interface LegalSnapshot {
   payments: LegalPayment[]
   firm_settings: LegalFirmSettings
   firm_totals: LegalFirmTotals
-}
-export interface LegalDomain {
-  id: string
-  label: string
-  matter_types: string[]
-  act_types: string[]
 }
 export interface LegalCompanyProfileSection {
   id: string
@@ -1880,6 +1892,22 @@ export interface LegalClient {
   customer_type?: 'individual' | 'professional'
   siren?: string
   id: string
+}
+export interface LegalTask {
+  id: string
+  matter_id: string
+  title: string
+  status: string
+  due_on: string
+  remind_on: string
+  responsible_user: string
+  notes: string
+  template_key: string
+  alert: string
+}
+export interface LegalWorkflowTemplate {
+  id: string
+  title: string
 }
 export interface LegalMatter {
   title: string
@@ -2104,6 +2132,17 @@ export interface LegalActParams {
   act_type: string
   body: string
 }
+export interface LegalLibraryImportParams {
+  profile?: string | null
+  project_id: string
+  domain: string
+  entries: LegalLibraryEntry[]
+}
+export interface LegalLibraryEntry {
+  title: string
+  act_type: string
+  body: string
+}
 export interface LegalFeeParams {
   profile?: string | null
   project_id: string
@@ -2202,6 +2241,23 @@ export interface LegalAllocatePaymentParams {
 export interface LegalPaymentAllocation {
   document_id: string
   amount_cents: number
+}
+export interface LegalWorkflowParams {
+  profile?: string | null
+  project_id: string
+  matter_id: string
+}
+export interface LegalTaskParams {
+  profile?: string | null
+  project_id: string
+  matter_id: string
+  id?: string | null
+  title: string
+  task_status?: 'pending' | 'done' | 'cancelled'
+  due_on?: string
+  remind_on?: string
+  responsible_user?: string
+  notes?: string
 }
 /** ``word`` is the token under the cursor (``@`` prefix = context reference); ``cwd`` / ``session_id`` pick the directory the listing resolves against. */
 export interface CompletePathParams {
@@ -5432,12 +5488,14 @@ export interface RpcMethods {
   /** Pre-render the /journey timeline (frames + legend/summary) so the TUI walks it locally. */
   'learning.frames': { params: LearningFramesParams; result: LearningFramesResult }
   'legal.act.save': { params: LegalActParams; result: LegalSnapshot }
+  'legal.catalog': { params: ProfileParams; result: LegalCatalog }
   'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
   'legal.document.credit': { params: LegalCreditParams; result: LegalSnapshot }
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
   'legal.fee_code.save': { params: LegalFeeCodeParams; result: LegalSnapshot }
   'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
+  'legal.library.import': { params: LegalLibraryImportParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
   'legal.payment.add': { params: LegalPaymentParams; result: LegalSnapshot }
   'legal.payment.allocate': { params: LegalAllocatePaymentParams; result: LegalSnapshot }
@@ -5445,6 +5503,8 @@ export interface RpcMethods {
   'legal.snapshot': { params: LegalProjectParams; result: LegalSnapshot }
   'legal.subscription.invoice': { params: LegalSubscriptionInvoiceParams; result: LegalSnapshot }
   'legal.subscription.save': { params: LegalSubscriptionParams; result: LegalSnapshot }
+  'legal.task.save': { params: LegalTaskParams; result: LegalSnapshot }
+  'legal.workflow.apply': { params: LegalWorkflowParams; result: LegalSnapshot }
   'legal.workspace.set': { params: LegalWorkspaceParams; result: LegalSnapshot }
   /** Stateless one-shot LLM completion (titles, ideas) on the session's or the task backend. */
   'llm.oneshot': { params: LlmOneshotParams; result: LlmOneshotResult }
@@ -5860,12 +5920,14 @@ export const RPC_METHODS = [
   'learning.edit',
   'learning.frames',
   'legal.act.save',
+  'legal.catalog',
   'legal.client.save',
   'legal.document.create',
   'legal.document.credit',
   'legal.fee.add',
   'legal.fee_code.save',
   'legal.firm.settings.set',
+  'legal.library.import',
   'legal.matter.save',
   'legal.payment.add',
   'legal.payment.allocate',
@@ -5873,6 +5935,8 @@ export const RPC_METHODS = [
   'legal.snapshot',
   'legal.subscription.invoice',
   'legal.subscription.save',
+  'legal.task.save',
+  'legal.workflow.apply',
   'legal.workspace.set',
   'llm.oneshot',
   'mcp.catalog',

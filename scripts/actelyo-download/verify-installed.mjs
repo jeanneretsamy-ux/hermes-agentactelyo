@@ -43,6 +43,88 @@ try {
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
+    const cabinet = page.getByRole('navigation', { name: 'Domaines du cabinet juridique' })
+    await cabinet.getByText('Droit des Sociétés', { exact: true }).click()
+    await cabinet.getByRole('button', { name: '+ Créer un espace Droit des Sociétés', exact: true }).click()
+    await page.getByRole('heading', { name: 'Cabinet juridique — Droit des Sociétés', exact: true }).waitFor({ timeout: 30000 })
+    await page.getByRole('heading', { name: 'Nouveau dossier', exact: true }).waitFor()
+    await page.getByRole('button', { name: 'Bibliothèque d’actes', exact: true }).click()
+    await page.getByLabel('Fichier de bibliothèque privée').setInputFiles({
+      name: 'bibliotheque-qa.json', mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ format: 'actelyo-private-library-v1', entries: [{
+        title: 'Modèle QA privé', act_type: 'Statuts', domain: 'societes', body: 'ARTICLE 1 — [*Société]',
+        sources: [{ archive: 'qa.zip', member: 'fixture.docx', sha256: '0'.repeat(64) }]
+      }] }))
+    })
+    await page.getByRole('button', { name: 'Importer les actes sélectionnés', exact: true }).click()
+    await page.getByText('Import enregistré.', { exact: false }).waitFor({ timeout: 30000 })
+    await page.getByText('Modèle QA privé — Statuts', { exact: true }).waitFor()
+    await page.getByRole('button', { name: 'Clients et dossiers', exact: true }).click()
+    await page.getByLabel('Nom du client', { exact: true }).fill('Client QA synthétique')
+    await page.getByRole('button', { name: 'Ajouter le client', exact: true }).click()
+    await page.getByLabel('Client du dossier', { exact: true }).selectOption({ label: 'Client QA synthétique' })
+    await page.getByLabel('Intitulé du dossier', { exact: true }).fill('Dossier QA échéances')
+    await page.getByLabel('Type de dossier', { exact: true }).selectOption({ index: 1 })
+    await page.getByRole('button', { name: 'Créer le dossier', exact: true }).click()
+    await page.getByRole('button', { name: 'Processus et échéances', exact: true }).click()
+    await page.getByLabel('Dossier du processus', { exact: true }).selectOption({ label: 'Dossier QA échéances' })
+    await page.getByRole('button', { name: 'Ajouter les étapes du domaine', exact: true }).click()
+    await page.getByText('Vérifier les parties, pièces et informations du dossier', { exact: true }).waitFor()
+    await page.getByLabel('Étape', { exact: true }).fill('Échéance QA synthétique')
+    await page.getByLabel('Échéance', { exact: true }).fill('2020-01-02')
+    await page.getByLabel('Rappel à partir du', { exact: true }).fill('2020-01-01')
+    await page.getByRole('button', { name: 'Enregistrer l’étape', exact: true }).click()
+    await page.getByText('Échéance dépassée', { exact: true }).waitFor()
+    await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
+    await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
+  await page.getByTestId('actelyo-studio').waitFor({ timeout: 30000 })
+  await page.screenshot({ path: path.join(proof, 'installed-studio.png') })
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'REA — créer des fonctionnalités', exact: true }).click()
+  await page.getByRole('heading', { name: 'REA — créer des fonctionnalités', exact: true }).waitFor()
+  await page.screenshot({ path: path.join(proof, 'installed-rea.png') })
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'Apprendre une procédure', exact: true }).click()
+  await page.getByRole('heading', { name: 'Apprendre une procédure', exact: true }).waitFor()
+  assert(await page.getByRole('button', { name: 'Démarrer', exact: true }).isDisabled())
+  await page.screenshot({ path: path.join(proof, 'installed-procedure.png') })
+  await page.keyboard.press('Escape')
+  // Real Windows capture of a synthetic, non-sensitive window. Only the consent
+  // answer is automated in this runner; unit tests cover denial and revocation.
+  await app.evaluate(async ({ BrowserWindow, dialog }) => {
+    const fixture = new BrowserWindow({ width: 640, height: 480, title: 'Actelyo QA procedure', show: true })
+    await fixture.loadURL('data:text/html,<title>Actelyo QA procedure</title><h1>Demonstration QA</h1><p>Etape 1 : ouvrir un dossier fictif.</p>')
+    globalThis.__actelyoCaptureQA = { fixture, original: dialog.showMessageBox }
+    dialog.showMessageBox = async (...args) => {
+      const options = args.at(-1)
+      if (options?.title === 'Apprendre une procédure') return { response: 1, checkboxChecked: false }
+      return globalThis.__actelyoCaptureQA.original.apply(dialog, args)
+    }
+  })
+  try {
+    const capture = await page.evaluate(async () => {
+      const api = window.hermesDesktop.procedureCapture
+      const sources = await api.sources()
+      const source = sources.find(item => item.name.includes('Actelyo QA procedure'))
+      if (!source) throw new Error('Synthetic capture window missing')
+      const grant = await api.start(source.id)
+      if (!grant) throw new Error('Synthetic capture consent failed')
+      try {
+        const frame = await api.capture(grant.token)
+        return Array.from(frame.png)
+      } finally { await api.stop(grant.token) }
+    })
+    assert.deepEqual(capture.slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10])
+    assert(capture.length > 100, 'Captured image is empty')
+    fs.writeFileSync(path.join(proof, 'procedure-native-capture.png'), Buffer.from(capture))
+  } finally {
+    await app.evaluate(({ dialog }) => {
+      dialog.showMessageBox = globalThis.__actelyoCaptureQA.original
+      globalThis.__actelyoCaptureQA.fixture.destroy()
+      delete globalThis.__actelyoCaptureQA
+    })
+  }
   await page.getByText(/^(Capabilities|Capacités)$/).first().click()
   const catalog = page.getByRole('region', { name: 'Actelyo · Skills Hub' })
   await catalog.waitFor({ timeout: 90000 })
@@ -52,7 +134,10 @@ try {
   await page.screenshot({ path: path.join(proof, 'installed-skills.png') })
   fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
-    localPayloadPresent: true, nativeCatalogVerified: true, logos,
+    localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
+      nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true, legalCabinetNavigationVerified: true,
+      privateLibraryImportVerified: true, workflowAndDeadlineVerified: true,
+    modelInferenceVerified: false, reaAnalysisVerified: false, skillReplayVerified: false,
     modelIncluded: false, codeSigned: false
   }, null, 2))
 } catch (error) {

@@ -1499,7 +1499,7 @@ export interface LocalCatalogModel {
 
 export interface LocalRuntimeJob {
   job_id: string
-  kind: 'model-activate' | 'model-download' | 'quickstart' | 'runtime-install'
+  kind: 'model-inference-test' | 'model-activate' | 'model-download' | 'quickstart' | 'runtime-install'
   target: string
   model_id: string | null
   status: 'done' | 'error' | 'paused' | 'running'

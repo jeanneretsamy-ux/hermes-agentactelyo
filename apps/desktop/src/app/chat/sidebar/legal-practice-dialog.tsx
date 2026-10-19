@@ -5,6 +5,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { appendComposerDraft } from '@/store/composer'
 import { $gateway } from '@/store/gateway'
 import {
   $legalPractice,
@@ -18,7 +19,9 @@ import { $activeGatewayProfile } from '@/store/profile'
 
 import { LegalActsSection } from './legal-practice/acts'
 import { LegalBillingSection } from './legal-practice/billing'
+import { legalDraftRequest } from './legal-practice/drafting'
 import { LegalMattersSection } from './legal-practice/matters'
+import { LegalTasksSection } from './legal-practice/tasks'
 import { LegalWorkspaceSection } from './legal-practice/workspace'
 
 export function LegalPracticeDialog() {
@@ -47,7 +50,10 @@ export function LegalPracticeDialog() {
             <DialogTitle>Cabinet juridique — {owner.name}</DialogTitle>
             <DialogDescription>Espaces, dossiers, bibliothèque d’actes et facturation du projet.</DialogDescription>
           </DialogHeader>
-          <LegalPracticeContent key={`${owner.profile}:${owner.projectId}`} owner={owner} />
+          <LegalPracticeContent
+            key={`${owner.profile}:${owner.projectId}:${owner.section ?? 'workspace'}`}
+            owner={owner}
+          />
         </DialogContent>
       )}
     </Dialog>
@@ -58,8 +64,15 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
   const client = useQueryClient()
   // Object identity pins the connection; profile and project pin the business data.
   const queryKey = legalQueryKey(owner)
-  const state = useQuery({ queryKey, queryFn: () => legalRequest(owner, 'legal.snapshot', {}), retry: false })
-  const [tab, setTab] = useState('workspace')
+
+  const state = useQuery({
+    queryKey,
+    queryFn: () => legalRequest(owner, 'legal.snapshot', {}),
+    retry: false,
+    refetchInterval: 30_000
+  })
+
+  const [tab, setTab] = useState<string>(owner.section ?? 'workspace')
   const [localError, setLocalError] = useState('')
   const pendingIds = useRef(new Map<string, string>())
 
@@ -73,6 +86,7 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
     onSuccess: snapshot => {
       if (isLegalOwnerCurrent(owner)) {
         client.setQueryData(queryKey, snapshot)
+        void client.invalidateQueries({ queryKey: [...legalQueryKey({ ...owner, projectId: '' }), 'catalog'] })
       }
     },
     retry: false
@@ -142,6 +156,7 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
           ['workspace', 'Espace juridique'],
           ['matters', 'Clients et dossiers'],
           ['acts', 'Bibliothèque d’actes'],
+          ['tasks', 'Processus et échéances'],
           ['billing', 'Facturation']
         ].map(([id, label]) => (
           <Button
@@ -168,7 +183,22 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
           <LegalMattersSection data={data} submit={submit} write={write} />
         </section>
         <section hidden={tab !== 'acts'}>
-          <LegalActsSection data={data} submit={submit} write={write} />
+          <LegalActsSection
+            data={data}
+            prepareDraft={(matterId, documentType) => {
+              if (!isLegalOwnerCurrent(owner)) {
+                return
+              }
+
+              appendComposerDraft(legalDraftRequest(data, matterId, documentType))
+              $legalPractice.set(null)
+            }}
+            submit={submit}
+            write={write}
+          />
+        </section>
+        <section hidden={tab !== 'tasks'}>
+          <LegalTasksSection data={data} submit={submit} write={write} />
         </section>
         <section hidden={tab !== 'billing'}>
           <LegalBillingSection data={data} submit={submit} write={write} />

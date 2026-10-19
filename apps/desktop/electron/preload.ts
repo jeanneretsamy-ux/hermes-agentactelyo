@@ -26,6 +26,12 @@ const localSkin = ipcRenderer.sendSync('hermes:skin:local')
 import { unwrapExpectedNotFound } from './api-expected-404'
 
 contextBridge.exposeInMainWorld('hermesDesktop', {
+  procedureCapture: {
+    sources: () => ipcRenderer.invoke('actelyo:procedure:sources'),
+    start: sourceId => ipcRenderer.invoke('actelyo:procedure:start', sourceId),
+    capture: token => ipcRenderer.invoke('actelyo:procedure:capture', token),
+    stop: token => ipcRenderer.invoke('actelyo:procedure:stop', token)
+  },
   glassSupported: translucencySupport?.glass === true,
   translucencySupported: translucencySupport?.translucency === true,
   // Launch-flag fact: the app was started with --local, so the renderer may

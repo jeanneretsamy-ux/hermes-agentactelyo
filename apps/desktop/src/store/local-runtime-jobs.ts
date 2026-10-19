@@ -361,26 +361,30 @@ function notifySettled(owner: LocalModelsOwner, job: LocalRuntimeJob): void {
       kind: 'success',
       title: localModelsNotificationTitle(owner),
       message:
-        job.kind === 'model-download'
-          ? translateNow('settings.localModels.downloadDoneToast', job.target)
-          : job.kind === 'model-activate'
-            ? translateNow('settings.localModels.activateDoneToast', job.target)
-            : job.kind === 'quickstart'
-              ? translateNow('settings.localModels.quickstartDoneToast', job.target)
-              : translateNow('settings.localModels.installDoneToast')
+        job.kind === 'model-inference-test'
+          ? job.detail
+          : job.kind === 'model-download'
+            ? translateNow('settings.localModels.downloadDoneToast', job.target)
+            : job.kind === 'model-activate'
+              ? translateNow('settings.localModels.activateDoneToast', job.target)
+              : job.kind === 'quickstart'
+                ? translateNow('settings.localModels.quickstartDoneToast', job.target)
+                : translateNow('settings.localModels.installDoneToast')
     })
   } else {
     notifyError(
       new Error(job.error ?? job.detail ?? 'failed'),
       localModelsNotificationTitle(owner) +
         ': ' +
-        (job.kind === 'model-download'
-          ? translateNow('settings.localModels.downloadFailed', job.target)
-          : job.kind === 'model-activate'
-            ? translateNow('settings.localModels.activateFailed', job.target)
-            : job.kind === 'quickstart'
-              ? translateNow('settings.localModels.quickstartFailed')
-              : translateNow('settings.localModels.installFailed'))
+        (job.kind === 'model-inference-test'
+          ? 'Diagnostic d’inférence'
+          : job.kind === 'model-download'
+            ? translateNow('settings.localModels.downloadFailed', job.target)
+            : job.kind === 'model-activate'
+              ? translateNow('settings.localModels.activateFailed', job.target)
+              : job.kind === 'quickstart'
+                ? translateNow('settings.localModels.quickstartFailed')
+                : translateNow('settings.localModels.installFailed'))
     )
   }
 }

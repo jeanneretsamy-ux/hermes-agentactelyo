@@ -150,10 +150,12 @@ import {
 import type { SidebarNavItem } from '../../types'
 import { type NewSessionSplitHandler, startNewSessionDrag } from '../new-session-drag'
 
+import { ActelyoWorkbench } from './actelyo-workbench'
 import { SidebarSectionAddButton } from './chrome'
 import { SidebarCronJobsSection } from './cron-jobs-section'
 import { SidebarFilterMenu } from './filter-menu'
 import { buildGatewaySessionGroups, scopeGatewaySessionGroups, useGatewaySessionGroups } from './gateway-group-model'
+import { LegalCabinetNavigation } from './legal-cabinet-navigation'
 import { LegalPracticeDialog } from './legal-practice-dialog'
 import { SidebarLoadMoreRow } from './load-more-row'
 import { orderByIds, reconcileOrderIds, resolveManualSessionOrderIds, sameIds } from './order'
@@ -1727,6 +1729,8 @@ export function ChatSidebar({
                   </SidebarMenuItem>
                 )
               })}
+              <LegalCabinetNavigation />
+              <ActelyoWorkbench />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

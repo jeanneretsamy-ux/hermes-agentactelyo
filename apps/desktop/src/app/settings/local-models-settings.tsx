@@ -21,6 +21,7 @@ import { PanelEmpty } from '../overlays/panel'
 import { isActiveStatus } from './local-models-actions'
 import { LocalModelsBrowseSection } from './local-models-browse'
 import { LocalModelsHardwareSection } from './local-models-hardware-section'
+import { LocalModelsInference } from './local-models-inference'
 import { LocalModelsModelsSection } from './local-models-models-section'
 import { LocalModelsOwnerProvider, useScopedLocalModelsOwner } from './local-models-owner'
 import { LocalModelsQuickstart } from './local-models-quickstart'
@@ -33,6 +34,13 @@ export function LocalModelsSettings(): ReactElement {
 
   return (
     <LocalModelsOwnerProvider key={JSON.stringify(localModelsKey(owner))} value={owner}>
+      <header className="mb-4" data-testid="actelyo-studio">
+        <h2 className="text-lg font-semibold">Actelyo Studio</h2>
+        <p className="text-muted-foreground">
+          Modèles locaux GGUF, mémoire et serveur d’inférence. L’agent dispose de l’outil actelyo_studio pour consulter
+          et gérer ce moteur sur la machine connectée. Un modèle activé s’applique aux nouvelles conversations.
+        </p>
+      </header>
       <ScopedLocalModelsSettings />
     </LocalModelsOwnerProvider>
   )
@@ -150,6 +158,7 @@ function ScopedLocalModelsSettings(): ReactElement {
     <SettingsContent>
       <ActiveProfileNote className="mb-5" />
       <LocalModelsRuntimeSection jobs={jobs} lastError={lastError} status={status} />
+      <LocalModelsInference jobs={jobs} modelId={status.active_model_id} />
       <LocalModelsHardwareSection hardware={hardware} />
       <LocalModelsModelsSection catalog={catalog} jobs={jobs} lastError={lastError} status={status} />
       <LocalModelsBrowseSection />

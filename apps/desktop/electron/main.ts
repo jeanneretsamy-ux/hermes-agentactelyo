@@ -464,6 +464,7 @@ import {
 } from './primary-backend-startup'
 import { rehomePrimaryConnection } from './primary-connection-rehome'
 import { PrimaryProfilePin, resolveLaunchProfile } from './primary-profile-pin'
+import { installProcedureCapture } from './procedure-capture'
 import { applyDesktopIdentity, PRODUCT_IDENTITY } from './product-identity'
 import {
   assertLocalProfileCanStart,
@@ -19478,6 +19479,7 @@ app.whenReady().then(() => {
   // here and surfaced in Settings via the IPC state (never silent).
   applyQuickEntrySettings(readQuickEntrySettings())
   installCommandScreenshot({ rendererUrl: DEV_SERVER || pathToFileURL(resolveRendererIndex()).toString() })
+  installProcedureCapture({ rendererUrl: DEV_SERVER || pathToFileURL(resolveRendererIndex()).toString() })
   installHudModifierTap({
     rendererUrl: DEV_SERVER || pathToFileURL(resolveRendererIndex()).toString(),
     summon: () => {

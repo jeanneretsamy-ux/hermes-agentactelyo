@@ -42,6 +42,7 @@ import { $threadScrolledUpBySession } from '@/store/thread-scroll'
 import { $autoSpeakReplies } from '@/store/voice-prefs'
 import { useTheme } from '@/themes'
 
+import { attachImageBatch } from './attach-image-batch'
 import { AttachmentList } from './attachments'
 import {
   acceptsTriggerCompletion,
@@ -333,18 +334,24 @@ export function ChatBar({
       return undefined
     }
 
-    return onComposerAttachImagesRequest(({ blobs, target }) => {
-      if (target !== scope.target) {
+    let alive = true
+
+    const off = onComposerAttachImagesRequest(({ blobs, target, surfaceId: destination, isCurrent, onComplete }) => {
+      if (target !== scope.target || (destination && destination !== surfaceId)) {
         return
       }
 
       triggerHaptic('selection')
 
-      for (const blob of blobs) {
-        void onAttachImageBlob(blob)
-      }
+      const current = () => alive && (!isCurrent || isCurrent())
+      void attachImageBatch(blobs, onAttachImageBlob, current).then(ok => onComplete?.(ok))
     })
-  }, [onAttachImageBlob, scope.target])
+
+    return () => {
+      alive = false
+      off()
+    }
+  }, [onAttachImageBlob, scope.target, surfaceId])
 
   // Prior history belongs to the draft that just left — undoing into another
   // conversation's text is worse than having none.

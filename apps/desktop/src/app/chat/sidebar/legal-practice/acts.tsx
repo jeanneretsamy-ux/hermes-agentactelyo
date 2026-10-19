@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { downloadLegalText } from '@/store/legal-practice'
 
-import { Field, type LegalSectionProps, TextField } from './fields'
+import { Choice, Field, type LegalSectionProps, TextField } from './fields'
+import { LegalLibraryImport } from './library-import-panel'
 
-export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
+export function LegalActsSection({ data, write, submit, prepareDraft }: LegalSectionProps) {
+  const [matterId, setMatterId] = useState('')
   const [actId, setActId] = useState<string | undefined>()
   const [actTitle, setActTitle] = useState('')
   const [actType, setActType] = useState('')
@@ -51,6 +53,28 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
 
   return (
     <>
+      <LegalLibraryImport data={data} write={write} />
+      <section className="space-y-3 rounded border p-3">
+        <h3 className="font-semibold">Rédiger à partir d’un dossier</h3>
+        <Choice
+          items={data.matters.map(item => ({ id: item.id, label: item.title }))}
+          label="Dossier à utiliser"
+          onChange={setMatterId}
+          value={matterId}
+        />
+        <TextField label="Document à rédiger intégralement" onChange={setActTitle} value={actTitle} />
+        <Button
+          disabled={!matterId || !actTitle.trim() || !prepareDraft}
+          onClick={() => prepareDraft?.(matterId, actTitle)}
+          type="button"
+        >
+          Préparer la demande de rédaction
+        </Button>
+        <p>
+          Les données du dossier sont reprises dans la demande. Joignez votre ZIP ou votre exemple dans le chat avant de
+          l’envoyer.
+        </p>
+      </section>
       <p>
         Ajoutez vos modèles, modifiez leur texte et téléchargez-les. Les catégories suggérées sont des intitulés ; elles
         ne contiennent pas d’actes prévalidés.
@@ -102,7 +126,9 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
               setDraggingExample(false)
               const file = event.dataTransfer.files[0]
 
-              if (file) {void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)}
+              if (file) {
+                void insertExample(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)
+              }
             }}
             ref={bodyRef}
             rows={10}
@@ -116,7 +142,10 @@ export function LegalActsSection({ data, write, submit }: LegalSectionProps) {
             onChange={event => {
               const file = event.currentTarget.files?.[0]
 
-              if (file) {void insertExample(file)}
+              if (file) {
+                void insertExample(file)
+              }
+
               event.currentTarget.value = ''
             }}
             ref={fileRef}

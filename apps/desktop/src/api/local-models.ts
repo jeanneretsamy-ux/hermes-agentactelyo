@@ -206,3 +206,12 @@ export function sideloadLocalModel(
     path: '/api/local-models/sideload'
   })
 }
+
+export function testLocalModelInference(modelId: string, scope?: LocalModelsScope): Promise<{ job_id: string }> {
+  return hermesApi<{ job_id: string }>({
+    ...(scope ?? profileScoped()),
+    body: { model_id: modelId },
+    method: 'POST',
+    path: '/api/local-models/test-inference'
+  })
+}

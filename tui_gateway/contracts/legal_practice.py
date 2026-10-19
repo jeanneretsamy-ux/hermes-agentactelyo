@@ -15,6 +15,18 @@ class LegalDomain(Result):
     act_types: list[str]
 
 
+class LegalWorkspaceEntry(Result):
+    id: str
+    name: str
+    domain: str | None
+    due_tasks: int = 0
+
+
+class LegalCatalog(Result):
+    domains: list[LegalDomain]
+    workspaces: list[LegalWorkspaceEntry]
+
+
 class LegalClientSnapshot(Result):
     name: str
     email: str
@@ -215,6 +227,24 @@ class LegalCompanyProfileSection(Result):
     fields: list[LegalCompanyProfileField]
 
 
+class LegalTask(Result):
+    id: str
+    matter_id: str
+    title: str
+    status: str
+    due_on: str
+    remind_on: str
+    responsible_user: str
+    notes: str
+    template_key: str
+    alert: str
+
+
+class LegalWorkflowTemplate(Result):
+    id: str
+    title: str
+
+
 class LegalSnapshot(Result):
     project_id: str
     domain: str | None
@@ -223,6 +253,8 @@ class LegalSnapshot(Result):
     matter_profile_schema: list[LegalCompanyProfileSection]
     company_profile_schema: list[LegalCompanyProfileSection]
     clients: list[LegalClient]
+    tasks: list[LegalTask] = Field(default_factory=list)
+    workflow_templates: list[LegalWorkflowTemplate] = Field(default_factory=list)
     matters: list[LegalMatter]
     acts: list[LegalAct]
     fees: list[LegalFee]
@@ -270,6 +302,17 @@ class LegalActParams(LegalProjectParams):
     title: str
     act_type: str
     body: str
+
+
+class LegalLibraryEntry(Result):
+    title: str = Field(min_length=1, max_length=500)
+    act_type: str = Field(min_length=1, max_length=100)
+    body: str = Field(min_length=1, max_length=200_000)
+
+
+class LegalLibraryImportParams(LegalProjectParams):
+    domain: str
+    entries: list[LegalLibraryEntry] = Field(min_length=1, max_length=500)
 
 
 class LegalFeeParams(LegalProjectParams):
@@ -375,12 +418,14 @@ class LegalAllocatePaymentParams(LegalProjectParams):
     allocations: list[LegalPaymentAllocation] = Field(min_length=1, max_length=100)
 
 
+method("legal.catalog", params=ProfileParams, result=LegalCatalog)
 method("legal.snapshot", params=LegalProjectParams, result=LegalSnapshot)
 method("legal.workspace.set", params=LegalWorkspaceParams, result=LegalSnapshot)
 method("legal.firm.settings.set", params=LegalFirmSettingsParams, result=LegalSnapshot)
 method("legal.client.save", params=LegalClientParams, result=LegalSnapshot)
 method("legal.matter.save", params=LegalMatterParams, result=LegalSnapshot)
 method("legal.act.save", params=LegalActParams, result=LegalSnapshot)
+method("legal.library.import", params=LegalLibraryImportParams, result=LegalSnapshot)
 method("legal.fee.add", params=LegalFeeParams, result=LegalSnapshot)
 method("legal.fee_code.save", params=LegalFeeCodeParams, result=LegalSnapshot)
 method("legal.subscription.save", params=LegalSubscriptionParams, result=LegalSnapshot)
@@ -390,3 +435,21 @@ method("legal.document.create", params=LegalDocumentParams, result=LegalSnapshot
 method("legal.document.credit", params=LegalCreditParams, result=LegalSnapshot)
 method("legal.payment.add", params=LegalPaymentParams, result=LegalSnapshot)
 method("legal.payment.allocate", params=LegalAllocatePaymentParams, result=LegalSnapshot)
+
+
+class LegalWorkflowParams(LegalProjectParams):
+    matter_id: str
+
+
+class LegalTaskParams(LegalWorkflowParams):
+    id: str | None = None
+    title: str
+    task_status: Literal["pending", "done", "cancelled"] = "pending"
+    due_on: str = ""
+    remind_on: str = ""
+    responsible_user: str = ""
+    notes: str = ""
+
+
+method("legal.workflow.apply", params=LegalWorkflowParams, result=LegalSnapshot)
+method("legal.task.save", params=LegalTaskParams, result=LegalSnapshot)

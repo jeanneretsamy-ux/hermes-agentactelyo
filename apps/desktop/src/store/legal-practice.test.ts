@@ -5,6 +5,7 @@ import { legalDocumentText, legalMoney } from './legal-practice'
 
 const document: LegalDocument = {
   id: 'doc-1',
+  rendered_document: '',
   matter_id: 'matter-1',
   kind: 'quote',
   reference: 'DEV-BROUILLON-2026-00001',
