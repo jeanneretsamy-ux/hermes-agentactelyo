@@ -1,0 +1,73 @@
+name: Publish verified Actelyo Desktop
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: actelyo-promote-58b7c20f
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      SOURCE_SHA: 58b7c20f270873106efe588a525ab824d6491dd0
+      RUN_ID: '39181967813'
+      TAG: actelyo-desktop-2026.10.19
+    steps:
+      - name: Require the validated source run
+        shell: pwsh
+        run: |
+          $run = gh api "repos/$env:GH_REPO/actions/runs/$env:RUN_ID" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $run.conclusion -ne 'success' -or $run.head_sha -ne $env:SOURCE_SHA) { throw 'Source run is not validated' }
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: '39181967813'
+          name: actelyo-law-harness-windows-verification
+          path: verified
+      - name: Verify installer and publish downloadable files
+        shell: pwsh
+        run: |
+          $manifest = Get-Content verified/build-manifest.json -Raw | ConvertFrom-Json
+          $exe = Get-Item verified/Actelyo-Law-Harness-Setup-x64.exe
+          $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($manifest.source_commit -ne $env:SOURCE_SHA -or $manifest.sha256.ToLowerInvariant() -ne $hash -or -not $manifest.verified_installed) { throw 'Installer manifest mismatch' }
+          New-Item -ItemType Directory -Path publish -Force | Out-Null
+          Copy-Item verified/build-manifest.json publish/build-manifest.json
+          Copy-Item verified/SHA256SUMS.txt publish/INSTALLER-SHA256SUMS.txt
+          # Volume sizes stay below GitHub's per-asset limit, without changing the verified installer.
+          $archive = Join-Path (Resolve-Path publish) 'Actelyo-Law-Harness-Windows.zip'
+          Push-Location verified
+          & 7z a -tzip -mx=0 -v1900m $archive $exe.Name
+          Pop-Location
+          if ($LASTEXITCODE -ne 0) { throw 'Archive creation failed' }
+          $parts = @(Get-ChildItem publish -Filter '*.zip.*' | Sort-Object Name)
+          if ($parts.Count -eq 1) { Rename-Item $parts[0].FullName 'Actelyo-Law-Harness-Windows.zip' }
+          $first = Get-ChildItem publish -Filter '*.zip*' | Sort-Object Name | Select-Object -First 1
+          & 7z t $first.FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Archive verification failed' }
+          Get-ChildItem publish -Filter '*.zip*' | Sort-Object Name | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $($_.Name)" } | Set-Content publish/SHA256SUMS.txt
+          @'
+          Version de distribution Actelyo Desktop issue du commit 58b7c20f, conservé dans main.
+
+          Validation Windows : compilation, installation, lancement, navigation Cabinet, client/dossier, étapes et échéance synthétiques, import de bibliothèque, Studio/REA et capture synthétique. Installateur non signé. Modèles et bibliothèques privées non inclus.
+
+          Téléchargement : prendre tous les fichiers Actelyo-Law-Harness-Windows.zip.001, .002 (etc.) dans le même dossier, puis ouvrir .001 avec 7-Zip et extraire l'EXE. Si un seul fichier .zip est proposé, le décompresser normalement. Les sommes de contrôle et le manifeste sont joints.
+
+          Limites connues : dates juridiques à vérifier, étapes à adapter, rappels dans le cabinet ouvert. L'inférence des modèles privés, l'erreur de contexte sur l'autre PC, le RAG, l'analyse réelle REA et la reproduction de skills ne sont pas validés. Préversion destinée aux essais utilisateur.
+          '@ | Set-Content publish/NOTES.txt
+          gh release create $env:TAG --target $env:SOURCE_SHA --title 'Actelyo Law Harness Desktop — 2026.10.19' --notes-file publish/NOTES.txt --draft --prerelease
+          if ($LASTEXITCODE -ne 0) { throw 'Release draft creation failed; inspect existing release before retrying' }
+          $assets = @(Get-ChildItem publish -File | ForEach-Object FullName)
+          gh release upload $env:TAG @assets
+          if ($LASTEXITCODE -ne 0) { throw 'Release assets upload failed; draft preserved' }
+          $release = gh api "repos/$env:GH_REPO/releases/tags/$env:TAG" | ConvertFrom-Json
+          foreach ($file in Get-ChildItem publish -File) {
+            $asset = @($release.assets | Where-Object name -eq $file.Name)
+            if ($asset.Count -ne 1 -or $asset[0].size -ne $file.Length) { throw "Uploaded asset mismatch: $($file.Name)" }
+          }
+          gh release edit $env:TAG --draft=false --prerelease
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
