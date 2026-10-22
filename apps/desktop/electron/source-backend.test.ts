@@ -9,7 +9,12 @@ import WebSocket from 'ws'
 
 import { serveBackendArgs } from './backend-command'
 import { waitForDashboardPort } from './backend-ready'
-import { createSourcePythonBackend, resolveSourceInstallationBackend, type SourceBackend } from './source-backend'
+import {
+  createSourcePythonBackend,
+  resolveSourceInstallationBackend,
+  resolveSourceRuntimeProbeTimeoutMs,
+  type SourceBackend
+} from './source-backend'
 
 interface Fixture {
   root: string
@@ -17,6 +22,11 @@ interface Fixture {
   python: string
   selected: string
 }
+
+test('installed source probes tolerate cold activation without shortening larger overrides', (): void => {
+  assert.equal(resolveSourceRuntimeProbeTimeoutMs(15_000), 45_000)
+  assert.equal(resolveSourceRuntimeProbeTimeoutMs(120_000), 120_000)
+})
 
 async function stop(child: ChildProcess): Promise<void> {
   if (child.exitCode !== null || child.signalCode !== null) {

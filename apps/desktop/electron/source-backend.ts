@@ -22,6 +22,18 @@ interface SourceOptions {
   env?: NodeJS.ProcessEnv
 }
 
+const MIN_SOURCE_RUNTIME_PROBE_TIMEOUT_MS = 45_000
+
+/**
+ * A managed source runtime can spend longer than the generic command-probe
+ * budget activating its selected generation on a cold machine. Keep the
+ * ordinary probe strict, but give this installed-runtime verification enough
+ * time to finish instead of misclassifying a valid install as missing.
+ */
+export function resolveSourceRuntimeProbeTimeoutMs(genericProbeTimeoutMs: number = PROBE_TIMEOUT_MS): number {
+  return Math.max(genericProbeTimeoutMs, MIN_SOURCE_RUNTIME_PROBE_TIMEOUT_MS)
+}
+
 /** Keep the validated command. PM owns interpreter and generation selection. */
 export async function resolveSourceInstallationBackend(
   root: string,
@@ -49,7 +61,7 @@ export async function resolveSourceInstallationBackend(
       env: { ...process.env, ...options.env, ...env },
       shell,
       stdio: 'ignore',
-      timeout: PROBE_TIMEOUT_MS,
+      timeout: resolveSourceRuntimeProbeTimeoutMs(),
       windowsHide: true
     })
   } catch {
