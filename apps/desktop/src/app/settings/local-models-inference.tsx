@@ -28,6 +28,7 @@ export function LocalModelsInference({ modelId, jobs }: { modelId: string | null
           if (!modelId || !isCurrentLocalModelsOwner(owner)) {
             return
           }
+
           setBusy(true)
           setError('')
 
