@@ -27,6 +27,7 @@ it('keeps the choice label stable when options arrive after a write', () => {
 
 it('edits a dated step without losing its matter, reminder or notes', async () => {
   const write = vi.fn().mockResolvedValue(true)
+
   const task = {
     id: 'step',
     matter_id: 'matter',
@@ -38,6 +39,7 @@ it('edits a dated step without losing its matter, reminder or notes', async () =
     status: 'pending',
     alert: 'overdue'
   }
+
   const data = { matters: [{ id: 'matter', title: 'Société' }], tasks: [task] } as LegalSnapshot
   render(
     <LegalTasksSection

@@ -9,7 +9,10 @@ vi.mock('@/components/ui/button', () => ({ Button: (props: React.ComponentProps<
 afterEach(cleanup)
 
 const entry = {
-  title: 'Statuts test', act_type: 'Statuts', domain: 'societes', body: 'ARTICLE 1 — [*Société]\nARTICLE 2 — [*Objet]',
+  title: 'Statuts test',
+  act_type: 'Statuts',
+  domain: 'societes',
+  body: 'ARTICLE 1 — [*Société]\nARTICLE 2 — [*Objet]',
   sources: [{ archive: 'exemple.zip', member: 'statuts.docm', sha256: 'a'.repeat(64) }]
 }
 
@@ -29,7 +32,9 @@ it('previews privately, then imports only the selected domain after explicit cli
   const data = { domain: 'societes', domains: [{ id: 'societes' }, { id: 'social' }] } as LegalSnapshot
   render(<LegalLibraryImport data={data} write={write} />)
   const file = new File([''], 'bibliotheque-actelyo.json')
-  Object.defineProperty(file, 'text', { value: async () => pack([entry, { ...entry, title: 'Contrat travail', domain: 'social' }]) })
+  Object.defineProperty(file, 'text', {
+    value: async () => pack([entry, { ...entry, title: 'Contrat travail', domain: 'social' }])
+  })
   fireEvent.change(screen.getByLabelText('Fichier de bibliothèque privée'), { target: { files: [file] } })
   await screen.findByText('Statuts test')
   expect(screen.queryByText('Contrat travail')).toBeNull()
@@ -37,7 +42,10 @@ it('previews privately, then imports only the selected domain after explicit cli
   fireEvent.click(screen.getByRole('button', { name: 'Importer les actes sélectionnés' }))
   await waitFor(() => expect(write).toHaveBeenCalledOnce())
   expect(write.mock.calls[0][0]).toBe('legal.library.import')
-  expect(write.mock.calls[0][1]).toMatchObject({ domain: 'societes', entries: [{ title: entry.title, act_type: entry.act_type }] })
+  expect(write.mock.calls[0][1]).toMatchObject({
+    domain: 'societes',
+    entries: [{ title: entry.title, act_type: entry.act_type }]
+  })
   expect(write.mock.calls[0][1].entries).toHaveLength(1)
   await screen.findByText(/Import enregistré/)
 })
