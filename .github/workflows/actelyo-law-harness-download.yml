@@ -167,13 +167,68 @@ jobs:
         with:
           name: actelyo-law-harness-windows-verification
           path: |
-            actelyo-release/*.exe
             actelyo-release/*.txt
             actelyo-release/*.log
             actelyo-release/*.json
             actelyo-release/proof/*.png
             actelyo-release/proof/*.json
           if-no-files-found: ignore
+      - name: Capture window and taskbar icon proof
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Drawing, System.Windows.Forms
+          $proof = 'actelyo-release/icon-proof'; New-Item -ItemType Directory -Force $proof | Out-Null
+          $exe = Join-Path $env:ACTELYO_INSTALLED 'Actelyo Law Harness.exe'
+          [System.Drawing.Icon]::ExtractAssociatedIcon($exe).ToBitmap().Save("$proof/exe-icon.png")
+          (New-Object System.Drawing.Icon (Join-Path $env:ACTELYO_INSTALLED 'resources\icon.ico'), 256, 256).ToBitmap().Save("$proof/window-icon-resource.png")
+          $setup = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
+          [System.Drawing.Icon]::ExtractAssociatedIcon($setup).ToBitmap().Save("$proof/installer-icon.png")
+          $p = Start-Process $exe -WorkingDirectory $env:ACTELYO_INSTALLED -PassThru
+          Start-Sleep 75
+          $b = [System.Windows.Forms.SystemInformation]::VirtualScreen
+          $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+          $g = [System.Drawing.Graphics]::FromImage($bmp); $g.CopyFromScreen($b.Left, $b.Top, 0, 0, $bmp.Size)
+          $bmp.Save("$proof/app-running-fullscreen.png"); $g.Dispose()
+          $tb = $bmp.Clone((New-Object System.Drawing.Rectangle 0, ($b.Height - 60), $b.Width, 60), $bmp.PixelFormat); $tb.Save("$proof/taskbar.png"); $bmp.Dispose()
+          $fam = @(Get-Process | Where-Object { try { $_.Path -and $_.Path.StartsWith($env:ACTELYO_INSTALLED, 'OrdinalIgnoreCase') } catch { $false } })
+          $titles = @($fam | Where-Object MainWindowTitle | ForEach-Object MainWindowTitle | Select-Object -Unique)
+          @{ processes = $fam.Count; windowTitles = $titles; version = (Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B617AF4-6EA4-4220-849A-8044F224B92C}_is1' -ErrorAction SilentlyContinue).DisplayVersion } | ConvertTo-Json | Set-Content "$proof/report.json"
+          Get-Content "$proof/report.json"
+          $fam | Stop-Process -Force -ErrorAction SilentlyContinue
+          if ($titles.Count -eq 0) { throw 'Installed app did not open a window' }
+      - name: Publish proof as a draft release
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $files = @(Get-ChildItem actelyo-release/icon-proof, actelyo-release/proof -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.png', '.json' } | ForEach-Object FullName)
+          if ($files) { gh release create "qa-proof-law-violet-${{ github.run_id }}" @files --draft --target $env:GITHUB_SHA --title 'QA proof Law Harness violet logo' --notes 'Preuves QA automatiques.' }
+      - name: Split installer into release-sized parts and publish a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $version = '2026.11.2'
+          $name = "Actelyo-Law-Harness-Setup-$version-x64.exe"
+          $out = 'actelyo-release/dist'; New-Item -ItemType Directory -Force $out | Out-Null
+          $setup = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
+          $len = (Get-Item $setup).Length
+          $hash = (Get-FileHash $setup -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$out/SHA256SUMS.txt"
+          $buf = New-Object byte[] (8MB); $in = [IO.File]::OpenRead((Resolve-Path $setup)); $n = 1
+          while ($in.Position -lt $len) {
+            $pp = Join-Path $out ("$name.part{0:D2}" -f $n); $o = [IO.File]::Create((Join-Path (Get-Location) $pp)); $w = 0
+            while ($w -lt 1000000000 -and ($r = $in.Read($buf, 0, [Math]::Min($buf.Length, 1000000000 - $w))) -gt 0) { $o.Write($buf, 0, $r); $w += $r }
+            $o.Dispose(); $n++
+          }
+          $in.Dispose()
+          Get-ChildItem $out -Filter '*.part*' | Sort-Object Name | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $($_.Name)" } | Add-Content "$out/SHA256SUMS.txt"
+          Copy-Item actelyo-release/build-manifest.json $out/
+          Get-Content "$out/SHA256SUMS.txt"
+          $files = @(Get-ChildItem $out -File | ForEach-Object FullName)
+          gh release create "desktop-law-v$version" @files --draft --target $env:ACTELYO_SOURCE_SHA --title "Actelyo Law Harness $version" --notes "Reconstruit depuis les sources avec le logo Actelyo Law Harness (violet) sur l'exécutable, la fenêtre, la barre des tâches, l'installateur et les raccourcis. Met à jour la version précédente sans toucher aux données. SHA-256 $hash ($len octets), en $($n-1) parties."
+          if ($LASTEXITCODE -ne 0) { throw 'Draft release failed' }
       - name: Publish verified download
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/codex/actelyo-local-modules-20261003') || inputs.publish }}
         env:
