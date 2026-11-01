@@ -5,7 +5,7 @@
   #error ReleaseDir must be supplied
 #endif
 #ifndef BuildVersion
-  #define BuildVersion "2026.10.4"
+  #define BuildVersion "2026.11.2"
 #endif
 [Setup]
 AppId={{4B617AF4-6EA4-4220-849A-8044F224B92C}
