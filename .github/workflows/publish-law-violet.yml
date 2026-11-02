@@ -1,0 +1,32 @@
+name: Publish Actelyo Law Harness 2026.11.2
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/law-violet-logo]
+    paths: ['.github/workflows/publish-law-violet.yml']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: desktop-law-v2026.11.2
+    steps:
+      - name: Make the reviewed draft release public
+        run: |
+          set -euo pipefail
+          gh release edit "$TAG" --draft=false --latest=false
+          gh release view "$TAG" --json isDraft,assets --jq '"draft=\(.isDraft) \([.assets[].name]|join(","))"'
+      - name: Check the three parts download and match their SHA-256
+        run: |
+          set -euo pipefail
+          declare -A want=(
+            [part01]=f5d6dd4f93e697af3d40e35b0768606694070f5f3dff24a57f693b4345b58334
+            [part02]=1ca2022eaf68b57b55c6c42ad3ff10db2dfc4f1d39c242478739857faa2ffca3
+            [part03]=59455916592592115c888a72784b6e5143af225d019dc171dcb9913c70102d98 )
+          for p in part01 part02 part03; do
+            got=$(curl -fsSL "https://github.com/${GH_REPO}/releases/download/${TAG}/Actelyo-Law-Harness-Setup-2026.11.2-x64.exe.$p" | sha256sum | cut -d' ' -f1)
+            echo "$p $got"; [ "$got" = "${want[$p]}" ]
+          done
