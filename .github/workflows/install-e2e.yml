@@ -375,7 +375,11 @@ jobs:
 
   macos:
     name: ${{ matrix.name }}
-    if: needs.generate-matrix.outputs.macos-legs != '0'
+    # Scheduled runs skip macOS: hosted macOS arm64 runners are often unavailable
+    # ("job was not acquired"), which turned twice-daily runs red for no code
+    # reason. macOS legs still run on manual dispatch (route all / macos-desktop),
+    # on PRs and on release calls.
+    if: needs.generate-matrix.outputs.macos-legs != '0' && github.event_name != 'schedule'
     needs: generate-matrix
     strategy:
       fail-fast: false
