@@ -8,6 +8,8 @@ let
       (lib.fileset.fileFilter (file: file.hasExt "svg") ../assets)
       # The DMG volume icon is hand-made raster artwork, not rendered from the svgs.
       ../assets/dmg-volume.png
+      # The violet Actelyo Law Harness desktop tile: hand-made, pre-sized raster frames.
+      ../assets/actelyo-law-desktop
     ];
   };
 in
