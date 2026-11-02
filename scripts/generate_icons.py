@@ -242,20 +242,15 @@ CHECK_SIZES: dict[str, tuple[str, tuple[int, int]]] = {
     "website/static/img/apple-touch-icon.png": ("PNG", (180, 180)),
 }
 
-# Actelyo Law Harness ships its violet product tile as hand-made raster art,
-# one pre-sized PNG per frame so outputs never depend on a resampler version.
-LAW_BRAND_DIR = "assets/actelyo-law-desktop"
-LAW_ICO_SIZES = [16, 24, 32, 48, 64, 128, 256]
-
 # (relpath, kind, arg)
 TARGETS: list[tuple[str, str, object]] = [
     ("assets/icon-master.svg", "svg", None),
     ("assets/icon-master-dark.svg", "svg_dark", None),
-    ("apps/desktop/assets/icon.png", "brand_png", 1024),
-    ("apps/desktop/assets/icon.ico", "brand_ico", LAW_ICO_SIZES),
+    ("apps/desktop/assets/icon.png", "png", 1024),
+    ("apps/desktop/assets/icon.ico", "ico", [16, 24, 32, 48, 64, 128, 256]),
     ("apps/desktop/assets/icon.icns", "icns", None),
-    ("apps/desktop/assets/icon-dark.png", "brand_png", 1024),
-    ("apps/desktop/assets/icon-dark.ico", "brand_ico", LAW_ICO_SIZES),
+    ("apps/desktop/assets/icon-dark.png", "png_dark", 1024),
+    ("apps/desktop/assets/icon-dark.ico", "ico_dark", [16, 24, 32, 48, 64, 128, 256]),
     ("apps/desktop/assets/icon-dark.icns", "icns_dark", None),
     # The DMG volume icon: our own drive artwork with the girl on its face,
     # one artwork for light and dark (volume icons have no appearance variants).
@@ -267,7 +262,7 @@ TARGETS: list[tuple[str, str, object]] = [
     ("apps/desktop/assets/icon.icon/Assets/art-dark.png", "icon_art", "white"),
     ("apps/desktop/assets/icon.icon/Assets/mono.png", "icon_mono", None),
     *APPX_TARGETS,
-    ("apps/desktop/public/apple-touch-icon.png", "brand_png", 1024),
+    ("apps/desktop/public/apple-touch-icon.png", "png", 1024),
     # The dev-run Dock icon (app.dock.setIcon): same mac grid as the icns.
     ("apps/desktop/assets/icon-mac.png", "png_mac", 1024),
     ("apps/desktop/public/nous-girl.png", "girl_light", 256),
@@ -852,14 +847,6 @@ def target_bytes(art: IconArt, kind: str, arg: object) -> bytes:
         save_png(render_svg(icon_art_svg(art, arg), ICON_CANVAS), buf)
     elif kind == "icon_mono":
         save_png(icon_mono_image(art), buf)
-    elif kind == "brand_png":
-        img = Image.open(art.source / LAW_BRAND_DIR / f"{arg}.png").convert("RGBA")
-        assert img.size == (arg, arg), f"{LAW_BRAND_DIR}/{arg}.png must be {arg}x{arg}"
-        save_png(img, buf)
-    elif kind == "brand_ico":
-        frames = [Image.open(art.source / LAW_BRAND_DIR / f"{s}.png").convert("RGBA") for s in arg]
-        assert all(f.size == (s, s) for f, s in zip(frames, arg)), f"{LAW_BRAND_DIR} frames must match their sizes"
-        frames[-1].save(buf, format="ICO", sizes=[(s, s) for s in arg], append_images=frames[:-1])
     elif kind == "ico":
         img = render(art.master, max(arg))
         img.save(buf, format="ICO", sizes=[(s, s) for s in arg])
