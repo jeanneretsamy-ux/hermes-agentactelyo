@@ -2,7 +2,7 @@ name: Atelier verification
 on:
   push:
     branches: [codex/grounded-deep-research, main]
-    paths: ['agent/agent_init.py', 'agent/transports/codex_app_server_session.py', 'tests/agent/test_native_codex_init.py', 'hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'skills/research/actelyo-plugin-creator/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'apps/desktop/src/test/plugin-workshop/**', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
+    paths: ['agent/agent_init.py', 'agent/transports/codex_app_server_session.py', 'tests/agent/test_native_codex_init.py', 'hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'skills/research/actelyo-plugin-creator/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'apps/desktop/src/test/plugin-workshop/**', 'apps/desktop/scripts/atelier-browser-smoke.cjs', 'examples/desktop-plugins/**', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,8 +30,17 @@ jobs:
       - name: Build real plugin loader browser fixture
         working-directory: apps/desktop
         run: npx vite build src/test/plugin-workshop --config vite.config.ts --base ./ --outDir "$RUNNER_TEMP/atelier-smoke"
+      - name: Install test browser
+        working-directory: apps/desktop
+        run: npx playwright install --with-deps chromium
+      - name: Generated plugins through the real loader
+        working-directory: apps/desktop
+        run: node scripts/atelier-browser-smoke.cjs --dist "$RUNNER_TEMP/atelier-smoke" --artifacts "$RUNNER_TEMP/atelier-browser-proof"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
         with:
           name: atelier-real-loader
-          path: ${{ runner.temp }}/atelier-smoke
+          path: |
+            ${{ runner.temp }}/atelier-smoke
+            ${{ runner.temp }}/atelier-browser-proof
           retention-days: 7

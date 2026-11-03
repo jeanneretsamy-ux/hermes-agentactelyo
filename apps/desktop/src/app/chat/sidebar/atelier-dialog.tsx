@@ -130,7 +130,10 @@ export function AtelierDialog({
           <DialogTitle>Atelier Actelyo</DialogTitle>
           <DialogDescription>Créez une chronologie sourcée ou un plugin d’interface avec l’agent.</DialogDescription>
         </DialogHeader>
-        <p>Profil : {profile}. Les brouillons et les versions actives appartiennent à ce profil.</p>
+        <p>
+          Profil de l’agent : {profile}. Les chronologies appartiennent à ce profil ; les plugins d’interface
+          appartiennent à l’application locale.
+        </p>
         <div aria-label="Type d’extension" className="flex gap-2">
           <Button variant="outline" aria-pressed={kind === 'chronology'} onClick={() => setKind('chronology')}>
             Chronologie sourcée
@@ -144,6 +147,9 @@ export function AtelierDialog({
             Les plugins d’interface appartiennent à cette application sur cet ordinateur, avec ses droits. Examinez leur
             code et leurs tests avant de les activer dans Plugins.
           </p>
+        )}
+        {kind === 'desktop-plugin' && (
+          <p>Utilisez un modèle capable de programmer et d’exécuter les outils de la conversation.</p>
         )}
         <label className="grid gap-2">
           Demande à l’agent
