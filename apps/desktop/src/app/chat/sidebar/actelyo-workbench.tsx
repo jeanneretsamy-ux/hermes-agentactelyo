@@ -10,6 +10,7 @@ import { $activeSessionId } from '@/store/session'
 
 import { ProcedureLearningDialog } from './procedure-learning-dialog'
 import { ReaWorkbenchDialog } from './rea-workbench-dialog'
+import { AtelierDialog } from './atelier-dialog'
 
 export function ActelyoWorkbench() {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ export function ActelyoWorkbench() {
   const session = useStore($activeSessionId)
 
   const [learning, setLearning] = useState<{
-    mode: 'learn' | 'rea'
+    mode: 'learn' | 'rea' | 'atelier'
     gateway: typeof gateway
     profile: typeof profile
     session: typeof session
@@ -42,6 +43,12 @@ export function ActelyoWorkbench() {
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
+        <SidebarMenuButton onClick={() => setLearning({ mode: 'atelier', gateway, profile, session })}>
+          <Codicon name="tools" />
+          Atelier Actelyo
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
         <SidebarMenuButton onClick={() => setLearning({ mode: 'rea', gateway, profile, session })}>
           <Codicon name="code" />
           REA — créer des fonctionnalités
@@ -54,6 +61,9 @@ export function ActelyoWorkbench() {
         </SidebarMenuButton>
       </SidebarMenuItem>
       {current && learning.mode === 'learn' && <ProcedureLearningDialog onClose={() => setLearning(null)} />}
+      {current && learning.mode === 'atelier' && (
+        <AtelierDialog gateway={gateway} onClose={() => setLearning(null)} profile={profile} />
+      )}
       {current && learning.mode === 'rea' && (
         <ReaWorkbenchDialog gateway={gateway} onClose={() => setLearning(null)} profile={profile} />
       )}

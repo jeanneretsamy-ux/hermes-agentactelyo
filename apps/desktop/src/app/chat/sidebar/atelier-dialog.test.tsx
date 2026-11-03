@@ -1,0 +1,124 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, expect, it, vi } from 'vitest'
+
+import type { HermesGateway } from '@/hermes'
+
+import { AtelierDialog } from './atelier-dialog'
+
+const mocks = vi.hoisted(() => ({
+  insert: vi.fn(),
+  request: vi.fn(),
+  surface: true
+}))
+vi.mock('@/app/chat/composer/focus', () => ({
+  getActiveComposer: () => 'main',
+  getVisibleComposerSurfaceId: () => (mocks.surface ? 'surface' : null),
+  requestComposerInsert: mocks.insert
+}))
+// Keep native control behavior while excluding layout/portal machinery from these interaction tests.
+vi.mock('@/components/ui/button', () => ({
+  Button: ({ variant: _variant, ...props }: any) => <button {...props} />
+}))
+vi.mock('@/components/ui/dialog', () => ({
+  Dialog: ({ children }: any) => <div>{children}</div>,
+  DialogContent: ({ children }: any) => <div>{children}</div>,
+  DialogHeader: ({ children }: any) => <header>{children}</header>,
+  DialogTitle: ({ children }: any) => <h1>{children}</h1>,
+  DialogDescription: ({ children }: any) => <p>{children}</p>
+}))
+
+const revision = 'a'.repeat(64)
+const rows = [
+  {
+    id: 'chrono',
+    name: 'Chronologie ALPHA',
+    revision,
+    created_at: '2026-11-03',
+    active: false
+  }
+]
+const panel = {
+  id: 'chrono',
+  name: 'Chronologie ALPHA',
+  revision,
+  kind: 'chronology',
+  source_binding: 'verified',
+  semantic_review: 'human_required',
+  events: [
+    {
+      id: 'sign',
+      date: '2026-10-15',
+      title: 'Signature',
+      evidence: [
+        {
+          passage_id: 'p_bound',
+          name: 'bail.txt',
+          page: null,
+          quote: 'Signé le 15 octobre 2026. <script>danger()</script>',
+          url: 'file:///bail.txt',
+          start: 0,
+          end: 57,
+          source_sha256: 'b'.repeat(64)
+        }
+      ]
+    }
+  ]
+}
+const gateway = { request: mocks.request } as unknown as HermesGateway
+
+beforeEach(() => {
+  mocks.request.mockReset()
+  mocks.insert.mockReset()
+  mocks.surface = true
+  mocks.request.mockImplementation(async (method: string) =>
+    method === 'atelier.preview' ? panel : { revisions: rows }
+  )
+})
+
+it('previews a source, filters, activates and deactivates the exact version in the owner profile', async () => {
+  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={vi.fn()} />)
+  fireEvent.click(await screen.findByRole('button', { name: /Chronologie ALPHA/ }))
+  await screen.findByRole('heading', { name: /Chronologie ALPHA/ })
+  fireEvent.click(screen.getByText(/Source : bail.txt/))
+  expect(screen.getByText(panel.events[0].evidence[0].quote)).toBeTruthy()
+  expect(document.querySelector('script')).toBeNull()
+  fireEvent.change(screen.getByLabelText('Filtrer les événements et les sources'), { target: { value: 'absent' } })
+  expect(screen.getByText('0 événement(s)')).toBeTruthy()
+  fireEvent.change(screen.getByLabelText('Filtrer les événements et les sources'), { target: { value: 'Signature' } })
+  expect(screen.getByText('1 événement(s)')).toBeTruthy()
+  mocks.request.mockImplementation(async (method: string) => ({
+    revisions: [{ ...rows[0], active: method !== 'atelier.deactivate' }]
+  }))
+  fireEvent.click(screen.getByRole('button', { name: 'Activer cette version après revue' }))
+  await screen.findByRole('heading', { name: /Version active/ })
+  expect(mocks.request).toHaveBeenCalledWith('atelier.activate', {
+    profile: 'legal-a',
+    revision
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Désactiver' }))
+  await screen.findByText('Extension désactivée. Les versions sont conservées.')
+  expect(mocks.request).toHaveBeenCalledWith('atelier.deactivate', {
+    profile: 'legal-a',
+    panel_id: 'chrono'
+  })
+})
+
+it('prepares an unsent creator request for the actual composer', async () => {
+  const close = vi.fn()
+  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={close} />)
+  await screen.findByRole('button', { name: /Chronologie ALPHA/ })
+  fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
+  expect(mocks.insert).toHaveBeenCalledWith(expect.stringContaining('actelyo-atelier'), { target: 'main' })
+  expect(close).toHaveBeenCalledOnce()
+  expect(mocks.request.mock.calls.every(([method]) => method === 'atelier.list')).toBe(true)
+})
+
+it('shows RPC failures and refreshes without pretending the extension was activated', async () => {
+  mocks.request.mockRejectedValueOnce(new Error('Backend indisponible'))
+  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={vi.fn()} />)
+  await screen.findByRole('alert')
+  expect(screen.queryByRole('button', { name: 'Activer cette version après revue' })).toBeNull()
+  fireEvent.click(screen.getByRole('button', { name: 'Actualiser' }))
+  await screen.findByRole('button', { name: /Chronologie ALPHA/ })
+  await waitFor(() => expect(screen.queryByRole('alert')).toBeNull())
+})
