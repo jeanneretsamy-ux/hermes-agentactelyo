@@ -1,7 +1,7 @@
 ---
 name: grounded-citations
 description: "Ground answers and documents in cited, verifiable sources."
-version: 1.3.0
+version: 1.4.0
 author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]

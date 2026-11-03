@@ -63,6 +63,8 @@ def test_real_http_transport_preserves_models_quotes_and_usage(tmp_path):
         result = research.run("Dépôt ?", research.load_sources(source_file), "writer", "judge", client)
         assert result["status"] == "approved"
         assert [call["model"] for call in calls] == ["writer", "judge"]
+        selection = calls[0]["response_format"]["json_schema"]["schema"]["properties"]["claims"]["items"]["properties"]["passage_ids"]["items"]["enum"]
+        assert set(selection) == {p["passage_id"] for p in result["passages"]}
         assert len(result["sources"][0]["sha256"]) == 64
         assert all(call["usage"]["prompt_tokens"] == 41 for call in result["calls"])
         assert result["claims"][0]["evidence"][0]["quote"] == "Dépôt : 4817 euros."

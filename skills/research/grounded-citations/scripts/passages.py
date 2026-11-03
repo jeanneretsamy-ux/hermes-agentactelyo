@@ -103,7 +103,8 @@ def build_catalog(sources):
                 continue
             def cells_for(value):
                 value = value.strip().strip("|") if delimiter == "|" else value.rstrip("\r\n")
-                return [c.strip() for c in value.split(delimiter)]
+                return [c.strip() for c in next(csv.reader([value], delimiter=delimiter,
+                    escapechar="\\" if delimiter == "|" else None, quoting=csv.QUOTE_NONE))]
             headers = cells_for(line)
             if len(headers) < 2 or delimiter not in lines[i+1]:
                 i += 1
@@ -197,6 +198,6 @@ def render_report(result):
         lines += [f"[{number}] {name} — {page}, caractères {evidence['start']}–{evidence['end']} du texte extrait.",
                   evidence["url"], f"Passage : `{evidence['passage_id']}` · SHA-256 : `{evidence['source_sha256']}`", ""]
         if "table" in evidence:
-            lines += [f"Ligne {evidence['table']['row']} · Colonnes : " + " | ".join(evidence["table"]["headers"]), ""]
+            lines += [f"Ligne {evidence['table']['row']} du tableau extrait · Colonnes : " + " | ".join(evidence["table"]["headers"]), ""]
         lines += ["> " + line for line in evidence["quote"].splitlines()] + [""]
     return "\n".join(lines)
