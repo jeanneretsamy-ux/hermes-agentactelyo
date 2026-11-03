@@ -28,14 +28,20 @@ jobs:
           from pathlib import Path
           from hermes_cli.mcp_catalog import get_entry, _build_server_config
           from hermes_cli.mcp_config import _probe_single_server
-          with tempfile.TemporaryDirectory(prefix='actelyo-browser-proof-') as home:
+          with tempfile.TemporaryDirectory(prefix='actelyo-browser-proof-', ignore_cleanup_errors=True) as home:
               os.environ['HERMES_HOME'] = home
               result = {}
               for name in ('browser-chrome', 'browser-edge'):
                   entry = get_entry(name)
                   assert entry is not None
                   config = _build_server_config(entry, None)
-                  tools = _probe_single_server(name, config, connect_timeout=120)
+                  try:
+                      tools = _probe_single_server(name, config, connect_timeout=120)
+                  except Exception:
+                      for log in Path(home).glob('logs/*'):
+                          if log.is_file():
+                              print(log.name, log.read_text(errors='replace')[-10000:])
+                      raise
                   names = {tool[0] for tool in tools}
                   required = {'browser_tabs', 'browser_snapshot', 'browser_click', 'browser_fill_form', 'browser_file_upload', 'browser_handle_dialog'}
                   assert required <= names, (name, names)
