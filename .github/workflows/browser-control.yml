@@ -2,7 +2,7 @@ name: Personal browser connectors
 on:
   push:
     branches: [codex/browser-control, main]
-    paths: ['optional-mcps/browser-*/**', 'tests/hermes_cli/test_browser_mcp_catalog.py', '.github/workflows/browser-control.yml']
+    paths: ['optional-mcps/browser-*/**', 'tests/hermes_cli/test_browser_mcp_catalog.py', 'tests/plugins/image_gen/test_openrouter_compat_provider.py', '.github/workflows/browser-control.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
           test-environment: 'true'
       - name: Catalog parsing and approval contract
         shell: bash
-        run: scripts/run_tests.sh tests/hermes_cli/test_browser_mcp_catalog.py tests/hermes_cli/test_mcp_catalog.py -q -j 1
+        run: scripts/run_tests.sh tests/hermes_cli/test_browser_mcp_catalog.py tests/hermes_cli/test_mcp_catalog.py tests/plugins/image_gen/test_openrouter_compat_provider.py -q -j 1
       - name: Discover actual browser tools through the Hermes MCP client
         shell: pwsh
         run: |
