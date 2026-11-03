@@ -6,6 +6,7 @@ not PDF coordinates or binary file offsets. Missing page numbers stay unknown.
 from __future__ import annotations
 
 import csv
+from decimal import Decimal, InvalidOperation
 import hashlib
 import io
 import json
@@ -191,6 +192,62 @@ def verify_bindings(claims, sources):
             expected = catalog.get(evidence.get("passage_id"))
             if expected is None or evidence != expected:
                 errors.append(f"{claim['id']}: citation does not match its source snapshot and location.")
+    return errors
+
+
+def verify_table_amounts(question, claims, catalog):
+    """Reject detectable row/financial-column conflicts; not a truth oracle."""
+    def normal(text):
+        return ''.join(c for c in unicodedata.normalize('NFKD', text.lower()) if not unicodedata.combining(c))
+    def number(text):
+        text = re.sub(r'[\s\u202f€]', '', text).replace(',', '.')
+        try:
+            return Decimal(text)
+        except InvalidOperation:
+            return None
+    q = normal(question)
+    tokens = ' '.join(re.findall(r'\w+', q))
+    rows = {(row['source_id'], row['start'], row['end']): row['table'] for row in catalog.values() if 'table' in row}
+    def row_score(table):
+        score = 0
+        for cell in table['cells']:
+            if normal(cell['header']) not in ('dossier', 'facture', 'reference', 'client', 'id'):
+                continue
+            value = ' '.join(re.findall(r'\w+', normal(cell['value'])))
+            if value and re.search(r'(?<!\w)'+re.escape(value)+r'(?!\w)', tokens):
+                score += 1
+        return score
+    scores = {key: row_score(table) for key, table in rows.items()}
+    best = max(scores.values(), default=0)
+    errors = []
+    for claim in claims:
+        tables = [((e['source_id'], e['start'], e['end']), e['table']) for e in claim['evidence'] if 'table' in e]
+        if not tables:
+            continue
+        text = normal(claim['text'])
+        fields = {field for field in ('ttc', 'ht', 'tva') if re.search(r'\b'+field+r'\b', text)}
+        if not fields:
+            fields = {normal(h) for _, table in tables for h in table['headers']
+                      if normal(h) in ('montant', 'total', 'prix', 'loyer') and re.search(r'\b'+normal(h)+r'\b', text)}
+        if not fields:
+            continue
+        if len(fields)>1:
+            errors.append(f"{claim['id']}: split financial fields into separate claims.")
+            continue
+        field = next(iter(fields))
+        expected = set()
+        for key, table in tables:
+            if best and scores.get(key, 0)<best:
+                continue
+            for cell in table['cells']:
+                if re.search(r'\b'+re.escape(field)+r'\b', normal(cell['header'])):
+                    value = number(cell['value'])
+                    if value is not None:
+                        expected.add(value)
+        stated = {number(m.group()) for m in re.finditer(r'(?<![\w/\-])-?\d(?:[\d\s.,\u202f]*\d)?(?![\w/\-])', text)}
+        stated.discard(None)
+        if not expected or not expected.intersection(stated):
+            errors.append(f"{claim['id']}: amount conflicts with the referenced {field} column or dossier/invoice row.")
     return errors
 
 

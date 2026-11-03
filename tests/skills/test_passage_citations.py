@@ -54,3 +54,16 @@ def test_table_selection_preserves_headers_rows_and_literal_citations(name, text
     assert "Colonnes" in rendered and "ALPHA" in rendered and "3000" in rendered
     blocked = passages.render_report({"status": "research_again", "claims": selected})
     assert "3000" not in blocked
+
+
+def test_table_amount_check_rejects_ht_ttc_and_other_invoice_confusion():
+    source={"1":{"url":"file:///factures.csv","text":"Dossier;Facture;HT;TTC\nALPHA;FA-042;2500;3000\nBETA;FB-041;9000;10800\n"}}
+    catalog=passages.build_catalog(source)
+    alpha=next(pid for pid,row in catalog.items() if row['table']['cells'][0]['value']=='ALPHA')
+    beta=next(pid for pid,row in catalog.items() if row['table']['cells'][0]['value']=='BETA')
+    question="Quel est le TTC de FA-042 du dossier ALPHA ?"
+    for text,pid in [("Le TTC de FA-042 est de 2500 euros.",alpha),("Le TTC est de 10800 euros.",beta)]:
+        claims=passages.assemble_claims([{"id":"c","text":text,"passage_ids":[pid]}],catalog)
+        assert passages.verify_table_amounts(question,claims,catalog)
+    good=passages.assemble_claims([{"id":"c","text":"Le TTC est de 3 000 euros.","passage_ids":[alpha]}],catalog)
+    assert passages.verify_table_amounts(question,good,catalog)==[]
