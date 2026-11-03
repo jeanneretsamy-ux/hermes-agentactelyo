@@ -200,7 +200,7 @@ jobs:
           $fam | Stop-Process -Force -ErrorAction SilentlyContinue
           if ($titles.Count -eq 0) { throw 'Installed app did not open a window' }
       - name: Publish proof as a draft release
-        if: always()
+        if: always() && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
@@ -212,7 +212,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
-          $version = '2026.11.2'
+          $version = '2026.11.3'
           $name = "Actelyo-Law-Harness-Setup-$version-x64.exe"
           $out = 'actelyo-release/dist'; New-Item -ItemType Directory -Force $out | Out-Null
           $setup = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
@@ -230,7 +230,9 @@ jobs:
           Copy-Item actelyo-release/build-manifest.json $out/
           Get-Content "$out/SHA256SUMS.txt"
           $files = @(Get-ChildItem $out -File | ForEach-Object FullName)
-          gh release create "desktop-law-v$version" @files --draft --target $env:ACTELYO_SOURCE_SHA --title "Actelyo Law Harness $version" --notes "Reconstruit depuis les sources avec le logo Actelyo Law Harness (violet) sur l'exécutable, la fenêtre, la barre des tâches, l'installateur et les raccourcis. Met à jour la version précédente sans toucher aux données. SHA-256 $hash ($len octets), en $($n-1) parties."
+          gh release view "desktop-law-v$version" 2>$null
+          if ($LASTEXITCODE -eq 0) { gh release upload "desktop-law-v$version" @files --clobber }
+          else { gh release create "desktop-law-v$version" @files --draft --target $env:ACTELYO_SOURCE_SHA --title "Actelyo Law Harness $version" --notes "Connexion Chrome/Edge par extension officielle. SHA-256 $hash ($len octets), en $($n-1) parties." }
           if ($LASTEXITCODE -ne 0) { throw 'Draft release failed' }
       - name: Publish verified download
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/codex/actelyo-local-modules-20261003') || inputs.publish }}
