@@ -13,8 +13,8 @@ function option(name, fallback) {
 }
 const out = path.resolve(option('--artifacts', path.join(base, '.atelier-browser-proof')))
 const dist = path.resolve(option('--dist', path.join(base, '.atelier-smoke-dist')))
-const calendar = path.join(base, 'examples/desktop-plugins/calendar-days/plugin.js')
-const counter = path.join(base, 'examples/desktop-plugins/piece-counter/plugin.js')
+const calendar = path.join(base, 'apps/desktop/src/test/plugin-workshop/fixtures/calendar-days/plugin.js')
+const counter = path.join(base, 'apps/desktop/src/test/plugin-workshop/fixtures/piece-counter/plugin.js')
 const chrome = option('--browser', undefined)
 const checks = []
 function checked(name) {
