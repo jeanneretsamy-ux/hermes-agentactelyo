@@ -200,8 +200,7 @@ jobs:
           $fam | Stop-Process -Force -ErrorAction SilentlyContinue
           if ($titles.Count -eq 0) { throw 'Installed app did not open a window' }
       - name: Publish proof as a draft release
-        if: github.ref == 'refs/heads/main'
-        if: always()
+        if: always() && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
