@@ -199,7 +199,10 @@ def run(question, sources, writer, decision, client):
             'Approve only when every claim is supported and the evidence answers the question.',
             {"question": question, "claims": claims, "gaps": draft.get("gaps", []), "sources": list(sources.values())})
         approved = validate_review(review, claims) and not draft.get("gaps")
-    return {"status": "approved" if approved else "research_again", "claims": claims,
+    experimental = any(call.get("experimental") for call in client.calls)
+    status = ("experimental_review_passed" if experimental else "approved") if approved else "research_again"
+    return {"status": status, "experimental": experimental, "requires_human_review": experimental,
+            "candidate_promoted": False if experimental else None, "claims": claims,
             "gaps": draft.get("gaps", []), "provenance_errors": errors, "review": review,
             "writer_model": writer, "decision_model": decision, "calls": client.calls,
             "sources": [{k: row[k] for k in ("id", "url", "sha256")} for row in sources.values()]}
@@ -242,8 +245,6 @@ def main():
         result["experimental"] = True
         result["requires_human_review"] = True
         result["candidate_promoted"] = False
-        if result["status"] == "approved":
-            result["status"] = "experimental_review_passed"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"status": result["status"], "output": str(args.output)}))

@@ -61,3 +61,15 @@ def test_systemone_identity_and_abstention_over_real_http(mode):
 def test_unpromoted_candidate_requires_explicit_evaluation_mode():
     with pytest.raises(ValueError, match="not promoted"):
         research.MatousseClient("http://127.0.0.1:8009/v1")
+    class ExperimentalPipeline:
+        calls = [{"experimental": True}]
+        def complete(self, model, system, payload):
+            if model == "writer":
+                return {"claims": [{"id": "c1", "text": "4817 euros", "evidence": [
+                    {"source_id": "1", "quote": "4817 euros"}]}], "gaps": []}
+            return {"decision": "approve", "claims": [{"id": "c1", "verdict": "supported"}]}
+    source = {"1": {"id": "1", "text": "4817 euros", "url": "file:///bail", "sha256": "fixture"}}
+    result = research.run("Montant ?", source, "writer", "judge", ExperimentalPipeline())
+    assert result["status"] == "experimental_review_passed"
+    assert result["requires_human_review"] is True
+    assert result["candidate_promoted"] is False
