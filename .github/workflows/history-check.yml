@@ -33,6 +33,7 @@ jobs:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
           fetch-depth: 0 # full history both sides for merge-base
+          filter: blob:none # Common ancestry uses commits, not historical file contents.
 
       - id: merge-base-check
         name: Reject PRs with no common ancestor on main
