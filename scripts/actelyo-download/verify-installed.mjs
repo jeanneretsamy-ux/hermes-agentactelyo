@@ -14,6 +14,10 @@ fs.mkdirSync(proof, { recursive: true })
 const exe = path.join(installed, 'Actelyo Law Harness.exe')
 assert(fs.existsSync(exe), 'Installed Actelyo executable missing')
 assert(fs.existsSync(path.join(installed, 'resources', 'agent-payload')), 'Bundled local agent missing')
+const runtimeSource = path.join(installed, 'resources', 'agent-payload', 'hermes-agent')
+for (const relative of ['hermes_cli/atelier.py', 'skills/research/actelyo-atelier/SKILL.md', 'skills/research/actelyo-plugin-creator/SKILL.md']) {
+  assert(fs.existsSync(path.join(runtimeSource, relative)), 'Missing installed creator component: ' + relative)
+}
 const cleanEnv = { ...process.env }
 for (const key of ['HERMES_PYTHON', 'HERMES_RUNTIME_DIR', 'VIRTUAL_ENV', 'PYTHONPATH', 'PYTHONHOME']) delete cleanEnv[key]
 const app = await _electron.launch({
@@ -41,6 +45,12 @@ try {
   await page.getByText(/^(Capabilities|Capacités)$/).first().waitFor({ timeout: 300000 })
   await clearFirstRunOverlay(page)
   await page.screenshot({ path: path.join(proof, 'installed-window.png') })
+  await page.getByRole('button', { name: 'Atelier Actelyo', exact: true }).click()
+  await page.getByRole('heading', { name: 'Atelier Actelyo', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Plugin d’interface', exact: true }).click()
+  await page.getByRole('button', { name: 'Ouvrir les plugins', exact: true }).waitFor()
+  await page.screenshot({ path: path.join(proof, 'installed-atelier.png') })
+  await page.keyboard.press('Escape')
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
     const cabinet = page.getByRole('navigation', { name: 'Domaines du cabinet juridique' })
@@ -134,7 +144,7 @@ try {
   await page.screenshot({ path: path.join(proof, 'installed-skills.png') })
   fs.writeFileSync(path.join(proof, 'verification.json'), JSON.stringify({
     identity, sourceCommit: process.env.ACTELYO_SOURCE_SHA || process.env.GITHUB_SHA, executable: path.basename(exe),
-    localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
+    atelierNavigationVerified: true, creatorSkillsPresent: true, localPayloadPresent: true, nativeCatalogVerified: true, workbenchNavigationVerified: true, logos,
       nativeWindowCaptureVerified: true, nativeCaptureConsentAutomated: true, legalCabinetNavigationVerified: true,
       privateLibraryImportVerified: true, workflowAndDeadlineVerified: true,
     modelInferenceVerified: false, reaAnalysisVerified: false, skillReplayVerified: false,

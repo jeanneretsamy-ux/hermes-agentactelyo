@@ -6,6 +6,11 @@ on:
         description: Commit to package (defaults to the selected branch head)
         required: false
         type: string
+      release_version:
+        description: New installer version (an existing release is never overwritten)
+        required: true
+        type: string
+        default: '2026.11.4'
       publish:
         description: Publish the verified installer as a prerelease
         required: false
@@ -52,8 +57,24 @@ jobs:
       HERMES_DESKTOP_VARIANT: bundled
       # Keep the established product pin on its legacy branch; PR/manual builds use the selected source head.
       ACTELYO_SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+      ACTELYO_RELEASE_VERSION: ${{ inputs.release_version || '2026.11.4' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+      - name: Admit a distinct installer version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ($env:ACTELYO_RELEASE_VERSION -notmatch '^\d{4}\.\d{1,2}\.\d{1,2}(?:\.\d{1,4})?$') { throw 'Invalid Actelyo release version' }
+          $exists = $true
+          try {
+            $uri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/desktop-law-v$env:ACTELYO_RELEASE_VERSION"
+            Invoke-RestMethod -Uri $uri -Headers @{ Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json' } | Out-Null
+          } catch {
+            if ([int]$_.Exception.Response.StatusCode -ne 404) { throw }
+            $exists = $false
+          }
+          if ($exists) { throw 'This release version already exists; choose a new version instead of replacing published files.' }
       - name: Keep verifier and select exact product source
         shell: pwsh
         run: |
@@ -75,14 +96,16 @@ jobs:
         run: npm ci
       - name: Test Actelyo workbench UI
         working-directory: apps/desktop
-        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
+        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/atelier-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
       - name: Test private library import and extraction
-        run: node scripts/build/python.mjs -m pytest tests/test_actelyo_workflow.py tests/test_actelyo_inference.py tests/test_actelyo_library_pack.py tests/tools/test_legal_cabinet_tool.py tests/tui_gateway/test_legal_practice_rpc.py -q
+        shell: bash
+        run: scripts/run_tests.sh tests/test_actelyo_workflow.py tests/test_actelyo_inference.py tests/test_actelyo_library_pack.py tests/tools/test_legal_cabinet_tool.py tests/tui_gateway/test_legal_practice_rpc.py tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/agent/test_native_codex_init.py -q -j 1
       - name: Test window capture consent and limits
         working-directory: apps/desktop
         run: npx vitest run --project electron electron/procedure-capture.test.ts --maxWorkers=1
       - name: Test Studio profile isolation
-        run: node scripts/build/python.mjs -m pytest tests/tools/test_actelyo_studio.py tests/hermes_cli/test_local_models_activate_rescan.py -q
+        shell: bash
+        run: scripts/run_tests.sh tests/tools/test_actelyo_studio.py tests/hermes_cli/test_local_models_activate_rescan.py -q -j 1
       - name: Restore verified local runtime inputs
         uses: actions/cache@v4
         id: payload
@@ -137,7 +160,7 @@ jobs:
             $compiler = Join-Path $innoRoot 'ISCC.exe'
             if (-not (Test-Path $compiler)) { throw 'Pinned Inno Setup 7 compiler unavailable after installation' }
             $compileLog = Join-Path $releaseDir 'installer-compile.log'
-            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" scripts/actelyo-download/installer.iss 2>&1
+            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" "/DBuildVersion=$env:ACTELYO_RELEASE_VERSION" scripts/actelyo-download/installer.iss 2>&1
             $compileExitCode = $LASTEXITCODE
             $compileOutput | Set-Content -LiteralPath $compileLog
             $compileOutput | Write-Output
@@ -164,7 +187,7 @@ jobs:
           $file = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
           $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  Actelyo-Law-Harness-Setup-x64.exe" | Set-Content actelyo-release/SHA256SUMS.txt
-          @{ product='Actelyo Law Harness'; source_commit=$env:ACTELYO_SOURCE_SHA; packaging_commit=$env:GITHUB_SHA; artifact='Actelyo-Law-Harness-Setup-x64.exe'; sha256=$hash; bytes=(Get-Item $file).Length; signed=$false; model_included=$false; windows='10/11 x64'; verified_installed=$true } | ConvertTo-Json | Set-Content actelyo-release/build-manifest.json
+          @{ product='Actelyo Law Harness'; source_commit=$env:ACTELYO_SOURCE_SHA; packaging_commit=$env:GITHUB_SHA; artifact='Actelyo-Law-Harness-Setup-x64.exe'; version=$env:ACTELYO_RELEASE_VERSION; sha256=$hash; bytes=(Get-Item $file).Length; signed=$false; model_included=$false; windows='10/11 x64'; verified_installed=$true } | ConvertTo-Json | Set-Content actelyo-release/build-manifest.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -212,7 +235,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
-          $version = '2026.11.3'
+          $version = $env:ACTELYO_RELEASE_VERSION
           $name = "Actelyo-Law-Harness-Setup-$version-x64.exe"
           $out = 'actelyo-release/dist'; New-Item -ItemType Directory -Force $out | Out-Null
           $setup = 'actelyo-release/Actelyo-Law-Harness-Setup-x64.exe'
@@ -230,9 +253,7 @@ jobs:
           Copy-Item actelyo-release/build-manifest.json $out/
           Get-Content "$out/SHA256SUMS.txt"
           $files = @(Get-ChildItem $out -File | ForEach-Object FullName)
-          gh release view "desktop-law-v$version" 2>$null
-          if ($LASTEXITCODE -eq 0) { gh release upload "desktop-law-v$version" @files --clobber }
-          else { gh release create "desktop-law-v$version" @files --draft --target $env:ACTELYO_SOURCE_SHA --title "Actelyo Law Harness $version" --notes "Connexion Chrome/Edge par extension officielle. SHA-256 $hash ($len octets), en $($n-1) parties." }
+          gh release create "desktop-law-v$version" @files --draft --target $env:ACTELYO_SOURCE_SHA --title "Actelyo Law Harness $version" --notes "Atelier de création de plugins par prompt, chronologies sourcées et corrections du moteur natif. Installation Windows vérifiée. SHA-256 $hash ($len octets), en $($n-1) parties. Aucun modèle privé inclus."
           if ($LASTEXITCODE -ne 0) { throw 'Draft release failed' }
       - name: Publish verified download
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/codex/actelyo-local-modules-20261003') || inputs.publish }}
@@ -240,6 +261,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
-          $tag = "actelyo-law-harness-$($env:ACTELYO_SOURCE_SHA.Substring(0,7))"
-          gh release create $tag actelyo-release/Actelyo-Law-Harness-Setup-x64.exe actelyo-release/SHA256SUMS.txt actelyo-release/build-manifest.json --target $env:ACTELYO_SOURCE_SHA --title 'Actelyo Law Harness — Windows' --notes 'Installateur Windows x64 vérifié sur un profil neuf. Icône et catalogue Actelyo. Moteur agent local inclus ; modèle à configurer séparément. Binaire non signé. Le manifeste donne le commit exact et le SHA-256.' --prerelease
+          $tag = "desktop-law-v$env:ACTELYO_RELEASE_VERSION"
+          gh release edit $tag --draft=false --latest=false
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
