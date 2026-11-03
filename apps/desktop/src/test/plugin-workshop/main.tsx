@@ -1,4 +1,4 @@
-/** Browser fixture for the real runtime loader, registry and plugin lifecycle.
+/** Renderer browser fixture for the real runtime loader, registry and plugin lifecycle.
  * No mock plugin SDK or generated result; only the Electron shell is absent.
  */
 import React, { useState, useSyncExternalStore } from 'react'
