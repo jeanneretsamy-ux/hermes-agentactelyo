@@ -19,6 +19,11 @@ def test_selection_cannot_move_a_quote_to_another_file_or_location(field, value)
     assert len(catalog) == len(set(catalog))
     assert set(catalog) == set(passages.build_catalog(dict(reversed(list(sources.items())))))
     pid = next(pid for pid, item in catalog.items() if item["source_id"] == "1")
+    limited = passages.select_context(catalog, "ALPHA dépôt", 1)
+    assert pid in limited
+    other = next(pid for pid, item in catalog.items() if item["source_id"] == "2")
+    with pytest.raises(ValueError, match="unknown"):
+        passages.assemble_claims([{"id": "c", "text": "4817 euros", "passage_ids": [other]}], limited)
     claims = passages.assemble_claims([{"id": "c", "text": "4817 euros", "passage_ids": [pid]}], catalog)
     evidence = claims[0]["evidence"][0]
     assert sources["1"]["text"][evidence["start"]:evidence["end"]] == evidence["quote"]

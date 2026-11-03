@@ -11,6 +11,7 @@ import io
 import json
 from pathlib import PurePosixPath
 import re
+import unicodedata
 from urllib.parse import unquote, urlparse
 
 
@@ -161,6 +162,25 @@ def assemble_claims(selected, catalog):
         # All citation fields come from the immutable catalog, never the model.
         result.append({"id": cid, "text": text, "evidence": [dict(catalog[pid]) for pid in ids]})
     return result
+
+
+def select_context(catalog, question, limit=None):
+    """Bound small local-model context using only the question, never gold labels."""
+    if limit is None or limit >= len(catalog):
+        return catalog
+    if type(limit) is not int or limit < 1:
+        raise ValueError("Passage limit must be a positive integer.")
+    stop = set("le la les de du des un une et est en au aux pour par sur dans quel quelle quels quelles ce cette ces a il elle que qui comment avec document documents dossier the is of what which".split())
+    def words(text):
+        plain = ''.join(c for c in unicodedata.normalize('NFKD', text.lower()) if not unicodedata.combining(c))
+        return {word for word in re.findall(r'\w+', plain) if len(word)>1 and word not in stop}
+    terms = words(question)
+    def key(item):
+        _, row = item
+        content = row['quote'] + ' ' + json.dumps(row.get('table', {}), ensure_ascii=False)
+        relevance = len(terms & words(content)) + 2*len(terms & words(row['name']))
+        return -relevance, row['url'], row['start']
+    return dict(sorted(catalog.items(), key=key)[:limit])
 
 
 def verify_bindings(claims, sources):
