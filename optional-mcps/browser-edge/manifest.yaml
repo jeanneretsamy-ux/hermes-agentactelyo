@@ -5,8 +5,8 @@ source: https://github.com/microsoft/playwright-mcp
 transport:
   type: stdio
   command: npx
-  args: ['-y', '@playwright/mcp@0.0.84', '--extension', '--browser', 'msedge']
-  version: '0.0.84'
+  args: ['-y', '@playwright/mcp@0.0.83', '--extension', '--browser', 'msedge']
+  version: '0.0.83'
 auth:
   type: none
 suggest:
