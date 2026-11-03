@@ -2,7 +2,7 @@
 name: grounded-citations
 description: "Ground answers and documents in cited, verifiable sources."
 version: 1.4.0
-author: Hermes Agent + Teknium
+author: Samy Jeanneret (@jeanneretsamy-ux) + Teknium + Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -12,7 +12,7 @@ metadata:
     related_skills: [arxiv, pdf, reddit-reading, rss-feeds, youtube-content]
 ---
 
-# Grounded Citations
+# Grounded Citations Skill
 
 Every claim taken from an outside source gets an inline numbered citation and a
 `Sources:` list, Perplexity-style. A ledger script owns the `url → [n]` mapping

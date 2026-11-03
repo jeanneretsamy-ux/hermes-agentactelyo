@@ -281,8 +281,8 @@ def render_report(result):
             labels.append(f"[{references[pid][0]}]")
         # Prevent model-authored reference numbers or Markdown links from being
         # confused with mechanically attached citations.
-        text = claim["text"].replace("[", "\\[").replace("]", "\\]")
-        lines.append(text + " " + "".join(labels) + "\n")
+        text = claim["text"].replace("\n", " ").replace("<", "&lt;").replace(">", "&gt;").replace("[", "\\[").replace("]", "\\]")
+        lines.append("- " + text + " " + "".join(labels) + "\n")
     lines += ["## Sources", ""]
     for number, evidence in references.values():
         page = f"page {evidence['page']}" if evidence["page"] is not None else "page non renseignée"
@@ -291,5 +291,7 @@ def render_report(result):
                   evidence["url"], f"Passage : `{evidence['passage_id']}` · SHA-256 : `{evidence['source_sha256']}`", ""]
         if "table" in evidence:
             lines += [f"Ligne {evidence['table']['row']} du tableau extrait · Colonnes : " + " | ".join(evidence["table"]["headers"]), ""]
-        lines += ["> " + line for line in evidence["quote"].splitlines()] + [""]
+        ticks = max((len(run) for run in re.findall(r'`+', evidence["quote"])), default=0)
+        fence = '`' * max(3, ticks+1)
+        lines += [fence+'text', evidence["quote"], fence, ""]
     return "\n".join(lines)
