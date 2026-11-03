@@ -65,8 +65,8 @@ def test_unpromoted_candidate_requires_explicit_evaluation_mode():
         calls = [{"experimental": True}]
         def complete(self, model, system, payload):
             if model == "writer":
-                return {"claims": [{"id": "c1", "text": "4817 euros", "evidence": [
-                    {"source_id": "1", "quote": "4817 euros"}]}], "gaps": []}
+                return {"claims": [{"id": "c1", "text": "4817 euros", "passage_ids": [
+                    payload["passages"][0]["passage_id"]]}], "gaps": []}
             return {"decision": "approve", "claims": [{"id": "c1", "verdict": "supported"}]}
     source = {"1": {"id": "1", "text": "4817 euros", "url": "file:///bail", "sha256": "fixture"}}
     result = research.run("Montant ?", source, "writer", "judge", ExperimentalPipeline())

@@ -17,9 +17,9 @@ spec.loader.exec_module(research)
 def test_incomplete_or_unsupported_evidence_cannot_be_approved(fault):
     sources = {"1": {"id": "1", "url": "file:///bail.txt", "sha256": "fixture", "text": "Le dépôt est de 4817 euros."}}
     claims = [{"id": "c1", "text": "Le dépôt est de 4817 euros.",
-               "evidence": [{"source_id": "1", "quote": sources["1"]["text"]}]}]
+               "passage_ids": list(research.build_catalog(sources))}]
     if fault == "invented_quote":
-        claims[0]["evidence"][0]["quote"] = "Le dépôt est de 9999 euros."
+        claims[0]["quote"] = "Le dépôt est de 9999 euros."
     class Client:
         calls = []
         def complete(self, model, system, payload):
@@ -42,8 +42,9 @@ def test_real_http_transport_preserves_models_quotes_and_usage(tmp_path):
         def do_POST(self):
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             calls.append(body)
+            input_data = json.loads(body["messages"][1]["content"])
             payload = ({"claims": [{"id": "c1", "text": "La somme est de 4817 euros.",
-                       "evidence": [{"source_id": "1", "quote": "4817 euros"}]}], "gaps": []}
+                       "passage_ids": [input_data["passages"][0]["passage_id"]]}], "gaps": []}
                        if body["model"] == "writer" else {"decision": "approve", "claims": [
                            {"id": "c1", "verdict": "supported", "reason": "matches evidence"}]})
             reply = json.dumps({"model": body["model"], "choices": [{"message": {"content": json.dumps(payload)}}],
@@ -64,6 +65,8 @@ def test_real_http_transport_preserves_models_quotes_and_usage(tmp_path):
         assert [call["model"] for call in calls] == ["writer", "judge"]
         assert len(result["sources"][0]["sha256"]) == 64
         assert all(call["usage"]["prompt_tokens"] == 41 for call in result["calls"])
+        assert result["claims"][0]["evidence"][0]["quote"] == "Dépôt : 4817 euros."
+        assert "Sources" in research.render_report(result)
     finally:
         server.shutdown()
         server.server_close()

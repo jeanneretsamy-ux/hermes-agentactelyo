@@ -18,4 +18,4 @@ jobs:
           extras: '[]'
           test-environment: 'true'
       - name: Citation contracts and actual loopback transport
-        run: scripts/run_tests.sh tests/skills/test_deep_research_review.py tests/skills/test_matousse_research.py tests/skills/test_grounded_citations_skill.py -q -j 1
+        run: scripts/run_tests.sh tests/skills/test_deep_research_review.py tests/skills/test_matousse_research.py tests/skills/test_passage_citations.py tests/skills/test_grounded_citations_skill.py -q -j 1
