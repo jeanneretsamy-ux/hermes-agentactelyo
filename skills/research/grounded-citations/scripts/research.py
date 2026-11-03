@@ -85,7 +85,7 @@ def model_passage(row):
 
 
 class ModelClient:
-    def __init__(self, base_url, api_key="", timeout=240, max_output_tokens=1800):
+    def __init__(self, base_url, api_key="", timeout=240, max_output_tokens=1800, max_claims=8):
         parsed = urllib.parse.urlparse(base_url)
         if parsed.username or parsed.password or parsed.query or parsed.fragment:
             raise ValueError("Invalid model endpoint.")
@@ -94,6 +94,7 @@ class ModelClient:
         self.base = base_url.rstrip("/")
         self.key, self.timeout, self.calls = api_key, timeout, []
         self.max_output_tokens = max_output_tokens
+        self.max_claims = max_claims
         # Do not send local evidence through environment-configured proxies.
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
@@ -103,17 +104,29 @@ class ModelClient:
                    "temperature": 0, "max_tokens": self.max_output_tokens, "stream": False}
         if "passages" in payload:
             schema = {"type": "object", "properties": {
-                "claims": {"type": "array", "items": {"type": "object", "properties": {
-                    "id": {"type": "string"}, "text": {"type": "string"},
-                    "passage_ids": {"type": "array", "minItems": 1, "maxItems": 4,
+                "claims": {"type": "array", "maxItems": self.max_claims, "items": {"type": "object", "properties": {
+                    "id": {"type": "string", "maxLength": 24}, "text": {"type": "string", "maxLength": 400},
+                    "passage_ids": {"type": "array", "minItems": 1, "maxItems": 3,
                         "items": {"type": "string", "enum": [p["passage_id"] for p in payload["passages"]]}}},
                     "required": ["id", "text", "passage_ids"], "additionalProperties": False}},
-                "gaps": {"type": "array", "items": {"type": "string"}}},
+                "gaps": {"type": "array", "maxItems": 3, "items": {"type": "string", "maxLength": 160}}},
                 "required": ["claims", "gaps"], "additionalProperties": False}
             request["response_format"] = {"type": "json_schema", "json_schema": {
                 "name": "grounded_claims", "strict": True, "schema": schema}}
         else:
-            request["response_format"] = {"type": "json_object"}
+            ids = [claim["id"] for claim in payload["claims"]]
+            schema = {"type": "object", "properties": {
+                "decision": {"type": "string", "enum": ["approve", "research_again"]},
+                "claims": {"type": "array", "minItems": len(ids), "maxItems": len(ids), "items": {
+                    "type": "object", "properties": {"id": {"type": "string", "enum": ids},
+                        "verdict": {"type": "string", "enum": ["supported", "unsupported", "contradicted"]},
+                        "reason": {"type": "string", "maxLength": 240}},
+                    "required": ["id", "verdict", "reason"], "additionalProperties": False}},
+                "missing_queries": {"type": "array", "maxItems": 3,
+                    "items": {"type": "string", "maxLength": 160}}},
+                "required": ["decision", "claims", "missing_queries"], "additionalProperties": False}
+            request["response_format"] = {"type": "json_schema", "json_schema": {
+                "name": "evidence_review", "strict": True, "schema": schema}}
         if "qwen" in model.lower() or model.lower().startswith("legalya"):
             request["chat_template_kwargs"] = {"enable_thinking": False}
         headers = {"Content-Type": "application/json"}
