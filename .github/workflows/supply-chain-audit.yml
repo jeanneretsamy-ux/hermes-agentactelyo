@@ -60,6 +60,7 @@ jobs:
         uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
           fetch-depth: 0
+          filter: blob:none  # Preserve merge-base semantics; fetch file contents only when needed.
 
       - name: Scan diff for critical patterns
         id: scan
