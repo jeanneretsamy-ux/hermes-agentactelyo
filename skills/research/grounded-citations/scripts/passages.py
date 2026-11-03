@@ -202,7 +202,8 @@ def verify_table_amounts(question, claims, catalog):
     def number(text):
         text = re.sub(r'[\s\u202f€]', '', text).replace(',', '.')
         try:
-            return Decimal(text)
+            value = Decimal(text)
+            return value if value.is_finite() else None
         except InvalidOperation:
             return None
     q = normal(question)
@@ -213,6 +214,8 @@ def verify_table_amounts(question, claims, catalog):
     for day, month, year in re.findall(r'\b(\d{1,2})(?:er)?\s+([a-z]+)\s+(\d{4})\b', q):
         if month in months:
             dates.add(f"{int(day):02}/{months[month]}/{year}")
+    if re.search(r'\b(?:avant|apres|depuis|entre|jusqu|anterieur|posterieur)\b', q):
+        dates = set()  # A range/boundary question is not an exact-date lookup.
     rows = {(row['source_id'], row['start'], row['end']): row['table'] for row in catalog.values() if 'table' in row}
     def row_score(table):
         score = 0
