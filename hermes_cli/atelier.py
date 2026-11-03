@@ -17,11 +17,13 @@ import sqlite3
 import unicodedata
 from urllib.parse import urlparse
 
-from hermes_constants import get_bundled_skills_dir, get_hermes_home
+from hermes_constants import get_bundled_skills_dir, get_hermes_home, mkdir_under_hermes_home
 
 
 def _passages():
-    path = get_bundled_skills_dir() / "research/grounded-citations/scripts/passages.py"
+    path = get_bundled_skills_dir(Path(__file__).resolve().parents[1] / 'skills') / "research/grounded-citations/scripts/passages.py"
+    if not path.is_file():
+        raise ValueError("Le module de citations n'est pas installé dans ce runtime.")
     spec = importlib.util.spec_from_file_location("_atelier_passages", path)
     if spec is None or spec.loader is None:
         raise ValueError("Le module de citations n'est pas installé.")
@@ -108,7 +110,7 @@ def validate_bundle(bundle):
 @contextmanager
 def _db():
     home = get_hermes_home()
-    home.mkdir(parents=True, exist_ok=True)
+    mkdir_under_hermes_home(home)
     conn = sqlite3.connect(home / 'atelier.sqlite3', timeout=10)
     conn.row_factory = sqlite3.Row
     try:
