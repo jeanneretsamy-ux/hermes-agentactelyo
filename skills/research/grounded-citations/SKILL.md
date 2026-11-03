@@ -1,7 +1,7 @@
 ---
 name: grounded-citations
 description: "Ground answers and documents in cited, verifiable sources."
-version: 1.2.0
+version: 1.3.0
 author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
@@ -152,6 +152,12 @@ sentiment. Report per-platform coverage gaps ("Reddit search returned nothing
 newer than March") rather than silently narrowing to what worked.
 
 ## Fact-Checking Mode
+
+For multi-step research with a separate Actelyo decision model, follow
+`references/deep-research.md`. The executable `scripts/research.py` creates
+structured claims, checks each quotation against retrieved text, and requires
+an independent per-claim decision before approving a report. Native search and
+extraction tools perform additional research when the decision requests it.
 
 For work where the reader must be able to check the chain — medical, legal,
 financial, safety, disputed claims, or when the user asks for fact-checking —
