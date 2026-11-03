@@ -6,7 +6,7 @@ import { Codicon } from '@/components/ui/codicon'
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { $gateway } from '@/store/gateway'
 import { $activeGatewayProfile } from '@/store/profile'
-import { $activeSessionId } from '@/store/session'
+import { $activeSessionId, $connection } from '@/store/session'
 
 import { ProcedureLearningDialog } from './procedure-learning-dialog'
 import { ReaWorkbenchDialog } from './rea-workbench-dialog'
@@ -17,6 +17,7 @@ export function ActelyoWorkbench() {
   const gateway = useStore($gateway)
   const profile = useStore($activeGatewayProfile)
   const session = useStore($activeSessionId)
+  const connection = useStore($connection)
 
   const [learning, setLearning] = useState<{
     mode: 'learn' | 'rea' | 'atelier'
@@ -62,7 +63,13 @@ export function ActelyoWorkbench() {
       </SidebarMenuItem>
       {current && learning.mode === 'learn' && <ProcedureLearningDialog onClose={() => setLearning(null)} />}
       {current && learning.mode === 'atelier' && (
-        <AtelierDialog gateway={gateway} onClose={() => setLearning(null)} profile={profile} />
+        <AtelierDialog
+          gateway={gateway}
+          onClose={() => setLearning(null)}
+          profile={profile}
+          local={connection?.mode === 'local'}
+          onOpenPlugins={() => navigate('/capabilities?tab=plugins')}
+        />
       )}
       {current && learning.mode === 'rea' && (
         <ReaWorkbenchDialog gateway={gateway} onClose={() => setLearning(null)} profile={profile} />

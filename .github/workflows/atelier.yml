@@ -2,7 +2,7 @@ name: Atelier verification
 on:
   push:
     branches: [codex/grounded-deep-research, main]
-    paths: ['hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
+    paths: ['agent/agent_init.py', 'tests/agent/test_native_codex_init.py', 'hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'skills/research/actelyo-plugin-creator/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,7 +18,7 @@ jobs:
           extras: '[]'
           test-environment: 'true'
       - name: Real storage, profile RPCs and generated contracts
-        run: scripts/run_tests.sh tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/tui_gateway/contracts/test_generated.py -q -j 1
+        run: scripts/run_tests.sh tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/tui_gateway/contracts/test_generated.py tests/agent/test_native_codex_init.py -q -j 1
       - name: Install locked UI dependencies without native postinstall
         run: npm ci --ignore-scripts
       - name: Atelier interactions

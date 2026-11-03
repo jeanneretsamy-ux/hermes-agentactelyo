@@ -8,7 +8,8 @@ import { AtelierDialog } from './atelier-dialog'
 const mocks = vi.hoisted(() => ({
   insert: vi.fn(),
   request: vi.fn(),
-  surface: true
+  surface: true,
+  pluginRoot: vi.fn()
 }))
 vi.mock('@/app/chat/composer/focus', () => ({
   getActiveComposer: () => 'main',
@@ -70,6 +71,12 @@ beforeEach(() => {
   mocks.request.mockReset()
   mocks.insert.mockReset()
   mocks.surface = true
+  mocks.pluginRoot.mockReset()
+  mocks.pluginRoot.mockResolvedValue('C:/device/desktop-plugins')
+  Object.defineProperty(window, 'hermesDesktop', {
+    configurable: true,
+    value: { desktopPluginsRoot: mocks.pluginRoot }
+  })
   mocks.request.mockImplementation(async (method: string) =>
     method === 'atelier.preview' ? panel : { revisions: rows }
   )
@@ -121,4 +128,29 @@ it('shows RPC failures and refreshes without pretending the extension was activa
   fireEvent.click(screen.getByRole('button', { name: 'Actualiser' }))
   await screen.findByRole('button', { name: /Chronologie ALPHA/ })
   await waitFor(() => expect(screen.queryByRole('alert')).toBeNull())
+})
+
+it('prepares a JavaScript plugin request using the local app root and opens its manager', async () => {
+  const open = vi.fn()
+  render(<AtelierDialog gateway={gateway} profile="legal-a" local onClose={vi.fn()} onOpenPlugins={open} />)
+  await screen.findByRole('button', { name: /Chronologie ALPHA/ })
+  fireEvent.click(screen.getByRole('button', { name: 'Plugin d’interface' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
+  await waitFor(() =>
+    expect(mocks.insert).toHaveBeenCalledWith(expect.stringContaining('actelyo-plugin-creator'), { target: 'main' })
+  )
+  expect(mocks.insert.mock.calls[0][0]).toContain('C:/device/desktop-plugins')
+  expect(mocks.insert.mock.calls[0][0]).toContain('defaultEnabled: false')
+  fireEvent.click(screen.getByRole('button', { name: 'Ouvrir les plugins' }))
+  expect(open).toHaveBeenCalledOnce()
+})
+
+it('refuses to confuse a remote backend with the local desktop plugin root', async () => {
+  render(<AtelierDialog gateway={gateway} profile="remote-profile" onClose={vi.fn()} />)
+  await screen.findByRole('button', { name: /Chronologie ALPHA/ })
+  fireEvent.click(screen.getByRole('button', { name: 'Plugin d’interface' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
+  expect((await screen.findByRole('alert')).textContent).toContain('connexion locale')
+  expect(mocks.pluginRoot).not.toHaveBeenCalled()
+  expect(mocks.insert).not.toHaveBeenCalled()
 })
