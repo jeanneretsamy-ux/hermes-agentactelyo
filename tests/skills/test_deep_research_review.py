@@ -31,7 +31,9 @@ def test_incomplete_or_unsupported_evidence_cannot_be_approved(fault):
         with pytest.raises(ValueError, match="every claim"):
             research.run("Dépôt ?", sources, "writer", "judge", Client())
     else:
-        assert research.run("Dépôt ?", sources, "writer", "judge", Client())["status"] == "research_again"
+        result = research.run("Dépôt ?", sources, "writer", "judge", Client())
+        assert result["status"] == "research_again"
+        assert result["research_queries"]
 
 
 def test_real_http_transport_preserves_models_quotes_and_usage(tmp_path):
@@ -68,6 +70,8 @@ def test_real_http_transport_preserves_models_quotes_and_usage(tmp_path):
         assert len(result["sources"][0]["sha256"]) == 64
         assert all(call["usage"]["prompt_tokens"] == 41 for call in result["calls"])
         assert result["claims"][0]["evidence"][0]["quote"] == "Dépôt : 4817 euros."
+        assert result["claims"][0]["verification"] == {
+            "verbatim_exists": True, "source_and_location_bound": True, "entailment": "supported"}
         assert "Sources" in research.render_report(result)
     finally:
         server.shutdown()

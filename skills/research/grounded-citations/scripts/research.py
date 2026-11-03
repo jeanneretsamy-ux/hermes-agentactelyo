@@ -252,11 +252,20 @@ def run(question, sources, writer, decision, client):
                                                          for sid, row in sources.items()]})
         approved = validate_review(review, claims) and not draft.get("gaps")
     experimental = any(call.get("experimental") for call in client.calls)
+    verdicts = {row["id"]: row["verdict"] for row in (review or {}).get("claims", [])}
+    for claim in claims:
+        claim["verification"] = {
+            "verbatim_exists": all(sources[e["source_id"]]["text"][e["start"]:e["end"]] == e["quote"] for e in claim["evidence"]),
+            "source_and_location_bound": all(catalog.get(e["passage_id"]) == e for e in claim["evidence"]),
+            "entailment": verdicts.get(claim["id"], "not_reviewed")}
+    queries = (review or {}).get("missing_queries", [])
+    if not approved and not queries:
+        queries = [f"{question} — vérifier : {c['text']}" for c in claims if verdicts.get(c["id"]) != "supported"] or [question]
     status = ("experimental_review_passed" if experimental else "approved") if approved else "research_again"
     return {"status": status, "experimental": experimental, "requires_human_review": experimental,
             "candidate_promoted": False if experimental else None, "claims": claims,
             "gaps": draft.get("gaps", []), "provenance_errors": errors, "review": review,
-            "research_queries": (review or {}).get("missing_queries", []) or ([question] if errors else []),
+            "research_queries": queries,
             "writer_model": writer, "decision_model": decision, "calls": client.calls,
             "passages": list(catalog.values()),
             "sources": [{"id": str(sid), "url": row["url"], "sha256": hashlib.sha256(row["text"].encode()).hexdigest()}
