@@ -31,6 +31,8 @@ def test_selection_cannot_move_a_quote_to_another_file_or_location(field, value)
 @pytest.mark.parametrize("name,text", [
     ("factures.csv", 'Dossier;Facture;TTC\nALPHA;FA-042;3000\nBETA;FB-042;9000\n'),
     ("factures.md", '| Dossier | Facture | TTC |\n|---|---|---|\n| ALPHA | FA-042 | 3000 |\n| BETA | FB-042 | 9000 |\n'),
+    ("factures.csv", '| Dossier | Facture | TTC |\n| --- | --- | --- |\n| ALPHA | FA-042 | 3000 |\n'),
+    ("factures.md", '| Dossier | Description | TTC |\n|---|---|---|\n| ALPHA | A \\| B | 3000 |\n'),
     ("factures.csv", 'Dossier;Description;TTC\nALPHA;"Prestation\ncomplémentaire";3000\n'),
 ])
 def test_table_selection_preserves_headers_rows_and_literal_citations(name, text):

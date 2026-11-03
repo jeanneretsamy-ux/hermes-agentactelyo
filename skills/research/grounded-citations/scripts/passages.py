@@ -70,7 +70,8 @@ def build_catalog(sources):
                 raise ValueError("Duplicate source snapshot or passage identity collision.")
             catalog[pid] = item
 
-        if source_name(source).lower().endswith((".csv", ".tsv")):
+        extracted_markdown = bool(re.match(r"\s*\|[^\n]+\n\|\s*:?-{3}", text))
+        if source_name(source).lower().endswith((".csv", ".tsv")) and not extracted_markdown:
             delimiter = "\t" if source_name(source).lower().endswith(".tsv") else ";"
             if delimiter == ";" and ";" not in text.splitlines()[0]:
                 delimiter = ","
