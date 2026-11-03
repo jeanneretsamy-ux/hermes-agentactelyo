@@ -207,10 +207,21 @@ def verify_table_amounts(question, claims, catalog):
             return None
     q = normal(question)
     tokens = ' '.join(re.findall(r'\w+', q))
+    months = {name: str(i).zfill(2) for i, name in enumerate(
+        ('janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'), 1)}
+    dates = {f"{int(d):02}/{int(m):02}/{y}" for d, m, y in re.findall(r'\b(\d{1,2})/(\d{1,2})/(\d{4})\b', q)}
+    for day, month, year in re.findall(r'\b(\d{1,2})(?:er)?\s+([a-z]+)\s+(\d{4})\b', q):
+        if month in months:
+            dates.add(f"{int(day):02}/{months[month]}/{year}")
     rows = {(row['source_id'], row['start'], row['end']): row['table'] for row in catalog.values() if 'table' in row}
     def row_score(table):
         score = 0
         for cell in table['cells']:
+            value_date = re.fullmatch(r'(\d{1,2})/(\d{1,2})/(\d{4})', cell['value'].strip())
+            if value_date:
+                day, month, year = value_date.groups()
+                if f"{int(day):02}/{int(month):02}/{year}" in dates:
+                    score += 2
             if normal(cell['header']) not in ('dossier', 'facture', 'reference', 'client', 'id'):
                 continue
             value = ' '.join(re.findall(r'\w+', normal(cell['value'])))

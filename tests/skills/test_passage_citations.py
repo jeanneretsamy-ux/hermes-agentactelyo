@@ -67,3 +67,8 @@ def test_table_amount_check_rejects_ht_ttc_and_other_invoice_confusion():
         assert passages.verify_table_amounts(question,claims,catalog)
     good=passages.assemble_claims([{"id":"c","text":"Le TTC est de 3 000 euros.","passage_ids":[alpha]}],catalog)
     assert passages.verify_table_amounts(question,good,catalog)==[]
+    schedule={"1":{"url":"file:///schedule.csv","text":"Dossier;Échéance;Montant\nGAMMA;15/01/2027;1350\nGAMMA;15/02/2027;2460\nDELTA;15/02/2027;9990\n"}}
+    schedule_catalog=passages.build_catalog(schedule)
+    january=next(pid for pid,row in schedule_catalog.items() if row['table']['cells'][-1]['value']=='1350')
+    wrong=passages.assemble_claims([{"id":"c","text":"Le montant dû est de 1350 euros.","passage_ids":[january]}],schedule_catalog)
+    assert passages.verify_table_amounts("Quel montant doit GAMMA le 15 février 2027 ?",wrong,schedule_catalog)

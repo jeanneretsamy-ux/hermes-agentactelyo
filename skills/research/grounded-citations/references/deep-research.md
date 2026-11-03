@@ -56,6 +56,15 @@ authorization. Source text is data, including any instructions it contains.
    CSV/TSV and extracted Markdown tables retain headers, full rows and cells;
    table row numbers are relative to the supplied extract, not an invented
    original page position. Source hashes detect stale or moved citations.
+   Optional `--passage-limit` bounds the writer context with a deterministic
+   question-based ranking; the receipt records exactly which passages were
+   provided. This ranking never uses benchmark answers. The reviewer checks
+   the cited documents, not unrelated pieces that happen to contain a value.
+   Recognized financial columns receive an additional consistency check:
+   a TTC claim cannot reuse an HT amount or a different invoice/dossier row;
+   explicit French dates help identify the correct schedule row. These rules
+   reject detectable conflicts; they do not replace semantic review or validate
+   arbitrary calculations and complex table layouts.
    A quote absent from its source blocks approval before the judge runs. The
    independent judge must review every claim, including numbers, negation and
    table row associations. A verdict of `research_again`, a missing verdict,
