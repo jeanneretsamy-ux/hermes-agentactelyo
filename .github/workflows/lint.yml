@@ -36,6 +36,7 @@ jobs:
         uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
           fetch-depth: 0 # need full history for merge-base + worktree
+          filter: blob:none # Materialize only files needed by HEAD and the base worktree.
 
       - uses: ./.github/actions/setup-pm
         with:
