@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [Research, Citations, Grounding, Sources, Web, Reports]
+    tags: [Research, Citations, Grounding, Sources, Web, Reports, DeepResearch]
     category: research
     related_skills: [arxiv, pdf, reddit-reading, rss-feeds, youtube-content]
 ---
@@ -39,6 +39,7 @@ knew:
   outside facts — reports, briefs, docs, decks, wiki pages
 - Fact-finding where the user will want to check your work
 - Multi-source synthesis where conflicting sources must be attributed
+- Deep Research with an independently configured decision model
 
 Skip inline citations when the retrieval is incidental to another task — a
 quick syntax/version lookup mid-coding, casual conversation, creative writing.
