@@ -284,6 +284,8 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-bundled-research',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/bundled/research/research-actelyo-atelier',
+                    'user-guide/skills/bundled/research/research-actelyo-plugin-creator',
                     'user-guide/skills/bundled/research/research-arxiv',
                     'user-guide/skills/bundled/research/research-competitor-news-monitor',
                     'user-guide/skills/bundled/research/research-grounded-citations',

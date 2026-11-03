@@ -5,6 +5,7 @@ import React, { useState, useSyncExternalStore } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { $pluginRecords, setPluginEnabled } from '@/contrib/plugins-store'
+import { ContribRender } from '@/contrib/react/boundary'
 import { registry } from '@/contrib/registry'
 import { loadRuntimePlugin, unloadRuntimePlugin } from '@/contrib/runtime-loader'
 
@@ -19,12 +20,17 @@ function Workshop() {
   const [status, setStatus] = useState('Aucun plugin chargé.')
 
   async function load(file: File | undefined) {
-    if (!file) return
-    const id = await loadRuntimePlugin(await file.text(), file.name, { defaultEnabled: false })
-    if (!id) {
-      setStatus('Échec du chargement.')
+    if (!file) {
       return
     }
+    const id = await loadRuntimePlugin(await file.text(), file.name, { defaultEnabled: false })
+
+    if (!id) {
+      setStatus('Échec du chargement.')
+
+      return
+    }
+
     setSelected(id)
     setStatus(`Chargé : ${id}`)
   }
@@ -35,11 +41,11 @@ function Workshop() {
       <p>Fixture de test du Desktop, sans compte ni shell Electron.</p>
       <label>
         Fichier du plugin
-        <input type="file" accept=".js" onChange={e => void load(e.target.files?.[0])} />
+        <input accept=".js" onChange={e => void load(e.target.files?.[0])} type="file" />
       </label>
       <label>
         Plugin
-        <select value={selected} onChange={e => setSelected(e.target.value)}>
+        <select onChange={e => setSelected(e.target.value)} value={selected}>
           <option value="">Choisir</option>
           {Object.values(records).map(row => (
             <option key={row.id} value={row.id}>
@@ -67,8 +73,8 @@ function Workshop() {
       <p role="status">{status}</p>
       <p data-testid="pane-count">{panes.length} panneau(x)</p>
       {panes.map(pane => (
-        <section key={pane.id} data-plugin-pane={pane.id}>
-          {pane.render?.()}
+        <section data-plugin-pane={pane.id} key={pane.id}>
+          {pane.render && <ContribRender render={pane.render} />}
         </section>
       ))}
     </main>

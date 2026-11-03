@@ -4,6 +4,7 @@ description: Créer et tester des plugins pour le Desktop.
 version: 1.0.0
 author: Samy Jeanneret (@jeanneretsamy-ux) + Hermes Agent
 license: MIT
+platforms: [linux, macos, windows]
 metadata:
   hermes:
     category: research

@@ -25,54 +25,78 @@ export function AtelierDialog({
   const [panel, setPanel] = useState<AtelierPanel | null>(null)
   const [query, setQuery] = useState('')
   const [kind, setKind] = useState<'chronology' | 'desktop-plugin'>('chronology')
+
   const [request, setRequest] = useState(
     'Crée la chronologie du dossier avec une source précise pour chaque événement.'
   )
+
   const [pluginRequest, setPluginRequest] = useState(
     'Crée un panneau pour calculer une date après un nombre de jours calendaires, avec un bouton Effacer.'
   )
+
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const pending = useRef(false)
   const generation = useRef(0)
+
   const destination = useRef({
     target: getActiveComposer(),
     surface: getVisibleComposerSurfaceId(getActiveComposer())
   })
 
-  async function run(action: () => Promise<void>) {
-    if (pending.current || !gateway) return
+  async function run(action: (current: () => boolean) => Promise<void>) {
+    if (pending.current || !gateway) {
+      return
+    }
     pending.current = true
+    const ticket = generation.current
+    const current = () => generation.current === ticket
     setBusy(true)
     setError('')
     setNotice('')
+
     try {
-      await action()
+      await action(current)
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : String(cause))
-      setPanel(null)
+      if (current()) {
+        setError(cause instanceof Error ? cause.message : String(cause))
+        setPanel(null)
+      }
     } finally {
-      pending.current = false
-      setBusy(false)
+      if (current()) {
+        pending.current = false
+        setBusy(false)
+      }
     }
   }
 
+  // Request generations fence late responses after a profile change or unmount; no atom is mirrored.
+  // eslint-disable-next-line no-restricted-syntax
   useEffect(() => {
     const ticket = ++generation.current
     setSnapshot({ revisions: [] })
     setPanel(null)
     setError('')
-    if (!gateway) return
-    setBusy(true)
-    pending.current = true
+    setNotice('')
+    setQuery('')
+    setBusy(Boolean(gateway))
+    pending.current = Boolean(gateway)
+
+    if (!gateway) {
+      return
+    }
     gateway
       .request<AtelierSnapshot>('atelier.list', { profile })
       .then(value => {
-        if (generation.current === ticket) setSnapshot(value)
+        if (generation.current === ticket) {
+          setSnapshot(value)
+        }
       })
       .catch(cause => {
-        if (generation.current === ticket) setError(String(cause))
+        if (generation.current === ticket) {
+          setError(String(cause))
+        }
       })
       .finally(() => {
         if (generation.current === ticket) {
@@ -80,6 +104,7 @@ export function AtelierDialog({
           pending.current = false
         }
       })
+
     return () => {
       generation.current++
     }
@@ -87,20 +112,31 @@ export function AtelierDialog({
 
   function prepare() {
     const { target, surface } = destination.current
+
     if (!surface || getVisibleComposerSurfaceId(target) !== surface) {
       setError('Ouvrez une conversation puis rouvrez l’Atelier pour préparer sa demande.')
+
       return
     }
+
     if (kind === 'desktop-plugin') {
       if (!local) {
         setError('Choisissez une connexion locale pour créer un plugin sur cet ordinateur.')
+
         return
       }
+
       const ticket = generation.current
       void run(async () => {
         const root = await window.hermesDesktop?.desktopPluginsRoot?.()
-        if (ticket !== generation.current || getVisibleComposerSurfaceId(target) !== surface) return
-        if (!root) throw new Error('Cette version Desktop ne fournit pas de dossier de plugins.')
+
+        if (ticket !== generation.current || getVisibleComposerSurfaceId(target) !== surface) {
+          return
+        }
+
+        if (!root) {
+          throw new Error('Cette version Desktop ne fournit pas de dossier de plugins.')
+        }
         requestComposerInsert(atelierPluginPrompt(pluginRequest, root), { target })
         onClose()
       })
@@ -111,6 +147,7 @@ export function AtelierDialog({
   }
 
   const active = snapshot.revisions.some(row => row.revision === panel?.revision && row.active)
+
   const events =
     panel?.events.filter(event =>
       `${event.date} ${event.title} ${event.evidence.map(e => `${e.name} ${e.quote}`).join(' ')}`
@@ -120,10 +157,12 @@ export function AtelierDialog({
 
   return (
     <Dialog
-      open
       onOpenChange={open => {
-        if (!open) onClose()
+        if (!open) {
+          onClose()
+        }
       }}
+      open
     >
       <DialogContent className="w-[min(64rem,calc(100vw-2rem))] max-w-none">
         <DialogHeader>
@@ -135,10 +174,10 @@ export function AtelierDialog({
           appartiennent à l’application locale.
         </p>
         <div aria-label="Type d’extension" className="flex gap-2">
-          <Button variant="outline" aria-pressed={kind === 'chronology'} onClick={() => setKind('chronology')}>
+          <Button aria-pressed={kind === 'chronology'} onClick={() => setKind('chronology')} variant="outline">
             Chronologie sourcée
           </Button>
-          <Button variant="outline" aria-pressed={kind === 'desktop-plugin'} onClick={() => setKind('desktop-plugin')}>
+          <Button aria-pressed={kind === 'desktop-plugin'} onClick={() => setKind('desktop-plugin')} variant="outline">
             Plugin d’interface
           </Button>
         </div>
@@ -155,8 +194,8 @@ export function AtelierDialog({
           Demande à l’agent
           <textarea
             className="rounded border p-2"
-            value={kind === 'chronology' ? request : pluginRequest}
             onChange={e => (kind === 'chronology' ? setRequest(e.target.value) : setPluginRequest(e.target.value))}
+            value={kind === 'chronology' ? request : pluginRequest}
           />
         </label>
         <div className="flex flex-wrap gap-2">
@@ -168,30 +207,33 @@ export function AtelierDialog({
           </Button>
           {kind === 'desktop-plugin' && (
             <Button
-              variant="outline"
               disabled={!onOpenPlugins}
               onClick={() => {
                 onClose()
                 onOpenPlugins?.()
               }}
+              variant="outline"
             >
               Ouvrir les plugins
             </Button>
           )}
           <Button
             disabled={!gateway || busy}
-            variant="outline"
             onClick={() =>
-              void run(async () => {
-                setSnapshot(
-                  await gateway!.request<AtelierSnapshot>('atelier.list', {
-                    profile
-                  })
-                )
+              void run(async current => {
+                const value = await gateway!.request<AtelierSnapshot>('atelier.list', {
+                  profile
+                })
+
+                if (!current()) {
+                  return
+                }
+                setSnapshot(value)
                 setPanel(null)
                 setNotice('Versions actualisées.')
               })
             }
+            variant="outline"
           >
             Actualiser
           </Button>
@@ -200,28 +242,31 @@ export function AtelierDialog({
         {busy && <p role="status">Chargement…</p>}
         {error && <p role="alert">{error} Vérifiez la connexion et la version du backend, puis actualisez.</p>}
         {notice && <p role="status">{notice}</p>}
-        <div hidden={kind !== 'chronology'} className="max-h-[55vh] space-y-4 overflow-y-auto">
+        <div className="max-h-[55vh] space-y-4 overflow-y-auto" hidden={kind !== 'chronology'}>
           {!busy && !error && snapshot.revisions.length === 0 && (
             <p>Aucune extension enregistrée. Préparez la demande puis envoyez-la à l’agent.</p>
           )}
           <nav aria-label="Versions des extensions" className="flex flex-wrap gap-2">
             {snapshot.revisions.map(row => (
               <Button
-                key={row.revision}
-                disabled={busy}
-                variant="outline"
                 aria-pressed={panel?.revision === row.revision}
+                disabled={busy}
+                key={row.revision}
                 onClick={() =>
-                  void run(async () => {
-                    setPanel(
-                      await gateway!.request<AtelierPanel>('atelier.preview', {
-                        profile,
-                        revision: row.revision
-                      })
-                    )
+                  void run(async current => {
+                    const value = await gateway!.request<AtelierPanel>('atelier.preview', {
+                      profile,
+                      revision: row.revision
+                    })
+
+                    if (!current()) {
+                      return
+                    }
+                    setPanel(value)
                     setQuery('')
                   })
                 }
+                variant="outline"
               >
                 {row.name} · {row.revision.slice(0, 8)} {row.active ? '· Active' : '· Aperçu'}
               </Button>
@@ -240,13 +285,16 @@ export function AtelierDialog({
                 <Button
                   disabled={busy || active}
                   onClick={() =>
-                    void run(async () => {
-                      setSnapshot(
-                        await gateway!.request<AtelierSnapshot>('atelier.activate', {
-                          profile,
-                          revision: panel.revision
-                        })
-                      )
+                    void run(async current => {
+                      const value = await gateway!.request<AtelierSnapshot>('atelier.activate', {
+                        profile,
+                        revision: panel.revision
+                      })
+
+                      if (!current()) {
+                        return
+                      }
+                      setSnapshot(value)
                       setNotice('Version activée. Les versions précédentes restent disponibles.')
                     })
                   }
@@ -254,23 +302,29 @@ export function AtelierDialog({
                   Activer cette version après revue
                 </Button>
                 <Button
-                  variant="outline"
                   disabled={busy || !active}
                   onClick={() =>
-                    void run(async () => {
-                      setSnapshot(
-                        await gateway!.request<AtelierSnapshot>('atelier.deactivate', { profile, panel_id: panel.id })
-                      )
+                    void run(async current => {
+                      const value = await gateway!.request<AtelierSnapshot>('atelier.deactivate', {
+                        profile,
+                        panel_id: panel.id
+                      })
+
+                      if (!current()) {
+                        return
+                      }
+                      setSnapshot(value)
                       setNotice('Extension désactivée. Les versions sont conservées.')
                     })
                   }
+                  variant="outline"
                 >
                   Désactiver
                 </Button>
               </div>
               <label className="grid gap-2">
                 Filtrer les événements et les sources
-                <input className="rounded border p-2" value={query} onChange={e => setQuery(e.target.value)} />
+                <input className="rounded border p-2" onChange={e => setQuery(e.target.value)} value={query} />
               </label>
               <p>{events.length} événement(s)</p>
               <ol className="space-y-4">

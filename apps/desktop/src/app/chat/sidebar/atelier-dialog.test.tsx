@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act } from 'react'
 import { beforeEach, expect, it, vi } from 'vitest'
 
 import type { HermesGateway } from '@/hermes'
@@ -11,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   surface: true,
   pluginRoot: vi.fn()
 }))
+
 vi.mock('@/app/chat/composer/focus', () => ({
   getActiveComposer: () => 'main',
   getVisibleComposerSurfaceId: () => (mocks.surface ? 'surface' : null),
@@ -29,6 +31,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }))
 
 const revision = 'a'.repeat(64)
+
 const rows = [
   {
     id: 'chrono',
@@ -38,6 +41,7 @@ const rows = [
     active: false
   }
 ]
+
 const panel = {
   id: 'chrono',
   name: 'Chronologie ALPHA',
@@ -65,6 +69,7 @@ const panel = {
     }
   ]
 }
+
 const gateway = { request: mocks.request } as unknown as HermesGateway
 
 beforeEach(() => {
@@ -83,7 +88,7 @@ beforeEach(() => {
 })
 
 it('previews a source, filters, activates and deactivates the exact version in the owner profile', async () => {
-  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={vi.fn()} />)
+  render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-a" />)
   fireEvent.click(await screen.findByRole('button', { name: /Chronologie ALPHA/ }))
   await screen.findByRole('heading', { name: /Chronologie ALPHA/ })
   fireEvent.click(screen.getByText(/Source : bail.txt/))
@@ -112,7 +117,7 @@ it('previews a source, filters, activates and deactivates the exact version in t
 
 it('prepares an unsent creator request for the actual composer', async () => {
   const close = vi.fn()
-  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={close} />)
+  render(<AtelierDialog gateway={gateway} onClose={close} profile="legal-a" />)
   await screen.findByRole('button', { name: /Chronologie ALPHA/ })
   fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
   expect(mocks.insert).toHaveBeenCalledWith(expect.stringContaining('actelyo-atelier'), { target: 'main' })
@@ -122,7 +127,7 @@ it('prepares an unsent creator request for the actual composer', async () => {
 
 it('shows RPC failures and refreshes without pretending the extension was activated', async () => {
   mocks.request.mockRejectedValueOnce(new Error('Backend indisponible'))
-  render(<AtelierDialog gateway={gateway} profile="legal-a" onClose={vi.fn()} />)
+  render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-a" />)
   await screen.findByRole('alert')
   expect(screen.queryByRole('button', { name: 'Activer cette version après revue' })).toBeNull()
   fireEvent.click(screen.getByRole('button', { name: 'Actualiser' }))
@@ -132,7 +137,7 @@ it('shows RPC failures and refreshes without pretending the extension was activa
 
 it('prepares a JavaScript plugin request using the local app root and opens its manager', async () => {
   const open = vi.fn()
-  render(<AtelierDialog gateway={gateway} profile="legal-a" local onClose={vi.fn()} onOpenPlugins={open} />)
+  render(<AtelierDialog gateway={gateway} local onClose={vi.fn()} onOpenPlugins={open} profile="legal-a" />)
   await screen.findByRole('button', { name: /Chronologie ALPHA/ })
   fireEvent.click(screen.getByRole('button', { name: 'Plugin d’interface' }))
   fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
@@ -146,11 +151,59 @@ it('prepares a JavaScript plugin request using the local app root and opens its 
 })
 
 it('refuses to confuse a remote backend with the local desktop plugin root', async () => {
-  render(<AtelierDialog gateway={gateway} profile="remote-profile" onClose={vi.fn()} />)
+  render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="remote-profile" />)
   await screen.findByRole('button', { name: /Chronologie ALPHA/ })
   fireEvent.click(screen.getByRole('button', { name: 'Plugin d’interface' }))
   fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
   expect((await screen.findByRole('alert')).textContent).toContain('connexion locale')
   expect(mocks.pluginRoot).not.toHaveBeenCalled()
   expect(mocks.insert).not.toHaveBeenCalled()
+})
+
+it('ignores a late preview from the previous profile across A to B to A', async () => {
+  let resolvePreview!: (value: typeof panel) => void
+  mocks.request.mockImplementation(async (method: string) =>
+    method === 'atelier.preview'
+      ? new Promise<typeof panel>(resolve => {
+          resolvePreview = resolve
+        })
+      : { revisions: rows }
+  )
+  const view = render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-a" />)
+  fireEvent.click(await screen.findByRole('button', { name: /Chronologie ALPHA/ }))
+  view.rerender(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-b" />)
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Actualiser' }).hasAttribute('disabled')).toBe(false))
+  await act(async () => resolvePreview(panel))
+  expect(screen.queryByRole('region', { name: 'Chronologie sourcée' })).toBeNull()
+  view.rerender(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-a" />)
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Actualiser' }).hasAttribute('disabled')).toBe(false))
+  expect(screen.queryByRole('region', { name: 'Chronologie sourcée' })).toBeNull()
+})
+
+it('ignores a late failure without unlocking the new profile request', async () => {
+  let rejectPreview!: (error: Error) => void
+  let resolveList!: (value: { revisions: typeof rows }) => void
+  mocks.request.mockImplementation(async (method: string, params: { profile: string }) => {
+    if (method === 'atelier.preview') {
+      return new Promise((_, reject) => {
+        rejectPreview = reject
+      })
+    }
+
+    if (params.profile === 'legal-b') {
+      return new Promise(resolve => {
+        resolveList = resolve
+      })
+    }
+
+    return { revisions: rows }
+  })
+  const view = render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-a" />)
+  fireEvent.click(await screen.findByRole('button', { name: /Chronologie ALPHA/ }))
+  view.rerender(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-b" />)
+  await act(async () => rejectPreview(new Error('Erreur du profil A')))
+  expect(screen.queryByRole('alert')).toBeNull()
+  expect(screen.getByRole('button', { name: 'Actualiser' }).hasAttribute('disabled')).toBe(true)
+  await act(async () => resolveList({ revisions: rows }))
+  expect(screen.getByRole('button', { name: 'Actualiser' }).hasAttribute('disabled')).toBe(false)
 })

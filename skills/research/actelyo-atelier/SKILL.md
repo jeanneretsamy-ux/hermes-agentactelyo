@@ -4,6 +4,7 @@ description: Créer une chronologie avec des sources vérifiables.
 version: 1.0.0
 author: Samy Jeanneret (@jeanneretsamy-ux) + Hermes Agent
 license: MIT
+platforms: [linux, macos, windows]
 metadata:
   hermes:
     category: research

@@ -105,6 +105,8 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 
 | Skill | Description | Path |
 |-------|-------------|------|
+| [`actelyo-atelier`](../user-guide/skills/bundled/research/research-actelyo-atelier.md) | Créer une chronologie avec des sources vérifiables. | `research/actelyo-atelier` |
+| [`actelyo-plugin-creator`](../user-guide/skills/bundled/research/research-actelyo-plugin-creator.md) | Créer et tester des plugins pour le Desktop. | `research/actelyo-plugin-creator` |
 | [`arxiv`](../user-guide/skills/bundled/research/research-arxiv.md) | Search arXiv papers by keyword, author, category, or ID. | `research/arxiv` |
 | [`competitor-news-monitor`](../user-guide/skills/bundled/research/research-competitor-news-monitor.md) | Watch named companies for material news; cited digests. | `research/competitor-news-monitor` |
 | [`grounded-citations`](../user-guide/skills/bundled/research/research-grounded-citations.md) | Ground answers and documents in cited, verifiable sources. | `research/grounded-citations` |
