@@ -66,8 +66,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if ($env:ACTELYO_RELEASE_VERSION -notmatch '^\d{4}\.\d{1,2}\.\d{1,2}(?:\.\d{1,4})?$') { throw 'Invalid Actelyo release version' }
-          gh release view "desktop-law-v$env:ACTELYO_RELEASE_VERSION" --repo $env:GITHUB_REPOSITORY 2>$null
-          if ($LASTEXITCODE -eq 0) { throw 'This release version already exists; choose a new version instead of replacing published files.' }
+          $exists = $true
+          try {
+            $uri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/desktop-law-v$env:ACTELYO_RELEASE_VERSION"
+            Invoke-RestMethod -Uri $uri -Headers @{ Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json' } | Out-Null
+          } catch {
+            if ([int]$_.Exception.Response.StatusCode -ne 404) { throw }
+            $exists = $false
+          }
+          if ($exists) { throw 'This release version already exists; choose a new version instead of replacing published files.' }
       - name: Keep verifier and select exact product source
         shell: pwsh
         run: |
