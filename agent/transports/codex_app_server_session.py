@@ -272,7 +272,18 @@ class CodexAppServerSession:
         # behind experimentalApi + a matching ``[permissions]`` table in ~/.codex/config.toml.
         # Hermes supplies the agent identity through its own system prompt; ``personality: "none"`` strips
         # codex's built-in "# Personality" section from the base instructions so it cannot compete (#72104).
-        params: dict[str, Any] = {"cwd": self._cwd, "personality": "none"}
+        # Use the stable protocol fields, not experimental named permissions.
+        # Logging the Hermes profile without transmitting it let an unrelated
+        # Codex home default (for example read-only) silently govern the turn.
+        policies = {
+            "workspace-write": "workspace-write",
+            "read-only-with-approval": "read-only",
+            "full-access": "danger-full-access",
+        }
+        if self._permission_profile not in policies:
+            raise ValueError(f"unsupported native permission profile: {self._permission_profile}")
+        params: dict[str, Any] = {"cwd": self._cwd, "personality": "none",
+                                  "sandbox": policies[self._permission_profile], "approvalPolicy": "on-request"}
         if self._developer_instructions and self._developer_instructions.strip():
             params["developerInstructions"] = self._developer_instructions
         if self._model_provider:

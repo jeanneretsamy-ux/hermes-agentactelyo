@@ -7,6 +7,53 @@
 export interface ProfileParams {
   profile?: string | null
 }
+export interface AtelierSnapshot {
+  revisions: AtelierRevision[]
+}
+export interface AtelierRevision {
+  id: string
+  name: string
+  revision: string
+  created_at: string
+  active: boolean
+}
+export interface AtelierRevisionParams {
+  profile?: string | null
+  revision: string
+}
+export interface AtelierPanel {
+  id: string
+  name: string
+  kind: 'chronology'
+  revision: string
+  events: AtelierEvent[]
+  source_binding: 'verified'
+  semantic_review: 'human_required'
+}
+export interface AtelierEvent {
+  id: string
+  date: string
+  title: string
+  evidence: AtelierEvidence[]
+}
+export interface AtelierEvidence {
+  passage_id: string
+  source_id: string
+  document_id: string
+  name: string
+  url: string
+  page: number | null
+  start: number
+  end: number
+  offset_scope: string
+  source_sha256: string
+  quote: string
+  table?: unknown
+}
+export interface AtelierDeactivateParams {
+  profile?: string | null
+  panel_id: string
+}
 /** ``_serialize_usage_model`` — also embedded as ``usage`` in the billing / subscription states, where the fail-open form is a bare ``{available: false}`` (no ``ok``). */
 export interface UsageModel {
   ok?: boolean | null
@@ -5311,6 +5358,10 @@ export interface RpcMethods {
   'approval.received': { params: ApprovalReceivedParams; result: ApprovalReceivedResult }
   /** Deliver the user's decision on a dangerous command (falls back to durable identity on a stale sid). */
   'approval.respond': { params: ApprovalRespondParams; result: ApprovalRespondResult }
+  'atelier.activate': { params: AtelierRevisionParams; result: AtelierSnapshot }
+  'atelier.deactivate': { params: AtelierDeactivateParams; result: AtelierSnapshot }
+  'atelier.list': { params: ProfileParams; result: AtelierSnapshot }
+  'atelier.preview': { params: AtelierRevisionParams; result: AtelierPanel }
   /** Enable/disable auto top-up with its threshold and reload amount (billing:manage). */
   'billing.auto_reload': { params: BillingAutoReloadParams; result: BillingMutationResult }
   /** Start a one-off top-up charge (billing:manage, idempotent). */
@@ -5831,6 +5882,10 @@ export const RPC_METHODS = [
   'approval.pending',
   'approval.received',
   'approval.respond',
+  'atelier.activate',
+  'atelier.deactivate',
+  'atelier.list',
+  'atelier.preview',
   'billing.auto_reload',
   'billing.charge',
   'billing.charge_status',

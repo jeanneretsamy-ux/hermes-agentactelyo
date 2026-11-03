@@ -79,6 +79,78 @@
       }
     },
     {
+      "name": "atelier.activate",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/AtelierRevisionParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/AtelierSnapshot"
+        }
+      }
+    },
+    {
+      "name": "atelier.deactivate",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/AtelierDeactivateParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/AtelierSnapshot"
+        }
+      }
+    },
+    {
+      "name": "atelier.list",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ProfileParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/AtelierSnapshot"
+        }
+      }
+    },
+    {
+      "name": "atelier.preview",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/AtelierRevisionParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/AtelierPanel"
+        }
+      }
+    },
+    {
       "name": "billing.auto_reload",
       "summary": "Enable/disable auto top-up with its threshold and reload amount (billing:manage).",
       "params": [
@@ -5593,6 +5665,266 @@
         ],
         "title": "ArgumentMode",
         "type": "string"
+      },
+      "AtelierDeactivateParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "panel_id": {
+            "title": "Panel Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "panel_id"
+        ],
+        "title": "AtelierDeactivateParams",
+        "type": "object"
+      },
+      "AtelierEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AtelierEvidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "title",
+          "evidence"
+        ],
+        "title": "AtelierEvent",
+        "type": "object"
+      },
+      "AtelierEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "passage_id": {
+            "title": "Passage Id",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "start": {
+            "title": "Start",
+            "type": "integer"
+          },
+          "end": {
+            "title": "End",
+            "type": "integer"
+          },
+          "offset_scope": {
+            "title": "Offset Scope",
+            "type": "string"
+          },
+          "source_sha256": {
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "table": {
+            "default": null,
+            "title": "Table"
+          }
+        },
+        "required": [
+          "passage_id",
+          "source_id",
+          "document_id",
+          "name",
+          "url",
+          "page",
+          "start",
+          "end",
+          "offset_scope",
+          "source_sha256",
+          "quote"
+        ],
+        "title": "AtelierEvidence",
+        "type": "object"
+      },
+      "AtelierPanel": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "const": "chronology",
+            "title": "Kind",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/AtelierEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "source_binding": {
+            "const": "verified",
+            "title": "Source Binding",
+            "type": "string"
+          },
+          "semantic_review": {
+            "const": "human_required",
+            "title": "Semantic Review",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "revision",
+          "events",
+          "source_binding",
+          "semantic_review"
+        ],
+        "title": "AtelierPanel",
+        "type": "object"
+      },
+      "AtelierRevision": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "revision",
+          "created_at",
+          "active"
+        ],
+        "title": "AtelierRevision",
+        "type": "object"
+      },
+      "AtelierRevisionParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "title": "AtelierRevisionParams",
+        "type": "object"
+      },
+      "AtelierSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "revisions": {
+            "items": {
+              "$ref": "#/components/schemas/AtelierRevision"
+            },
+            "title": "Revisions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "revisions"
+        ],
+        "title": "AtelierSnapshot",
+        "type": "object"
       },
       "AttachedImageResult": {
         "additionalProperties": false,

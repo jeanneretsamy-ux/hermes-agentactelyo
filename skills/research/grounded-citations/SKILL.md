@@ -1,18 +1,18 @@
 ---
 name: grounded-citations
 description: "Ground answers and documents in cited, verifiable sources."
-version: 1.2.0
-author: Hermes Agent + Teknium
+version: 1.4.0
+author: Samy Jeanneret (@jeanneretsamy-ux) + Teknium + Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [Research, Citations, Grounding, Sources, Web, Reports]
+    tags: [Research, Citations, Grounding, Sources, Web, Reports, DeepResearch]
     category: research
     related_skills: [arxiv, pdf, reddit-reading, rss-feeds, youtube-content]
 ---
 
-# Grounded Citations
+# Grounded Citations Skill
 
 Every claim taken from an outside source gets an inline numbered citation and a
 `Sources:` list, Perplexity-style. A ledger script owns the `url → [n]` mapping
@@ -39,6 +39,7 @@ knew:
   outside facts — reports, briefs, docs, decks, wiki pages
 - Fact-finding where the user will want to check your work
 - Multi-source synthesis where conflicting sources must be attributed
+- Deep Research with an independently configured decision model
 
 Skip inline citations when the retrieval is incidental to another task — a
 quick syntax/version lookup mid-coding, casual conversation, creative writing.
@@ -152,6 +153,12 @@ sentiment. Report per-platform coverage gaps ("Reddit search returned nothing
 newer than March") rather than silently narrowing to what worked.
 
 ## Fact-Checking Mode
+
+For multi-step research with a separate Actelyo decision model, follow
+`references/deep-research.md`. The executable `scripts/research.py` creates
+structured claims, checks each quotation against retrieved text, and requires
+an independent per-claim decision before approving a report. Native search and
+extraction tools perform additional research when the decision requests it.
 
 For work where the reader must be able to check the chain — medical, legal,
 financial, safety, disputed claims, or when the user asks for fact-checking —

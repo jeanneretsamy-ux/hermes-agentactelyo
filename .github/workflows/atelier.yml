@@ -1,0 +1,46 @@
+name: Atelier verification
+on:
+  push:
+    branches: [codex/grounded-deep-research, main]
+    paths: ['agent/agent_init.py', 'agent/transports/codex_app_server_session.py', 'tests/agent/test_native_codex_init.py', 'hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'skills/research/actelyo-plugin-creator/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'apps/desktop/src/test/plugin-workshop/**', 'apps/desktop/scripts/atelier-browser-smoke.cjs', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'true'
+      - name: Real storage, profile RPCs and generated contracts
+        run: scripts/run_tests.sh tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/tui_gateway/contracts/test_generated.py tests/agent/test_native_codex_init.py tests/agent/test_codex_runtime_prompt_handoff.py tests/agent/transports/test_codex_app_server_runtime.py -q -j 1
+      - name: Install locked UI dependencies without native postinstall
+        run: npm ci --ignore-scripts
+      - name: Atelier interactions
+        working-directory: apps/desktop
+        run: npx vitest run --project ui src/app/chat/sidebar/atelier-dialog.test.tsx
+      - name: Desktop typecheck
+        working-directory: apps/desktop
+        run: npm run typecheck
+      - name: Build real plugin loader browser fixture
+        working-directory: apps/desktop
+        run: npx vite build src/test/plugin-workshop --config vite.config.ts --base ./ --outDir "$RUNNER_TEMP/atelier-smoke"
+      - name: Install test browser
+        working-directory: apps/desktop
+        run: npx playwright install --with-deps chromium
+      - name: Generated plugins through the real loader
+        working-directory: apps/desktop
+        run: node scripts/atelier-browser-smoke.cjs --dist "$RUNNER_TEMP/atelier-smoke" --artifacts "$RUNNER_TEMP/atelier-browser-proof"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: atelier-real-loader
+          path: |
+            ${{ runner.temp }}/atelier-smoke
+            ${{ runner.temp }}/atelier-browser-proof
+          retention-days: 7
