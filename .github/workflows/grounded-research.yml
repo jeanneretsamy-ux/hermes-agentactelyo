@@ -2,7 +2,7 @@ name: Grounded research verification
 on:
   push:
     branches: [codex/grounded-deep-research, main]
-    paths: ['skills/research/grounded-citations/**', 'tests/skills/test_deep_research_review.py', '.github/workflows/grounded-research.yml']
+    paths: ['skills/research/grounded-citations/**', 'tests/skills/test_deep_research_review.py', 'tests/skills/test_matousse_research.py', '.github/workflows/grounded-research.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,4 +18,4 @@ jobs:
           extras: '[]'
           test-environment: 'true'
       - name: Citation contracts and actual loopback transport
-        run: scripts/run_tests.sh tests/skills/test_deep_research_review.py tests/skills/test_grounded_citations_skill.py -q -j 1
+        run: scripts/run_tests.sh tests/skills/test_deep_research_review.py tests/skills/test_matousse_research.py tests/skills/test_grounded_citations_skill.py -q -j 1
