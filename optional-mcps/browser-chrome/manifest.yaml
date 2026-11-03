@@ -1,0 +1,26 @@
+manifest_version: 1
+name: browser-chrome
+description: 'Piloter les onglets de votre Chrome habituel : pages, formulaires, fichiers et captures.'
+source: https://github.com/microsoft/playwright-mcp
+transport:
+  type: stdio
+  command: npx
+  args: ['-y', '@playwright/mcp@0.0.84', '--extension', '--browser', 'chrome']
+  version: '0.0.84'
+auth:
+  type: none
+suggest:
+  keywords: ['chrome', 'navigateur', 'browser']
+  applications: ['Google Chrome']
+  examples: ['Remplir un formulaire dans un onglet Chrome déjà connecté']
+  requires_app: true
+post_install: |
+  Installez l’extension officielle Playwright dans Chrome :
+  https://chromewebstore.google.com/detail/playwright-extension/mmlmfjhmonkocbjadbfplnigmagldckm
+  Ouvrez une nouvelle conversation pour charger les outils MCP. Lors de la première
+  action, autorisez la connexion dans Chrome et choisissez l’onglet à partager.
+  Ajoutez les autres onglets au groupe de cette connexion pour les rendre accessibles.
+  L’extension permet de déconnecter Law Harness à tout moment.
+  Aucun profil ni cookie n’est copié. Aucun jeton ne contourne votre validation.
+  Node.js/npx doit être disponible sur la machine qui exécute le backend Hermes.
+  Pour un backend distant, connectez un serveur MCP exécuté sur votre PC Windows.

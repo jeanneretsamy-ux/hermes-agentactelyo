@@ -1,0 +1,51 @@
+name: Personal browser connectors
+on:
+  push:
+    branches: [codex/browser-control, main]
+    paths: ['optional-mcps/browser-*/**', 'tests/hermes_cli/test_browser_mcp_catalog.py', '.github/workflows/browser-control.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'true'
+      - name: Catalog parsing and approval contract
+        shell: bash
+        run: scripts/run_tests.sh tests/hermes_cli/test_browser_mcp_catalog.py tests/hermes_cli/test_mcp_catalog.py -q -j 1
+      - name: Discover actual browser tools through the Hermes MCP client
+        shell: pwsh
+        run: |
+          @'
+          import json, tempfile, os
+          from pathlib import Path
+          from hermes_cli.mcp_catalog import get_entry, _build_server_config
+          from hermes_cli.mcp_config import _probe_single_server
+          with tempfile.TemporaryDirectory(prefix='actelyo-browser-proof-') as home:
+              os.environ['HERMES_HOME'] = home
+              result = {}
+              for name in ('browser-chrome', 'browser-edge'):
+                  entry = get_entry(name)
+                  assert entry is not None
+                  config = _build_server_config(entry, None)
+                  tools = _probe_single_server(name, config, connect_timeout=120)
+                  names = {tool[0] for tool in tools}
+                  required = {'browser_tabs', 'browser_snapshot', 'browser_click', 'browser_fill_form', 'browser_file_upload', 'browser_handle_dialog'}
+                  assert required <= names, (name, names)
+                  result[name] = {'passed': True, 'tools': sorted(names)}
+              Path('browser-control-proof.json').write_text(json.dumps(result, indent=2))
+          '@ | Set-Content browser-control-probe.py
+          node scripts/build/python.mjs browser-control-probe.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: personal-browser-proof
+          path: browser-control-proof.json
