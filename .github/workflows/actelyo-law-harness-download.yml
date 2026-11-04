@@ -189,7 +189,7 @@ jobs:
         shell: powershell
         run: |
           scripts/actelyo-download/window-branding.ps1 -Executable "$env:ACTELYO_INSTALLED/Actelyo Law Harness.exe" -ExpectedIcon apps/desktop/assets/icon.ico -ProofDirectory "$env:RUNNER_TEMP/law-window-proof" -Product 'Actelyo Law Harness'
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not $?) { throw 'Native window icon verification failed' }
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-branding.json" actelyo-release/proof/native-window-branding.json
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-icon.png" actelyo-release/proof/native-window-icon.png
       - name: Record checksum and exact source
