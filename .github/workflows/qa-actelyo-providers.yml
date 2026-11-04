@@ -16,6 +16,12 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Provider lint and committed translation catalog
+        working-directory: apps/desktop
+        run: |
+          npx eslint src/app/settings/custom-endpoints-settings.tsx src/lib/actelyo-provider-presets.ts
+          node scripts/i18n-keys.mjs --check
+          npx vitest run --project electron scripts/i18n-keys.test.mjs --maxWorkers 1
       - name: Provider forms and profile isolation
         working-directory: apps/desktop
         run: npx vitest run --project ui src/app/settings/custom-endpoints-settings.test.tsx --maxWorkers 1
