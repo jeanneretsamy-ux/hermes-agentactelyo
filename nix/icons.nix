@@ -5,6 +5,9 @@ let
     root = ./..;
     fileset = lib.fileset.unions [
       ../scripts/generate_icons.py
+      ../scripts/windows_product_icons.py
+      ../assets/actelyo-law-windows.png
+      ../assets/actelyo-law-windows.ico
       (lib.fileset.fileFilter (file: file.hasExt "svg") ../assets)
       # The DMG volume icon is hand-made raster artwork, not rendered from the svgs.
       ../assets/dmg-volume.png

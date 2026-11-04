@@ -187,7 +187,8 @@ class TestLifecycle:
         s = make_session(client, permission_profile="workspace-write", developer_instructions="SOUL: be terse")
         s.ensure_started()
         method, params = next(r for r in client.requests if r[0] == "thread/start")
-        assert params == {"cwd": "/tmp", "developerInstructions": "SOUL: be terse", "personality": "none"}
+        assert params == {"cwd": "/tmp", "developerInstructions": "SOUL: be terse", "personality": "none",
+                          "sandbox": "workspace-write", "approvalPolicy": "on-request"}
 
     def test_thread_start_omits_developer_instructions_when_prompt_empty(self):
         """No prompt (or a blank one) never sends an empty developerInstructions field."""
@@ -221,7 +222,7 @@ class TestLifecycle:
 
         named = thread_start_params(provider="custom", requested_provider="custom:my-gateway", model="gpt-5.4")
         # ``personality: "none"`` rides on every thread/start (#72104); only the provider selection varies.
-        base = {"cwd": "/tmp", "personality": "none"}
+        base = {"cwd": "/tmp", "personality": "none", "sandbox": "workspace-write", "approvalPolicy": "on-request"}
         assert named == {**base, "modelProvider": "my-gateway", "model": "gpt-5.4"}
         assert "sk-secret" not in repr(named)
         assert thread_start_params(provider="openai-codex", requested_provider="openai-codex", model="gpt-5.4") == {
@@ -247,7 +248,8 @@ class TestLifecycle:
         s = make_session(client, resume_thread_id="stored-1", developer_instructions="SOUL")
         assert s.ensure_started() == s.ensure_started() == "stored-1"
         assert [m for m, _ in client.requests] == ["thread/resume"]
-        assert client.requests[0][1] == {"threadId": "stored-1", "cwd": "/tmp", "personality": "none", "developerInstructions": "SOUL"}
+        assert client.requests[0][1] == {"threadId": "stored-1", "cwd": "/tmp", "personality": "none", "developerInstructions": "SOUL",
+                                          "sandbox": "workspace-write", "approvalPolicy": "on-request"}
 
         def refuse(method, params):
             if method == "thread/resume":

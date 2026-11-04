@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
           fetch-depth: 0  # Full history needed for git log
+          filter: blob:none  # Keep commit history without downloading every historical file.
 
       - name: Check for unmapped contributor emails
         id: check-emails

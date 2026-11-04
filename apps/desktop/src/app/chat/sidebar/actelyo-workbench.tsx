@@ -8,9 +8,9 @@ import { $gateway } from '@/store/gateway'
 import { $activeGatewayProfile } from '@/store/profile'
 import { $activeSessionId, $connection } from '@/store/session'
 
+import { AtelierDialog } from './atelier-dialog'
 import { ProcedureLearningDialog } from './procedure-learning-dialog'
 import { ReaWorkbenchDialog } from './rea-workbench-dialog'
-import { AtelierDialog } from './atelier-dialog'
 
 export function ActelyoWorkbench() {
   const navigate = useNavigate()
@@ -65,10 +65,10 @@ export function ActelyoWorkbench() {
       {current && learning.mode === 'atelier' && (
         <AtelierDialog
           gateway={gateway}
-          onClose={() => setLearning(null)}
-          profile={profile}
           local={connection?.mode === 'local'}
+          onClose={() => setLearning(null)}
           onOpenPlugins={() => navigate('/capabilities?tab=plugins')}
+          profile={profile}
         />
       )}
       {current && learning.mode === 'rea' && (

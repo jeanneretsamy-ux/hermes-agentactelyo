@@ -15,11 +15,35 @@ DEFAULT_WORKSPACE = os.environ.get("ACTELYO_RAG_WORKSPACE", "mon-espace-de-trava
 
 def api_base():
     if API_BASE:
-        return API_BASE
+        endpoint = urllib.parse.urlparse(API_BASE)
+        loopback = endpoint.hostname in {'localhost', '127.0.0.1', '::1'}
+        if (endpoint.scheme != 'https' and not (endpoint.scheme == 'http' and loopback)
+                or not endpoint.hostname or endpoint.username or endpoint.password
+                or endpoint.query or endpoint.fragment):
+            raise RuntimeError('Invalid RAG API address. Use HTTPS or loopback HTTP without embedded credentials.')
+        return API_BASE.removesuffix('/v1')
     # The desktop app allocates a fresh loopback port on every launch. Resolve
     # it per request so an existing MCP process also follows a RAG restart.
     appdata = os.environ.get("APPDATA")
     if appdata:
+        receipt = Path(appdata) / "Actelyo RAG" / "desktop-service.json"
+        if receipt.exists():
+            try:
+                if receipt.stat().st_size > 4096:
+                    raise ValueError('oversized receipt')
+                record = json.loads(receipt.read_text(encoding='utf-8'))
+                endpoint = urllib.parse.urlparse(record['apiBase'])
+                if (record.get('schemaVersion') != 1 or record.get('product') != 'Actelyo RAG'
+                        or not isinstance(record.get('pid'), int) or record['pid'] <= 0
+                        or endpoint.scheme != 'http' or endpoint.hostname != '127.0.0.1'
+                        or endpoint.path != '/api/v1' or not endpoint.port
+                        or endpoint.username or endpoint.password or endpoint.query or endpoint.fragment):
+                    raise ValueError('invalid receipt')
+                if record.get('state') == 'stopped':
+                    raise RuntimeError('Actelyo RAG is stopped. Start the Desktop app before searching.')
+                return record['apiBase'].removesuffix('/v1')
+            except (OSError, ValueError, KeyError, TypeError):
+                raise RuntimeError('Invalid Actelyo RAG Desktop service announcement.') from None
         log = Path(appdata) / "Actelyo RAG" / "desktop.log"
         try:
             with log.open("rb") as stream:
@@ -31,7 +55,7 @@ def api_base():
                 return f"http://127.0.0.1:{ports[-1]}/api"
         except OSError:
             pass
-    return "http://127.0.0.1:61045/api"
+    raise RuntimeError('Actelyo RAG is not detected. Start the Desktop app or configure its API address.')
 
 
 def _headers():
@@ -44,13 +68,15 @@ def _request(method, path, payload=None):
     url = f"{api_base()}{path}"
     data = None if payload is None else json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, method=method, headers=_headers())
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
     try:
-        with urllib.request.urlopen(req, timeout=120) as res:
+        with urllib.request.build_opener(NoRedirect()).open(req, timeout=120) as res:
             raw = res.read().decode("utf-8", errors="replace")
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Actelyo RAG HTTP {exc.code}: {body[:1000]}")
+        raise RuntimeError(f"Actelyo RAG HTTP {exc.code}: request not completed; no redirect or provider fallback.") from None
     except urllib.error.URLError as exc:
         raise RuntimeError(f"Actelyo RAG is not reachable at {url}: {exc.reason}")
 
@@ -63,11 +89,18 @@ def list_workspaces(_args):
     return _tool_result(_request("GET", "/v1/workspaces"))
 
 
+def _workspace(args):
+    slug = (args or {}).get('workspace') or DEFAULT_WORKSPACE
+    if not isinstance(slug, str) or not re.fullmatch(r'[a-zA-Z0-9_-]{1,160}', slug):
+        raise RuntimeError('Invalid Actelyo RAG workspace identifier.')
+    return slug
+
+
 def query(args):
     prompt = (args or {}).get("prompt") or (args or {}).get("query")
     if not prompt:
         raise RuntimeError("Missing required argument: prompt")
-    slug = (args or {}).get("workspace") or DEFAULT_WORKSPACE
+    slug = _workspace(args)
     mode = (args or {}).get("mode") or "query"
     payload = {"message": prompt, "mode": mode}
     if (args or {}).get("sessionId"):
@@ -79,7 +112,7 @@ def vector_search(args):
     query_text = (args or {}).get("query")
     if not query_text:
         raise RuntimeError("Missing required argument: query")
-    slug = (args or {}).get("workspace") or DEFAULT_WORKSPACE
+    slug = _workspace(args)
     payload = {"query": query_text}
     if (args or {}).get("topN") is not None:
         payload["topN"] = args["topN"]

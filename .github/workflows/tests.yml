@@ -250,6 +250,18 @@ jobs:
       matrix:
         shard: ${{ fromJSON(needs.e2e-upgrade-plan.outputs.shards) }}
     steps:
+      - name: Reserve disk for real upgrade installations
+        if: github.repository == 'jeanneretsamy-ux/hermes-agentactelyo'
+        # These Linux shards do not use Android or .NET. Remove only these
+        # preinstalled runner SDKs before making several real N-1/HEAD installs.
+        run: |
+          set -euo pipefail
+          [ "$GITHUB_ACTIONS" = true ] && [ "$RUNNER_OS" = Linux ]
+          df -h /
+          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet
+          df -h /
+          available=$(df --output=avail -B1 / | tail -1 | tr -d ' ')
+          [ "$available" -ge 21474836480 ] || { echo 'Upgrade QA requires 20 GiB free on the runner' >&2; exit 1; }
       - name: Checkout code
         uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
         with:
@@ -359,9 +371,10 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}
           # Each file drives real installs/updaters (process trees plus uv and
-          # git I/O); cpu_count of them at once starves their deadlines. A
-          # shard holds at most ~7 files, so this runs each shard in one wave.
-          HERMES_TEST_WORKERS: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && '2' || '6' }}
+          # git I/O); cpu_count of them at once starves their deadlines.
+          # PM builds several dependency generations; serialize its files on
+          # the standard fork runner to reduce concurrent disk consumption.
+          HERMES_TEST_WORKERS: ${{ github.repository == 'jeanneretsamy-ux/hermes-agentactelyo' && (matrix.shard == 'pm' && '1' || '2') || '6' }}
           HERMES_TEST_FILE_TIMEOUT: "3000"
           OPENROUTER_API_KEY: ""
           OPENAI_API_KEY: ""

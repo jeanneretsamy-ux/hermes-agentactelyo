@@ -1,0 +1,44 @@
+name: Actelyo providers QA
+on:
+  push:
+    branches: [codex/actelyo-provider-presets]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  providers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Provider lint and committed translation catalog
+        working-directory: apps/desktop
+        run: |
+          npx eslint src/app/settings/custom-endpoints-settings.tsx src/lib/actelyo-provider-presets.ts
+          node scripts/i18n-keys.mjs --check
+          npx vitest run --project electron scripts/i18n-keys.test.mjs --maxWorkers 1
+      - name: Provider forms and profile isolation
+        working-directory: apps/desktop
+        run: npx vitest run --project ui src/app/settings/custom-endpoints-settings.test.tsx --maxWorkers 1
+      - name: Desktop typecheck
+        working-directory: apps/desktop
+        run: npm run typecheck
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: python
+          extras: '[]'
+          test-environment: 'true'
+      - name: RAG endpoint discovery and real HTTP
+        run: scripts/run_tests.sh tests/tools/test_actelyo_rag_mcp.py -q -j 1
+      - name: Canonical Windows artwork and channel behavior
+        run: scripts/run_tests.sh tests/scripts/test_icon_freshness_content.py tests/scripts/test_icon_flavors.py -q -j 1
+      - name: Regenerate and compare every committed icon
+        env:
+          HERMES_PAYLOAD_TAG: ''
+          HERMES_BUILD_COMMIT: ''
+        run: '"$HERMES_PYTHON" -m scripts.check_icon_freshness'

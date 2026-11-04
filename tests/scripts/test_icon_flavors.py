@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
+from scripts.windows_product_icons import WINDOWS_PRODUCT_ICONS
 import pytest
 
 
@@ -154,6 +155,9 @@ def test_canary_changes_only_desktop_background_preserving_art_and_native_geomet
     for path in (stable / "apps/desktop").rglob("*"):
         if not path.is_file() or LAYERED_ICON in path.parts or path.relative_to(stable) == DMG_VOLUME:
             continue  # the layered macOS icon carries its flavor in icon.json; the DMG volume art is unflavoured (both tested below)
+        if path.relative_to(stable).as_posix() in WINDOWS_PRODUCT_ICONS:
+            assert path.read_bytes() == (canary / path.relative_to(stable)).read_bytes()
+            continue  # Windows retains the canonical product logo in every channel.
         original_frames = list(frames(path))
         canary_frames = list(frames(canary / path.relative_to(stable)))
         assert len(original_frames) == len(canary_frames)
@@ -182,6 +186,10 @@ def test_commit_icons_are_red_and_print_only_the_actual_seven_digit_prefix(gener
             continue
         rel = path.relative_to(first)
         assert path.read_bytes() == (same_prefix / rel).read_bytes(), rel
+        if rel.as_posix() in WINDOWS_PRODUCT_ICONS:
+            assert path.read_bytes() == (stable / rel).read_bytes()
+            assert path.read_bytes() == (changed / rel).read_bytes()
+            continue
         if LAYERED_ICON in path.parts or rel == DMG_VOLUME:
             continue  # the layered macOS icon carries its flavor in icon.json; the DMG volume art is unflavoured (both tested below)
         first_frames = list(frames(path))
@@ -213,7 +221,7 @@ def test_commit_icons_are_red_and_print_only_the_actual_seven_digit_prefix(gener
         (14, 16, 16, 30, 17, 17, 14),
     )
     # The composite Actelyo logo must not obscure any of the commit digits.
-    for name in ("icon.png", "icon-dark.png"):
+    for name in ("icon-dark.png",):
         image = Image.open(first / "apps/desktop/assets" / name).convert("RGB")
         for digit, rows in enumerate(expected):
             judged = 0

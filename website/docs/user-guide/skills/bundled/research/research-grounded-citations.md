@@ -16,11 +16,11 @@ Ground answers and documents in cited, verifiable sources.
 |---|---|
 | Source | Bundled (installed by default) |
 | Path | `skills/research/grounded-citations` |
-| Version | `1.2.0` |
-| Author | Hermes Agent + Teknium |
+| Version | `1.4.0` |
+| Author | Samy Jeanneret (@jeanneretsamy-ux) + Teknium + Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
-| Tags | `Research`, `Citations`, `Grounding`, `Sources`, `Web`, `Reports` |
+| Tags | `Research`, `Citations`, `Grounding`, `Sources`, `Web`, `Reports`, `DeepResearch` |
 | Related skills | [`arxiv`](../../bundled/research/research-arxiv.md), [`pdf`](../../bundled/productivity/productivity-pdf.md), [`reddit-reading`](../../optional/social-media/social-media-reddit-reading.md), [`rss-feeds`](../../optional/research/research-rss-feeds.md), [`youtube-content`](../../bundled/media/media-youtube-content.md) |
 
 ## Reference: full SKILL.md
@@ -29,7 +29,7 @@ Ground answers and documents in cited, verifiable sources.
 The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
-# Grounded Citations
+# Grounded Citations Skill
 
 Every claim taken from an outside source gets an inline numbered citation and a
 `Sources:` list, Perplexity-style. A ledger script owns the `url → [n]` mapping
@@ -56,6 +56,7 @@ knew:
   outside facts — reports, briefs, docs, decks, wiki pages
 - Fact-finding where the user will want to check your work
 - Multi-source synthesis where conflicting sources must be attributed
+- Deep Research with an independently configured decision model
 
 Skip inline citations when the retrieval is incidental to another task — a
 quick syntax/version lookup mid-coding, casual conversation, creative writing.
@@ -169,6 +170,12 @@ sentiment. Report per-platform coverage gaps ("Reddit search returned nothing
 newer than March") rather than silently narrowing to what worked.
 
 ## Fact-Checking Mode
+
+For multi-step research with a separate Actelyo decision model, follow
+`references/deep-research.md`. The executable `scripts/research.py` creates
+structured claims, checks each quotation against retrieved text, and requires
+an independent per-claim decision before approving a report. Native search and
+extraction tools perform additional research when the decision requests it.
 
 For work where the reader must be able to check the chain — medical, legal,
 financial, safety, disputed claims, or when the user asks for fact-checking —
