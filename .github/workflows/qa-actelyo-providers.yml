@@ -22,3 +22,10 @@ jobs:
       - name: Desktop typecheck
         working-directory: apps/desktop
         run: npm run typecheck
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: python
+          extras: '[]'
+          test-environment: 'true'
+      - name: RAG endpoint discovery and real HTTP
+        run: scripts/run_tests.sh tests/tools/test_actelyo_rag_mcp.py -q -j 1

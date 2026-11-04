@@ -62,7 +62,35 @@ def test_explicit_endpoint_takes_priority(bridge, monkeypatch):
     assert bridge.api_base() == "https://rag.example/api"
 
 
-def test_missing_desktop_log_retains_legacy_endpoint(bridge, tmp_path, monkeypatch):
+def test_missing_desktop_service_does_not_guess_a_port(bridge, tmp_path, monkeypatch):
     monkeypatch.setenv("APPDATA", str(tmp_path))
     monkeypatch.setattr(bridge, "API_BASE", "")
-    assert bridge.api_base() == "http://127.0.0.1:61045/api"
+    with pytest.raises(RuntimeError, match='not detected'):
+        bridge.api_base()
+
+
+def test_service_announcement_follows_restart_and_stopped_state(bridge, tmp_path, monkeypatch):
+    monkeypatch.setenv('APPDATA', str(tmp_path))
+    monkeypatch.setattr(bridge, 'API_BASE', '')
+    monkeypatch.setattr(bridge, 'API_KEY', 'fixture-key')
+    receipt = tmp_path / 'Actelyo RAG' / 'desktop-service.json'
+    receipt.parent.mkdir()
+    with backend() as first, backend() as second:
+        for port in (first, second):
+            receipt.write_text(json.dumps({'schemaVersion': 1, 'product': 'Actelyo RAG', 'pid': 1234, 'state': 'ready', 'apiBase': f'http://127.0.0.1:{port}/api/v1'}))
+            result = bridge.list_workspaces({})
+            assert json.loads(result['content'][0]['text'])['port'] == port
+    receipt.write_text(json.dumps({'schemaVersion': 1, 'product': 'Actelyo RAG', 'pid': 1234, 'state': 'stopped', 'apiBase': 'http://127.0.0.1:1234/api/v1'}))
+    with pytest.raises(RuntimeError, match='stopped'):
+        bridge.api_base()
+
+
+def test_invalid_announcement_does_not_fall_back_to_a_stale_log(bridge, tmp_path, monkeypatch):
+    monkeypatch.setenv('APPDATA', str(tmp_path))
+    monkeypatch.setattr(bridge, 'API_BASE', '')
+    directory = tmp_path / 'Actelyo RAG'
+    directory.mkdir()
+    (directory / 'desktop.log').write_text('Primary server in HTTP mode listening on port 12345\n')
+    (directory / 'desktop-service.json').write_text(json.dumps({'schemaVersion': 1, 'product': 'other', 'pid': 1, 'apiBase': 'https://example.invalid/api/v1'}))
+    with pytest.raises(RuntimeError, match='Invalid'):
+        bridge.api_base()

@@ -20,6 +20,24 @@ def api_base():
     # it per request so an existing MCP process also follows a RAG restart.
     appdata = os.environ.get("APPDATA")
     if appdata:
+        receipt = Path(appdata) / "Actelyo RAG" / "desktop-service.json"
+        if receipt.exists():
+            try:
+                if receipt.stat().st_size > 4096:
+                    raise ValueError('oversized receipt')
+                record = json.loads(receipt.read_text(encoding='utf-8'))
+                endpoint = urllib.parse.urlparse(record['apiBase'])
+                if (record.get('schemaVersion') != 1 or record.get('product') != 'Actelyo RAG'
+                        or not isinstance(record.get('pid'), int) or record['pid'] <= 0
+                        or endpoint.scheme != 'http' or endpoint.hostname != '127.0.0.1'
+                        or endpoint.path != '/api/v1' or not endpoint.port
+                        or endpoint.username or endpoint.password or endpoint.query or endpoint.fragment):
+                    raise ValueError('invalid receipt')
+                if record.get('state') == 'stopped':
+                    raise RuntimeError('Actelyo RAG is stopped. Start the Desktop app before searching.')
+                return record['apiBase'].removesuffix('/v1')
+            except (OSError, ValueError, KeyError, TypeError):
+                raise RuntimeError('Invalid Actelyo RAG Desktop service announcement.') from None
         log = Path(appdata) / "Actelyo RAG" / "desktop.log"
         try:
             with log.open("rb") as stream:
@@ -31,7 +49,7 @@ def api_base():
                 return f"http://127.0.0.1:{ports[-1]}/api"
         except OSError:
             pass
-    return "http://127.0.0.1:61045/api"
+    raise RuntimeError('Actelyo RAG is not detected. Start the Desktop app or configure its API address.')
 
 
 def _headers():
@@ -44,13 +62,15 @@ def _request(method, path, payload=None):
     url = f"{api_base()}{path}"
     data = None if payload is None else json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, method=method, headers=_headers())
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
     try:
-        with urllib.request.urlopen(req, timeout=120) as res:
+        with urllib.request.build_opener(NoRedirect()).open(req, timeout=120) as res:
             raw = res.read().decode("utf-8", errors="replace")
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Actelyo RAG HTTP {exc.code}: {body[:1000]}")
+        raise RuntimeError(f"Actelyo RAG HTTP {exc.code}: request not completed; no redirect or provider fallback.") from None
     except urllib.error.URLError as exc:
         raise RuntimeError(f"Actelyo RAG is not reachable at {url}: {exc.reason}")
 
