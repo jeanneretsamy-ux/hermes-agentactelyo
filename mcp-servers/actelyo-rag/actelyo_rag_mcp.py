@@ -15,7 +15,13 @@ DEFAULT_WORKSPACE = os.environ.get("ACTELYO_RAG_WORKSPACE", "mon-espace-de-trava
 
 def api_base():
     if API_BASE:
-        return API_BASE
+        endpoint = urllib.parse.urlparse(API_BASE)
+        loopback = endpoint.hostname in {'localhost', '127.0.0.1', '::1'}
+        if (endpoint.scheme != 'https' and not (endpoint.scheme == 'http' and loopback)
+                or not endpoint.hostname or endpoint.username or endpoint.password
+                or endpoint.query or endpoint.fragment):
+            raise RuntimeError('Invalid RAG API address. Use HTTPS or loopback HTTP without embedded credentials.')
+        return API_BASE.removesuffix('/v1')
     # The desktop app allocates a fresh loopback port on every launch. Resolve
     # it per request so an existing MCP process also follows a RAG restart.
     appdata = os.environ.get("APPDATA")
@@ -83,11 +89,18 @@ def list_workspaces(_args):
     return _tool_result(_request("GET", "/v1/workspaces"))
 
 
+def _workspace(args):
+    slug = (args or {}).get('workspace') or DEFAULT_WORKSPACE
+    if not isinstance(slug, str) or not re.fullmatch(r'[a-zA-Z0-9_-]{1,160}', slug):
+        raise RuntimeError('Invalid Actelyo RAG workspace identifier.')
+    return slug
+
+
 def query(args):
     prompt = (args or {}).get("prompt") or (args or {}).get("query")
     if not prompt:
         raise RuntimeError("Missing required argument: prompt")
-    slug = (args or {}).get("workspace") or DEFAULT_WORKSPACE
+    slug = _workspace(args)
     mode = (args or {}).get("mode") or "query"
     payload = {"message": prompt, "mode": mode}
     if (args or {}).get("sessionId"):
@@ -99,7 +112,7 @@ def vector_search(args):
     query_text = (args or {}).get("query")
     if not query_text:
         raise RuntimeError("Missing required argument: query")
-    slug = (args or {}).get("workspace") or DEFAULT_WORKSPACE
+    slug = _workspace(args)
     payload = {"query": query_text}
     if (args or {}).get("topN") is not None:
         payload["topN"] = args["topN"]

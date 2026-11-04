@@ -62,6 +62,18 @@ def test_explicit_endpoint_takes_priority(bridge, monkeypatch):
     assert bridge.api_base() == "https://rag.example/api"
 
 
+@pytest.mark.parametrize('address', ['http://remote.example/api', 'https://key@rag.example/api', 'https://rag.example/api?key=secret'])
+def test_invalid_explicit_endpoint_is_rejected_without_echoing_credentials(bridge, monkeypatch, address):
+    monkeypatch.setattr(bridge, 'API_BASE', address)
+    with pytest.raises(RuntimeError, match='Invalid RAG API address'):
+        bridge.api_base()
+
+
+def test_workspace_traversal_is_rejected_before_request(bridge):
+    with pytest.raises(RuntimeError, match='workspace identifier'):
+        bridge.vector_search({'query': 'Recherche QA', 'workspace': '../other'})
+
+
 def test_missing_desktop_service_does_not_guess_a_port(bridge, tmp_path, monkeypatch):
     monkeypatch.setenv("APPDATA", str(tmp_path))
     monkeypatch.setattr(bridge, "API_BASE", "")
