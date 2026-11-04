@@ -79,6 +79,20 @@ afterEach(() => {
 })
 
 describe('CustomEndpointsSettings', () => {
+  it('prepares a router without retaining a key or activating it', async () => {
+    getCustomEndpoints.mockResolvedValue(emptyResponse)
+    render(<CustomEndpointsSettings />)
+    await screen.findByText('No custom endpoints')
+    fireEvent.change(screen.getByLabelText(/API key/i), { target: { value: 'fixture-secret' } })
+    fireEvent.click(screen.getByRole('button', { name: 'FreeLLMAPI', exact: true }))
+    expect(screen.getByPlaceholderText<HTMLInputElement>('http://127.0.0.1:8081/v1').value).toBe('http://127.0.0.1:3002/v1')
+    expect((screen.getByLabelText(/API key/i) as HTMLInputElement).value).toBe('')
+    expect(saveCustomEndpoint).not.toHaveBeenCalled()
+    expect(validateCustomEndpoint).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Save', exact: true }).hasAttribute('disabled')).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'OpenRouter', exact: true }))
+    expect(screen.getByPlaceholderText<HTMLInputElement>('http://127.0.0.1:8081/v1').value).toBe('https://openrouter.ai/api/v1')
+  })
   it('localizes endpoint editing on language changes without changing transport or draft identifiers', async () => {
     getCustomEndpoints.mockResolvedValue(emptyResponse)
     saveCustomEndpoint.mockResolvedValue(savedResponse)

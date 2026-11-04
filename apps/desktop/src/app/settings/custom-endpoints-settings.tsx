@@ -14,6 +14,7 @@ import {
 } from '@/hermes'
 import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
+import { ACTELYO_PROVIDER_PRESETS } from '@/lib/actelyo-provider-presets'
 import { Check, Globe, Loader2, Plus, Save, Trash2, Zap } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { confirm } from '@/store/confirm'
@@ -415,6 +416,21 @@ export function CustomEndpointsSettings({ onConfigSaved, onMainModelChanged }: C
         <section>
           <SectionHeading icon={Plus} title={form.id ? ce.editTitle : ce.addTitle} />
           <div className="grid gap-3 rounded-md border border-border/50 p-3">
+            <div className="flex flex-wrap gap-2" aria-label={ce.presetLabel ?? 'Provider presets'}>
+              {ACTELYO_PROVIDER_PRESETS.map(preset => (
+                <Button key={preset.id} variant="outline" size="sm" disabled={saving || testing} onClick={() => {
+                  setForm({ ...EMPTY_FORM, name: preset.name, baseUrl: preset.baseUrl, apiMode: 'chat_completions', makeDefault: false })
+                  setDiscoveredModels([])
+                  setDiscoveredDetails([])
+                }}>{preset.name}</Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {ce.presetNotice ?? 'Use your own API key and test the live model list before saving. Local routers can send your documents to cloud providers. FreeLLMAPI requires PORT=3002 to avoid Actelyo RAG on port 3001. Availability and charges depend on your providers.'}
+            </p>
+            <div className="flex flex-wrap gap-3 text-xs">
+              {ACTELYO_PROVIDER_PRESETS.map(preset => <a key={preset.id} href={preset.helpUrl} target="_blank" rel="noopener noreferrer" className="underline">{preset.name} — {ce.presetHelp ?? 'Setup / API key'}</a>)}
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="grid gap-1.5 text-xs text-muted-foreground">
                 {ce.fields.name}

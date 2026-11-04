@@ -1307,6 +1307,9 @@ export const en: Translations = {
       backendIdleTimeoutTitle: 'Backend Idle Timeout'
     },
     customEndpoints: {
+      presetLabel: 'Provider presets',
+      presetNotice: 'Use your own API key and test the live model list before saving. Local routers can send your documents to cloud providers. FreeLLMAPI requires PORT=3002 to avoid Actelyo RAG on port 3001. Availability and charges depend on your providers.',
+      presetHelp: 'Setup / API key',
       active: 'Active',
       apiKeySet: 'API key set',
       use: 'Use',

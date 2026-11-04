@@ -1,0 +1,24 @@
+name: Actelyo providers QA
+on:
+  push:
+    branches: [codex/actelyo-provider-presets]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  providers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Provider forms and profile isolation
+        working-directory: apps/desktop
+        run: npx vitest run --project ui src/app/settings/custom-endpoints-settings.test.tsx --maxWorkers 1
+      - name: Desktop typecheck
+        working-directory: apps/desktop
+        run: npm run typecheck
