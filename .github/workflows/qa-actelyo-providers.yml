@@ -29,3 +29,10 @@ jobs:
           test-environment: 'true'
       - name: RAG endpoint discovery and real HTTP
         run: scripts/run_tests.sh tests/tools/test_actelyo_rag_mcp.py -q -j 1
+      - name: Canonical Windows artwork and channel behavior
+        run: scripts/run_tests.sh tests/scripts/test_icon_freshness_content.py tests/scripts/test_icon_flavors.py -q -j 1
+      - name: Regenerate and compare every committed icon
+        env:
+          HERMES_PAYLOAD_TAG: ''
+          HERMES_BUILD_COMMIT: ''
+        run: '"$HERMES_PYTHON" -m scripts.check_icon_freshness'

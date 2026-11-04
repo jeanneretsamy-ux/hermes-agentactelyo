@@ -35,6 +35,9 @@ Canary uses yellow/dark-yellow backgrounds. Commit builds use red/dark-red
 and a seven-character SHA badge. The girl and tile geometry do not change.
 Only apps/desktop outputs use this identity. Website, bootstrap, dashboard,
 and the shared master SVGs retain the default brand.
+Actelyo's Windows product PNG/ICO always retain the canonical violet artwork;
+their build identity is carried by executable/version metadata. Other desktop
+surfaces continue to use the channel backgrounds and commit badge.
 
 The girl's position and uniform scale are registered to the reference artwork.
 She is clipped only to the outer rounded silhouette. Only nodes near her bottom
@@ -101,8 +104,16 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from importlib.util import module_from_spec, spec_from_file_location
 
 from PIL import Image, ImageOps
+
+# Explicit sibling loading also works under the isolated `python -I script`
+# invocation used by the native build, without adding foreign import paths.
+_windows_spec = spec_from_file_location("windows_product_icons", Path(__file__).with_name("windows_product_icons.py"))
+assert _windows_spec is not None and _windows_spec.loader is not None
+_windows_icons = module_from_spec(_windows_spec)
+_windows_spec.loader.exec_module(_windows_icons)
 
 try:
     import resvg_py
@@ -907,7 +918,8 @@ def cmd_write(source: Path, out: Path) -> int:
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             selected = desktop_art if rel.startswith("apps/desktop/") else art
-            path.write_bytes(target_bytes(selected, kind, arg))
+            canonical = _windows_icons.windows_product_icon(source, rel)
+            path.write_bytes(canonical if canonical is not None else target_bytes(selected, kind, arg))
             written += 1
         except Exception as exc:  # noqa: BLE001 - report all, then fail
             failures += 1
@@ -953,7 +965,9 @@ def cmd_check(source: Path, out: Path) -> int:
     for rel, kind, arg in TARGETS:
         try:
             selected = desktop_art if rel.startswith("apps/desktop/") else art
-            target_bytes(selected, kind, arg)
+            canonical = _windows_icons.windows_product_icon(source, rel)
+            if canonical is None:
+                target_bytes(selected, kind, arg)
         except Exception as exc:  # noqa: BLE001
             problems.append(f"{rel}: REGENERATE FAILED ({exc})")
 
