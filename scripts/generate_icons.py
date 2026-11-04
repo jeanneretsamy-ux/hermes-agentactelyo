@@ -35,7 +35,7 @@ Canary uses yellow/dark-yellow backgrounds. Commit builds use red/dark-red
 and a seven-character SHA badge. The girl and tile geometry do not change.
 Only apps/desktop outputs use this identity. Website, bootstrap, dashboard,
 and the shared master SVGs retain the default brand.
-Actelyo's Windows product PNG/ICO always retain the canonical violet artwork;
+Actelyo's Windows product PNG/ICO and shared desktop mark retain the canonical violet artwork;
 their build identity is carried by executable/version metadata. Other desktop
 surfaces continue to use the channel backgrounds and commit badge.
 
@@ -274,6 +274,7 @@ TARGETS: list[tuple[str, str, object]] = [
     ("apps/desktop/assets/icon.icon/Assets/mono.png", "icon_mono", None),
     *APPX_TARGETS,
     ("apps/desktop/public/apple-touch-icon.png", "png", 1024),
+    ("apps/desktop/public/actelyo-logo.png", "png", 512),
     # The dev-run Dock icon (app.dock.setIcon): same mac grid as the icns.
     ("apps/desktop/assets/icon-mac.png", "png_mac", 1024),
     ("apps/desktop/public/nous-girl.png", "girl_light", 256),
