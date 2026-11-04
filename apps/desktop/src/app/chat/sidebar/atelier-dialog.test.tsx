@@ -160,6 +160,25 @@ it('refuses to confuse a remote backend with the local desktop plugin root', asy
   expect(mocks.insert).not.toHaveBeenCalled()
 })
 
+it('prepares a bounded mission for the selected profile without creating work before send', async () => {
+  render(<AtelierDialog gateway={gateway} onClose={vi.fn()} profile="legal-b" />)
+  await screen.findByRole('button', { name: /Chronologie ALPHA/ })
+  fireEvent.click(screen.getByRole('button', { name: 'Mission suivie' }))
+  fireEvent.change(screen.getByLabelText('Demande à l’agent'), {
+    target: { value: 'Comparer les deux projets du dossier.' }
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Préparer la création dans le chat' }))
+  const [prompt, destination] = mocks.insert.mock.calls[0]
+  expect(prompt).toContain('Comparer les deux projets du dossier.')
+  expect(prompt).toContain('"legal-b"')
+  expect(prompt).toContain('--goal-max-turns 20')
+  expect(prompt).toContain('--max-retries 2')
+  expect(prompt).toContain('--completion-contract local-only')
+  expect(destination).toEqual({ target: 'main' })
+  expect(mocks.request.mock.calls.every(([method]) => method === 'atelier.list')).toBe(true)
+  expect(mocks.pluginRoot).not.toHaveBeenCalled()
+})
+
 it('ignores a late preview from the previous profile across A to B to A', async () => {
   let resolvePreview!: (value: typeof panel) => void
   mocks.request.mockImplementation(async (method: string) =>

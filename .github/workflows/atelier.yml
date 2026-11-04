@@ -1,7 +1,7 @@
 name: Atelier verification
 on:
   push:
-    branches: [codex/grounded-deep-research, main]
+    branches: [codex/grounded-deep-research, codex/creator-autonomy, main]
     paths: ['agent/agent_init.py', 'agent/transports/codex_app_server_session.py', 'tests/agent/test_native_codex_init.py', 'hermes_cli/atelier.py', 'skills/research/actelyo-atelier/**', 'skills/research/actelyo-plugin-creator/**', 'apps/desktop/src/app/chat/sidebar/atelier-*', 'apps/desktop/src/app/chat/sidebar/actelyo-workbench.tsx', 'apps/desktop/src/test/plugin-workshop/**', 'apps/desktop/scripts/atelier-browser-smoke.cjs', 'tui_gateway/methods_atelier.py', 'tui_gateway/contracts/atelier.py', 'tests/hermes_cli/test_atelier.py', 'tests/tui_gateway/test_atelier_rpc.py', '.github/workflows/atelier.yml']
   workflow_dispatch:
 permissions:
@@ -19,6 +19,8 @@ jobs:
           test-environment: 'true'
       - name: Real storage, profile RPCs and generated contracts
         run: scripts/run_tests.sh tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/tui_gateway/contracts/test_generated.py tests/agent/test_native_codex_init.py tests/agent/test_codex_runtime_prompt_handoff.py tests/agent/transports/test_codex_app_server_runtime.py -q -j 1
+      - name: Durable mission contract and bounded goal loop
+        run: scripts/run_tests.sh tests/hermes_cli/test_actelyo_mission_contract.py tests/hermes_cli/test_kanban_goal_mode.py -q -j 1
       - name: Install locked UI dependencies without native postinstall
         run: npm ci --ignore-scripts
       - name: Atelier interactions

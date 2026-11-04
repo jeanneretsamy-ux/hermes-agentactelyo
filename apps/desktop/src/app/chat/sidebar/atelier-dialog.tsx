@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { HermesGateway } from '@/hermes'
 
-import { atelierPluginPrompt, atelierPrompt } from './atelier-prompts'
+import { atelierMissionPrompt, atelierPluginPrompt, atelierPrompt } from './atelier-prompts'
 
 export function AtelierDialog({
   gateway,
@@ -24,7 +24,11 @@ export function AtelierDialog({
   const [snapshot, setSnapshot] = useState<AtelierSnapshot>({ revisions: [] })
   const [panel, setPanel] = useState<AtelierPanel | null>(null)
   const [query, setQuery] = useState('')
-  const [kind, setKind] = useState<'chronology' | 'desktop-plugin'>('chronology')
+  const [kind, setKind] = useState<'chronology' | 'desktop-plugin' | 'mission'>('chronology')
+  const [missionRequest, setMissionRequest] = useState(
+    'Prépare un projet de note à partir des pièces choisies, vérifie les citations et conserve les résultats pour relecture.'
+  )
+  const missionKey = useRef(crypto.randomUUID())
 
   const [request, setRequest] = useState(
     'Crée la chronologie du dossier avec une source précise pour chaque événement.'
@@ -33,6 +37,7 @@ export function AtelierDialog({
   const [pluginRequest, setPluginRequest] = useState(
     'Crée un panneau pour calculer une date après un nombre de jours calendaires, avec un bouton Effacer.'
   )
+  const selectedRequest = kind === 'chronology' ? request : kind === 'desktop-plugin' ? pluginRequest : missionRequest
 
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -119,7 +124,10 @@ export function AtelierDialog({
       return
     }
 
-    if (kind === 'desktop-plugin') {
+    if (kind === 'mission') {
+      requestComposerInsert(atelierMissionPrompt(missionRequest, profile, missionKey.current), { target })
+      onClose()
+    } else if (kind === 'desktop-plugin') {
       if (!local) {
         setError('Choisissez une connexion locale pour créer un plugin sur cet ordinateur.')
 
@@ -180,7 +188,17 @@ export function AtelierDialog({
           <Button aria-pressed={kind === 'desktop-plugin'} onClick={() => setKind('desktop-plugin')} variant="outline">
             Plugin d’interface
           </Button>
+          <Button aria-pressed={kind === 'mission'} onClick={() => setKind('mission')} variant="outline">
+            Mission suivie
+          </Button>
         </div>
+        {kind === 'mission' && (
+          <p>
+            Préparez la demande puis envoyez-la dans le chat. L’agent créera une tâche Kanban persistante, limitée à 20
+            tours, avec un plafond de 30 minutes par exécution et deux échecs avant blocage. Le modèle et le dispatcher
+            doivent être disponibles ; cette fenêtre ne démarre aucune tâche.
+          </p>
+        )}
         {kind === 'desktop-plugin' && (
           <p>
             Les plugins d’interface appartiennent à cette application sur cet ordinateur, avec ses droits. Examinez leur
@@ -194,15 +212,22 @@ export function AtelierDialog({
           Demande à l’agent
           <textarea
             className="rounded border p-2"
-            onChange={e => (kind === 'chronology' ? setRequest(e.target.value) : setPluginRequest(e.target.value))}
-            value={kind === 'chronology' ? request : pluginRequest}
+            onChange={e => {
+              if (kind === 'chronology') {
+                setRequest(e.target.value)
+              } else if (kind === 'desktop-plugin') {
+                setPluginRequest(e.target.value)
+              }
+              else {
+                setMissionRequest(e.target.value)
+                missionKey.current = crypto.randomUUID()
+              }
+            }}
+            value={selectedRequest}
           />
         </label>
         <div className="flex flex-wrap gap-2">
-          <Button
-            disabled={!gateway || busy || !(kind === 'chronology' ? request : pluginRequest).trim()}
-            onClick={prepare}
-          >
+          <Button disabled={!gateway || busy || !selectedRequest.trim()} onClick={prepare}>
             Préparer la création dans le chat
           </Button>
           {kind === 'desktop-plugin' && (
