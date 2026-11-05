@@ -50,6 +50,23 @@ jobs:
           # The seeded install clones this checkout through a local bare origin.
           fetch-depth: 0
 
+      - name: Reserve disk for the real desktop update sandbox
+        if: github.repository == 'jeanneretsamy-ux/hermes-agentactelyo'
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The fork uses standard hosted runners. This Linux Electron suite
+          # does not use Android or CodeQL; its cloned installs and wheel
+          # caches otherwise exhaust the image before logs can be uploaded.
+          # Fixed preinstalled SDK directories only, on an ephemeral runner.
+          for sdk in /usr/local/lib/android /opt/hostedtoolcache/CodeQL; do
+            if [[ -d "$sdk" && ! -L "$sdk" ]]; then
+              sudo rm -rf -- "$sdk"
+            fi
+          done
+          df -h / "$RUNNER_TEMP"
+
       - name: Install system dependencies for Electron and the sandbox
         run: |
           sudo apt-get update -qq
@@ -78,6 +95,13 @@ jobs:
         working-directory: apps/desktop
         run: |
           git --version
+          python3 - <<'PY'
+          import os, shutil
+          free = shutil.disk_usage(os.environ['RUNNER_TEMP']).free
+          print(f'Desktop update sandbox free disk: {free / 1024**3:.1f} GiB')
+          if free < 20 * 1024**3:
+              raise SystemExit('Desktop update sandbox requires at least 20 GiB free after dependency setup')
+          PY
           # Resource trail in the log, so a runner that dies mid-run leaves its last state behind.
           ( while sleep 10; do
               echo "::group::resources $(date -u +%T)"
