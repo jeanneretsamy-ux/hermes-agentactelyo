@@ -100,7 +100,7 @@ jobs:
         shell: bash
         run: |
           node scripts/build/python.mjs scripts/gen_gateway_contracts.py --check
-          scripts/run_tests.sh tests/tui_gateway/test_legal_finance_rpc.py tests/tui_gateway/test_legal_finance_control_rpc.py tests/tui_gateway/test_legal_operations_rpc.py tests/tui_gateway/test_legal_billing_orders_rpc.py tests/tui_gateway/test_legal_finance_files_rpc.py tests/tui_gateway/test_legal_finance_ocr_rpc.py -q -j 1
+          scripts/run_tests.sh tests/tui_gateway/test_legal_finance_rpc.py tests/tui_gateway/test_legal_finance_control_rpc.py tests/tui_gateway/test_legal_operations_rpc.py tests/tui_gateway/test_legal_billing_orders_rpc.py tests/tui_gateway/test_legal_finance_files_rpc.py tests/tui_gateway/test_legal_finance_ocr_rpc.py tests/tui_gateway/test_legal_pdf_isolation.py -q -j 1
       - name: Test Actelyo workbench UI
         working-directory: apps/desktop
         run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/atelier-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/chat/sidebar/legal-practice/finance-cabinet.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1

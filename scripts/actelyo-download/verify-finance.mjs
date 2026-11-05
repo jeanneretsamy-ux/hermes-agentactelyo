@@ -6,6 +6,7 @@ import {DatabaseSync} from 'node:sqlite'
 
 // This runs against the actual installed EXE and its isolated, synthetic profile.
 export async function verifyFinance(page,proof,fixture){
+  assert.equal(createHash('sha256').update(fs.readFileSync(fixture)).digest('hex'),'a921ec77f8ee7d5484d88c6304fca5a80093f3c2cea40d9ba38818e5c5480f9b','The committed binary PDF fixture must survive checkout byte for byte.')
   await page.getByRole('button',{name:'Pilotage financier',exact:true}).click()
   await page.getByRole('button',{name:'Actualiser le registre réel',exact:true}).click()
   const dossier=page.getByLabel('Dossier',{exact:true})

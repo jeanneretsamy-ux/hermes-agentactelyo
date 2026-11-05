@@ -2,6 +2,7 @@
 import base64
 from datetime import datetime,timezone
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -160,9 +161,19 @@ def transfer(conn,pid,action,p):
 
 def _worker(row,operation,**params):
     from tools.environments.local import served_profile_child_env
+    # A bundled launcher adds its dependencies in-process. A new bare Python
+    # process does not inherit sys.path; select that same package directory
+    # explicitly, without inheriting PYTHONPATH or executing third-party .pth.
+    pdf=importlib.util.find_spec('pypdf')
+    if pdf is None or not pdf.origin or not pdf.submodule_search_locations:
+        raise ValueError('Module PDF local absent : installer les dépendances finance du Law Harness.')
+    dependencies=str(Path(pdf.origin).resolve().parent.parent)
+    bootstrap=('import runpy,sys; worker,dependencies=sys.argv[1:]; '
+               'sys.path.append(dependencies); sys.argv=[worker]; '
+               'runpy.run_path(worker,run_name="__main__")')
     request={'operation':operation,'data_base64':base64.b64encode(row['data']).decode(),**params}
     try:
-        process=subprocess.run([sys.executable,str(Path(__file__).with_name('legal_pdf_worker.py'))],
+        process=subprocess.run([sys.executable,'-I','-S','-X','utf8','-c',bootstrap,str(Path(__file__).with_name('legal_pdf_worker.py')),dependencies],
              input=json.dumps(request).encode(),capture_output=True,timeout=30,env=served_profile_child_env(),
              creationflags=0x08000000 if sys.platform=='win32' else 0)
     except subprocess.TimeoutExpired: raise ValueError('Délai PDF dépassé ; original conservé.') from None
