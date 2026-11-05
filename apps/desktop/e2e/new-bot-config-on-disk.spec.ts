@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import yaml from 'js-yaml'
 
@@ -6,6 +6,7 @@ import { MOCK_REPLY } from '../../../tests-js/scripts/mock-server'
 
 import { type MockBackendFixture, setupMockBackend, waitForAppReady } from './fixtures'
 import { expect, test } from './test'
+import { captureRpc } from './capture-rpc'
 
 // A bot created from the New Bot dialog WITHOUT a clone source (the "inherited
 // from launch profile" path) must land on disk with a usable `model:` block in
@@ -15,6 +16,7 @@ import { expect, test } from './test'
 // created profile's config.yaml under HERMES_HOME), not the toast.
 
 let fixture: MockBackendFixture | null = null
+const wire: unknown[] = []
 
 type Page = MockBackendFixture['page']
 
@@ -30,6 +32,7 @@ async function openBots(page: Page): Promise<void> {
 
 test.beforeAll(async () => {
   fixture = await setupMockBackend()
+  captureRpc(fixture.page, wire)
   await waitForAppReady(fixture, 120_000)
 })
 
@@ -40,6 +43,7 @@ test.afterEach(async ({}, info) => {
   }
 
   await info.attach('native-window', { body: await fixture.page.screenshot(), contentType: 'image/png' })
+  writeFileSync(info.outputPath('bot-rpc.json'), JSON.stringify({ wire, prompts: fixture.mock.receivedPrompts.length }))
   const cfg = join(fixture.sandbox.hermesHome, 'profiles', 'fresh-scout', 'config.yaml')
   await info.attach('created-config', {
     body: existsSync(cfg) ? readFileSync(cfg) : Buffer.from('<missing>'),

@@ -9,6 +9,7 @@ import * as fs from 'node:fs'
 import * as http from 'node:http'
 import * as net from 'node:net'
 import * as path from 'node:path'
+import yaml from 'js-yaml'
 
 import { createSandbox, findElectron, type Sandbox } from './fixtures'
 import {
@@ -120,20 +121,8 @@ function seedConfig(home: string, endpoint: string, model: string): void {
   )
 }
 
-function configModel(python: string, env: Record<string, string>, home: string): unknown {
-  const read = spawnSync(
-    python,
-    [
-      '-c',
-      'import json, pathlib, sys, yaml; print(json.dumps(yaml.safe_load(pathlib.Path(sys.argv[1]).read_text())["model"]))',
-      path.join(home, 'config.yaml')
-    ],
-    { cwd: REPO_ROOT, env, encoding: 'utf8', timeout: 10_000 }
-  )
-
-  expect(read.status, read.stderr).toBe(0)
-
-  return JSON.parse(read.stdout)
+function configModel(home: string): unknown {
+  return (yaml.load(fs.readFileSync(path.join(home, 'config.yaml'), 'utf8')) as { model: unknown }).model
 }
 
 async function listen(server: net.Server): Promise<number> {
@@ -379,7 +368,7 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
       await page.getByRole('button', { name: 'Connect', exact: true }).click()
       await expect(input).toBeHidden({ timeout: 45_000 })
       await expect
-        .poll(() => configModel(python, remoteEnv, remoteProfileHome))
+        .poll(() => configModel(remoteProfileHome))
         .toMatchObject({
           provider: expect.stringMatching(/^custom(?::.+)?$/),
           default: model,
@@ -417,7 +406,7 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
       await page.getByRole('button', { name: 'Close settings', exact: true }).click()
       await selectGateway(page, 'local', 'This device', 'default')
       await openProviderKeys(page)
-      expect(configModel(python, localEnv, sandbox.hermesHome)).toMatchObject({ default: 'local-sentinel' })
+      expect(configModel(sandbox.hermesHome)).toMatchObject({ default: 'local-sentinel' })
       await page.screenshot({ path: test.info().outputPath(`${model}-back-on-local.png`) })
       await page.getByRole('button', { name: 'Close settings', exact: true }).click()
 

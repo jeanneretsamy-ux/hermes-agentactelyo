@@ -18,6 +18,7 @@ import {
 } from './fixtures'
 import { writeEnvFile, writeMockProviderConfig } from '../../../tests-js/scripts/mock-provider-config'
 import { collectErrorBanners, type ElectronApplication, expect, installErrorBannerGuard, type Page, test } from './test'
+import { captureRpc } from './capture-rpc'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../../..')
 const LOCAL_LABEL = 'This device'
@@ -214,6 +215,14 @@ const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Pag
 
       const launched = await launchDesktop(isolatedEnv(local))
       app = launched.app
+      const wire: unknown[] = []
+      captureRpc(launched.page, wire)
+      app.on('window', page => captureRpc(page, wire))
+      await info.attach('rpc-capture-started', { body: 'Synthetic requests only; no credentials or prompt bodies', contentType: 'text/plain' })
+      // Persist as frames arrive so teardown errors cannot discard the trace.
+      const wireFile = info.outputPath('peer-rpc.json')
+      const saveWire = () => fs.writeFileSync(wireFile, JSON.stringify(wire))
+      app.on('close', saveWire)
       app.process().stdout?.on('data', chunk => { desktopLog += chunk.toString() })
       app.process().stderr?.on('data', chunk => { desktopLog += chunk.toString() })
       await expectReady(launched.page, LOCAL_LABEL)
