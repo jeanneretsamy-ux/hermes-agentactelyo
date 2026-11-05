@@ -58,10 +58,12 @@ jobs:
           $complete = Get-Item -LiteralPath $output
           $hash = (Get-FileHash $output -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($complete.Length -ne $parts.bytes -or $hash -ne $parts.sha256) { throw 'The reassembled EXE differs from the installed and tested EXE.' }
-          if ($complete.VersionInfo.ProductVersion -notin @($env:RELEASE_VERSION,"$env:RELEASE_VERSION.0")) { throw 'Native EXE version mismatch.' }
+          # Inno Setup pads the PE string table with spaces; compare its trimmed value.
+          $nativeVersion = $complete.VersionInfo.ProductVersion.Trim()
+          if ($nativeVersion -notin @($env:RELEASE_VERSION,"${env:RELEASE_VERSION}.0")) { throw "Native EXE version mismatch: [$nativeVersion]" }
           Copy-Item verified-parts/build-manifest.json $root/
           "$hash  $name" | Set-Content (Join-Path $root 'SHA256SUMS.txt')
-          @{version=$env:RELEASE_VERSION;source_commit=$env:SOURCE_SHA;verified_build_run=$env:SOURCE_RUN;sha256=$hash;bytes=$complete.Length;bitwise_identical_to_installed_installer=$true} | ConvertTo-Json | Set-Content (Join-Path $root 'delivery-verification.json')
+          @{version=$env:RELEASE_VERSION;native_product_version=$nativeVersion;source_commit=$env:SOURCE_SHA;verified_build_run=$env:SOURCE_RUN;sha256=$hash;bytes=$complete.Length;bitwise_identical_to_installed_installer=$true} | ConvertTo-Json | Set-Content (Join-Path $root 'delivery-verification.json')
       - name: Deliver one complete Windows installer
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
