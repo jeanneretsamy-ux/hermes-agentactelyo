@@ -69,7 +69,9 @@ describe('requestPluginCatalogInstallFromDeepLink', () => {
 
     expect(fetchSpy).toHaveBeenCalledWith(PLUGIN_CATALOG_URL, expect.anything())
     expect($pluginInstallRequest.get()).toBeNull()
-    expect($notifications.get()[0]?.message).toContain('\u201Cweather-evil\u201D is not in the Actelyo Law Harness plugin catalog')
+    expect($notifications.get()[0]?.message).toContain(
+      '\u201Cweather-evil\u201D is not in the Actelyo Law Harness plugin catalog'
+    )
 
     await requestPluginCatalogInstallFromDeepLink('weather')
 

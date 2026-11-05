@@ -847,9 +847,11 @@ async function fetchRosterSnapshot(activeConnectionId: null | string | undefined
        * snapshot rather than clearing it. */
       const previous: RosterRow[] = $lastRoster.get().filter(row => !row?.ghost)
       const merged = mergeMultiSourceRoster(local, null, activeConnectionId, previous)
+
       const profiles = (merged?.profiles || []).map(row =>
         row?.remoteSource ? { ...row, sourceReachable: false } : row
       )
+
       await reconcileBotMeta(profiles, issuedAt)
 
       return {
@@ -1297,7 +1299,8 @@ export function newBotChat(bot: RosterRow) {
     host.notify?.({
       kind: 'error',
       message:
-        getPluginCtx()?.i18n?.t('bot.openAnotherChatUnsupported') ?? "Update Actelyo Law Harness Desktop to open another Bot chat."
+        getPluginCtx()?.i18n?.t('bot.openAnotherChatUnsupported') ??
+        'Update Actelyo Law Harness Desktop to open another Bot chat.'
     })
 
     return
@@ -1309,7 +1312,8 @@ export function newBotChat(bot: RosterRow) {
     host.notify?.({
       kind: 'error',
       message:
-        getPluginCtx()?.i18n?.t('bot.openAnotherChatUnsupported') ?? "Update Actelyo Law Harness Desktop to open another Bot chat."
+        getPluginCtx()?.i18n?.t('bot.openAnotherChatUnsupported') ??
+        'Update Actelyo Law Harness Desktop to open another Bot chat.'
     })
 
     return

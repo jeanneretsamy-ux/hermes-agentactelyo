@@ -114,6 +114,7 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
   }
 
   const [query, setQuery] = useState('')
+
   const catalog = useQuery({
     queryKey: [...OFFICIAL_SKILLS_KEY, profileScopeKey(profile)],
     queryFn: () => getOfficialSkills(profile),
@@ -121,15 +122,19 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
     staleTime: 60_000,
     retry: false
   })
+
   const runningKeys = useStoreSelector($hubActions, actions =>
     Object.keys(actions)
       .filter(key => actions[key]?.running)
       .sort()
       .join('|')
   )
+
   const running = useMemo(() => new Set(runningKeys.split('|')), [runningKeys])
+
   const skills = useMemo(() => {
     const needle = query.trim().toLowerCase()
+
     return (catalog.data?.skills ?? []).filter(
       skill =>
         !needle ||
@@ -141,6 +146,7 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
     if (installedNames.has(name) || installedNames.has(identifier) || running.has(identifier)) {
       return
     }
+
     notify({ kind: 'success', title: h.installStarted(name), message: h.actionLog })
     void installHubSkill(identifier, profile).catch(err => notifyHubActionFailed(err, h.actionFailed, name, profile))
   }
@@ -218,7 +224,9 @@ export const EmbeddedHubPicker = memo(function EmbeddedHubPicker({
             {skills.map(skill => {
               const installed =
                 skill.installed || installedNames.has(skill.name) || installedNames.has(skill.identifier)
+
               const installing = running.has(skill.identifier)
+
               return (
                 <div
                   className="flex items-center gap-3 border-b border-(--ui-stroke-secondary) p-3 last:border-b-0"

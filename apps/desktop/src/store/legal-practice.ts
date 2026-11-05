@@ -31,7 +31,10 @@ export function legalQueryKey(owner: LegalPracticeOwner): (string | number)[] {
   return ['legal-practice', id, owner.profile, owner.projectId]
 }
 
-export function openLegalPractice(project: { id: string; name: string }, section: LegalPracticeSection = 'workspace'): void {
+export function openLegalPractice(
+  project: { id: string; name: string },
+  section: LegalPracticeSection = 'workspace'
+): void {
   const gateway = activeGateway()
   const profile = projectProfile()
 

@@ -262,9 +262,9 @@ async function locateHermes(ssh, remoteHermesPath) {
   }
 
   const err: any = new Error(
-    "Actelyo Law Harness is not installed on the remote host (could not find a `hermes` executable). " +
+    'Actelyo Law Harness is not installed on the remote host (could not find a `hermes` executable). ' +
       'Install it on the remote with:  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh  ' +
-      "— or set the Actelyo Law Harness path explicitly in the SSH connection settings."
+      '— or set the Actelyo Law Harness path explicitly in the SSH connection settings.'
   )
 
   err.kind = 'hermes-not-found'
@@ -312,7 +312,7 @@ async function probeRemoteHermesHome(ssh) {
 
     return out || '~/.hermes'
   } catch (cause) {
-    const error: any = new Error("Could not resolve the remote Actelyo Law Harness home.")
+    const error: any = new Error('Could not resolve the remote Actelyo Law Harness home.')
     error.kind = 'transient-transport-error'
     error.cause = cause
     throw error
@@ -386,7 +386,9 @@ async function assertRemoteInstallUpdateClear(ssh, hermesHome) {
         .split(/\r?\n/)
         .pop() || ''
   } catch (cause) {
-    const error: any = new Error("Could not prove that the remote Actelyo Law Harness install is clear for SSH startup.")
+    const error: any = new Error(
+      'Could not prove that the remote Actelyo Law Harness install is clear for SSH startup.'
+    )
     error.kind = 'update-in-progress'
     error.cause = cause
     throw error
@@ -401,7 +403,7 @@ async function assertRemoteInstallUpdateClear(ssh, hermesHome) {
   const error: any = new Error(
     live
       ? `Remote Actelyo Law Harness update process ${live[1]} is still running; SSH startup is paused.`
-      : "The remote Actelyo Law Harness update marker is unreadable or malformed; refusing SSH startup."
+      : 'The remote Actelyo Law Harness update marker is unreadable or malformed; refusing SSH startup.'
   )
 
   error.kind = 'update-in-progress'
@@ -416,7 +418,7 @@ async function listRemoteHermesProfiles(ssh) {
   try {
     listing = await ssh.exec(`if [ -d ${dir} ]; then ls -1 ${dir}; fi`)
   } catch (cause) {
-    const error: any = new Error("Could not list remote Actelyo Law Harness profiles.")
+    const error: any = new Error('Could not list remote Actelyo Law Harness profiles.')
     error.kind = 'transient-transport-error'
     error.cause = cause
     throw error
@@ -438,7 +440,7 @@ async function readRemoteInstallId(ssh) {
   try {
     out = await ssh.exec(`if [ -f ${file} ]; then cat ${file}; fi`)
   } catch (cause) {
-    const error: any = new Error("Could not read the remote Actelyo Law Harness install id.")
+    const error: any = new Error('Could not read the remote Actelyo Law Harness install id.')
     error.kind = 'transient-transport-error'
     error.cause = cause
     throw error
@@ -460,7 +462,7 @@ function assertSafeRemoteHome(home) {
   const value = String(home || '').trim()
 
   if (!/^(\/|~\/)[A-Za-z0-9._/+-]+$/.test(value) || value.includes('..')) {
-    const error: any = new Error("Unsafe remote Actelyo Law Harness home.")
+    const error: any = new Error('Unsafe remote Actelyo Law Harness home.')
     error.kind = 'unsafe-path'
     throw error
   }
@@ -1314,8 +1316,8 @@ async function spawnRemoteDashboard(
 ) {
   if (!(await remoteSupportsSshOwnership(ssh, hermesPath))) {
     const err: any = new Error(
-      "The remote Actelyo Law Harness install does not support --ssh-session-token-file and --ssh-owner-nonce. " +
-        "Update Actelyo Law Harness on the remote host to continue using Desktop SSH mode."
+      'The remote Actelyo Law Harness install does not support --ssh-session-token-file and --ssh-owner-nonce. ' +
+        'Update Actelyo Law Harness on the remote host to continue using Desktop SSH mode.'
     )
 
     err.kind = 'update-required'

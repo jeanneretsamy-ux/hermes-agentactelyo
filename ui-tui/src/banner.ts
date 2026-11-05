@@ -45,7 +45,25 @@ export function parseRichMarkup(markup: string): Line[] {
 
 const LOGO_ART = ['ACTELYO LAW HARNESS']
 
-const CADUCEUS_ART = ["", "", "", "", "", "", "                   ███", "             ██ ██████", "             ████  ███", "", "           █   █   █", "                     █", "", "", "", "", ""]
+const CADUCEUS_ART = [
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '                   ███',
+  '             ██ ██████',
+  '             ████  ███',
+  '',
+  '           █   █   █',
+  '                     █',
+  '',
+  '',
+  '',
+  '',
+  ''
+]
 
 const LOGO_GRADIENT = [0, 0, 1, 1, 2, 2] as const
 const CADUC_GRADIENT = [2, 2, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3] as const

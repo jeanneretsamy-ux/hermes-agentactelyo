@@ -92,7 +92,7 @@ export function useGatewayRequest() {
         const conn = await withTimeout(
           desktop.getConnection(),
           RECONNECT_ATTEMPT_TIMEOUT_MS,
-          "Timed out reconnecting to Actelyo Law Harness backend"
+          'Timed out reconnecting to Actelyo Law Harness backend'
         )
 
         connectionRef.current = conn
@@ -135,7 +135,7 @@ export function useGatewayRequest() {
       const gateway = gatewayRef.current ?? activeGateway()
 
       if (!gateway) {
-        throw new Error("Actelyo Law Harness gateway unavailable")
+        throw new Error('Actelyo Law Harness gateway unavailable')
       }
 
       try {
