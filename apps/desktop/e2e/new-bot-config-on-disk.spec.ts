@@ -1,5 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import yaml from 'js-yaml'
+
+import { MOCK_REPLY } from '../../../tests-js/scripts/mock-server'
 
 import { type MockBackendFixture, setupMockBackend, waitForAppReady } from './fixtures'
 import { expect, test } from './test'
@@ -72,10 +75,18 @@ test('a fresh (non-clone) bot gets a runnable model block on disk', async () => 
   const cfgPath = join(fixture!.sandbox.hermesHome, 'profiles', 'fresh-scout', 'config.yaml')
   await expect.poll(() => existsSync(cfgPath), { timeout: 30_000 }).toBe(true)
   const cfg = readFileSync(cfgPath, 'utf8')
-  expect(cfg).toMatch(/^model:/m)
-  expect(cfg).toMatch(/provider:\s*mock/)
-  expect(cfg).toMatch(/default:\s*mock-model/)
-  // The inherited model rides a custom `providers:` gateway; its definition must travel with it
-  // or the first turn dies with "Unknown provider 'mock'".
-  expect(cfg).toMatch(/^providers:\n\s+mock:/m)
+  const created = yaml.load(cfg) as { model: Record<string, unknown> }
+  const parent = yaml.load(readFileSync(join(fixture!.sandbox.hermesHome, 'config.yaml'), 'utf8')) as { model: Record<string, unknown> }
+  // The fixture now uses the supported custom provider with its endpoint in
+  // model.base_url, rather than a legacy named providers.mock gateway.
+  expect(parent.model.base_url).toBe(`${fixture!.mockUrl}/v1`)
+  expect(created.model).toMatchObject({
+    provider: parent.model.provider,
+    default: parent.model.default,
+    base_url: parent.model.base_url,
+  })
+  // A stored block alone is not a runnable bot: its automatic introduction
+  // must complete through the real gateway and the mock inference server.
+  await expect(page.locator('[data-slot="aui_thread-viewport"]')).toContainText(MOCK_REPLY, { timeout: 60_000 })
+  expect(fixture!.mock.receivedPrompts.length).toBeGreaterThan(0)
 })
