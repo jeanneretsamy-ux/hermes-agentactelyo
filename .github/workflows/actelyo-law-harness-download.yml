@@ -130,7 +130,7 @@ jobs:
         run: |
           $nativeVersion = $env:ACTELYO_RELEASE_VERSION
           if (($nativeVersion -split '\.').Count -eq 3) { $nativeVersion += '.0' }
-          node scripts/run-electron-builder.mjs --win zip --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION" "--config.buildVersion=$nativeVersion" "--config.extraMetadata.shortVersion=$nativeVersion" "--config.extraMetadata.shortVersionWindows=$nativeVersion"
+          node scripts/run-electron-builder.mjs --win --dir --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION" "--config.buildVersion=$nativeVersion" "--config.extraMetadata.shortVersion=$nativeVersion" "--config.extraMetadata.shortVersionWindows=$nativeVersion"
           if ($LASTEXITCODE -ne 0) { throw 'Windows packaging failed' }
       - name: Build and install Actelyo installer
         shell: pwsh
@@ -142,11 +142,16 @@ jobs:
           $transcriptPath = Join-Path $releaseDir 'installer-diagnostics.log'
           Start-Transcript -Path $transcriptPath -Force | Out-Null
           try {
-            $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
-            if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-            # Keep the staged source root short; Python packages contain deeply nested filenames.
-            $appSource = Join-Path $env:RUNNER_TEMP 'a'
-            Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+            # The deliverable is Inno's installer. Avoid compressing and expanding
+            # a second multi-gigabyte archive merely to feed the same files to Inno.
+            $workspaceRoot = [IO.Path]::GetFullPath($env:GITHUB_WORKSPACE).TrimEnd('\')+'\'
+            $tempRoot = [IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\')+'\'
+            $unpacked = [IO.Path]::GetFullPath((Join-Path $env:GITHUB_WORKSPACE 'apps/desktop/release/win-unpacked'))
+            $appSource = [IO.Path]::GetFullPath((Join-Path $env:RUNNER_TEMP 'actelyo-inno-source'))
+            if (!$unpacked.StartsWith($workspaceRoot,[StringComparison]::OrdinalIgnoreCase) -or !$appSource.StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected installer staging paths' }
+            if (!(Test-Path -LiteralPath (Join-Path $unpacked 'Actelyo Law Harness.exe')) -or (Test-Path -LiteralPath $appSource)) { throw 'Unpacked application missing or staging destination already exists' }
+            # Use a short verified runner path for deeply nested Python packages.
+            Move-Item -LiteralPath $unpacked -Destination $appSource
             if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
             $metadata = (Get-Item (Join-Path $appSource 'Actelyo Law Harness.exe')).VersionInfo
             foreach ($value in @($metadata.ProductVersion, $metadata.FileVersion)) {
