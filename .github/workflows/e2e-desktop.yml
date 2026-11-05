@@ -40,12 +40,32 @@ jobs:
             xdg-utils libatspi2.0-0 libdrm2 libgbm1 libasound2t64
 
       - name: Set up the locked desktop toolchain
+        id: pm
         uses: ./.github/actions/setup-pm
         with:
           toolchain: all
           extras: '["all"]'
           test-environment: 'true'
           prune-python-cache: true
+
+      - name: Expose the selected source runtime to Electron and gateway fixtures
+        env:
+          SELECTED_PYTHON: ${{ steps.pm.outputs.python-path }}
+        run: |
+          test -x "$SELECTED_PYTHON"
+          "$SELECTED_PYTHON" -c 'import hermes_cli.main; import sys; print("Verified source runtime:", sys.executable)'
+          echo "HERMES_DESKTOP_PYTHON=$SELECTED_PYTHON" >> "$GITHUB_ENV"
+          echo "HERMES_E2E_PYTHON=$SELECTED_PYTHON" >> "$GITHUB_ENV"
+          launcher_dir="$RUNNER_TEMP/cabinet-law-bin"
+          mkdir -p "$launcher_dir"
+          cat > "$launcher_dir/hermes" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          exec "${HERMES_DESKTOP_PYTHON:?Selected source interpreter required}" -m hermes_cli.main "$@"
+          SH
+          chmod +x "$launcher_dir/hermes"
+          HERMES_DESKTOP_PYTHON="$SELECTED_PYTHON" "$launcher_dir/hermes" --version
+          echo "$launcher_dir" >> "$GITHUB_PATH"
 
       # Full npm ci (not --ignore-scripts): electron's postinstall
       # downloads the binary we launch, and node-pty's native build is
