@@ -8,7 +8,11 @@ import {DatabaseSync} from 'node:sqlite'
 export async function verifyFinance(page,proof,fixture){
   await page.getByRole('button',{name:'Pilotage financier',exact:true}).click()
   await page.getByRole('button',{name:'Actualiser le registre réel',exact:true}).click()
-  await page.getByLabel('Dossier',{exact:true}).selectOption({label:'Dossier QA échéances'},{timeout:60000})
+  const dossier=page.getByLabel('Dossier',{exact:true})
+  const option=dossier.locator('option').filter({hasText:'Dossier QA échéances'})
+  await option.waitFor({state:'attached',timeout:60000})
+  assert.equal(await option.count(),1,'A unique synthetic dossier must be selected.')
+  await dossier.selectOption(await option.getAttribute('value'))
   const finance=page.getByRole('region',{name:'Pilotage financier du cabinet',exact:true})
   const details=title=>finance.locator('details').filter({has:page.locator('summary',{hasText:title})}).last()
   const confirm=async()=>{
