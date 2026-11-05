@@ -1,8 +1,8 @@
 import {
-  useState,
-  type ComponentType,
   type ButtonHTMLAttributes,
+  type ComponentType,
   type InputHTMLAttributes,
+  useState,
 } from "react";
 export type BillingOrder = {
   id: string;
@@ -36,14 +36,18 @@ type Props = {
   Button: ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>;
   Input: ComponentType<InputHTMLAttributes<HTMLInputElement>>;
 };
+
 const euros = (value: number) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(
     value / 100,
   );
+
 const today = () => {
   const d = new Date();
+
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
 export default function BillingOrders({
   orders,
   fees,
@@ -56,13 +60,16 @@ export default function BillingOrders({
   const [selected, setSelected] = useState<string[]>([]),
     [purpose, setPurpose] = useState("standard"),
     [due, setDue] = useState(today);
+
   const available = fees.filter((f) => f.matter_id === matterId);
   const chosen = selected.filter((id) => available.some((f) => f.id === id));
+
   const reserved = new Set(
     orders
       .filter((o) => o.status === "ready")
       .flatMap((o) => o.lines.map((l) => l.id)),
   );
+
   return (
     <details>
       <summary>Bons à facturer numérotés</summary>
@@ -74,7 +81,6 @@ export default function BillingOrders({
       {available.map((f) => (
         <label key={f.id}>
           <input
-            type="checkbox"
             checked={chosen.includes(f.id)}
             disabled={reserved.has(f.id)}
             onChange={(e) => {
@@ -85,6 +91,7 @@ export default function BillingOrders({
                   : chosen.filter((id) => id !== f.id),
               );
             }}
+            type="checkbox"
           />
           {f.description} · {euros(f.net_cents)} HT{" "}
           {reserved.has(f.id) ? "· déjà réservée" : ""}
@@ -94,11 +101,11 @@ export default function BillingOrders({
         Nature du bon
         <select
           aria-label="Nature du bon"
-          value={purpose}
           onChange={(e) => {
             onEdit();
             setPurpose(e.target.value);
           }}
+          value={purpose}
         >
           <option value="standard">Standard</option>
           <option value="provision_fees">Provision sur honoraires</option>
@@ -109,7 +116,6 @@ export default function BillingOrders({
         </select>
       </label>
       <Button
-        type="button"
         disabled={
           !matterId || !chosen.length || chosen.some((id) => reserved.has(id))
         }
@@ -120,25 +126,26 @@ export default function BillingOrders({
             purpose,
           })
         }
+        type="button"
       >
         Préparer le bon à facturer
       </Button>
       <label>
         Échéance de la facture issue du bon
         <Input
-          type="date"
-          required
-          value={due}
           onChange={(e) => {
             onEdit();
             setDue(e.target.value);
           }}
+          required
+          type="date"
+          value={due}
         />
       </label>
       {orders
         .filter((o) => o.matter_id === matterId)
         .map((o) => (
-          <article key={o.id} aria-label={o.reference}>
+          <article aria-label={o.reference} key={o.id}>
             <h4>{o.reference}</h4>
             <p>
               {(
@@ -162,7 +169,6 @@ export default function BillingOrders({
             {o.status === "ready" && (
               <>
                 <Button
-                  type="button"
                   disabled={!due}
                   onClick={() =>
                     void prepare("finance.billing_order.invoice", {
@@ -172,17 +178,18 @@ export default function BillingOrders({
                       template_id: "classique",
                     })
                   }
+                  type="button"
                 >
                   Préparer la facture de ce bon
                 </Button>
                 <Button
-                  type="button"
                   onClick={() =>
                     void prepare("finance.billing_order.cancel", {
                       billing_order_id: o.id,
                       expected_version: o.version,
                     })
                   }
+                  type="button"
                 >
                   Préparer l’annulation du bon
                 </Button>

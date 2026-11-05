@@ -1,16 +1,17 @@
 import {
+  type ButtonHTMLAttributes,
+  type ComponentType,
+  type InputHTMLAttributes,
   useEffect,
   useRef,
   useState,
-  type ComponentType,
-  type ButtonHTMLAttributes,
-  type InputHTMLAttributes,
 } from "react";
+
+import BillingOrders, { type BillingOrder } from "./BillingOrders";
 import CabinetOperations, {
   type CabinetOperationsData,
 } from "./CabinetOperations";
 import FinanceControls, { type ControlData } from "./FinanceControls";
-import BillingOrders, { type BillingOrder } from "./BillingOrders";
 import FinanceDocuments, {
   type FinanceFile,
   type SaveFinancePdf,
@@ -76,17 +77,22 @@ type Snapshot = {
     files?: FinanceFile[];
   };
 };
+
 export function financeCents(value: string) {
   const m = value
     .trim()
     .replace(",", ".")
     .match(/^(\d+)(?:\.(\d{1,2}))?$/);
-  if (!m) throw Error("Montant positif avec deux décimales maximum requis.");
+
+  if (!m) {throw Error("Montant positif avec deux décimales maximum requis.");}
   const n = Number(m[1]) * 100 + Number((m[2] || "").padEnd(2, "0"));
+
   if (!Number.isSafeInteger(n) || n > 1_000_000_000)
-    throw Error("Montant trop élevé.");
+    {throw Error("Montant trop élevé.");}
+
   return n;
 }
+
 const money = (n: number | null) =>
   n === null
     ? "Coûts à compléter"
@@ -94,13 +100,17 @@ const money = (n: number | null) =>
         style: "currency",
         currency: "EUR",
       }).format(n / 100);
+
 const localDay = () => {
   const d = new Date();
+
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
 const NativeButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button {...props} />
 );
+
 const NativeInput = (props: InputHTMLAttributes<HTMLInputElement>) => (
   <input {...props} />
 );
@@ -124,7 +134,9 @@ export default function FinanceCabinet({
     [proposal, setProposal] = useState<any>(null),
     [csv, setCsv] = useState(""),
     [notice, setNotice] = useState("");
+
   const [purpose, setPurpose] = useState("standard");
+
   const [matterId, setMatterId] = useState(""),
     [description, setDescription] = useState(""),
     [kind, setKind] = useState("time"),
@@ -135,6 +147,7 @@ export default function FinanceCabinet({
     [billable, setBillable] = useState(true),
     [responsible, setResponsible] = useState(""),
     [activityDate, setActivityDate] = useState(localDay);
+
   const [budgetMinutes, setBudgetMinutes] = useState("0"),
     [budgetRevenue, setBudgetRevenue] = useState("0"),
     [budgetCost, setBudgetCost] = useState("0"),
@@ -143,8 +156,11 @@ export default function FinanceCabinet({
     [invoiceId, setInvoiceId] = useState(""),
     [payment, setPayment] = useState(""),
     [paymentRef, setPaymentRef] = useState("");
+
   const generation = useRef(0),
     pending = useRef(false);
+
+  // eslint-disable-next-line no-restricted-syntax -- Reset the local request guard for a new project; no nanostore value is mirrored.
   useEffect(() => {
     generation.current++;
     pending.current = false;
@@ -159,20 +175,23 @@ export default function FinanceCabinet({
     setInvoiceId("");
     setPayment("");
     setPaymentRef("");
+
     return () => {
       generation.current++;
     };
   }, [projectId]);
+
   async function run(fn: () => Promise<void>) {
-    if (pending.current) return;
+    if (pending.current) {return;}
     pending.current = true;
     setBusy(true);
     setError("");
     const version = generation.current;
+
     try {
       await fn();
     } catch (e) {
-      if (version === generation.current) setError((e as Error).message);
+      if (version === generation.current) {setError((e as Error).message);}
     } finally {
       if (version === generation.current) {
         pending.current = false;
@@ -180,23 +199,29 @@ export default function FinanceCabinet({
       }
     }
   }
+
   async function refresh() {
     const version = generation.current;
     const value = await call("snapshot", { project_id: projectId });
+
     if (version === generation.current) {
       if (value.project_id !== projectId)
-        throw Error("Le moteur a répondu pour un autre espace.");
+        {throw Error("Le moteur a répondu pour un autre espace.");}
+
       setData(value);
       setProposal(null);
     }
   }
+
   async function prepare(action: string, payload: Record<string, unknown>) {
     const version = generation.current;
+
     const value = await call("prepare", {
       project_id: projectId,
       action,
       payload,
     });
+
     if (version === generation.current) {
       setProposal(value);
       setNotice(
@@ -204,7 +229,9 @@ export default function FinanceCabinet({
       );
     }
   }
+
   const matter = data?.matters.find((m) => m.id === matterId);
+
   function selectMatter(id: string) {
     setMatterId(id);
     setProposal(null);
@@ -214,6 +241,7 @@ export default function FinanceCabinet({
     setBudgetRevenue(((b?.revenue_cents || 0) / 100).toFixed(2));
     setBudgetCost(((b?.cost_cents || 0) / 100).toFixed(2));
   }
+
   const text = (
     label: string,
     value: string,
@@ -223,19 +251,20 @@ export default function FinanceCabinet({
     <label>
       {label}
       <Input
-        type={type}
-        value={value}
         onChange={(e) => {
           setter(e.target.value);
           setProposal(null);
         }}
+        type={type}
+        value={value}
       />
     </label>
   );
+
   return (
     <section
-      className="finance-cabinet min-w-0 space-y-4"
       aria-label="Pilotage financier du cabinet"
+      className="finance-cabinet min-w-0 space-y-4"
     >
       <h3 className="text-lg font-semibold">Production, budgets et encours</h3>
       <p>
@@ -243,9 +272,9 @@ export default function FinanceCabinet({
         préparées ici utilisent ce même registre sur PC et mobile.
       </p>
       <Button
-        type="button"
         disabled={busy || !projectId}
         onClick={() => void run(refresh)}
+        type="button"
       >
         Actualiser le registre réel
       </Button>
@@ -277,15 +306,15 @@ export default function FinanceCabinet({
             {data.totals.billable_minutes} facturables ·{" "}
             {data.totals.missing_costs} coût(s) non renseigné(s)
           </p>
-          <fieldset disabled={busy} className="min-w-0 space-y-4">
+          <fieldset className="min-w-0 space-y-4" disabled={busy}>
             {data.operations && (
               <CabinetOperations
                 Button={Button}
+                cents={financeCents}
+                data={data.operations}
                 Input={Input}
                 key={projectId}
-                data={data.operations}
                 matterId={matterId}
-                cents={financeCents}
                 onEdit={() => setProposal(null)}
                 prepare={async (action, payload) => {
                   await run(() => prepare(action, payload));
@@ -296,8 +325,8 @@ export default function FinanceCabinet({
               Dossier
               <select
                 aria-label="Dossier"
-                value={matterId}
                 onChange={(e) => selectMatter(e.target.value)}
+                value={matterId}
               >
                 <option value="">Choisir un dossier du registre</option>
                 {data.matters.map((m) => (
@@ -337,7 +366,6 @@ export default function FinanceCabinet({
                     setBudgetCost,
                   )}
                   <Button
-                    type="button"
                     onClick={() =>
                       void run(() =>
                         prepare("finance.budget.save", {
@@ -349,6 +377,7 @@ export default function FinanceCabinet({
                         }),
                       )
                     }
+                    type="button"
                   >
                     Préparer le budget
                   </Button>
@@ -359,11 +388,11 @@ export default function FinanceCabinet({
                   <label>
                     Nature
                     <select
-                      value={kind}
                       onChange={(e) => {
                         setKind(e.target.value);
                         setProposal(null);
                       }}
+                      value={kind}
                     >
                       <option value="time">Temps passé</option>
                       <option value="fixed">Forfait</option>
@@ -401,17 +430,16 @@ export default function FinanceCabinet({
                   )}
                   <label className="finance-check">
                     <input
-                      type="checkbox"
                       checked={billable}
                       onChange={(e) => {
                         setBillable(e.target.checked);
                         setProposal(null);
                       }}
+                      type="checkbox"
                     />
                     Facturable
                   </label>
                   <Button
-                    type="button"
                     disabled={!description.trim()}
                     onClick={() =>
                       void run(() =>
@@ -447,6 +475,7 @@ export default function FinanceCabinet({
                         }),
                       )
                     }
+                    type="button"
                   >
                     Préparer la diligence à valider
                   </Button>
@@ -464,7 +493,6 @@ export default function FinanceCabinet({
                         </p>
                         {(["approved", "rejected"] as const).map((status) => (
                           <Button
-                            type="button"
                             key={status}
                             onClick={() =>
                               void run(() =>
@@ -478,6 +506,7 @@ export default function FinanceCabinet({
                                 }),
                               )
                             }
+                            type="button"
                           >
                             {status === "approved"
                               ? "Préparer la validation"
@@ -499,7 +528,6 @@ export default function FinanceCabinet({
                     .map((f) => (
                       <label className="finance-check" key={f.id}>
                         <input
-                          type="checkbox"
                           checked={selectedFees.includes(f.id)}
                           onChange={(e) => {
                             setSelectedFees(
@@ -509,6 +537,7 @@ export default function FinanceCabinet({
                             );
                             setProposal(null);
                           }}
+                          type="checkbox"
                         />
                         {f.description} · {money(f.net_cents)} HT
                       </label>
@@ -517,11 +546,11 @@ export default function FinanceCabinet({
                     Type de facture
                     <select
                       aria-label="Type de facture"
-                      value={purpose}
                       onChange={(e) => {
                         setPurpose(e.target.value);
                         setProposal(null);
                       }}
+                      value={purpose}
                     >
                       <option value="standard">Facture standard</option>
                       <option value="provision_fees">
@@ -538,9 +567,8 @@ export default function FinanceCabinet({
                   {text("Échéance", dueOn, setDueOn, "date")}
                   {(["quote", "invoice"] as const).map((type) => (
                     <Button
-                      key={type}
-                      type="button"
                       disabled={!selectedFees.length}
+                      key={type}
                       onClick={() =>
                         void run(() =>
                           prepare("document.create", {
@@ -552,6 +580,7 @@ export default function FinanceCabinet({
                           }),
                         )
                       }
+                      type="button"
                     >
                       {type === "quote"
                         ? "Préparer le devis"
@@ -591,11 +620,11 @@ export default function FinanceCabinet({
                 Facture à rapprocher
                 <select
                   aria-label="Facture à rapprocher"
-                  value={invoiceId}
                   onChange={(e) => {
                     setInvoiceId(e.target.value);
                     setProposal(null);
                   }}
+                  value={invoiceId}
                 >
                   <option value="">Choisir une facture</option>
                   {data.receivables.map((r) => (
@@ -608,7 +637,6 @@ export default function FinanceCabinet({
               {text("Montant TTC du règlement (€)", payment, setPayment)}
               {text("Référence du règlement", paymentRef, setPaymentRef)}
               <Button
-                type="button"
                 disabled={!invoiceId || !payment.trim()}
                 onClick={() =>
                   void run(() =>
@@ -620,21 +648,24 @@ export default function FinanceCabinet({
                     }),
                   )
                 }
+                type="button"
               >
                 Préparer le rapprochement
               </Button>
             </details>
             <Button
-              type="button"
               onClick={() =>
                 void run(async () => {
                   const version = generation.current;
+
                   const result = await call("export", {
                     project_id: projectId,
                   });
-                  if (version === generation.current) setCsv(result.content);
+
+                  if (version === generation.current) {setCsv(result.content);}
                 })
               }
+              type="button"
             >
               Afficher l’export CSV de pilotage
             </Button>
@@ -642,47 +673,47 @@ export default function FinanceCabinet({
           {data.operations?.controls && (
             <fieldset disabled={busy} onChange={() => setProposal(null)}>
               <FinanceControls
+                Button={Button}
+                cents={financeCents}
                 data={data.operations.controls}
+                Input={Input}
                 matterId={matterId}
-                receivables={data.receivables}
+                onEdit={() => setProposal(null)}
                 prepare={async (action, payload) => {
                   await run(() => prepare(action, payload));
                 }}
-                cents={financeCents}
-                onEdit={() => setProposal(null)}
-                Button={Button}
-                Input={Input}
+                receivables={data.receivables}
               />
             </fieldset>
           )}
           <fieldset disabled={busy} onChange={() => setProposal(null)}>
             {data.operations?.billing_orders && (
               <BillingOrders
-                key={"baf:" + projectId + ":" + matterId}
-                orders={data.operations.billing_orders}
+                Button={Button}
                 fees={data.ready_fees}
+                Input={Input}
+                key={"baf:" + projectId + ":" + matterId}
                 matterId={matterId}
                 onEdit={() => setProposal(null)}
+                orders={data.operations.billing_orders}
                 prepare={async (action, payload) => {
                   await run(() => prepare(action, payload));
                 }}
-                Button={Button}
-                Input={Input}
               />
             )}
             {data.operations?.files && (
               <FinanceDocuments
-                key={"files:" + projectId + ":" + matterId}
-                files={data.operations.files}
-                projectId={projectId}
-                matterId={matterId}
+                Button={Button}
                 call={call}
-                refresh={refresh}
+                files={data.operations.files}
+                Input={Input}
+                key={"files:" + projectId + ":" + matterId}
+                matterId={matterId}
                 prepare={async (action, payload) => {
                   await run(() => prepare(action, payload));
                 }}
-                Button={Button}
-                Input={Input}
+                projectId={projectId}
+                refresh={refresh}
                 savePdf={savePdf}
               />
             )}
@@ -707,23 +738,26 @@ export default function FinanceCabinet({
                 de taxe en centièmes de pourcentage.
               </p>
               <Button
-                type="button"
                 disabled={busy}
                 onClick={() =>
                   void run(async () => {
                     const version = generation.current;
+
                     const result = await call("apply", {
                       proposal_id: proposal.proposal_id,
                       approved: true,
                     });
-                    if (version !== generation.current) return;
+
+                    if (version !== generation.current) {return;}
+
                     if (
                       !result.applied ||
                       result.readback?.project_id !== projectId
                     )
-                      throw Error(
+                      {throw Error(
                         "La relecture n’a pas confirmé l’espace financier.",
-                      );
+                      );}
+
                     setData(result.readback);
                     setProposal(null);
                     setSelectedFees([]);
@@ -733,13 +767,14 @@ export default function FinanceCabinet({
                     );
                   })
                 }
+                type="button"
               >
                 Confirmer l’enregistrement
               </Button>
               <Button
-                type="button"
                 disabled={busy}
                 onClick={() => setProposal(null)}
+                type="button"
               >
                 Annuler cette préparation
               </Button>

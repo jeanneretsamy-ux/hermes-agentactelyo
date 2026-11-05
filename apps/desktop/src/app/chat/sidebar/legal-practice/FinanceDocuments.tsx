@@ -1,15 +1,16 @@
 import {
+  type ButtonHTMLAttributes,
+  type ComponentType,
+  type InputHTMLAttributes,
   useEffect,
   useRef,
   useState,
-  type ComponentType,
-  type ButtonHTMLAttributes,
-  type InputHTMLAttributes,
 } from "react";
+
 import {
+  type FinanceFile,
   readFinanceBytes,
   uploadFinanceBytes,
-  type FinanceFile,
 } from "./financeFileTransfer";
 export type { FinanceFile } from "./financeFileTransfer";
 export type SaveFinancePdf = (
@@ -51,52 +52,65 @@ export default function FinanceDocuments({
     [download, setDownload] = useState<{ url: string; name: string } | null>(
       null,
     );
+
   const alive = useRef(true),
     pending = useRef(false),
     url = useRef<string | null>(null),
     controller = useRef<AbortController | null>(null);
+
+  // eslint-disable-next-line no-restricted-syntax -- Mount and cancellation flags only; no nanostore or reactive value is mirrored.
   useEffect(() => {
     alive.current = true;
+
     return () => {
       alive.current = false;
       controller.current?.abort();
-      if (url.current) URL.revokeObjectURL(url.current);
+
+      if (url.current) {URL.revokeObjectURL(url.current);}
     };
   }, []);
+
   async function run(work: () => Promise<void>) {
-    if (pending.current) return;
+    if (pending.current) {return;}
     pending.current = true;
     controller.current = new AbortController();
     setBusy(true);
     setError("");
+
     try {
       await work();
     } catch (e) {
       if (alive.current)
-        setError(e instanceof Error ? e.message : "Document indisponible.");
+        {setError(e instanceof Error ? e.message : "Document indisponible.");}
     } finally {
       pending.current = false;
-      if (alive.current) setBusy(false);
+
+      if (alive.current) {setBusy(false);}
     }
   }
+
   function current() {
     if (!alive.current || controller.current?.signal.aborted)
-      throw Error("Transfert arrêté ou dossier fermé.");
+      {throw Error("Transfert arrêté ou dossier fermé.");}
   }
+
   const context = () => ({
     projectId,
     matterId,
     call,
     current,
     progress: (percent: number) => {
-      if (alive.current) setNotice(`Dépôt : ${percent} %`);
+      if (alive.current) {setNotice(`Dépôt : ${percent} %`);}
     },
   });
+
   async function upload() {
     if (!file || !matterId || !file.name.toLowerCase().endsWith(".pdf"))
-      throw Error("Choisissez un dossier et un PDF.");
+      {throw Error("Choisissez un dossier et un PDF.");}
+
     if (file.size < 1 || file.size > 5_000_000)
-      throw Error("PDF de 5 Mo maximum requis.");
+      {throw Error("PDF de 5 Mo maximum requis.");}
+
     await uploadFinanceBytes(
       context(),
       file.name,
@@ -107,14 +121,19 @@ export default function FinanceDocuments({
     await refresh();
     setNotice("Document déposé et empreinte vérifiée.");
   }
+
   async function read(file: FinanceFile) {
     const bytes = await readFinanceBytes(context(), file);
+
     if (savePdf) {
       await savePdf(file.filename, bytes, file.sha256);
-      if (alive.current) setNotice("PDF enregistré et relu sur cet appareil.");
+
+      if (alive.current) {setNotice("PDF enregistré et relu sur cet appareil.");}
+
       return;
     }
-    if (url.current) URL.revokeObjectURL(url.current);
+
+    if (url.current) {URL.revokeObjectURL(url.current);}
     url.current = URL.createObjectURL(
       new Blob([new Uint8Array(bytes).buffer], { type: "application/pdf" }),
     );
@@ -123,35 +142,44 @@ export default function FinanceDocuments({
       "PDF récupéré et empreinte vérifiée. Utilisez le lien pour l’enregistrer.",
     );
   }
+
   async function showText(file: FinanceFile) {
     const result = await call("file_text", {
       project_id: projectId,
       file_id: file.id,
     });
+
     current();
+
     if (result.file_id !== file.id || result.sha256 !== file.sha256)
-      throw Error("Source du texte différente.");
+      {throw Error("Source du texte différente.");}
+
     setText(result.text);
     setSource(
       `${file.filename} · SHA-256 ${file.sha256}${result.extraction_source_id ? " · Relevé OCR " + result.extraction_source_id : ""}`,
     );
+
     if (result.mode === "partial_text")
-      setNotice(
+      {setNotice(
         "Texte partiel : certaines pages nécessitent un OCR avant toute analyse complète.",
-      );
+      );}
+
     if (result.mode === "partial_ocr")
-      setNotice(
+      {setNotice(
         "OCR partiel ou peu fiable : vérifiez les pages du PDF avant toute analyse complète.",
-      );
+      );}
+
     if (result.mode === "ocr")
-      setNotice(
+      {setNotice(
         "Texte OCR enregistré : vérifier les montants et les références dans le PDF original.",
-      );
+      );}
   }
+
   async function ocr(file: FinanceFile) {
     const bytes = await readFinanceBytes(context(), file);
     setNotice("Chargement du moteur OCR local…");
     let runtime;
+
     try {
       runtime = await import(
         /* @vite-ignore */ new URL("./ocr-runtime/client.mjs", document.baseURI)
@@ -160,19 +188,23 @@ export default function FinanceDocuments({
     } catch {
       throw Error("Moteur OCR local absent. Mettre l’application à jour.");
     }
+
     const result = await runtime.recognizePdf(bytes, {
       signal: controller.current?.signal,
       onProgress: (page: number, total: number) => {
-        if (alive.current) setNotice(`OCR local : page ${page}/${total}`);
+        if (alive.current) {setNotice(`OCR local : page ${page}/${total}`);}
       },
     });
+
     current();
+
     const payload = {
       ...result,
       schema: "actelyo-ocr-v1",
       source_file_id: file.id,
       source_sha256: file.sha256,
     };
+
     const encoded = new TextEncoder().encode(JSON.stringify(payload));
     await uploadFinanceBytes(
       context(),
@@ -184,6 +216,7 @@ export default function FinanceDocuments({
     await refresh();
     await showText(file);
   }
+
   return (
     <details>
       <summary>Documents financiers et pièces PDF</summary>
@@ -196,42 +229,42 @@ export default function FinanceDocuments({
         <label>
           Document PDF
           <Input
-            type="file"
             accept="application/pdf,.pdf"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
+            type="file"
           />
         </label>
         <select
           aria-label="Catégorie du document"
-          value={kind}
           onChange={(e) => setKind(e.target.value)}
+          value={kind}
         >
           <option value="financial_document">Document financier</option>
           <option value="financial_statement">Bilan / états financiers</option>
           <option value="evidence">Pièce de dossier</option>
         </select>
         <Button
-          type="button"
           disabled={!file || !matterId}
           onClick={() => void run(upload)}
+          type="button"
         >
           Déposer le document et vérifier son empreinte
         </Button>
         <label>
           Numéro de pièce pour le tampon
           <Input
-            type="number"
-            min="1"
             max="999999"
-            step="1"
-            value={piece}
+            min="1"
             onChange={(e) => setPiece(e.target.value)}
+            step="1"
+            type="number"
+            value={piece}
           />
         </label>
         {files
           .filter((f) => f.matter_id === matterId && f.kind !== "ocr_result")
           .map((f) => (
-            <article key={f.id} aria-label={f.filename}>
+            <article aria-label={f.filename} key={f.id}>
               <strong>{f.filename}</strong>
               <p>
                 {Math.ceil(f.size_bytes / 1024)} Ko ·{" "}
@@ -241,35 +274,34 @@ export default function FinanceDocuments({
               </p>
               <small>SHA-256 : {f.sha256}</small>
               <div>
-                <Button type="button" onClick={() => void run(() => read(f))}>
+                <Button onClick={() => void run(() => read(f))} type="button">
                   Récupérer le PDF vérifié
                 </Button>
                 <Button
-                  type="button"
                   onClick={() =>
                     void prepare("finance.file.extract", { file_id: f.id })
                   }
+                  type="button"
                 >
                   Préparer l’extraction du texte
                 </Button>
                 <Button
-                  type="button"
                   disabled={!("extraction_source_id" in f)}
                   onClick={() => void run(() => ocr(f))}
+                  type="button"
                 >
                   Lire le scan par OCR local
                 </Button>
                 {f.extraction_mode !== "not_requested" && (
                   <Button
-                    type="button"
                     onClick={() => void run(() => showText(f))}
+                    type="button"
                   >
                     Afficher le texte sourcé
                   </Button>
                 )}
                 {!f.source_file_id && (
                   <Button
-                    type="button"
                     disabled={!/^[1-9]\d{0,5}$/.test(piece)}
                     onClick={() =>
                       void prepare("finance.file.stamp", {
@@ -277,6 +309,7 @@ export default function FinanceDocuments({
                         piece_number: Number(piece),
                       })
                     }
+                    type="button"
                   >
                     Préparer la copie tamponnée
                   </Button>
@@ -287,11 +320,11 @@ export default function FinanceDocuments({
       </fieldset>
       {busy && (
         <Button
-          type="button"
           onClick={() => {
             controller.current?.abort();
             setNotice("Arrêt demandé, fin de l’étape en cours.");
           }}
+          type="button"
         >
           Arrêter le traitement du document
         </Button>
@@ -299,7 +332,7 @@ export default function FinanceDocuments({
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
       {download && (
-        <a href={download.url} download={download.name}>
+        <a download={download.name} href={download.url}>
           Enregistrer {download.name}
         </a>
       )}

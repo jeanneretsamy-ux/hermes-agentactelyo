@@ -1,8 +1,8 @@
 import {
-  useState,
-  type ComponentType,
   type ButtonHTMLAttributes,
+  type ComponentType,
   type InputHTMLAttributes,
+  useState,
 } from "react";
 
 export interface CabinetOperationsData {
@@ -57,12 +57,15 @@ interface Props {
   Button?: ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>;
   Input?: ComponentType<InputHTMLAttributes<HTMLInputElement>>;
 }
+
 const euros = (value: number) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(
     value / 100,
   );
+
 const today = () => {
   const d = new Date();
+
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
@@ -82,11 +85,13 @@ export default function CabinetOperations({
     [address, setAddress] = useState(""),
     [notes, setNotes] = useState(""),
     [partyId, setPartyId] = useState("");
+
   const [contractParty, setContractParty] = useState(""),
     [contractTitle, setContractTitle] = useState(""),
     [start, setStart] = useState(today),
     [end, setEnd] = useState(today),
     [contractAmount, setContractAmount] = useState("0");
+
   const [supplier, setSupplier] = useState(""),
     [reference, setReference] = useState(""),
     [due, setDue] = useState(today),
@@ -94,6 +99,7 @@ export default function CabinetOperations({
     [unit, setUnit] = useState(""),
     [quantity, setQuantity] = useState("1"),
     [tax, setTax] = useState("0");
+
   const [lines, setLines] = useState<
     {
       description: string;
@@ -102,18 +108,24 @@ export default function CabinetOperations({
       tax_bps: number;
     }[]
   >([]);
+
   const [orderId, setOrderId] = useState(""),
     [paid, setPaid] = useState(""),
     [paidReference, setPaidReference] = useState(""),
     [paidOn, setPaidOn] = useState(today);
+
   const [timerUser, setTimerUser] = useState("");
+
   const [timerDescription, setTimerDescription] = useState(""),
     [timerRate, setTimerRate] = useState("0"),
     [timerCost, setTimerCost] = useState(""),
     [timerBillable, setTimerBillable] = useState(true);
+
   const [error, setError] = useState("");
+
   function invoke(action: string, payload: () => Record<string, unknown>) {
     setError("");
+
     try {
       void prepare(action, payload()).catch((e) =>
         setError((e as Error).message),
@@ -122,6 +134,7 @@ export default function CabinetOperations({
       setError((e as Error).message);
     }
   }
+
   function field(
     label: string,
     value: string,
@@ -132,16 +145,19 @@ export default function CabinetOperations({
       <label>
         {label}
         <Input
+          onChange={(e) => set(e.target.value)}
           type={type}
           value={value}
-          onChange={(e) => set(e.target.value)}
         />
       </label>
     );
   }
+
   const party = data.parties.find((p) => p.id === partyId);
+
   const partyName = (id: string) =>
     data.parties.find((p) => p.id === id)?.name || id;
+
   const states: Record<string, string> = {
     draft: "Brouillon",
     ordered: "Commandé en interne",
@@ -153,6 +169,7 @@ export default function CabinetOperations({
     paused: "Suspendu",
     finished: "Converti en diligence",
   };
+
   return (
     <section
       aria-label="Gestion commerciale du cabinet"
@@ -168,7 +185,6 @@ export default function CabinetOperations({
         <label>
           Tiers à modifier
           <select
-            value={partyId}
             onChange={(e) => {
               const p = data.parties.find((p) => p.id === e.target.value);
               setPartyId(p?.id || "");
@@ -179,10 +195,11 @@ export default function CabinetOperations({
               setAddress(p?.address || "");
               setNotes(p?.notes || "");
             }}
+            value={partyId}
           >
             <option value="">Nouveau tiers</option>
             {data.parties.map((p) => (
-              <option value={p.id} key={p.id}>
+              <option key={p.id} value={p.id}>
                 {p.name} · {p.role}
               </option>
             ))}
@@ -191,7 +208,7 @@ export default function CabinetOperations({
         {field("Nom du tiers", name, setName)}
         <label>
           Rôle du tiers
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <select onChange={(e) => setRole(e.target.value)} value={role}>
             <option value="prospect">Prospect</option>
             <option value="supplier">Fournisseur</option>
             <option value="partner">Partenaire</option>
@@ -202,7 +219,6 @@ export default function CabinetOperations({
         {field("Adresse du tiers", address, setAddress)}
         {field("Notes sur le tiers", notes, setNotes)}
         <Button
-          type="button"
           disabled={!name.trim()}
           onClick={() =>
             invoke("business.party.save", () => ({
@@ -216,6 +232,7 @@ export default function CabinetOperations({
               notes,
             }))
           }
+          type="button"
         >
           Préparer le tiers
         </Button>
@@ -236,8 +253,8 @@ export default function CabinetOperations({
         <label>
           Partie au contrat
           <select
-            value={contractParty}
             onChange={(e) => setContractParty(e.target.value)}
+            value={contractParty}
           >
             <option value="">Choisir un tiers</option>
             {data.parties.map((p) => (
@@ -252,7 +269,6 @@ export default function CabinetOperations({
         {field("Fin du contrat", end, setEnd, "date")}
         {field("Montant du contrat HT (€)", contractAmount, setContractAmount)}
         <Button
-          type="button"
           disabled={!contractParty || !contractTitle.trim()}
           onClick={() =>
             invoke("business.contract.save", () => ({
@@ -265,6 +281,7 @@ export default function CabinetOperations({
               expected_version: 0,
             }))
           }
+          type="button"
         >
           Préparer le contrat
         </Button>
@@ -276,7 +293,6 @@ export default function CabinetOperations({
             </p>
             {c.status !== "closed" && (
               <Button
-                type="button"
                 onClick={() =>
                   invoke("business.contract.save", () => ({
                     id: c.id,
@@ -289,6 +305,7 @@ export default function CabinetOperations({
                     status: c.status === "draft" ? "active" : "closed",
                   }))
                 }
+                type="button"
               >
                 {c.status === "draft"
                   ? "Préparer l’activation du contrat"
@@ -307,8 +324,8 @@ export default function CabinetOperations({
         <label>
           Fournisseur de l’achat
           <select
-            value={supplier}
             onChange={(e) => setSupplier(e.target.value)}
+            value={supplier}
           >
             <option value="">Choisir un fournisseur</option>
             {data.parties
@@ -327,17 +344,20 @@ export default function CabinetOperations({
         {field("Prix unitaire HT achat (€)", unit, setUnit)}
         {field("Taxe achat (%)", tax, setTax)}
         <Button
-          type="button"
           disabled={!line.trim() || lines.length >= 100}
           onClick={() => {
             try {
               if (!/^\d+(?:[.,]\d{1,3})?$/.test(quantity))
-                throw Error("Quantité positive à trois décimales maximum.");
+                {throw Error("Quantité positive à trois décimales maximum.");}
+
               const qty = Math.round(Number(quantity.replace(",", ".")) * 1000);
+
               if (qty < 1 || qty > 1000000)
-                throw Error("Quantité hors limites.");
+                {throw Error("Quantité hors limites.");}
+
               const bps = cents(tax);
-              if (bps > 10000) throw Error("Taux de taxe hors limites.");
+
+              if (bps > 10000) {throw Error("Taux de taxe hors limites.");}
               setLines([
                 ...lines,
                 {
@@ -353,6 +373,7 @@ export default function CabinetOperations({
               setError((e as Error).message);
             }
           }}
+          type="button"
         >
           Ajouter la ligne achat
         </Button>
@@ -362,8 +383,8 @@ export default function CabinetOperations({
               {l.description} · {l.quantity_milli / 1000} ×{" "}
               {euros(l.unit_cents)} HT{" "}
               <Button
-                type="button"
                 onClick={() => setLines(lines.filter((_, n) => n !== i))}
+                type="button"
               >
                 Retirer la ligne {i + 1}
               </Button>
@@ -371,7 +392,6 @@ export default function CabinetOperations({
           ))}
         </ol>
         <Button
-          type="button"
           disabled={!supplier || !reference.trim() || !lines.length}
           onClick={() =>
             invoke("business.purchase.save", () => ({
@@ -381,6 +401,7 @@ export default function CabinetOperations({
               lines,
             }))
           }
+          type="button"
         >
           Préparer l’achat
         </Button>
@@ -399,7 +420,6 @@ export default function CabinetOperations({
               }[p.status] || []
             ).map((status) => (
               <Button
-                type="button"
                 key={status}
                 onClick={() =>
                   invoke("business.purchase.transition", () => ({
@@ -408,6 +428,7 @@ export default function CabinetOperations({
                     status,
                   }))
                 }
+                type="button"
               >
                 {
                   (
@@ -425,12 +446,12 @@ export default function CabinetOperations({
         ))}
         <label>
           Achat à régler
-          <select value={orderId} onChange={(e) => setOrderId(e.target.value)}>
+          <select onChange={(e) => setOrderId(e.target.value)} value={orderId}>
             <option value="">Choisir un achat réceptionné</option>
             {data.purchases
               .filter((p) => p.status === "received" && p.balance_cents > 0)
               .map((p) => (
-                <option value={p.id} key={p.id}>
+                <option key={p.id} value={p.id}>
                   {p.reference} · {euros(p.balance_cents)}
                 </option>
               ))}
@@ -444,7 +465,6 @@ export default function CabinetOperations({
           setPaidReference,
         )}
         <Button
-          type="button"
           disabled={!orderId || !paidReference.trim()}
           onClick={() =>
             invoke("business.supplier_payment.add", () => ({
@@ -454,6 +474,7 @@ export default function CabinetOperations({
               reference: paidReference,
             }))
           }
+          type="button"
         >
           Préparer le règlement fournisseur
         </Button>
@@ -475,14 +496,13 @@ export default function CabinetOperations({
         )}
         <label className="finance-check">
           <Input
-            type="checkbox"
             checked={timerBillable}
             onChange={(e) => setTimerBillable(e.target.checked)}
+            type="checkbox"
           />
           Minuteur facturable
         </label>
         <Button
-          type="button"
           disabled={!matterId || !timerDescription.trim()}
           onClick={() =>
             invoke("finance.timer.start", () => ({
@@ -494,6 +514,7 @@ export default function CabinetOperations({
               billable: timerBillable,
             }))
           }
+          type="button"
         >
           Préparer le démarrage du minuteur
         </Button>
@@ -508,9 +529,8 @@ export default function CabinetOperations({
               {(t.status === "running" ? ["pause"] : ["resume", "finish"]).map(
                 (command) => (
                   <Button
-                    type="button"
-                    key={command}
                     disabled={command === "finish" && t.seconds < 1}
+                    key={command}
                     onClick={() =>
                       invoke("finance.timer.change", () => ({
                         timer_id: t.id,
@@ -518,6 +538,7 @@ export default function CabinetOperations({
                         command,
                       }))
                     }
+                    type="button"
                   >
                     {
                       (

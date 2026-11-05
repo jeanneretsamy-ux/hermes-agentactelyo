@@ -1,8 +1,8 @@
 import {
-  useState,
-  type ComponentType,
   type ButtonHTMLAttributes,
+  type ComponentType,
   type InputHTMLAttributes,
+  useState,
 } from "react";
 
 export type ControlData = {
@@ -71,6 +71,7 @@ type Props = {
   Button: ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>;
   Input: ComponentType<InputHTMLAttributes<HTMLInputElement>>;
 };
+
 const euro = (n: number | null) =>
   n === null
     ? "Coûts incomplets"
@@ -78,6 +79,7 @@ const euro = (n: number | null) =>
         style: "currency",
         currency: "EUR",
       }).format(n / 100);
+
 const day = () => new Intl.DateTimeFormat("en-CA").format(new Date());
 type Shared = Pick<
   Props,
@@ -91,7 +93,9 @@ function AccountingImport({ data, prepare, onEdit, Button, Input }: Shared) {
     filename: string;
     content: string;
   } | null>(null);
+
   const [error, setError] = useState("");
+
   return (
     <details>
       <summary>Importer un FEC et rapprocher les pièces</summary>
@@ -104,19 +108,22 @@ function AccountingImport({ data, prepare, onEdit, Button, Input }: Shared) {
       <label>
         Fichier FEC
         <Input
-          type="file"
           accept=".txt,.fec,.csv"
           onChange={async (e) => {
             onEdit();
             setFile(null);
             setError("");
             const selected = e.target.files?.[0];
-            if (!selected) return;
+
+            if (!selected) {return;}
+
             try {
               if (selected.size > 240000)
-                throw Error("Fichier trop volumineux pour cet import.");
+                {throw Error("Fichier trop volumineux pour cet import.");}
+
               const bytes = await selected.arrayBuffer();
               let content: string;
+
               try {
                 content = new TextDecoder("utf-8", { fatal: true }).decode(
                   bytes,
@@ -124,14 +131,17 @@ function AccountingImport({ data, prepare, onEdit, Button, Input }: Shared) {
               } catch {
                 content = new TextDecoder("windows-1252").decode(bytes);
               }
+
               if (content.length > 60000)
-                throw Error("Limite actuelle : 60 000 caractères.");
+                {throw Error("Limite actuelle : 60 000 caractères.");}
+
               if (
                 new TextEncoder().encode(
                   JSON.stringify({ filename: selected.name, content }),
                 ).length > 85000
               )
-                throw Error("FEC trop volumineux pour le pont actuel.");
+                {throw Error("FEC trop volumineux pour le pont actuel.");}
+
               setFile({ filename: selected.name, content });
             } catch (err) {
               setError(
@@ -139,13 +149,14 @@ function AccountingImport({ data, prepare, onEdit, Button, Input }: Shared) {
               );
             }
           }}
+          type="file"
         />
       </label>
       {error && <p role="alert">{error}</p>}
       <Button
-        type="button"
         disabled={!file}
         onClick={() => file && void prepare("finance.fec.import", file)}
+        type="button"
       >
         Contrôler et préparer l’import
       </Button>
@@ -184,13 +195,16 @@ function Objectives({
     [role, setRole] = useState("collaborator"),
     [start, setStart] = useState(day),
     [end, setEnd] = useState(day);
+
   const [revenue, setRevenue] = useState("0"),
     [margin, setMargin] = useState("0"),
     [minutes, setMinutes] = useState("0");
+
   const old = data.objectives.find(
     (o) =>
       o.responsible_user === user && o.start_on === start && o.end_on === end,
   );
+
   return (
     <details>
       <summary>Objectifs des collaborateurs et associés</summary>
@@ -218,15 +232,15 @@ function Objectives({
         <label>
           Responsable
           <Input
+            onChange={(e) => setUser(e.target.value)}
             required
             value={user}
-            onChange={(e) => setUser(e.target.value)}
           />
         </label>
         <select
           aria-label="Rôle du responsable"
-          value={role}
           onChange={(e) => setRole(e.target.value)}
+          value={role}
         >
           <option value="collaborator">Collaborateur</option>
           <option value="partner">Associé</option>
@@ -234,50 +248,50 @@ function Objectives({
         <label>
           Début de période
           <Input
+            onChange={(e) => setStart(e.target.value)}
             required
             type="date"
             value={start}
-            onChange={(e) => setStart(e.target.value)}
           />
         </label>
         <label>
           Fin de période
           <Input
+            onChange={(e) => setEnd(e.target.value)}
             required
             type="date"
             value={end}
-            onChange={(e) => setEnd(e.target.value)}
           />
         </label>
         <label>
           Objectif de production HT (€)
           <Input
-            required
             inputMode="decimal"
-            pattern="[0-9]+([.,][0-9]{1,2})?"
-            value={revenue}
             onChange={(e) => setRevenue(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,2})?"
+            required
+            value={revenue}
           />
         </label>
         <label>
           Objectif de marge (€)
           <Input
-            required
             inputMode="decimal"
-            pattern="[0-9]+([.,][0-9]{1,2})?"
-            value={margin}
             onChange={(e) => setMargin(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,2})?"
+            required
+            value={margin}
           />
         </label>
         <label>
           Objectif de temps (minutes)
           <Input
-            required
-            type="number"
             min="0"
-            step="1"
-            value={minutes}
             onChange={(e) => setMinutes(e.target.value)}
+            required
+            step="1"
+            type="number"
+            value={minutes}
           />
         </label>
         <Button type="submit">Préparer l’objectif</Button>
@@ -311,9 +325,11 @@ function Forecast({
     [label, setLabel] = useState("Scénario de base"),
     [incoming, setIncoming] = useState("0"),
     [outgoing, setOutgoing] = useState("0");
+
   const old = data.forecasts.find(
     (f) => f.month === month && f.label === label,
   );
+
   return (
     <details>
       <summary>Prévisionnel mensuel de trésorerie</summary>
@@ -337,36 +353,36 @@ function Forecast({
         <label>
           Mois
           <Input
-            type="month"
-            required
-            value={month}
             onChange={(e) => setMonth(e.target.value)}
+            required
+            type="month"
+            value={month}
           />
         </label>
         <label>
           Scénario
           <Input
+            onChange={(e) => setLabel(e.target.value)}
             required
             value={label}
-            onChange={(e) => setLabel(e.target.value)}
           />
         </label>
         <label>
           Entrées prévues (€)
           <Input
-            required
-            pattern="[0-9]+([.,][0-9]{1,2})?"
-            value={incoming}
             onChange={(e) => setIncoming(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,2})?"
+            required
+            value={incoming}
           />
         </label>
         <label>
           Sorties prévues (€)
           <Input
-            required
-            pattern="[0-9]+([.,][0-9]{1,2})?"
-            value={outgoing}
             onChange={(e) => setOutgoing(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,2})?"
+            required
+            value={outgoing}
           />
         </label>
         <Button type="submit">Préparer la prévision</Button>
@@ -406,6 +422,7 @@ function Mileage({
     [distance, setDistance] = useState(""),
     [rate, setRate] = useState(""),
     [source, setSource] = useState("");
+
   return (
     <details>
       <summary>Indemnités kilométriques</summary>
@@ -419,7 +436,8 @@ function Mileage({
         onSubmit={(e) => {
           e.preventDefault();
           const km = distance.replace(",", ".");
-          if (!/^\d+(\.\d{1,3})?$/.test(km)) return;
+
+          if (!/^\d+(\.\d{1,3})?$/.test(km)) {return;}
           invoke("finance.mileage.add", () => ({
             matter_id: matterId,
             responsible_user: user,
@@ -435,56 +453,56 @@ function Mileage({
         <label>
           Bénéficiaire
           <Input
+            onChange={(e) => setUser(e.target.value)}
             required
             value={user}
-            onChange={(e) => setUser(e.target.value)}
           />
         </label>
         <label>
           Date du déplacement
           <Input
+            onChange={(e) => setDate(e.target.value)}
             required
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
           />
         </label>
         <label>
           Trajet et motif
           <Input
+            onChange={(e) => setRoute(e.target.value)}
             required
             value={route}
-            onChange={(e) => setRoute(e.target.value)}
           />
         </label>
         <label>
           Distance (km)
           <Input
-            required
             inputMode="decimal"
-            pattern="[0-9]+([.,][0-9]{1,3})?"
-            value={distance}
             onChange={(e) => setDistance(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,3})?"
+            required
+            value={distance}
           />
         </label>
         <label>
           Taux convenu (€/km)
           <Input
-            required
-            pattern="[0-9]+([.,][0-9]{1,2})?"
-            value={rate}
             onChange={(e) => setRate(e.target.value)}
+            pattern="[0-9]+([.,][0-9]{1,2})?"
+            required
+            value={rate}
           />
         </label>
         <label>
           Justification du taux
           <Input
+            onChange={(e) => setSource(e.target.value)}
             required
             value={source}
-            onChange={(e) => setSource(e.target.value)}
           />
         </label>
-        <Button type="submit" disabled={!matterId}>
+        <Button disabled={!matterId} type="submit">
           Préparer le frais kilométrique
         </Button>
       </form>
@@ -510,6 +528,7 @@ function Reminders({
     [message, setMessage] = useState(
       "Merci de vérifier le règlement de cette facture.",
     );
+
   const level =
     Math.max(
       0,
@@ -517,6 +536,7 @@ function Reminders({
         .filter((r) => r.document_id === invoice)
         .map((r) => r.level),
     ) + 1;
+
   return (
     <details>
       <summary>Relances graduées et recouvrement amiable</summary>
@@ -537,9 +557,9 @@ function Reminders({
       >
         <select
           aria-label="Créance échue à relancer"
+          onChange={(e) => setInvoice(e.target.value)}
           required
           value={invoice}
-          onChange={(e) => setInvoice(e.target.value)}
         >
           <option value="">Choisir une créance échue</option>
           {receivables
@@ -553,12 +573,12 @@ function Reminders({
         <label>
           Message du projet
           <Input
+            onChange={(e) => setMessage(e.target.value)}
             required
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
           />
         </label>
-        <Button type="submit" disabled={!invoice || level > 3}>
+        <Button disabled={!invoice || level > 3} type="submit">
           Préparer la relance de niveau {level}
         </Button>
       </form>
@@ -574,8 +594,10 @@ function Reminders({
 
 export default function FinanceControls(props: Props) {
   const [error, setError] = useState("");
+
   const invoke = (action: string, payload: () => Record<string, unknown>) => {
     setError("");
+
     try {
       void props
         .prepare(action, payload())
@@ -586,7 +608,9 @@ export default function FinanceControls(props: Props) {
       setError(e instanceof Error ? e.message : "Valeur invalide.");
     }
   };
+
   const shared = { ...props, invoke };
+
   return (
     <section aria-label="Comptabilité et prévisions">
       <h3>Comptabilité et prévisions</h3>
