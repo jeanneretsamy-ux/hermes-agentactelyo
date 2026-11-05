@@ -1,0 +1,27 @@
+name: Generate cabinet skill docs for review
+on:
+  push:
+    branches: [codex/cabinet-native-bridge]
+    paths: [.github/workflows/cabinet-docs-review.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: python
+      - name: Install the generator dependency through the project manager
+        run: python -m scripts.ci.python_packages ruamel.yaml==0.18.17
+      - name: Run the canonical skill documentation generator
+        run: python3 website/scripts/generate-skill-docs.py
+      - name: Return the generated page for a reviewed source commit
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cabinet-skill-generated-docs
+          path: website/docs/user-guide/skills/bundled/productivity/productivity-actelyo-applications.md
+          if-no-files-found: error
