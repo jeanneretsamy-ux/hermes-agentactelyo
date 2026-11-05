@@ -29,7 +29,7 @@ interface CapabilitiesViewProps {
 
 const mocks = vi.hoisted(() => ({
   connections: vi.fn(async () => [] as { id: string; label: string }[]),
-  createCanonicalChat: vi.fn(async () => 'session-1'),
+  createCanonicalChat: vi.fn(async (_owner: unknown, _options: { kickoff?: boolean; openingStillCurrent?: () => boolean }) => 'session-1'),
   deleteBot: vi.fn(async () => undefined),
   /** Flipped off to model a desktop build that predates the live surface. */
   hasCapabilitiesView: { value: true },
@@ -195,7 +195,7 @@ describe('materializing the draft profile', () => {
       name: profileName
     })
     expect(mocks.saveBotMeta).toHaveBeenCalledWith(profileName, expect.objectContaining({ title: enteredName }))
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile(profileName), { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile(profileName), expect.objectContaining({ kickoff: true, openingStillCurrent: expect.any(Function) })))
   })
 
   it('creates it once when the Capabilities tab opens, pinned to the new slug', async () => {
@@ -211,7 +211,7 @@ describe('materializing the draft profile', () => {
     // Create Bot goes through the same helper — no duplicate profiles.create.
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), expect.objectContaining({ kickoff: true, openingStillCurrent: expect.any(Function) })))
     expect(createCalls()).toHaveLength(1)
   })
 
@@ -306,6 +306,17 @@ describe('materializing the draft profile', () => {
 describe('provider readiness before the intro turn', () => {
   const notReady = { error: 'No usable credentials found for openrouter.', ok: false }
 
+  it('releases creation navigation when a later bot or group takes the workspace', async () => {
+    await renderDialog(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalled())
+    const options = mocks.createCanonicalChat.mock.calls.at(-1)![1] as unknown as { openingStillCurrent: () => boolean }
+    expect(options.openingStillCurrent()).toBe(true)
+    const { bumpBotOpenGeneration } = await import('./shared')
+    bumpBotOpenGeneration()
+    expect(options.openingStillCurrent()).toBe(false)
+  })
+
   it('keeps the bot, skips the intro, and offers model setup when its provider is not ready', async () => {
     const base = mocks.request.getMockImplementation()!
     mocks.request.mockImplementation(async (method: string, params?: unknown) =>
@@ -316,7 +327,7 @@ describe('provider readiness before the intro turn', () => {
     await renderDialog(true, onConfigureModel)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: false }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), expect.objectContaining({ kickoff: false, openingStillCurrent: expect.any(Function) })))
     expect(mocks.request).toHaveBeenCalledWith('setup.runtime_check', { profile: 'inbox-triage' })
     expect(createCalls()).toHaveLength(1)
 
@@ -340,7 +351,7 @@ describe('provider readiness before the intro turn', () => {
     await renderDialog(true)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), expect.objectContaining({ kickoff: true, openingStillCurrent: expect.any(Function) })))
     expect(mocks.notify).toHaveBeenLastCalledWith({ kind: 'success', message: 'Bot "Inbox Triage" created' })
   })
 

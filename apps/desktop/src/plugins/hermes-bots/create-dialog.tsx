@@ -70,6 +70,7 @@ import type {
 import { CapabilitiesView, capabilitiesViewRoutesConnections, CheckList } from './profile-config'
 import { deleteBot } from './profile-ops'
 import { botRosterMeta } from './routing'
+import { bumpBotOpenGeneration, getBotOpenGeneration } from './shared'
 import { HubSkillsSection } from './skills-hub'
 import { composeSoul } from './soul'
 import type { BotMeta, ConnectionRow, RosterRow } from './types'
@@ -505,6 +506,8 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
     }
 
     const creationConnectionId = targetConnection || activeConnectionId || 'local'
+    const creationGeneration = bumpBotOpenGeneration()
+    const creationStillCurrent = () => creationGeneration === getBotOpenGeneration()
     setBusy(true)
     setError(null)
 
@@ -573,7 +576,9 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         return
       }
 
-      $selectedBot.set(slug)
+      if (creationStillCurrent()) {
+        $selectedBot.set(slug)
+      }
 
       // Birth the bot's forever chat right away: it introduces itself as
       // the first thing the user sees, and the pin exists from minute one.
@@ -586,14 +591,15 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         // the chat can change the foreground gateway; its runtime session id
         // must never be submitted through that mutable foreground connection.
         const sid = await createCanonicalChat(typeof host.requestProfile === 'function' ? bot : slugCreated, {
-          kickoff: !needsModel
+          kickoff: !needsModel,
+          openingStillCurrent: creationStillCurrent
         })
 
-        if (!sid && typeof host.newChat === 'function') {
+        if (!sid && creationStillCurrent() && typeof host.newChat === 'function') {
           host.newChat(slug)
         }
       } catch {
-        if (typeof host.newChat === 'function') {
+        if (creationStillCurrent() && typeof host.newChat === 'function') {
           host.newChat(slug)
         }
       }

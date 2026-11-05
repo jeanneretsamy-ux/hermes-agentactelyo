@@ -230,9 +230,12 @@ test.describe('large session resume', () => {
       await fixture.page.screenshot({ path: testInfo.outputPath(`${resumeKind}-background-inference-resume.png`), fullPage: false })
 
       expect(await textNodeOccurrences(fixture.page, BACKGROUND_PROMPT), 'the running user prompt should appear once').toBe(1)
-      expect(
-        await textNodeOccurrences(fixture.page, MOCK_REPLY),
-        'the completed assistant reply should add exactly one transcript row',
+      // Cold hydration paints the newest rows first, then backfills history.
+      // Keep the exact duplicate-count assertion, but wait for that paint to
+      // finish instead of comparing a partial DOM after a fixed 300 ms.
+      await expect.poll(
+        () => textNodeOccurrences(fixture!.page, MOCK_REPLY),
+        { message: 'the completed assistant reply should add exactly one transcript row', timeout: 30_000 },
       ).toBe(initialMockReplyCount + 1)
     })
   }
