@@ -306,6 +306,24 @@ describe('materializing the draft profile', () => {
 describe('provider readiness before the intro turn', () => {
   const notReady = { error: 'No usable credentials found for openrouter.', ok: false }
 
+  it('waits for the refreshed roster before opening the new owner', async () => {
+    await renderDialog(true)
+    const sdk = await import('@hermes/plugin-sdk')
+    let release!: () => void
+    const refreshed = new Promise<void>(resolve => { release = resolve })
+    const invalidate = vi.spyOn(sdk.queryClient, 'invalidateQueries').mockReturnValue(refreshed)
+    try {
+      fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
+      await waitFor(() => expect(invalidate).toHaveBeenCalled())
+      expect(mocks.createCanonicalChat).not.toHaveBeenCalled()
+      release()
+      await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalled())
+    } finally {
+      release()
+      invalidate.mockRestore()
+    }
+  })
+
   it('selects the same source-qualified owner as the new canonical conversation', async () => {
     await renderDialog(true)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))

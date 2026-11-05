@@ -490,7 +490,10 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         })
       }
 
-      queryClient.invalidateQueries({
+      // Reconciliation may only select this owner after the roster has
+      // observed profiles.create. A pre-create snapshot would otherwise
+      // clear the new selection and reclaim its main pane for the old bot.
+      await queryClient.invalidateQueries({
         queryKey: ROSTER_KEY
       })
 

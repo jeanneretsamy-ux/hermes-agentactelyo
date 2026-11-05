@@ -52,8 +52,10 @@ test('submits while same-chat search tokens churn during new-session creation', 
     await page.keyboard.press('Enter')
 
     await expect
-      .poll(() => mock.receivedPrompts.includes(PROMPT), { timeout: 60_000 })
-      .toBe(true)
+      // The gateway can add current-turn context around the user's text.
+      // The provider must still receive this unique prompt exactly once.
+      .poll(() => mock.receivedPrompts.filter(text => text.includes(PROMPT)).length, { timeout: 60_000 })
+      .toBe(1)
 
     await page.waitForFunction(
       prompt => document.querySelector('[data-slot="aui_thread-viewport"]')?.textContent?.includes(prompt) ?? false,
