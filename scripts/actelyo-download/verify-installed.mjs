@@ -15,8 +15,14 @@ const exe = path.join(installed, 'Actelyo Law Harness.exe')
 assert(fs.existsSync(exe), 'Installed Actelyo executable missing')
 assert(fs.existsSync(path.join(installed, 'resources', 'agent-payload')), 'Bundled local agent missing')
 const runtimeSource = path.join(installed, 'resources', 'agent-payload', 'hermes-agent')
-for (const relative of ['hermes_cli/atelier.py', 'skills/research/actelyo-atelier/SKILL.md', 'skills/research/actelyo-plugin-creator/SKILL.md']) {
-  assert(fs.existsSync(path.join(runtimeSource, relative)), 'Missing installed creator component: ' + relative)
+for (const relative of [
+  'hermes_cli/atelier.py',
+  'skills/research/actelyo-atelier/SKILL.md',
+  'skills/research/actelyo-plugin-creator/SKILL.md',
+  'skills/productivity/actelyo-applications/SKILL.md',
+  'skills/productivity/actelyo-applications/scripts/cabinet_link.py',
+]) {
+  assert(fs.existsSync(path.join(runtimeSource, relative)), 'Missing installed Actelyo component: ' + relative)
 }
 const cleanEnv = { ...process.env }
 for (const key of ['HERMES_PYTHON', 'HERMES_RUNTIME_DIR', 'VIRTUAL_ENV', 'PYTHONPATH', 'PYTHONHOME']) delete cleanEnv[key]
