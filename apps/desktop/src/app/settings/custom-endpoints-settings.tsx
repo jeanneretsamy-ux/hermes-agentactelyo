@@ -418,18 +418,43 @@ export function CustomEndpointsSettings({ onConfigSaved, onMainModelChanged }: C
           <div className="grid gap-3 rounded-md border border-border/50 p-3">
             <div aria-label={ce.presetLabel ?? 'Provider presets'} className="flex flex-wrap gap-2">
               {ACTELYO_PROVIDER_PRESETS.map(preset => (
-                <Button disabled={saving || testing} key={preset.id} onClick={() => {
-                  setForm({ ...EMPTY_FORM, name: preset.name, baseUrl: preset.baseUrl, apiMode: 'chat_completions', makeDefault: false })
-                  setDiscoveredModels([])
-                  setDiscoveredDetails([])
-                }} size="sm" variant="outline">{preset.name}</Button>
+                <Button
+                  disabled={saving || testing}
+                  key={preset.id}
+                  onClick={() => {
+                    setForm({
+                      ...EMPTY_FORM,
+                      name: preset.name,
+                      baseUrl: preset.baseUrl,
+                      apiMode: 'chat_completions',
+                      makeDefault: false
+                    })
+                    setDiscoveredModels([])
+                    setDiscoveredDetails([])
+                  }}
+                  size="sm"
+                  variant="outline"
+                >
+                  {preset.name}
+                </Button>
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              {ce.presetNotice ?? 'Use your own API key and test the live model list before saving. Local routers can send your documents to cloud providers. FreeLLMAPI requires PORT=3002 to avoid Actelyo RAG on port 3001. Availability and charges depend on your providers.'}
+              {ce.presetNotice ??
+                'Use your own API key and test the live model list before saving. Local routers can send your documents to cloud providers. FreeLLMAPI requires PORT=3002 to avoid Actelyo RAG on port 3001. Availability and charges depend on your providers.'}
             </p>
             <div className="flex flex-wrap gap-3 text-xs">
-              {ACTELYO_PROVIDER_PRESETS.map(preset => <a className="underline" href={preset.helpUrl} key={preset.id} rel="noopener noreferrer" target="_blank">{preset.name} — {ce.presetHelp ?? 'Setup / API key'}</a>)}
+              {ACTELYO_PROVIDER_PRESETS.map(preset => (
+                <a
+                  className="underline"
+                  href={preset.helpUrl}
+                  key={preset.id}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {preset.name} — {ce.presetHelp ?? 'Setup / API key'}
+                </a>
+              ))}
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="grid gap-1.5 text-xs text-muted-foreground">
