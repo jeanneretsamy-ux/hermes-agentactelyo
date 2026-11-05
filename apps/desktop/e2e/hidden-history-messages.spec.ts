@@ -109,19 +109,16 @@ test('live verify-on-stop continuations stay out of the transcript', async ({}, 
   )
 
   const mock = await startMockServer({ verificationWritePath: changedFile })
-  writeMockProviderConfig(sandbox.hermesHome, mock.url)
-  fs.appendFileSync(path.join(sandbox.hermesHome, 'config.yaml'), '\nagent:\n  verify_on_stop: true\n', 'utf8')
   // Auto session titling (feat f726090d48) fires an auxiliary title_generation
   // LLM call whose user snippet CONTAINS the trigger keyword, so the mock's
   // isVerificationStopTrigger matches it and the title call steals a scripted
   // verify-on-stop turn (the transcript then ends on 'The code edit is
   // complete.' instead of the exhausted-verifier final). Disable the
   // model-backed title upgrade so script indices track real chat turns.
-  fs.appendFileSync(
-    path.join(sandbox.hermesHome, 'config.yaml'),
-    '\nauxiliary:\n  title_generation:\n    enabled: false\n',
-    'utf8',
-  )
+  // Merge the scenario rather than appending a duplicate auxiliary mapping.
+  // Desktop's YAML reader rejects duplicate keys even when Python accepts them.
+  writeMockProviderConfig(sandbox.hermesHome, mock.url, undefined,
+    'agent:\n  verify_on_stop: true\nauxiliary:\n  title_generation:\n    enabled: false\n')
   writeEnvFile(sandbox.hermesHome, 'e2e-mock-key', mock.url)
   const { app, page } = await launchDesktop(buildAppEnv(sandbox))
 

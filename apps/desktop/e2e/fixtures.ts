@@ -539,7 +539,16 @@ export async function setupPackagedApp(): Promise<PackagedAppFixture> {
 export async function waitForAppReady(fixture: MockBackendFixture | NoProviderFixture | DeadBackendFixture, timeoutMs = 60_000): Promise<void> {
   const { page, app } = fixture
 
-  await waitForChatReady(page, timeoutMs)
+  await Promise.race([
+    waitForChatReady(page, timeoutMs),
+    page.getByRole('heading', { name: /couldn't start/ }).waitFor({ state: 'visible', timeout: timeoutMs }).then(async () => {
+      const logs = await page.evaluate(async () => {
+        const bridge = (window as unknown as { hermesDesktop?: { getRecentLogs: () => Promise<{ lines?: string[] }> } }).hermesDesktop
+        return (await bridge?.getRecentLogs())?.lines?.slice(-40).join('') ?? 'Recent backend logs unavailable'
+      }).catch(() => 'Recent backend logs unavailable')
+      throw new Error(`Synthetic desktop backend failed before chat readiness:\n${logs}`)
+    }),
+  ])
 
   // On Electron 40.x, ready-to-show may never fire (electron/electron#51972)
   // and the window stays hidden even though the DOM is rendered. The main
