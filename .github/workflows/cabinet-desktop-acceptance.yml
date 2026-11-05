@@ -2,7 +2,7 @@ name: Cabinet Law desktop acceptance
 on:
   push:
     branches: [codex/cabinet-native-bridge]
-    paths: [.github/workflows/cabinet-desktop-acceptance.yml, .github/workflows/e2e-desktop.yml]
+    paths: [.github/workflows/cabinet-desktop-acceptance.yml, .github/workflows/e2e-desktop.yml, apps/desktop/e2e/**, tests-js/scripts/mock-server.ts]
   workflow_dispatch:
 permissions:
   contents: read
