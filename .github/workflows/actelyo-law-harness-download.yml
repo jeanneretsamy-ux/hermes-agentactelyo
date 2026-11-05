@@ -201,6 +201,10 @@ jobs:
           if (-not $?) { throw 'Native window icon verification failed' }
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-branding.json" actelyo-release/proof/native-window-branding.json
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-icon.png" actelyo-release/proof/native-window-icon.png
+          powershell -NoProfile -File scripts/actelyo-download/window-branding.ps1 -Executable actelyo-release/Actelyo-Law-Harness-Setup-x64.exe -ExpectedIcon apps/desktop/assets/icon.ico -ProofDirectory "$env:RUNNER_TEMP/law-setup-icon-proof" -Product 'Actelyo Law Harness Setup' -ExecutableIconOnly
+          if ($LASTEXITCODE -ne 0) { throw 'Setup executable icon verification failed' }
+          Copy-Item "$env:RUNNER_TEMP/law-setup-icon-proof/executable-branding.json" actelyo-release/proof/setup-executable-branding.json
+          Copy-Item "$env:RUNNER_TEMP/law-setup-icon-proof/executable-icon.png" actelyo-release/proof/setup-executable-icon.png
       - name: Record checksum and exact source
         shell: pwsh
         run: |
