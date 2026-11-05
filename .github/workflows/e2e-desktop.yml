@@ -101,7 +101,7 @@ jobs:
       # is always fresh — no separate build step needed.
       - name: Verify bot creation and canonical chat ownership
         working-directory: apps/desktop
-        run: npx vitest run --project ui src/plugins/hermes-bots/create-agent-lazy-profile.test.tsx src/plugins/hermes-bots/canonical-chat-creation.test.ts src/plugins/hermes-bots/canonical-chat-adopt-on-conflict.test.ts --maxWorkers=1
+        run: npx vitest run --project ui src/plugins/hermes-bots/create-agent-lazy-profile.test.tsx src/plugins/hermes-bots/canonical-chat-creation.test.ts src/plugins/hermes-bots/canonical-chat-adopt-on-conflict.test.ts src/plugins/hermes-bots/data.bot-meta.test.ts src/plugins/hermes-bots/data.roster.test.tsx --maxWorkers=1
 
       - name: Run Playwright E2E tests
         working-directory: apps/desktop

@@ -1011,6 +1011,7 @@ export function mergeMultiSourceRoster(
   }
 
   const activeByName = new Map<string, RosterRow>()
+  const activeSource = (union?.sources || []).find(source => source.connectionId === activeId)
 
   // Treat the rich list as one row per active-source profile. Clone every
   // row: some gateway clients reuse response objects, and annotating those in
@@ -1028,10 +1029,28 @@ export function mergeMultiSourceRoster(
     }
 
     if (!activeByName.has(name)) {
-      activeByName.set(name, {
+      const row: RosterRow = {
         ...profile,
         name
-      })
+      }
+      // profiles.list already proved this profile exists on the captured
+      // source. Union enumeration can lag a just-completed profiles.create;
+      // waiting for its per-profile row must not turn a known owner into a
+      // legacy/unscoped bot and let reconciliation replace its conversation.
+      if (!row.sourceScoped && activeSource?.kind) {
+        row.connectionId = activeId
+        row.connectionKind = activeSource.kind
+        row.connectionLabel = activeSource.label || activeId
+        row.targetProfile = row.targetProfile || name
+        row.route = {
+          connectionId: activeId,
+          mode: activeSource.kind === 'local' ? 'local' : 'remote',
+          profile: name,
+          targetProfile: row.targetProfile
+        }
+        row.sourceScoped = true
+      }
+      activeByName.set(name, row)
     }
   }
 
