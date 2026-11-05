@@ -42,7 +42,7 @@ import { useEffect, useRef, useState } from 'react'
 import { avatarColor, blobatarSvg, botAppearance, BotFace } from './avatar'
 import { isBackfilledFacePng } from './avatar-image'
 import { AvatarPicker } from './avatar-picker'
-import { $selectedBot } from './bot-state'
+import { saveSelectedRosterBot } from './bot-state'
 import { createCanonicalChat } from './canonical-chat'
 import { $botMeta, botHandle, botRosterKey, filterBots, ROSTER_KEY, saveBotMeta } from './data'
 import { labeled, ResizableFrame } from './dialog-parts'
@@ -539,6 +539,8 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         title: botTitle,
         // One captured owner for both provider setup and the first chat.
         sourceScoped: typeof host.requestProfile === 'function',
+        connectionId: typeof host.requestProfile === 'function' ? creationConnectionId : undefined,
+        connectionKind: creationConnectionId === 'local' ? 'local' : 'remote',
         route: typeof host.requestProfile === 'function' ? {
           connectionId: creationConnectionId,
           mode: creationConnectionId === 'local' ? 'local' : 'remote',
@@ -577,7 +579,10 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
       }
 
       if (creationStillCurrent()) {
-        $selectedBot.set(slug)
+        // Selection and the main pane must name the same source-qualified
+        // owner. Updating only the legacy routines selection left the roster
+        // on the previous bot, whose refresh then replaced this new chat.
+        saveSelectedRosterBot(bot)
       }
 
       // Birth the bot's forever chat right away: it introduces itself as

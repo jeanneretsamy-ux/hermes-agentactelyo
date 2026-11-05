@@ -306,6 +306,15 @@ describe('materializing the draft profile', () => {
 describe('provider readiness before the intro turn', () => {
   const notReady = { error: 'No usable credentials found for openrouter.', ok: false }
 
+  it('selects the same source-qualified owner as the new canonical conversation', async () => {
+    await renderDialog(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalled())
+    const { $selectedBot, $selectedRosterKey } = await import('./bot-state')
+    expect($selectedBot.get()).toBe('local::inbox-triage')
+    expect($selectedRosterKey.get()).toBe('local::inbox-triage')
+  })
+
   it('releases creation navigation when a later bot or group takes the workspace', async () => {
     await renderDialog(true)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
