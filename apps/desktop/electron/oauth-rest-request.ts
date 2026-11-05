@@ -74,9 +74,21 @@ export function canShowInteractiveOauthLogin(): boolean {
 export async function retryCookie401WithLogin<T>(
   error: unknown,
   options: { method?: unknown; replayOn401?: unknown },
-  actions: { clearCookies: () => void; login: () => Promise<unknown>; retry: () => Promise<T> }
+  actions: {
+    canLogin?: () => Promise<boolean>
+    clearCookies: () => void
+    login: () => Promise<unknown>
+    retry: () => Promise<T>
+  }
 ): Promise<T> {
   if (!canShowInteractiveOauthLogin() || !shouldReplayAfterCookie401(error, options)) {
+    throw error
+  }
+
+  // Silent renewal needs an existing gateway or portal identity. A fresh
+  // unsigned connection must return its 401 to the recovery screen instead
+  // of waiting indefinitely in a login window it never requested.
+  if (actions.canLogin && !(await actions.canLogin())) {
     throw error
   }
 
