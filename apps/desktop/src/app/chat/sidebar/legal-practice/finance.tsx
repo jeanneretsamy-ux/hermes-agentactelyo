@@ -1,10 +1,15 @@
-import { useRef } from 'react'
+import { type InputHTMLAttributes, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { isLegalOwnerCurrent, type LegalPracticeOwner } from '@/store/legal-practice'
 
 import FinanceCabinet from './finance-cabinet'
+
+// The desktop control uses size for visual variants; native HTML uses a number.
+function FinanceInput({ size: _nativeSize, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <Input {...props} />
+}
 
 export function LegalFinanceSection({ owner }: { owner: LegalPracticeOwner }) {
   const pending = useRef<{ id: string; value: any; created: number } | null>(null)
@@ -64,5 +69,5 @@ export function LegalFinanceSection({ owner }: { owner: LegalPracticeOwner }) {
     return { applied: true, native_request_id: proposal.value.params.request_id, readback }
   }
 
-  return <FinanceCabinet Button={Button} call={call} Input={Input} projectId={owner.projectId} />
+  return <FinanceCabinet Button={Button} call={call} Input={FinanceInput} projectId={owner.projectId} />
 }
