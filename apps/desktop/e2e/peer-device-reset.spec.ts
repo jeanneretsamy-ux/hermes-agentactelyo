@@ -259,7 +259,7 @@ const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Pag
 
 peerTest.setTimeout(240_000)
 
-peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', async ({ gateways: { app, source } }) => {
+peerTest('Ctrl+Shift+N keeps the remote owner and can reopen its stored session', async ({ gateways: { app, source } }) => {
   const remoteProfile = source.locator(`[data-slot="profile-rail-gateway"][data-connection-id="${REMOTE_ID}"]`)
     .getByRole('button', { name: `${REMOTE_PROFILE} · ${REMOTE_LABEL}`, exact: true })
 
@@ -275,6 +275,14 @@ peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', asy
   const peer = await opened
   installErrorBannerGuard(peer)
   await expectReady(peer, REMOTE_LABEL)
+  // Generic peer windows intentionally start a fresh draft (#74948), while
+  // preserving the owning gateway/profile. Reopen history explicitly.
+  expect(new URL(peer.url()).searchParams.get('profile')).toBe(REMOTE_PROFILE)
+  expect(new URL(peer.url()).searchParams.get('connectionId')).toBe(REMOTE_ID)
+  await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toHaveCount(0)
+  const storedChat = peer.getByRole('button', { name: /^Remember this remote profile session/ })
+  await expect(storedChat).toHaveCount(1)
+  await storedChat.click()
   await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toBeVisible({ timeout: 60_000 })
   await expectReady(source, REMOTE_LABEL)
   await peer.reload()

@@ -504,6 +504,7 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
       return
     }
 
+    const creationConnectionId = targetConnection || activeConnectionId || 'local'
     setBusy(true)
     setError(null)
 
@@ -573,7 +574,20 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         // the ONE caller allowed to request the intro turn — genuine New
         // Agent creation. Click-path resolution (openBotCanonicalChat) mints
         // silently so a resolution miss never burns a turn (ScottFive).
-        const sid = await createCanonicalChat(slug, {
+        // Keep every creation RPC on the new profile's owning service. Opening
+        // the chat can change the foreground gateway; its runtime session id
+        // must never be submitted through that mutable foreground connection.
+        const chatOwner: RosterRow = {
+          ...bot,
+          sourceScoped: true,
+          route: {
+            connectionId: creationConnectionId,
+            mode: creationConnectionId === 'local' ? 'local' : 'remote',
+            profile: slugCreated,
+            targetProfile: slugCreated
+          }
+        }
+        const sid = await createCanonicalChat(typeof host.requestProfile === 'function' ? chatOwner : slugCreated, {
           kickoff: !needsModel
         })
 

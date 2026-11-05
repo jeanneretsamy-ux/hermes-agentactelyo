@@ -123,6 +123,14 @@ function createCalls() {
   return mocks.request.mock.calls.filter(([method]) => method === 'profiles.create')
 }
 
+function ownedProfile(name: string) {
+  return expect.objectContaining({
+    name,
+    sourceScoped: true,
+    route: { connectionId: 'local', mode: 'local', profile: name, targetProfile: name }
+  })
+}
+
 /** The control under a `labeled(...)` caption — the label is presentational,
  *  so it carries no `for`/`id` pair to query by. */
 function controlUnder(caption: string) {
@@ -187,7 +195,7 @@ describe('materializing the draft profile', () => {
       name: profileName
     })
     expect(mocks.saveBotMeta).toHaveBeenCalledWith(profileName, expect.objectContaining({ title: enteredName }))
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(profileName, { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile(profileName), { kickoff: true }))
   })
 
   it('creates it once when the Capabilities tab opens, pinned to the new slug', async () => {
@@ -203,7 +211,7 @@ describe('materializing the draft profile', () => {
     // Create Bot goes through the same helper — no duplicate profiles.create.
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith('inbox-triage', { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: true }))
     expect(createCalls()).toHaveLength(1)
   })
 
@@ -308,7 +316,7 @@ describe('provider readiness before the intro turn', () => {
     await renderDialog(true, onConfigureModel)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith('inbox-triage', { kickoff: false }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: false }))
     expect(mocks.request).toHaveBeenCalledWith('setup.runtime_check', { profile: 'inbox-triage' })
     expect(createCalls()).toHaveLength(1)
 
@@ -332,7 +340,7 @@ describe('provider readiness before the intro turn', () => {
     await renderDialog(true)
     fireEvent.click(screen.getByRole('button', { name: 'Create Bot' }))
 
-    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith('inbox-triage', { kickoff: true }))
+    await waitFor(() => expect(mocks.createCanonicalChat).toHaveBeenCalledWith(ownedProfile('inbox-triage'), { kickoff: true }))
     expect(mocks.notify).toHaveBeenLastCalledWith({ kind: 'success', message: 'Bot "Inbox Triage" created' })
   })
 

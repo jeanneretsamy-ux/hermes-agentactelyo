@@ -99,6 +99,10 @@ jobs:
       # On main, we run with --update-snapshots to generate baselines.
       # `npm run test:e2e` builds dist/ as a pretest hook so the renderer
       # is always fresh — no separate build step needed.
+      - name: Verify bot creation and canonical chat ownership
+        working-directory: apps/desktop
+        run: npx vitest run --project ui src/plugins/hermes-bots/create-agent-lazy-profile.test.tsx src/plugins/hermes-bots/canonical-chat-creation.test.ts src/plugins/hermes-bots/canonical-chat-adopt-on-conflict.test.ts --maxWorkers=1
+
       - name: Run Playwright E2E tests
         working-directory: apps/desktop
         run: |
