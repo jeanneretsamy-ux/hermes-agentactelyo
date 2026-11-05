@@ -534,6 +534,14 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         name: slugCreated,
         description: descriptionText,
         title: botTitle,
+        // One captured owner for both provider setup and the first chat.
+        sourceScoped: typeof host.requestProfile === 'function',
+        route: typeof host.requestProfile === 'function' ? {
+          connectionId: creationConnectionId,
+          mode: creationConnectionId === 'local' ? 'local' : 'remote',
+          profile: slugCreated,
+          targetProfile: slugCreated
+        } : undefined,
         ...(remoteTarget ? { connectionId: targetConnection, remoteSource: true } : {})
       }
 
@@ -577,17 +585,7 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         // Keep every creation RPC on the new profile's owning service. Opening
         // the chat can change the foreground gateway; its runtime session id
         // must never be submitted through that mutable foreground connection.
-        const chatOwner: RosterRow = {
-          ...bot,
-          sourceScoped: true,
-          route: {
-            connectionId: creationConnectionId,
-            mode: creationConnectionId === 'local' ? 'local' : 'remote',
-            profile: slugCreated,
-            targetProfile: slugCreated
-          }
-        }
-        const sid = await createCanonicalChat(typeof host.requestProfile === 'function' ? chatOwner : slugCreated, {
+        const sid = await createCanonicalChat(typeof host.requestProfile === 'function' ? bot : slugCreated, {
           kickoff: !needsModel
         })
 

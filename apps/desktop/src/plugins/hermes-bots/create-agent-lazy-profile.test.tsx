@@ -328,7 +328,7 @@ describe('provider readiness before the intro turn', () => {
       title: 'Bot "Inbox Triage" created'
     })
     toast.action.onClick()
-    expect(onConfigureModel).toHaveBeenCalledWith(expect.objectContaining({ name: 'inbox-triage' }))
+    expect(onConfigureModel).toHaveBeenCalledWith(ownedProfile('inbox-triage'))
   })
 
   it('runs the intro when the provider check passes', async () => {
