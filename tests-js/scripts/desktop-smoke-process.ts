@@ -139,6 +139,28 @@ function linuxListeningPid(port: number, candidates: NativeProcess[]): number[] 
   }).map((candidate: NativeProcess): number => candidate.pid)
 }
 
+/** netstat avoids cold NetTCPIP/WMI provider startup during Windows update tests. */
+export function windowsListeningPids(table: string, port: number): number[] {
+  const pids = new Set<number>()
+
+  for (const line of table.split('\n')) {
+    const fields = line.trim().split(/\s+/)
+
+    if (fields.length !== 5 || fields[0] !== 'TCP' || fields[3] !== 'LISTENING') {
+      continue
+    }
+
+    const localPort = /:(\d+)$/.exec(fields[1])?.[1]
+    const pid = Number(fields[4])
+
+    if (Number(localPort) === port && /^\d+$/.test(fields[4]) && Number.isSafeInteger(pid) && pid > 0) {
+      pids.add(pid)
+    }
+  }
+
+  return [...pids]
+}
+
 /** Identify the actual listener, not a healthy helper or a command recorded before spawn. */
 export function localBackendProcess(port: number, electronPid: number): NativeProcess {
   if (!Number.isInteger(port) || port <= 0 || port > 65535) {
@@ -149,8 +171,7 @@ export function localBackendProcess(port: number, electronPid: number): NativePr
   let pids: number[]
 
   if (process.platform === 'win32') {
-    pids = z.array(z.number()).parse(JSON.parse(nativeText('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
-      `ConvertTo-Json -Compress -InputObject @((Get-NetTCPConnection -State Listen -LocalPort ${port} -ErrorAction Stop).OwningProcess | Sort-Object -Unique)`])))
+    pids = windowsListeningPids(nativeText('netstat.exe', ['-ano', '-p', 'tcp']), port)
   } else if (process.platform === 'darwin') {
     pids = nativeText('/usr/sbin/lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-Fp']).split('\n')
       .filter((line: string): boolean => /^p\d+$/.test(line)).map((line: string): number => Number(line.slice(1)))
