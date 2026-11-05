@@ -147,7 +147,7 @@ jobs:
             $workspaceRoot = [IO.Path]::GetFullPath($env:GITHUB_WORKSPACE).TrimEnd('\')+'\'
             $tempRoot = [IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\')+'\'
             $unpacked = [IO.Path]::GetFullPath((Join-Path $env:GITHUB_WORKSPACE 'apps/desktop/release/win-unpacked'))
-            $appSource = [IO.Path]::GetFullPath((Join-Path $env:RUNNER_TEMP 'actelyo-inno-source'))
+            $appSource = [IO.Path]::GetFullPath((Join-Path $env:RUNNER_TEMP 'a'))
             if (!$unpacked.StartsWith($workspaceRoot,[StringComparison]::OrdinalIgnoreCase) -or !$appSource.StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected installer staging paths' }
             if (!(Test-Path -LiteralPath (Join-Path $unpacked 'Actelyo Law Harness.exe')) -or (Test-Path -LiteralPath $appSource)) { throw 'Unpacked application missing or staging destination already exists' }
             # Use a short verified runner path for deeply nested Python packages.
