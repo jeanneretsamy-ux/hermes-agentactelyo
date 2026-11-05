@@ -56,7 +56,8 @@ class CabinetClient:
 
     def status(self):
         status = self._request("/status")
-        if status.get("product") != "Actelyo ERP" or (status.get("native_cabinet") or {}).get("version") != 1:
+        cabinet = status.get("native_cabinet") if isinstance(status, dict) else None
+        if not isinstance(cabinet, dict) or status.get("product") != "Actelyo ERP" or cabinet.get("version") != 1:
             raise ValueError("This ERP does not expose the cabinet service; update it first.")
         # Approval cards can contain private details; do not include them in discovery.
         return {"product": status["product"], "cabinet": status["native_cabinet"]}
@@ -73,12 +74,16 @@ class CabinetClient:
         if dossier_id:
             payload["dossierId"] = dossier_id
         result = self._request("/cabinet", payload)
+        if not isinstance(result, dict):
+            raise ValueError("Invalid native execution receipt.")
         if result.get("cancelled"):
             return {"cancelled": True, "confirmed": False}
         if result.get("isError") or "content" not in result:
             raise ValueError("No native execution receipt returned.")
-        blocks = [block["text"] for block in result["content"] if block.get("type") == "text"]
-        if len(blocks) != 1:
+        if not isinstance(result["content"], list) or any(not isinstance(block, dict) for block in result["content"]):
+            raise ValueError("Invalid native receipt content.")
+        blocks = [block.get("text") for block in result["content"] if block.get("type") == "text"]
+        if len(blocks) != 1 or not isinstance(blocks[0], str):
             raise ValueError("Unexpected native cabinet receipt.")
         return {"confirmed": True, "result": json.loads(blocks[0])}
 
