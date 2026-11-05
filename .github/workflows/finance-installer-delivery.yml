@@ -1,0 +1,72 @@
+name: Assemble the verified Law Harness 2026.11.8 installer
+on:
+  push:
+    branches: [codex/finance-installer-delivery-20261105]
+    paths: [.github/workflows/finance-installer-delivery.yml]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  assemble:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    env:
+      SOURCE_RUN: '42028620880'
+      PACKAGING_SHA: f41de068b307fd96b8105fec5cb106ba610d5f0d
+      SOURCE_SHA: f41de068b307fd96b8105fec5cb106ba610d5f0d
+      RELEASE_VERSION: '2026.11.8'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Require the successfully tested installer build
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $run = gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:SOURCE_RUN" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $run.conclusion -ne 'success' -or $run.head_sha -ne $env:PACKAGING_SHA) { throw 'The exact native installer build is not verified.' }
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          github-token: ${{ github.token }}
+          run-id: '42028620880'
+          name: actelyo-law-harness-verified-installer
+          path: verified-parts
+      - name: Reassemble the exact EXE and verify all hashes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $parts = Get-Content verified-parts/parts.json -Raw | ConvertFrom-Json
+          $manifest = Get-Content verified-parts/build-manifest.json -Raw | ConvertFrom-Json
+          $name = "Actelyo-Law-Harness-Setup-$env:RELEASE_VERSION-x64.exe"
+          if ($parts.artifact -ne $name -or $manifest.version -ne $env:RELEASE_VERSION -or $manifest.source_commit -ne $env:SOURCE_SHA -or -not $manifest.verified_installed -or $manifest.sha256 -ne $parts.sha256 -or $manifest.bytes -ne $parts.bytes) { throw 'Installer provenance mismatch.' }
+          $root = Join-Path $env:GITHUB_WORKSPACE 'deliverable'
+          New-Item -ItemType Directory -Path $root -Force | Out-Null
+          $output = Join-Path $root $name
+          $stream = [IO.File]::Open($output,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
+          $buffer = New-Object byte[] (1MB)
+          try {
+            $sequence = 0
+            foreach ($part in $parts.parts) {
+              $sequence++
+              $expected = "$name.part{0:D2}" -f $sequence
+              if ($part.name -ne $expected) { throw 'Unexpected part order or filename.' }
+              $file = Get-Item -LiteralPath (Join-Path 'verified-parts' $expected)
+              if ($file.Length -ne $part.bytes -or (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant() -ne $part.sha256) { throw "Invalid installer part $sequence" }
+              $inputStream = [IO.File]::OpenRead($file.FullName)
+              try { while (($read = $inputStream.Read($buffer,0,$buffer.Length)) -gt 0) { $stream.Write($buffer,0,$read) } }
+              finally { $inputStream.Dispose() }
+            }
+          } finally { $stream.Dispose() }
+          $complete = Get-Item -LiteralPath $output
+          $hash = (Get-FileHash $output -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($complete.Length -ne $parts.bytes -or $hash -ne $parts.sha256) { throw 'The reassembled EXE differs from the installed and tested EXE.' }
+          if ($complete.VersionInfo.ProductVersion -notin @($env:RELEASE_VERSION,"$env:RELEASE_VERSION.0")) { throw 'Native EXE version mismatch.' }
+          Copy-Item verified-parts/build-manifest.json $root/
+          "$hash  $name" | Set-Content (Join-Path $root 'SHA256SUMS.txt')
+          @{version=$env:RELEASE_VERSION;source_commit=$env:SOURCE_SHA;verified_build_run=$env:SOURCE_RUN;sha256=$hash;bytes=$complete.Length;bitwise_identical_to_installed_installer=$true} | ConvertTo-Json | Set-Content (Join-Path $root 'delivery-verification.json')
+      - name: Deliver one complete Windows installer
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: Actelyo-Law-Harness-2026.11.8-Windows-Installer
+          path: deliverable/*
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
