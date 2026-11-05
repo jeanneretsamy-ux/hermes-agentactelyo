@@ -117,7 +117,8 @@ jobs:
               echo "::endgroup::"
             done ) &
           xvfb-run -a --server-args="-screen 0 1280x1024x24" \
-            npx playwright test -c e2e/update/playwright.config.ts ${{ matrix.specs }}
+            npx playwright test -c e2e/update/playwright.config.ts ${{ matrix.specs }} --reporter=list,html,json
+          node ../../scripts/ci/assert-playwright-pass.mjs playwright-report/update/acceptance.json
         env:
           CI: 'true'
           HERMES_E2E_PYTHON: ${{ steps.pm.outputs.python-path }}
@@ -127,6 +128,17 @@ jobs:
           OPENAI_API_KEY: ''
           NOUS_API_KEY: ''
           ANTHROPIC_API_KEY: ''
+          PLAYWRIGHT_HTML_OUTPUT_DIR: ${{ github.workspace }}/apps/desktop/playwright-report/update
+          PLAYWRIGHT_JSON_OUTPUT_FILE: ${{ github.workspace }}/apps/desktop/playwright-report/update/acceptance.json
+
+      - name: Preserve actual update acceptance results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: desktop-update-actual-results-${{ matrix.cell }}-${{ github.sha }}
+          path: apps/desktop/playwright-report/update/acceptance.json
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Collect the install's logs
         if: failure() || cancelled()
