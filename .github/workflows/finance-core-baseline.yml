@@ -1,0 +1,9 @@
+name: Verify unchanged desktop conversation baseline
+on:
+  push:
+    branches: [codex/desktop-core-baseline-20261105]
+permissions:
+  contents: read
+jobs:
+  baseline:
+    uses: ./.github/workflows/e2e-desktop-core.yml
