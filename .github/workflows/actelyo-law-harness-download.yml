@@ -127,7 +127,11 @@ jobs:
         working-directory: apps/desktop
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION"
+        run: |
+          $nativeVersion = $env:ACTELYO_RELEASE_VERSION
+          if (($nativeVersion -split '\.').Count -eq 3) { $nativeVersion += '.0' }
+          node scripts/run-electron-builder.mjs --win zip --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION" "--config.buildVersion=$nativeVersion" "--config.extraMetadata.shortVersion=$nativeVersion" "--config.extraMetadata.shortVersionWindows=$nativeVersion"
+          if ($LASTEXITCODE -ne 0) { throw 'Windows packaging failed' }
       - name: Build and install Actelyo installer
         shell: pwsh
         run: |
