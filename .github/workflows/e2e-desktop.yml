@@ -108,8 +108,11 @@ jobs:
               npx playwright test --reporter=list --update-snapshots
           else
             echo "On PR — comparing against cached baselines"
+            # A shared bootstrap failure must return its first trace promptly,
+            # not spend the job budget repeating the same failure 61 times.
+            # A green run still requires the complete suite; retries cannot mask it.
             npm run build && xvfb-run -a --server-args="-screen 0 1280x1024x24" \
-              npx playwright test --reporter=list
+              npx playwright test --reporter=list --max-failures=1 --retries=0
           fi
         env:
           CI: 'true'
