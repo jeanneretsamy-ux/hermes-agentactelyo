@@ -1,0 +1,44 @@
+name: Diagnose the exact installed financial PDF worker
+on:
+  push:
+    branches: [codex/pdf-installed-diagnostic-20261105]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          github-token: ${{ github.token }}
+          run-id: '42019715098'
+          name: actelyo-law-harness-diagnostic-installer-UNVERIFIED
+          path: diagnostic-installer
+      - name: Install the unchanged diagnostic candidate and inspect its PDF worker
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $inputs=Get-Content diagnostic-installer/installer-inputs.json -Raw | ConvertFrom-Json
+          $installer=Join-Path $env:GITHUB_WORKSPACE 'diagnostic-installer/Actelyo-Law-Harness-Setup-x64.exe'
+          $expected='e7683151d4e491ce1354da1e92021527ca42a834fb3503d91a5f9829115395ca'
+          if($inputs.source_commit -ne 'ef5066428bb975852598a5f1761442529f7f5296' -or $inputs.packaging_commit -ne '9cd1183bf9f479f4054c53b4f2cc6a17e24f1cf4' -or $inputs.sha256 -ne $expected -or (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected){throw 'Diagnostic installer provenance mismatch'}
+          $installed=Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Programs/Actelyo Law Harness'
+          $process=Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',"/DIR=`"$installed`"") -WindowStyle Hidden -Wait -PassThru
+          if($process.ExitCode -ne 0){throw 'Diagnostic installation failed'}
+          $payload=Join-Path $installed 'resources/agent-payload'
+          $manifest=Get-Content (Join-Path $payload 'manifest.json') -Raw | ConvertFrom-Json
+          $python=[IO.Path]::GetFullPath((Join-Path $payload $manifest.runtime.storePython))
+          if(!$python.StartsWith([IO.Path]::GetFullPath($payload)+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Interpreter escaped the installed payload'}
+          New-Item -ItemType Directory -Path proof -Force | Out-Null
+          & $python -I -S scripts/actelyo-download/pdf-installed-diagnostic.py $payload scripts/actelyo-download/fixtures/finance-scan.pdf (Join-Path $env:GITHUB_WORKSPACE 'proof')
+          if($LASTEXITCODE -ne 0){throw 'PDF diagnostic failed before recording its result'}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: financial-pdf-installed-diagnostic
+          path: proof/*.json
+          retention-days: 7
+          if-no-files-found: error
