@@ -55,7 +55,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
   const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([])
   const [createKind, setCreateKind] = useState<'quote' | 'invoice'>('invoice')
 
-  const [createPurpose, setCreatePurpose] = useState<'standard' | 'provision_fees' | 'provision_expenses_fees'>(
+  const [createPurpose, setCreatePurpose] = useState<'standard' | 'provision_fees' | 'provision_expenses' | 'provision_expenses_fees'>(
     'standard'
   )
 
@@ -606,7 +606,9 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
                 ? 'devis'
                 : createPurpose === 'provision_fees'
                   ? 'provision sur honoraires'
-                  : createPurpose === 'provision_expenses_fees'
+                  : createPurpose === 'provision_expenses'
+                    ? 'provision sur frais'
+                    : createPurpose === 'provision_expenses_fees'
                     ? 'provision sur frais et honoraires'
                     : 'facture'}
             </DialogTitle>
@@ -648,6 +650,7 @@ export function LegalBillingSection({ data, write, submit }: LegalSectionProps) 
                       items={[
                         { id: 'standard', label: 'Facture d’honoraires' },
                         { id: 'provision_fees', label: 'Provision sur honoraires' },
+                        { id: 'provision_expenses', label: 'Provision sur frais' },
                         { id: 'provision_expenses_fees', label: 'Provision sur frais et honoraires' }
                       ]}
                       label="Nature de la facture"

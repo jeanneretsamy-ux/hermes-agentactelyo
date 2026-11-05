@@ -88,15 +88,20 @@ jobs:
         uses: ./.github/actions/setup-pm
         with:
           toolchain: all
-          extras: '[]'
+          extras: '["legal-finance"]'
           test-environment: 'true'
       - name: Test installed-app readiness verifier
         run: node --test scripts/actelyo-download/verify-installed.test.mjs
       - name: Install locked dependencies
         run: npm ci
+      - name: Verify finance contracts and native ledger
+        shell: bash
+        run: |
+          node scripts/build/python.mjs scripts/gen_gateway_contracts.py --check
+          scripts/run_tests.sh tests/tui_gateway/test_legal_finance_rpc.py tests/tui_gateway/test_legal_finance_control_rpc.py tests/tui_gateway/test_legal_operations_rpc.py tests/tui_gateway/test_legal_billing_orders_rpc.py tests/tui_gateway/test_legal_finance_files_rpc.py tests/tui_gateway/test_legal_finance_ocr_rpc.py -q -j 1
       - name: Test Actelyo workbench UI
         working-directory: apps/desktop
-        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/atelier-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
+        run: npx vitest run --project ui src/app/chat/sidebar/procedure-learning-dialog.test.tsx src/app/chat/sidebar/rea-workbench-dialog.test.tsx src/app/chat/sidebar/atelier-dialog.test.tsx src/app/chat/sidebar/legal-practice/cabinet-navigation.test.tsx src/app/chat/sidebar/legal-practice/library-import.test.tsx src/app/chat/sidebar/legal-practice/tasks.test.tsx src/app/chat/sidebar/legal-practice/finance-cabinet.test.tsx src/app/settings/local-models-inference.test.tsx src/app/chat/composer/attach-image-batch.test.ts --maxWorkers=1
       - name: Test private library import and extraction
         shell: bash
         run: scripts/run_tests.sh tests/test_actelyo_workflow.py tests/test_actelyo_inference.py tests/test_actelyo_library_pack.py tests/tools/test_legal_cabinet_tool.py tests/tui_gateway/test_legal_practice_rpc.py tests/hermes_cli/test_atelier.py tests/tui_gateway/test_atelier_rpc.py tests/agent/test_native_codex_init.py -q -j 1

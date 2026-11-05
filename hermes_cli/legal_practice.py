@@ -138,6 +138,14 @@ CREATE TABLE IF NOT EXISTS legal_requests (
 
 
 def initialize_legal(conn):
+    from hermes_cli import legal_finance
+    conn.executescript(legal_finance.SCHEMA)
+    from hermes_cli import legal_operations
+    conn.executescript(legal_operations.SCHEMA)
+    from .legal_finance_files import migrate as migrate_finance_files
+    migrate_finance_files(conn)
+    if 'responsible_user' not in {r['name'] for r in conn.execute('PRAGMA table_info(legal_time_trackers)')}:
+        conn.execute("ALTER TABLE legal_time_trackers ADD COLUMN responsible_user TEXT NOT NULL DEFAULT ''")
     from hermes_cli import legal_workflow
     conn.executescript(_LEGAL_SCHEMA + legal_workflow.SCHEMA)
     columns = {row[1] for row in conn.execute("PRAGMA table_info(legal_fees)")}
@@ -161,7 +169,9 @@ def initialize_legal(conn):
         conn.execute("ALTER TABLE legal_matters ADD COLUMN matter_profile TEXT NOT NULL DEFAULT '{}' ")
     conn.execute("UPDATE legal_matters SET matter_profile=company_profile WHERE matter_profile='{}' AND company_profile!='{}'")
     for name, definition in (("activity_date", "TEXT NOT NULL DEFAULT ''"), ("billing_code", "TEXT NOT NULL DEFAULT ''"),
-                             ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1")):
+                             ("activity_type", "TEXT NOT NULL DEFAULT ''"), ("billable", "INTEGER NOT NULL DEFAULT 1"),
+                             ("cost_cents", "INTEGER"), ("cost_rate_cents", "INTEGER"),
+                             ("approval_status", "TEXT NOT NULL DEFAULT 'approved'"), ("expense_type", "TEXT NOT NULL DEFAULT ''")):
         if name not in fee_columns:
             conn.execute(f"ALTER TABLE legal_fees ADD COLUMN {name} {definition}")
     # The legacy-profile backfill above is DML and opens an implicit SQLite
@@ -490,6 +500,7 @@ def render_legal_document(document):
     template_id = snapshot.get("template_id", "classique")
     purpose_labels = {
         "provision_fees": "Facture de provision sur honoraires",
+        "provision_expenses": "Facture de provision sur frais",
         "provision_expenses_fees": "Facture de provision sur frais et honoraires",
     }
     title = "Avoir d'annulation" if document["kind"] == "credit_note" else purpose_labels.get(document.get("purpose"), "Facture" if is_invoice else "Devis")
@@ -602,7 +613,8 @@ def legal_mutate(conn, project_id, action, params):
     payload = json.dumps({"action": action, **{k: v for k, v in params.items() if k not in ("profile", "project_id")}}, sort_keys=True, ensure_ascii=False)
     request_id = params.get("request_id")
     with write_txn(conn):
-        if action in ("fee.add", "fee_code.save", "subscription.save", "subscription.invoice", "practice_document.create", "document.create", "payment.add", "payment.allocate", "document.credit"):
+        from hermes_cli.legal_operations import HANDLERS
+        if action in HANDLERS or action in ("finance.budget.save", "finance.fee.review", "fee.add", "fee_code.save", "subscription.save", "subscription.invoice", "practice_document.create", "document.create", "payment.add", "payment.allocate", "document.credit"):
             request_id = _legal_text(request_id, required=True, limit=100)
             existing = conn.execute("SELECT payload FROM legal_requests WHERE project_id=? AND request_id=?", (project_id, request_id)).fetchone()
             if existing:
@@ -615,7 +627,13 @@ def legal_mutate(conn, project_id, action, params):
         return legal_snapshot(conn, project_id)
 
 
-def _legal_apply(conn, pid, action, p):
+def _legal_apply(conn, pid, action, p, *, billing_order_id=None):
+    from hermes_cli.legal_operations import HANDLERS, apply as apply_operations
+    if action in HANDLERS:
+        return apply_operations(conn,pid,action,p)
+    if action in ('finance.budget.save','finance.fee.review'):
+        from hermes_cli.legal_finance import apply
+        return apply(conn,pid,action,p)
     if action in ("task.save", "workflow.apply"):
         from hermes_cli.legal_workflow import apply
         apply(conn, pid, action, p)
@@ -711,7 +729,10 @@ def _legal_apply(conn, pid, action, p):
         minutes = _legal_integer(p.get("minutes", 0), high=1_000_000)
         rate = _legal_integer(p.get("rate_cents", 0))
         net = _legal_round(Decimal(minutes) * rate / 60) if kind == "time" else _legal_integer(p.get("amount_cents", 0))
-        if net <= 0 or (kind == "time" and (minutes == 0 or rate == 0)):
+        billable = p.get('billable',True)
+        if type(billable) is not bool:
+            raise ValueError('Le statut facturable doit être vrai ou faux')
+        if (billable and net <= 0) or (kind == "time" and (minutes == 0 or (billable and rate == 0))):
             raise ValueError("Honoraires strictement positifs requis")
         _legal_integer(net)
         tax_bps = _legal_integer(p.get("tax_bps", 0), high=10000)
@@ -727,6 +748,19 @@ def _legal_apply(conn, pid, action, p):
         if type(billable) is not bool:
             raise ValueError("Le statut facturable doit être vrai ou faux")
         conn.execute("INSERT INTO legal_fees (id,project_id,matter_id,description,kind,minutes,rate_cents,net_cents,tax_bps,tax_cents,invoice_id,responsible_user,activity_date,billing_code,activity_type,billable) VALUES (?,?,?,?,?,?,?,?,?,?,NULL,?,?,?,?,?)", (secrets.token_hex(16), pid, p["matter_id"], _legal_text(p.get("description"), required=True), kind, minutes, rate, net, tax_bps, tax, _legal_text(p.get("responsible_user"), limit=200), activity_date, billing_code, activity_type, int(billable)))
+        fee_id=conn.execute('SELECT id FROM legal_fees WHERE rowid=last_insert_rowid()').fetchone()['id']
+        approval=p.get('approval_status','approved')
+        expense_type=p.get('expense_type','office' if kind=='expense' else '')
+        if approval not in ('draft','approved','rejected') or expense_type not in ('','office','disbursement') or (kind!='expense' and expense_type):
+            raise ValueError('Validation ou catégorie de frais invalide.')
+        cost=p.get('cost_cents')
+        cost_rate=p.get('cost_rate_cents')
+        if cost_rate is not None:
+            cost_rate=_legal_integer(cost_rate)
+            if kind!='time' or cost is not None:raise ValueError('Le coût horaire concerne uniquement un temps sans coût total saisi.')
+            cost=_legal_round(Decimal(minutes)*cost_rate/60)
+        if cost is not None:cost=_legal_integer(cost)
+        conn.execute('UPDATE legal_fees SET cost_cents=?,cost_rate_cents=?,approval_status=?,expense_type=? WHERE id=?',(cost,cost_rate,approval,expense_type,fee_id))
         return
     if action == "fee_code.save":
         code = _legal_text(p.get("code"), required=True, limit=40)
@@ -855,10 +889,15 @@ def _legal_apply(conn, pid, action, p):
         if not ids or len(ids) != len(set(ids)) or len(ids) > 500:
             raise ValueError("Sélectionner entre 1 et 500 honoraires distincts")
         fees = [_legal_row(conn, "legal_fees", pid, fee_id) for fee_id in ids]
+        if kind == 'invoice':
+            from .legal_billing_orders import check_reservations
+            check_reservations(conn,pid,ids,billing_order_id=billing_order_id)
         if kind == "invoice" and (not client["address"].strip() or (client["customer_type"] == "professional" and len(client["siren"]) != 9)):
             raise ValueError("Complétez l’adresse du client et, pour un client professionnel, son SIREN avant la facture.")
         if any(f["matter_id"] != matter["id"] or not f["billable"] or (kind == "invoice" and f["invoice_id"]) for f in fees):
             raise ValueError("Honoraires d'un autre dossier ou déjà facturés")
+        if any(f['approval_status']=='rejected' or (kind=='invoice' and f['approval_status']!='approved') for f in fees):
+            raise ValueError('Validez les diligences avant de préparer la facture ; une ligne refusée est exclue.')
         if kind == "invoice" and settings["vat_regime"] == "franchise" and any(f["tax_bps"] for f in fees):
             raise ValueError("Le régime de franchise en base ne peut pas facturer de TVA. Corrigez les honoraires avant de créer la facture.")
         due_on = _legal_date(p.get("due_on"))
@@ -878,10 +917,14 @@ def _legal_apply(conn, pid, action, p):
                 "late_penalty_rate": settings["late_penalty_rate"], "recovery_indemnity_cents": 4000}
             snapshot["vat_notice"] = "TVA non applicable, article 293 B du CGI" if settings["vat_regime"] == "franchise" else ""
         purpose = p.get("purpose", "standard")
-        if purpose not in ("standard", "provision_fees", "provision_expenses_fees"):
+        if purpose not in ("standard", "provision_fees", "provision_expenses", "provision_expenses_fees"):
             raise ValueError("Type de facture inconnu")
         if kind != "invoice" and purpose != "standard":
             raise ValueError("Les provisions concernent les factures")
+        if purpose == 'provision_expenses' and any(f['kind']!='expense' for f in fees):
+            raise ValueError('Une provision sur frais doit contenir uniquement des frais.')
+        if purpose == 'provision_fees' and any(f['kind']=='expense' for f in fees):
+            raise ValueError('Une provision sur honoraires ne doit pas contenir de frais.')
         snapshot["purpose"] = purpose
         conn.execute("INSERT INTO legal_documents (id,project_id,matter_id,kind,reference,created_on,due_on,snapshot,net_cents,tax_cents,total_cents,purpose,related_document_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)", (doc_id, pid, matter["id"], kind, ref, today, due_on, json.dumps(snapshot, ensure_ascii=False), net, tax, net + tax, purpose))
         if kind == "invoice":

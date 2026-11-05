@@ -1988,6 +1988,10 @@ export interface LegalFee {
   billing_code: string
   activity_type: string
   billable: boolean
+  cost_cents?: number | null
+  cost_rate_cents?: number | null
+  approval_status?: 'draft' | 'approved' | 'rejected'
+  expense_type?: '' | 'office' | 'disbursement'
 }
 export interface LegalFeeCode {
   id: string
@@ -2206,6 +2210,10 @@ export interface LegalFeeParams {
   billing_code?: string
   activity_type?: string
   billable?: boolean
+  cost_cents?: number | null
+  cost_rate_cents?: number | null
+  approval_status?: 'draft' | 'approved' | 'rejected'
+  expense_type?: '' | 'office' | 'disbursement'
 }
 export interface LegalFeeCodeParams {
   profile?: string | null
@@ -2258,7 +2266,7 @@ export interface LegalDocumentParams {
   fee_ids: string[]
   due_on: string
   template_id?: 'classique' | 'synthese' | 'detaille'
-  purpose?: 'standard' | 'provision_fees' | 'provision_expenses_fees'
+  purpose?: 'standard' | 'provision_fees' | 'provision_expenses' | 'provision_expenses_fees'
 }
 export interface LegalCreditParams {
   profile?: string | null
@@ -2305,6 +2313,531 @@ export interface LegalTaskParams {
   remind_on?: string
   responsible_user?: string
   notes?: string
+}
+export interface FileMutationParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  file_id: string
+}
+export interface FileStampParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  file_id: string
+  piece_number: number
+}
+export interface BillingOrderCreateParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  fee_ids: string[]
+  purpose?: 'standard' | 'provision_fees' | 'provision_expenses' | 'provision_expenses_fees'
+}
+export interface BillingOrderInvoiceParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  billing_order_id: string
+  expected_version: number
+  due_on: string
+  template_id?: 'classique' | 'synthese' | 'detaille'
+}
+export interface BillingOrderChangeParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  billing_order_id: string
+  expected_version: number
+}
+export interface FecImportParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  filename: string
+  content: string
+}
+export interface ObjectiveParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  responsible_user: string
+  role: 'collaborator' | 'partner'
+  start_on: string
+  end_on: string
+  revenue_cents: number
+  margin_cents: number
+  minutes: number
+  expected_version?: number
+}
+export interface ForecastParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  month: string
+  label: string
+  incoming_cents: number
+  outgoing_cents: number
+  expected_version?: number
+}
+export interface MileageParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  activity_date: string
+  responsible_user: string
+  route: string
+  distance_milli: number
+  rate_cents: number
+  rate_source: string
+  billable?: boolean
+}
+export interface ReminderParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  document_id: string
+  level: number
+  message: string
+}
+export interface PartyParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  id?: string | null
+  expected_version?: number
+  name: string
+  role: 'prospect' | 'supplier' | 'partner'
+  email?: string
+  phone?: string
+  address?: string
+  notes?: string
+}
+export interface ContractParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  id?: string | null
+  expected_version?: number
+  party_id: string
+  title: string
+  start_on: string
+  end_on: string
+  amount_cents: number
+  status?: 'draft' | 'active' | 'closed'
+}
+export interface PurchaseParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  supplier_id: string
+  reference: string
+  due_on: string
+  lines: PurchaseLine[]
+}
+export interface PurchaseLine {
+  description: string
+  quantity_milli?: number
+  unit_cents: number
+  tax_bps?: number
+}
+export interface PurchaseTransitionParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  order_id: string
+  expected_version: number
+  status: 'ordered' | 'received' | 'closed' | 'cancelled'
+}
+export interface SupplierPaymentParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  order_id: string
+  amount_cents: number
+  paid_on: string
+  reference: string
+}
+export interface TimerStartParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  responsible_user?: string
+  matter_id: string
+  description: string
+  rate_cents: number
+  cost_rate_cents?: number | null
+  billable?: boolean
+}
+export interface TimerChangeParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  timer_id: string
+  expected_version: number
+  command: 'pause' | 'resume' | 'finish'
+}
+export interface FileStartParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  filename: string
+  kind: 'financial_statement' | 'financial_document' | 'evidence' | 'ocr_result'
+  size_bytes: number
+  sha256: string
+}
+export interface FileStartResult {
+  upload_id: string
+  chunk_bytes: number
+}
+export interface FileChunkParams {
+  profile?: string | null
+  project_id: string
+  upload_id: string
+  sequence: number
+  data_base64: string
+}
+export interface FileChunkResult {
+  upload_id: string
+  sequence: number
+  accepted_bytes: number
+}
+export interface FileUploadParams {
+  profile?: string | null
+  project_id: string
+  upload_id: string
+}
+export interface FinanceFile {
+  id: string
+  project_id: string
+  matter_id: string
+  filename: string
+  kind: 'financial_statement' | 'financial_document' | 'evidence' | 'ocr_result'
+  size_bytes: number
+  sha256: string
+  created_on: string
+  source_file_id: string | null
+  piece_number: number
+  extraction_mode: 'not_requested' | 'text' | 'partial_text' | 'ocr' | 'partial_ocr'
+  extraction_source_id: string | null
+}
+export interface FileCancelResult {
+  upload_id: string
+  cancelled: boolean
+}
+export interface FileReadParams {
+  profile?: string | null
+  project_id: string
+  file_id: string
+  offset: number
+}
+export interface FileReadResult {
+  file_id: string
+  offset: number
+  data_base64: string
+  size_bytes: number
+  sha256: string
+  filename: string
+}
+export interface FileTextParams {
+  profile?: string | null
+  project_id: string
+  file_id: string
+}
+export interface FileTextResult {
+  file_id: string
+  sha256: string
+  text: string
+  mode: string
+  untrusted: true
+  extraction_source_id: string | null
+}
+export interface LegalFinanceSnapshot {
+  project_id: string
+  as_of: string
+  currency: 'EUR'
+  totals: FinanceMetrics
+  matters: FinanceMatter[]
+  ageing: Record<string, number>
+  receivables: FinanceReceivable[]
+  pending_fees: FinancePendingFee[]
+  ready_fees: FinancePendingFee[]
+  operations: CabinetOperations
+  scope: string
+}
+export interface FinanceMetrics {
+  minutes: number
+  billable_minutes: number
+  unbilled_cents: number
+  pending_cents: number
+  cost_cents: number
+  billed_net_cents: number
+  cash_received_cents: number
+  outstanding_cents: number
+  missing_costs: number
+  margin_cents: number | null
+}
+export interface FinanceMatter {
+  minutes: number
+  billable_minutes: number
+  unbilled_cents: number
+  pending_cents: number
+  cost_cents: number
+  billed_net_cents: number
+  cash_received_cents: number
+  outstanding_cents: number
+  missing_costs: number
+  margin_cents: number | null
+  id: string
+  title: string
+  reference: string
+  client: string
+  budget: FinanceBudget | null
+  time_over_budget: boolean
+  cost_over_budget: boolean
+}
+export interface FinanceBudget {
+  budget_minutes: number
+  revenue_cents: number
+  cost_cents: number
+  version: number
+}
+export interface FinanceReceivable {
+  document_id: string
+  matter_id: string
+  client: string
+  reference: string
+  due_on: string
+  overdue_days: number
+  balance_cents: number
+  bucket: 'not_due' | 'days_1_30' | 'days_31_60' | 'days_61_90' | 'days_over_90'
+}
+export interface FinancePendingFee {
+  id: string
+  matter_id: string
+  description: string
+  net_cents: number
+  activity_date: string
+  expense_type: string
+  approval_status: 'draft' | 'approved' | 'rejected'
+}
+export interface CabinetOperations {
+  files: FinanceFile[]
+  billing_orders: BillingOrder[]
+  controls: FinancialControls
+  parties: BusinessParty[]
+  contracts: BusinessContract[]
+  purchases: PurchaseOrder[]
+  supplier_payments: SupplierPayment[]
+  timers: TimeTracker[]
+  supplier_balance_cents: number
+  scope: string
+}
+export interface BillingOrder {
+  id: string
+  project_id: string
+  matter_id: string
+  reference: string
+  created_on: string
+  purpose: string
+  fee_ids: string[]
+  source_digest: string
+  lines: BillingOrderLine[]
+  net_cents: number
+  tax_cents: number
+  total_cents: number
+  status: 'ready' | 'invoiced' | 'cancelled'
+  document_id: string | null
+  version: number
+}
+export interface BillingOrderLine {
+  id: string
+  description: string
+  kind: string
+  minutes: number
+  rate_cents: number
+  net_cents: number
+  tax_bps: number
+  tax_cents: number
+  responsible_user: string
+  activity_date: string
+}
+export interface FinancialControls {
+  imports: AccountingImport[]
+  objectives: FinancialObjective[]
+  forecasts: FinancialForecast[]
+  mileage: MileageRecord[]
+  reminders: ReminderDraft[]
+}
+export interface AccountingImport {
+  id: string
+  project_id: string
+  filename: string
+  digest: string
+  imported_on: string
+  row_count: number
+  debit_cents: number
+  credit_cents: number
+  revenue_cents: number
+  expense_cents: number
+  matched_references: string[]
+  unmatched_references: string[]
+}
+export interface FinancialObjective {
+  id: string
+  project_id: string
+  responsible_user: string
+  role: 'collaborator' | 'partner'
+  start_on: string
+  end_on: string
+  revenue_cents: number
+  margin_cents: number
+  minutes: number
+  version: number
+  actual_minutes: number
+  production_cents: number
+  missing_costs: number
+  production_margin_cents: number | null
+}
+export interface FinancialForecast {
+  id: string
+  project_id: string
+  month: string
+  label: string
+  incoming_cents: number
+  outgoing_cents: number
+  version: number
+}
+export interface MileageRecord {
+  id: string
+  project_id: string
+  matter_id: string
+  activity_date: string
+  responsible_user: string
+  route: string
+  distance_milli: number
+  rate_cents: number
+  rate_source: string
+  amount_cents: number
+  fee_id: string
+}
+export interface ReminderDraft {
+  id: string
+  project_id: string
+  document_id: string
+  level: number
+  created_on: string
+  balance_cents: number
+  content: string
+  status: 'draft'
+}
+export interface BusinessParty {
+  id: string
+  project_id: string
+  name: string
+  role: 'prospect' | 'supplier' | 'partner'
+  email: string
+  phone: string
+  address: string
+  notes: string
+  version: number
+}
+export interface BusinessContract {
+  id: string
+  project_id: string
+  party_id: string
+  title: string
+  start_on: string
+  end_on: string
+  amount_cents: number
+  status: 'draft' | 'active' | 'closed'
+  version: number
+}
+export interface PurchaseOrder {
+  id: string
+  project_id: string
+  supplier_id: string
+  reference: string
+  due_on: string
+  lines: PurchaseLineResult[]
+  net_cents: number
+  tax_cents: number
+  total_cents: number
+  status: 'draft' | 'ordered' | 'received' | 'closed' | 'cancelled'
+  version: number
+  paid_cents: number
+  balance_cents: number
+}
+export interface PurchaseLineResult {
+  description: string
+  quantity_milli?: number
+  unit_cents: number
+  tax_bps?: number
+  net_cents: number
+  tax_cents: number
+}
+export interface SupplierPayment {
+  id: string
+  project_id: string
+  order_id: string
+  amount_cents: number
+  paid_on: string
+  reference: string
+}
+export interface TimeTracker {
+  id: string
+  project_id: string
+  responsible_user: string
+  matter_id: string
+  description: string
+  rate_cents: number
+  cost_rate_cents: number | null
+  billable: number
+  seconds: number
+  running_since: string | null
+  status: 'running' | 'paused' | 'finished'
+  version: number
+  elapsed_seconds: number
+}
+export interface FinanceExport {
+  filename: string
+  content: string
+  mime: string
+  scope: string
+}
+export interface FinanceBudgetParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  matter_id: string
+  expected_version: number
+  budget_minutes?: number
+  revenue_cents?: number
+  cost_cents?: number
+}
+export interface FinanceReviewParams {
+  profile?: string | null
+  project_id: string
+  request_id: string
+  fee_id: string
+  approval_status: 'draft' | 'approved' | 'rejected'
+  reason: string
+}
+export interface FinancePrepareParams {
+  profile?: string | null
+  project_id: string
+  action: 'fee.add' | 'finance.budget.save' | 'finance.fee.review' | 'document.create' | 'payment.add' | 'business.party.save' | 'business.contract.save' | 'business.purchase.save' | 'business.purchase.transition' | 'business.supplier_payment.add' | 'finance.timer.start' | 'finance.timer.change' | 'finance.file.extract' | 'finance.file.stamp' | 'finance.billing_order.create' | 'finance.billing_order.invoice' | 'finance.billing_order.cancel' | 'finance.fec.import' | 'finance.objective.save' | 'finance.forecast.save' | 'finance.mileage.add' | 'finance.reminder.prepare'
+  payload: Record<string, unknown>
+  request_id: string
+}
+export interface FinancePreparation {
+  project_id: string
+  action: string
+  params: Record<string, unknown>
+  description: string
 }
 /** ``word`` is the token under the cursor (``@`` prefix = context reference); ``cwd`` / ``session_id`` pick the directory the listing resolves against. */
 export interface CompletePathParams {
@@ -5539,12 +6072,40 @@ export interface RpcMethods {
   /** Pre-render the /journey timeline (frames + legend/summary) so the TUI walks it locally. */
   'learning.frames': { params: LearningFramesParams; result: LearningFramesResult }
   'legal.act.save': { params: LegalActParams; result: LegalSnapshot }
+  'legal.business.contract.save': { params: ContractParams; result: LegalSnapshot }
+  'legal.business.party.save': { params: PartyParams; result: LegalSnapshot }
+  'legal.business.purchase.save': { params: PurchaseParams; result: LegalSnapshot }
+  'legal.business.purchase.transition': { params: PurchaseTransitionParams; result: LegalSnapshot }
+  'legal.business.supplier_payment.add': { params: SupplierPaymentParams; result: LegalSnapshot }
   'legal.catalog': { params: ProfileParams; result: LegalCatalog }
   'legal.client.save': { params: LegalClientParams; result: LegalSnapshot }
   'legal.document.create': { params: LegalDocumentParams; result: LegalSnapshot }
   'legal.document.credit': { params: LegalCreditParams; result: LegalSnapshot }
   'legal.fee.add': { params: LegalFeeParams; result: LegalSnapshot }
   'legal.fee_code.save': { params: LegalFeeCodeParams; result: LegalSnapshot }
+  'legal.finance.billing_order.cancel': { params: BillingOrderChangeParams; result: LegalSnapshot }
+  'legal.finance.billing_order.create': { params: BillingOrderCreateParams; result: LegalSnapshot }
+  'legal.finance.billing_order.invoice': { params: BillingOrderInvoiceParams; result: LegalSnapshot }
+  'legal.finance.budget.save': { params: FinanceBudgetParams; result: LegalSnapshot }
+  'legal.finance.export': { params: LegalProjectParams; result: FinanceExport }
+  'legal.finance.fec.import': { params: FecImportParams; result: LegalSnapshot }
+  'legal.finance.fee.review': { params: FinanceReviewParams; result: LegalSnapshot }
+  'legal.finance.file.cancel': { params: FileUploadParams; result: FileCancelResult }
+  'legal.finance.file.chunk': { params: FileChunkParams; result: FileChunkResult }
+  'legal.finance.file.extract': { params: FileMutationParams; result: LegalSnapshot }
+  'legal.finance.file.finish': { params: FileUploadParams; result: FinanceFile }
+  'legal.finance.file.read': { params: FileReadParams; result: FileReadResult }
+  'legal.finance.file.stamp': { params: FileStampParams; result: LegalSnapshot }
+  'legal.finance.file.start': { params: FileStartParams; result: FileStartResult }
+  'legal.finance.file.text': { params: FileTextParams; result: FileTextResult }
+  'legal.finance.forecast.save': { params: ForecastParams; result: LegalSnapshot }
+  'legal.finance.mileage.add': { params: MileageParams; result: LegalSnapshot }
+  'legal.finance.objective.save': { params: ObjectiveParams; result: LegalSnapshot }
+  'legal.finance.prepare': { params: FinancePrepareParams; result: FinancePreparation }
+  'legal.finance.reminder.prepare': { params: ReminderParams; result: LegalSnapshot }
+  'legal.finance.snapshot': { params: LegalProjectParams; result: LegalFinanceSnapshot }
+  'legal.finance.timer.change': { params: TimerChangeParams; result: LegalSnapshot }
+  'legal.finance.timer.start': { params: TimerStartParams; result: LegalSnapshot }
   'legal.firm.settings.set': { params: LegalFirmSettingsParams; result: LegalSnapshot }
   'legal.library.import': { params: LegalLibraryImportParams; result: LegalSnapshot }
   'legal.matter.save': { params: LegalMatterParams; result: LegalSnapshot }
@@ -5975,12 +6536,40 @@ export const RPC_METHODS = [
   'learning.edit',
   'learning.frames',
   'legal.act.save',
+  'legal.business.contract.save',
+  'legal.business.party.save',
+  'legal.business.purchase.save',
+  'legal.business.purchase.transition',
+  'legal.business.supplier_payment.add',
   'legal.catalog',
   'legal.client.save',
   'legal.document.create',
   'legal.document.credit',
   'legal.fee.add',
   'legal.fee_code.save',
+  'legal.finance.billing_order.cancel',
+  'legal.finance.billing_order.create',
+  'legal.finance.billing_order.invoice',
+  'legal.finance.budget.save',
+  'legal.finance.export',
+  'legal.finance.fec.import',
+  'legal.finance.fee.review',
+  'legal.finance.file.cancel',
+  'legal.finance.file.chunk',
+  'legal.finance.file.extract',
+  'legal.finance.file.finish',
+  'legal.finance.file.read',
+  'legal.finance.file.stamp',
+  'legal.finance.file.start',
+  'legal.finance.file.text',
+  'legal.finance.forecast.save',
+  'legal.finance.mileage.add',
+  'legal.finance.objective.save',
+  'legal.finance.prepare',
+  'legal.finance.reminder.prepare',
+  'legal.finance.snapshot',
+  'legal.finance.timer.change',
+  'legal.finance.timer.start',
   'legal.firm.settings.set',
   'legal.library.import',
   'legal.matter.save',

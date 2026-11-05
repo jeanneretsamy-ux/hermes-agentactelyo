@@ -73,7 +73,8 @@
     "electron@40.10.2": true,
     "fsevents@2.3.2": true,
     "fsevents@2.3.3": true,
-    "get-windows@9.3.0": true
+    "get-windows@9.3.0": true,
+    "tesseract.js@7.0.0": false
   },
   "dependencies": {
     "js-yaml": "4.3.1",
