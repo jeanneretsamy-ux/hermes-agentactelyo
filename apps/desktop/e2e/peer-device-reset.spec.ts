@@ -136,6 +136,9 @@ async function expectReady(page: Page, label: string): Promise<void> {
 async function switchTo(page: Page, label: string): Promise<void> {
   await gateway(page).click()
   await page.getByRole('menuitemradio', { name: new RegExp(label) }).click()
+  if (label === 'This device') {
+    await page.getByRole('dialog', { name: 'Switch to This device?' }).getByRole('button', { name: 'Switch', exact: true }).click()
+  }
   await expectReady(page, label)
 }
 

@@ -116,7 +116,7 @@ jobs:
             # failures instead of stopping at each stale fixture in turn.
             # A green run still requires the complete suite; retries cannot mask it.
             npm run build && xvfb-run -a --server-args="-screen 0 1280x1024x24" \
-              npx playwright test --reporter=list --max-failures=5 --retries=0
+              npx playwright test --reporter=list --max-failures=10 --retries=0
           fi
         env:
           CI: 'true'

@@ -59,6 +59,9 @@ try {
   await page.keyboard.press('Escape')
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
+  if (process.env.ACTELYO_RELEASE_VERSION) {
+    assert.equal(identity.version, process.env.ACTELYO_RELEASE_VERSION, 'Installed app version differs from the requested installer version')
+  }
     const cabinet = page.getByRole('navigation', { name: 'Domaines du cabinet juridique' })
     await cabinet.getByText('Droit des Sociétés', { exact: true }).click()
     await cabinet.getByRole('button', { name: '+ Créer un espace Droit des Sociétés', exact: true }).click()

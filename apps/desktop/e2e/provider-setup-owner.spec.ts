@@ -232,7 +232,14 @@ async function selectGateway(page: Page, id: string, label: string, profile: str
   const group = gatewayGroup(page, id)
   await expect(group).toBeVisible({ timeout: 60_000 })
   const active = await group.getAttribute('data-active') === 'true'
-  await group.getByRole('button', { name: active ? profile : `${profile} · ${label}`, exact: true }).click()
+  const localDevice = id === 'local' && !active && profile === 'default'
+  await group.getByRole('button', {
+    name: localDevice ? /^This device \(local backend/ : active ? profile : `${profile} · ${label}`,
+    exact: !localDevice
+  }).click()
+  if (localDevice) {
+    await page.getByRole('dialog', { name: 'Switch to This device?' }).getByRole('button', { name: 'Switch', exact: true }).click()
+  }
   await expect(page.getByRole('button', { name: /^Registered gateways: / })).toHaveAttribute(
     'aria-label',
     `Registered gateways: ${label}`,

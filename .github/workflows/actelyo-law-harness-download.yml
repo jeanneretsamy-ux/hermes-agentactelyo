@@ -163,6 +163,7 @@ jobs:
             $innoInstaller = Join-Path $env:RUNNER_TEMP "innosetup-$innoVersion-x64.exe"
             $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe"
             Invoke-WebRequest -Uri $innoUrl -OutFile $innoInstaller
+            if ((Get-FileHash -LiteralPath $innoInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Pinned Inno Setup installer digest mismatch' }
             $signature = Get-AuthenticodeSignature -FilePath $innoInstaller
             if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B\.V\.') {
               throw 'Inno Setup installer signature or publisher verification failed'
