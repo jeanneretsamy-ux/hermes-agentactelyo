@@ -1753,6 +1753,96 @@
       }
     },
     {
+      "name": "legal.business.contract.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ContractParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.business.party.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/PartyParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.business.purchase.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/PurchaseParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.business.purchase.transition",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/PurchaseTransitionParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.business.supplier_payment.add",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/SupplierPaymentParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
       "name": "legal.catalog",
       "summary": "",
       "params": [
@@ -1850,6 +1940,420 @@
           "name": "params",
           "schema": {
             "$ref": "#/components/schemas/LegalFeeCodeParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.billing_order.cancel",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/BillingOrderChangeParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.billing_order.create",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/BillingOrderCreateParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.billing_order.invoice",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/BillingOrderInvoiceParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.budget.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FinanceBudgetParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.export",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalProjectParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FinanceExport"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.fec.import",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FecImportParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.fee.review",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FinanceReviewParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.cancel",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileUploadParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FileCancelResult"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.chunk",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileChunkParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FileChunkResult"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.extract",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileMutationParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.finish",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileUploadParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FinanceFile"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.read",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileReadParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FileReadResult"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.stamp",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileStampParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.start",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileStartParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FileStartResult"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.file.text",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FileTextParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FileTextResult"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.forecast.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ForecastParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.mileage.add",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/MileageParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.objective.save",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ObjectiveParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.prepare",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/FinancePrepareParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/FinancePreparation"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.reminder.prepare",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/ReminderParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.snapshot",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/LegalProjectParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalFinanceSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.timer.change",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/TimerChangeParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/LegalSnapshot"
+        }
+      }
+    },
+    {
+      "name": "legal.finance.timer.start",
+      "summary": "",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/TimerStartParams"
           }
         }
       ],
@@ -4956,6 +5460,81 @@
         "title": "AccountOwner",
         "type": "object"
       },
+      "AccountingImport": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "digest": {
+            "title": "Digest",
+            "type": "string"
+          },
+          "imported_on": {
+            "title": "Imported On",
+            "type": "string"
+          },
+          "row_count": {
+            "title": "Row Count",
+            "type": "integer"
+          },
+          "debit_cents": {
+            "title": "Debit Cents",
+            "type": "integer"
+          },
+          "credit_cents": {
+            "title": "Credit Cents",
+            "type": "integer"
+          },
+          "revenue_cents": {
+            "title": "Revenue Cents",
+            "type": "integer"
+          },
+          "expense_cents": {
+            "title": "Expense Cents",
+            "type": "integer"
+          },
+          "matched_references": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matched References",
+            "type": "array"
+          },
+          "unmatched_references": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched References",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "filename",
+          "digest",
+          "imported_on",
+          "row_count",
+          "debit_cents",
+          "credit_cents",
+          "revenue_cents",
+          "expense_cents",
+          "matched_references",
+          "unmatched_references"
+        ],
+        "title": "AccountingImport",
+        "type": "object"
+      },
       "ActiveIdResult": {
         "additionalProperties": false,
         "properties": {
@@ -6917,6 +7496,334 @@
         "title": "BillingMutationResult",
         "type": "object"
       },
+      "BillingOrder": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "created_on": {
+            "title": "Created On",
+            "type": "string"
+          },
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          },
+          "fee_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fee Ids",
+            "type": "array"
+          },
+          "source_digest": {
+            "title": "Source Digest",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/BillingOrderLine"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "invoiced",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "matter_id",
+          "reference",
+          "created_on",
+          "purpose",
+          "fee_ids",
+          "source_digest",
+          "lines",
+          "net_cents",
+          "tax_cents",
+          "total_cents",
+          "status",
+          "document_id",
+          "version"
+        ],
+        "title": "BillingOrder",
+        "type": "object"
+      },
+      "BillingOrderChangeParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "billing_order_id": {
+            "title": "Billing Order Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "billing_order_id",
+          "expected_version"
+        ],
+        "title": "BillingOrderChangeParams",
+        "type": "object"
+      },
+      "BillingOrderCreateParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "fee_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Fee Ids",
+            "type": "array"
+          },
+          "purpose": {
+            "default": "standard",
+            "enum": [
+              "standard",
+              "provision_fees",
+              "provision_expenses",
+              "provision_expenses_fees"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "fee_ids"
+        ],
+        "title": "BillingOrderCreateParams",
+        "type": "object"
+      },
+      "BillingOrderInvoiceParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "billing_order_id": {
+            "title": "Billing Order Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "template_id": {
+            "default": "classique",
+            "enum": [
+              "classique",
+              "synthese",
+              "detaille"
+            ],
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "billing_order_id",
+          "expected_version",
+          "due_on"
+        ],
+        "title": "BillingOrderInvoiceParams",
+        "type": "object"
+      },
+      "BillingOrderLine": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "rate_cents": {
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          },
+          "responsible_user": {
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "activity_date": {
+            "title": "Activity Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "kind",
+          "minutes",
+          "rate_cents",
+          "net_cents",
+          "tax_bps",
+          "tax_cents",
+          "responsible_user",
+          "activity_date"
+        ],
+        "title": "BillingOrderLine",
+        "type": "object"
+      },
       "BillingPaymentMethod": {
         "additionalProperties": false,
         "description": "``_serialize_payment_method``: each kind emits only its own fields (a ``card`` never carries\n``email``; ``unknown`` carries what the server called it in ``raw_kind``).",
@@ -8183,6 +9090,203 @@
           "level"
         ],
         "title": "BrowserProgressPayload",
+        "type": "object"
+      },
+      "BusinessContract": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "party_id": {
+            "title": "Party Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "start_on": {
+            "title": "Start On",
+            "type": "string"
+          },
+          "end_on": {
+            "title": "End On",
+            "type": "string"
+          },
+          "amount_cents": {
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "active",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "party_id",
+          "title",
+          "start_on",
+          "end_on",
+          "amount_cents",
+          "status",
+          "version"
+        ],
+        "title": "BusinessContract",
+        "type": "object"
+      },
+      "BusinessParty": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "prospect",
+              "supplier",
+              "partner"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "phone": {
+            "title": "Phone",
+            "type": "string"
+          },
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "name",
+          "role",
+          "email",
+          "phone",
+          "address",
+          "notes",
+          "version"
+        ],
+        "title": "BusinessParty",
+        "type": "object"
+      },
+      "CabinetOperations": {
+        "additionalProperties": false,
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceFile"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "billing_orders": {
+            "items": {
+              "$ref": "#/components/schemas/BillingOrder"
+            },
+            "title": "Billing Orders",
+            "type": "array"
+          },
+          "controls": {
+            "$ref": "#/components/schemas/FinancialControls"
+          },
+          "parties": {
+            "items": {
+              "$ref": "#/components/schemas/BusinessParty"
+            },
+            "title": "Parties",
+            "type": "array"
+          },
+          "contracts": {
+            "items": {
+              "$ref": "#/components/schemas/BusinessContract"
+            },
+            "title": "Contracts",
+            "type": "array"
+          },
+          "purchases": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseOrder"
+            },
+            "title": "Purchases",
+            "type": "array"
+          },
+          "supplier_payments": {
+            "items": {
+              "$ref": "#/components/schemas/SupplierPayment"
+            },
+            "title": "Supplier Payments",
+            "type": "array"
+          },
+          "timers": {
+            "items": {
+              "$ref": "#/components/schemas/TimeTracker"
+            },
+            "title": "Timers",
+            "type": "array"
+          },
+          "supplier_balance_cents": {
+            "title": "Supplier Balance Cents",
+            "type": "integer"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "files",
+          "billing_orders",
+          "controls",
+          "parties",
+          "contracts",
+          "purchases",
+          "supplier_payments",
+          "timers",
+          "supplier_balance_cents",
+          "scope"
+        ],
+        "title": "CabinetOperations",
         "type": "object"
       },
       "CapabilityEntry": {
@@ -11842,6 +12946,98 @@
         "title": "ContextFileSource",
         "type": "object"
       },
+      "ContractParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "expected_version": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "party_id": {
+            "title": "Party Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "start_on": {
+            "title": "Start On",
+            "type": "string"
+          },
+          "end_on": {
+            "title": "End On",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "active",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "party_id",
+          "title",
+          "start_on",
+          "end_on",
+          "amount_cents"
+        ],
+        "title": "ContractParams",
+        "type": "object"
+      },
       "ControllerScope": {
         "additionalProperties": false,
         "properties": {
@@ -14419,6 +15615,54 @@
         "title": "FailedDelegation",
         "type": "object"
       },
+      "FecImportParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "filename": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "content": {
+            "maxLength": 60000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "filename",
+          "content"
+        ],
+        "title": "FecImportParams",
+        "type": "object"
+      },
       "FileAttachParams": {
         "additionalProperties": false,
         "description": "``path`` when the file is gateway-visible, else ``data_url`` carries the bytes; ``name`` labels\nan uploaded file.",
@@ -14519,6 +15763,1368 @@
           "uploaded"
         ],
         "title": "FileAttachResult",
+        "type": "object"
+      },
+      "FileCancelResult": {
+        "additionalProperties": false,
+        "properties": {
+          "upload_id": {
+            "title": "Upload Id",
+            "type": "string"
+          },
+          "cancelled": {
+            "title": "Cancelled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "upload_id",
+          "cancelled"
+        ],
+        "title": "FileCancelResult",
+        "type": "object"
+      },
+      "FileChunkParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "upload_id": {
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Upload Id",
+            "type": "string"
+          },
+          "sequence": {
+            "maximum": 138,
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "data_base64": {
+            "maxLength": 48000,
+            "minLength": 1,
+            "title": "Data Base64",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "upload_id",
+          "sequence",
+          "data_base64"
+        ],
+        "title": "FileChunkParams",
+        "type": "object"
+      },
+      "FileChunkResult": {
+        "additionalProperties": false,
+        "properties": {
+          "upload_id": {
+            "title": "Upload Id",
+            "type": "string"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "accepted_bytes": {
+            "title": "Accepted Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "upload_id",
+          "sequence",
+          "accepted_bytes"
+        ],
+        "title": "FileChunkResult",
+        "type": "object"
+      },
+      "FileMutationParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "file_id": {
+            "title": "File Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "file_id"
+        ],
+        "title": "FileMutationParams",
+        "type": "object"
+      },
+      "FileReadParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "file_id": {
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "File Id",
+            "type": "string"
+          },
+          "offset": {
+            "maximum": 5000000,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "file_id",
+          "offset"
+        ],
+        "title": "FileReadParams",
+        "type": "object"
+      },
+      "FileReadResult": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "title": "File Id",
+            "type": "string"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "data_base64": {
+            "title": "Data Base64",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_id",
+          "offset",
+          "data_base64",
+          "size_bytes",
+          "sha256",
+          "filename"
+        ],
+        "title": "FileReadResult",
+        "type": "object"
+      },
+      "FileStampParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "file_id": {
+            "title": "File Id",
+            "type": "string"
+          },
+          "piece_number": {
+            "maximum": 999999,
+            "minimum": 1,
+            "title": "Piece Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "file_id",
+          "piece_number"
+        ],
+        "title": "FileStampParams",
+        "type": "object"
+      },
+      "FileStartParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "filename": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "financial_statement",
+              "financial_document",
+              "evidence",
+              "ocr_result"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "size_bytes": {
+            "maximum": 5000000,
+            "minimum": 1,
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "filename",
+          "kind",
+          "size_bytes",
+          "sha256"
+        ],
+        "title": "FileStartParams",
+        "type": "object"
+      },
+      "FileStartResult": {
+        "additionalProperties": false,
+        "properties": {
+          "upload_id": {
+            "title": "Upload Id",
+            "type": "string"
+          },
+          "chunk_bytes": {
+            "title": "Chunk Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "upload_id",
+          "chunk_bytes"
+        ],
+        "title": "FileStartResult",
+        "type": "object"
+      },
+      "FileTextParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "file_id": {
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "File Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "file_id"
+        ],
+        "title": "FileTextParams",
+        "type": "object"
+      },
+      "FileTextResult": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "title": "File Id",
+            "type": "string"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "untrusted": {
+            "const": true,
+            "title": "Untrusted",
+            "type": "boolean"
+          },
+          "extraction_source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extraction Source Id"
+          }
+        },
+        "required": [
+          "file_id",
+          "sha256",
+          "text",
+          "mode",
+          "untrusted",
+          "extraction_source_id"
+        ],
+        "title": "FileTextResult",
+        "type": "object"
+      },
+      "FileUploadParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "upload_id": {
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Upload Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "upload_id"
+        ],
+        "title": "FileUploadParams",
+        "type": "object"
+      },
+      "FinanceBudget": {
+        "additionalProperties": false,
+        "properties": {
+          "budget_minutes": {
+            "title": "Budget Minutes",
+            "type": "integer"
+          },
+          "revenue_cents": {
+            "title": "Revenue Cents",
+            "type": "integer"
+          },
+          "cost_cents": {
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "budget_minutes",
+          "revenue_cents",
+          "cost_cents",
+          "version"
+        ],
+        "title": "FinanceBudget",
+        "type": "object"
+      },
+      "FinanceBudgetParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "budget_minutes": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Budget Minutes",
+            "type": "integer"
+          },
+          "revenue_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Revenue Cents",
+            "type": "integer"
+          },
+          "cost_cents": {
+            "default": 0,
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Cost Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "expected_version"
+        ],
+        "title": "FinanceBudgetParams",
+        "type": "object"
+      },
+      "FinanceExport": {
+        "additionalProperties": false,
+        "properties": {
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "mime": {
+            "title": "Mime",
+            "type": "string"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename",
+          "content",
+          "mime",
+          "scope"
+        ],
+        "title": "FinanceExport",
+        "type": "object"
+      },
+      "FinanceFile": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "financial_statement",
+              "financial_document",
+              "evidence",
+              "ocr_result"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "created_on": {
+            "title": "Created On",
+            "type": "string"
+          },
+          "source_file_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source File Id"
+          },
+          "piece_number": {
+            "title": "Piece Number",
+            "type": "integer"
+          },
+          "extraction_mode": {
+            "enum": [
+              "not_requested",
+              "text",
+              "partial_text",
+              "ocr",
+              "partial_ocr"
+            ],
+            "title": "Extraction Mode",
+            "type": "string"
+          },
+          "extraction_source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extraction Source Id"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "matter_id",
+          "filename",
+          "kind",
+          "size_bytes",
+          "sha256",
+          "created_on",
+          "source_file_id",
+          "piece_number",
+          "extraction_mode",
+          "extraction_source_id"
+        ],
+        "title": "FinanceFile",
+        "type": "object"
+      },
+      "FinanceMatter": {
+        "additionalProperties": false,
+        "properties": {
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "billable_minutes": {
+            "title": "Billable Minutes",
+            "type": "integer"
+          },
+          "unbilled_cents": {
+            "title": "Unbilled Cents",
+            "type": "integer"
+          },
+          "pending_cents": {
+            "title": "Pending Cents",
+            "type": "integer"
+          },
+          "cost_cents": {
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "billed_net_cents": {
+            "title": "Billed Net Cents",
+            "type": "integer"
+          },
+          "cash_received_cents": {
+            "title": "Cash Received Cents",
+            "type": "integer"
+          },
+          "outstanding_cents": {
+            "title": "Outstanding Cents",
+            "type": "integer"
+          },
+          "missing_costs": {
+            "title": "Missing Costs",
+            "type": "integer"
+          },
+          "margin_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Cents"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "client": {
+            "title": "Client",
+            "type": "string"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FinanceBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "time_over_budget": {
+            "title": "Time Over Budget",
+            "type": "boolean"
+          },
+          "cost_over_budget": {
+            "title": "Cost Over Budget",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "minutes",
+          "billable_minutes",
+          "unbilled_cents",
+          "pending_cents",
+          "cost_cents",
+          "billed_net_cents",
+          "cash_received_cents",
+          "outstanding_cents",
+          "missing_costs",
+          "margin_cents",
+          "id",
+          "title",
+          "reference",
+          "client",
+          "budget",
+          "time_over_budget",
+          "cost_over_budget"
+        ],
+        "title": "FinanceMatter",
+        "type": "object"
+      },
+      "FinanceMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "billable_minutes": {
+            "title": "Billable Minutes",
+            "type": "integer"
+          },
+          "unbilled_cents": {
+            "title": "Unbilled Cents",
+            "type": "integer"
+          },
+          "pending_cents": {
+            "title": "Pending Cents",
+            "type": "integer"
+          },
+          "cost_cents": {
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "billed_net_cents": {
+            "title": "Billed Net Cents",
+            "type": "integer"
+          },
+          "cash_received_cents": {
+            "title": "Cash Received Cents",
+            "type": "integer"
+          },
+          "outstanding_cents": {
+            "title": "Outstanding Cents",
+            "type": "integer"
+          },
+          "missing_costs": {
+            "title": "Missing Costs",
+            "type": "integer"
+          },
+          "margin_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Cents"
+          }
+        },
+        "required": [
+          "minutes",
+          "billable_minutes",
+          "unbilled_cents",
+          "pending_cents",
+          "cost_cents",
+          "billed_net_cents",
+          "cash_received_cents",
+          "outstanding_cents",
+          "missing_costs",
+          "margin_cents"
+        ],
+        "title": "FinanceMetrics",
+        "type": "object"
+      },
+      "FinancePendingFee": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "activity_date": {
+            "title": "Activity Date",
+            "type": "string"
+          },
+          "expense_type": {
+            "title": "Expense Type",
+            "type": "string"
+          },
+          "approval_status": {
+            "enum": [
+              "draft",
+              "approved",
+              "rejected"
+            ],
+            "title": "Approval Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "matter_id",
+          "description",
+          "net_cents",
+          "activity_date",
+          "expense_type",
+          "approval_status"
+        ],
+        "title": "FinancePendingFee",
+        "type": "object"
+      },
+      "FinancePreparation": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": true,
+            "title": "Params",
+            "type": "object"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action",
+          "params",
+          "description"
+        ],
+        "title": "FinancePreparation",
+        "type": "object"
+      },
+      "FinancePrepareParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "action": {
+            "enum": [
+              "fee.add",
+              "finance.budget.save",
+              "finance.fee.review",
+              "document.create",
+              "payment.add",
+              "business.party.save",
+              "business.contract.save",
+              "business.purchase.save",
+              "business.purchase.transition",
+              "business.supplier_payment.add",
+              "finance.timer.start",
+              "finance.timer.change",
+              "finance.file.extract",
+              "finance.file.stamp",
+              "finance.billing_order.create",
+              "finance.billing_order.invoice",
+              "finance.billing_order.cancel",
+              "finance.fec.import",
+              "finance.objective.save",
+              "finance.forecast.save",
+              "finance.mileage.add",
+              "finance.reminder.prepare"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action",
+          "payload",
+          "request_id"
+        ],
+        "title": "FinancePrepareParams",
+        "type": "object"
+      },
+      "FinanceReceivable": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "client": {
+            "title": "Client",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "overdue_days": {
+            "title": "Overdue Days",
+            "type": "integer"
+          },
+          "balance_cents": {
+            "title": "Balance Cents",
+            "type": "integer"
+          },
+          "bucket": {
+            "enum": [
+              "not_due",
+              "days_1_30",
+              "days_31_60",
+              "days_61_90",
+              "days_over_90"
+            ],
+            "title": "Bucket",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "matter_id",
+          "client",
+          "reference",
+          "due_on",
+          "overdue_days",
+          "balance_cents",
+          "bucket"
+        ],
+        "title": "FinanceReceivable",
+        "type": "object"
+      },
+      "FinanceReviewParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "fee_id": {
+            "title": "Fee Id",
+            "type": "string"
+          },
+          "approval_status": {
+            "enum": [
+              "draft",
+              "approved",
+              "rejected"
+            ],
+            "title": "Approval Status",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "fee_id",
+          "approval_status",
+          "reason"
+        ],
+        "title": "FinanceReviewParams",
+        "type": "object"
+      },
+      "FinancialControls": {
+        "additionalProperties": false,
+        "properties": {
+          "imports": {
+            "items": {
+              "$ref": "#/components/schemas/AccountingImport"
+            },
+            "title": "Imports",
+            "type": "array"
+          },
+          "objectives": {
+            "items": {
+              "$ref": "#/components/schemas/FinancialObjective"
+            },
+            "title": "Objectives",
+            "type": "array"
+          },
+          "forecasts": {
+            "items": {
+              "$ref": "#/components/schemas/FinancialForecast"
+            },
+            "title": "Forecasts",
+            "type": "array"
+          },
+          "mileage": {
+            "items": {
+              "$ref": "#/components/schemas/MileageRecord"
+            },
+            "title": "Mileage",
+            "type": "array"
+          },
+          "reminders": {
+            "items": {
+              "$ref": "#/components/schemas/ReminderDraft"
+            },
+            "title": "Reminders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "imports",
+          "objectives",
+          "forecasts",
+          "mileage",
+          "reminders"
+        ],
+        "title": "FinancialControls",
+        "type": "object"
+      },
+      "FinancialForecast": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "incoming_cents": {
+            "title": "Incoming Cents",
+            "type": "integer"
+          },
+          "outgoing_cents": {
+            "title": "Outgoing Cents",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "month",
+          "label",
+          "incoming_cents",
+          "outgoing_cents",
+          "version"
+        ],
+        "title": "FinancialForecast",
+        "type": "object"
+      },
+      "FinancialObjective": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "responsible_user": {
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "collaborator",
+              "partner"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "start_on": {
+            "title": "Start On",
+            "type": "string"
+          },
+          "end_on": {
+            "title": "End On",
+            "type": "string"
+          },
+          "revenue_cents": {
+            "title": "Revenue Cents",
+            "type": "integer"
+          },
+          "margin_cents": {
+            "title": "Margin Cents",
+            "type": "integer"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "actual_minutes": {
+            "title": "Actual Minutes",
+            "type": "integer"
+          },
+          "production_cents": {
+            "title": "Production Cents",
+            "type": "integer"
+          },
+          "missing_costs": {
+            "title": "Missing Costs",
+            "type": "integer"
+          },
+          "production_margin_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Production Margin Cents"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "responsible_user",
+          "role",
+          "start_on",
+          "end_on",
+          "revenue_cents",
+          "margin_cents",
+          "minutes",
+          "version",
+          "actual_minutes",
+          "production_cents",
+          "missing_costs",
+          "production_margin_cents"
+        ],
+        "title": "FinancialObjective",
+        "type": "object"
+      },
+      "ForecastParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "month": {
+            "maxLength": 7,
+            "minLength": 7,
+            "title": "Month",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "incoming_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Incoming Cents",
+            "type": "integer"
+          },
+          "outgoing_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Outgoing Cents",
+            "type": "integer"
+          },
+          "expected_version": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "month",
+          "label",
+          "incoming_cents",
+          "outgoing_cents"
+        ],
+        "title": "ForecastParams",
         "type": "object"
       },
       "ForeignSessionRow": {
@@ -18399,6 +21005,7 @@
             "enum": [
               "standard",
               "provision_fees",
+              "provision_expenses",
               "provision_expenses_fees"
             ],
             "title": "Purpose",
@@ -18631,6 +21238,50 @@
           "billable": {
             "title": "Billable",
             "type": "boolean"
+          },
+          "cost_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cost Cents"
+          },
+          "cost_rate_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cost Rate Cents"
+          },
+          "approval_status": {
+            "default": "approved",
+            "enum": [
+              "draft",
+              "approved",
+              "rejected"
+            ],
+            "title": "Approval Status",
+            "type": "string"
+          },
+          "expense_type": {
+            "default": "",
+            "enum": [
+              "",
+              "office",
+              "disbursement"
+            ],
+            "title": "Expense Type",
+            "type": "string"
           }
         },
         "required": [
@@ -18863,6 +21514,54 @@
             "default": true,
             "title": "Billable",
             "type": "boolean"
+          },
+          "cost_cents": {
+            "anyOf": [
+              {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cost Cents"
+          },
+          "cost_rate_cents": {
+            "anyOf": [
+              {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cost Rate Cents"
+          },
+          "approval_status": {
+            "default": "approved",
+            "enum": [
+              "draft",
+              "approved",
+              "rejected"
+            ],
+            "title": "Approval Status",
+            "type": "string"
+          },
+          "expense_type": {
+            "default": "",
+            "enum": [
+              "",
+              "office",
+              "disbursement"
+            ],
+            "title": "Expense Type",
+            "type": "string"
           }
         },
         "required": [
@@ -18873,6 +21572,84 @@
           "kind"
         ],
         "title": "LegalFeeParams",
+        "type": "object"
+      },
+      "LegalFinanceSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "currency": {
+            "const": "EUR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/FinanceMetrics"
+          },
+          "matters": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceMatter"
+            },
+            "title": "Matters",
+            "type": "array"
+          },
+          "ageing": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Ageing",
+            "type": "object"
+          },
+          "receivables": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceReceivable"
+            },
+            "title": "Receivables",
+            "type": "array"
+          },
+          "pending_fees": {
+            "items": {
+              "$ref": "#/components/schemas/FinancePendingFee"
+            },
+            "title": "Pending Fees",
+            "type": "array"
+          },
+          "ready_fees": {
+            "items": {
+              "$ref": "#/components/schemas/FinancePendingFee"
+            },
+            "title": "Ready Fees",
+            "type": "array"
+          },
+          "operations": {
+            "$ref": "#/components/schemas/CabinetOperations"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "as_of",
+          "currency",
+          "totals",
+          "matters",
+          "ageing",
+          "receivables",
+          "pending_fees",
+          "ready_fees",
+          "operations",
+          "scope"
+        ],
+        "title": "LegalFinanceSnapshot",
         "type": "object"
       },
       "LegalFirmSettings": {
@@ -22037,6 +24814,154 @@
         "title": "MessageReactionPayload",
         "type": "object"
       },
+      "MileageParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "activity_date": {
+            "title": "Activity Date",
+            "type": "string"
+          },
+          "responsible_user": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "route": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Route",
+            "type": "string"
+          },
+          "distance_milli": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Distance Milli",
+            "type": "integer"
+          },
+          "rate_cents": {
+            "maximum": 100000,
+            "minimum": 1,
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "rate_source": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Rate Source",
+            "type": "string"
+          },
+          "billable": {
+            "default": false,
+            "title": "Billable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "activity_date",
+          "responsible_user",
+          "route",
+          "distance_milli",
+          "rate_cents",
+          "rate_source"
+        ],
+        "title": "MileageParams",
+        "type": "object"
+      },
+      "MileageRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "activity_date": {
+            "title": "Activity Date",
+            "type": "string"
+          },
+          "responsible_user": {
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "route": {
+            "title": "Route",
+            "type": "string"
+          },
+          "distance_milli": {
+            "title": "Distance Milli",
+            "type": "integer"
+          },
+          "rate_cents": {
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "rate_source": {
+            "title": "Rate Source",
+            "type": "string"
+          },
+          "amount_cents": {
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "fee_id": {
+            "title": "Fee Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "matter_id",
+          "activity_date",
+          "responsible_user",
+          "route",
+          "distance_milli",
+          "rate_cents",
+          "rate_source",
+          "amount_cents",
+          "fee_id"
+        ],
+        "title": "MileageRecord",
+        "type": "object"
+      },
       "MoaAggregatingPayload": {
         "additionalProperties": false,
         "properties": {
@@ -22789,6 +25714,94 @@
         "title": "NotificationShowPayload",
         "type": "object"
       },
+      "ObjectiveParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "responsible_user": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "collaborator",
+              "partner"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "start_on": {
+            "title": "Start On",
+            "type": "string"
+          },
+          "end_on": {
+            "title": "End On",
+            "type": "string"
+          },
+          "revenue_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Revenue Cents",
+            "type": "integer"
+          },
+          "margin_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Margin Cents",
+            "type": "integer"
+          },
+          "minutes": {
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "expected_version": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "responsible_user",
+          "role",
+          "start_on",
+          "end_on",
+          "revenue_cents",
+          "margin_cents",
+          "minutes"
+        ],
+        "title": "ObjectiveParams",
+        "type": "object"
+      },
       "OkResult": {
         "additionalProperties": false,
         "properties": {
@@ -23079,6 +26092,100 @@
         "description": "Client\u2192server method params / server\u2192client request params. Unknown keys are rejected.",
         "properties": {},
         "title": "Params",
+        "type": "object"
+      },
+      "PartyParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "expected_version": {
+            "default": 0,
+            "maximum": 1000000,
+            "minimum": 0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "prospect",
+              "supplier",
+              "partner"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "email": {
+            "default": "",
+            "maxLength": 320,
+            "title": "Email",
+            "type": "string"
+          },
+          "phone": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Phone",
+            "type": "string"
+          },
+          "address": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Address",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "name",
+          "role"
+        ],
+        "title": "PartyParams",
         "type": "object"
       },
       "PasteCollapseParams": {
@@ -29746,6 +32853,292 @@
         "title": "PromptSubmitStatus",
         "type": "string"
       },
+      "PurchaseLine": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "quantity_milli": {
+            "default": 1000,
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Quantity Milli",
+            "type": "integer"
+          },
+          "unit_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Unit Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "default": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Tax Bps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "description",
+          "unit_cents"
+        ],
+        "title": "PurchaseLine",
+        "type": "object"
+      },
+      "PurchaseLineResult": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "quantity_milli": {
+            "default": 1000,
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Quantity Milli",
+            "type": "integer"
+          },
+          "unit_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Unit Cents",
+            "type": "integer"
+          },
+          "tax_bps": {
+            "default": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Tax Bps",
+            "type": "integer"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "description",
+          "unit_cents",
+          "net_cents",
+          "tax_cents"
+        ],
+        "title": "PurchaseLineResult",
+        "type": "object"
+      },
+      "PurchaseOrder": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "title": "Supplier Id",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLineResult"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "net_cents": {
+            "title": "Net Cents",
+            "type": "integer"
+          },
+          "tax_cents": {
+            "title": "Tax Cents",
+            "type": "integer"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "ordered",
+              "received",
+              "closed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "paid_cents": {
+            "title": "Paid Cents",
+            "type": "integer"
+          },
+          "balance_cents": {
+            "title": "Balance Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "supplier_id",
+          "reference",
+          "due_on",
+          "lines",
+          "net_cents",
+          "tax_cents",
+          "total_cents",
+          "status",
+          "version",
+          "paid_cents",
+          "balance_cents"
+        ],
+        "title": "PurchaseOrder",
+        "type": "object"
+      },
+      "PurchaseParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "title": "Supplier Id",
+            "type": "string"
+          },
+          "reference": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Reference",
+            "type": "string"
+          },
+          "due_on": {
+            "title": "Due On",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLine"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "supplier_id",
+          "reference",
+          "due_on",
+          "lines"
+        ],
+        "title": "PurchaseParams",
+        "type": "object"
+      },
+      "PurchaseTransitionParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "order_id": {
+            "title": "Order Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ordered",
+              "received",
+              "closed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "order_id",
+          "expected_version",
+          "status"
+        ],
+        "title": "PurchaseTransitionParams",
+        "type": "object"
+      },
       "QueuedPrompt": {
         "additionalProperties": false,
         "properties": {
@@ -30136,6 +33529,109 @@
         ],
         "title": "ReloadMcpStatus",
         "type": "string"
+      },
+      "ReminderDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "created_on": {
+            "title": "Created On",
+            "type": "string"
+          },
+          "balance_cents": {
+            "title": "Balance Cents",
+            "type": "integer"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "status": {
+            "const": "draft",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "document_id",
+          "level",
+          "created_on",
+          "balance_cents",
+          "content",
+          "status"
+        ],
+        "title": "ReminderDraft",
+        "type": "object"
+      },
+      "ReminderParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 3,
+            "minimum": 1,
+            "title": "Level",
+            "type": "integer"
+          },
+          "message": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "document_id",
+          "level",
+          "message"
+        ],
+        "title": "ReminderParams",
+        "type": "object"
       },
       "RepoDiscoveryPolicy": {
         "additionalProperties": false,
@@ -38832,6 +42328,103 @@
         "title": "SudoRequestParams",
         "type": "object"
       },
+      "SupplierPayment": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "order_id": {
+            "title": "Order Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "paid_on": {
+            "title": "Paid On",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "order_id",
+          "amount_cents",
+          "paid_on",
+          "reference"
+        ],
+        "title": "SupplierPayment",
+        "type": "object"
+      },
+      "SupplierPaymentParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "order_id": {
+            "title": "Order Id",
+            "type": "string"
+          },
+          "amount_cents": {
+            "maximum": 1000000000,
+            "minimum": 1,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "paid_on": {
+            "title": "Paid On",
+            "type": "string"
+          },
+          "reference": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "order_id",
+          "amount_cents",
+          "paid_on",
+          "reference"
+        ],
+        "title": "SupplierPaymentParams",
+        "type": "object"
+      },
       "SystemBatteryParams": {
         "additionalProperties": false,
         "properties": {
@@ -38992,6 +42585,233 @@
           "cols"
         ],
         "title": "TerminalResizeResult",
+        "type": "object"
+      },
+      "TimeTracker": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "responsible_user": {
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "rate_cents": {
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "cost_rate_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Rate Cents"
+          },
+          "billable": {
+            "title": "Billable",
+            "type": "integer"
+          },
+          "seconds": {
+            "title": "Seconds",
+            "type": "integer"
+          },
+          "running_since": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Running Since"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "paused",
+              "finished"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "elapsed_seconds": {
+            "title": "Elapsed Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "responsible_user",
+          "matter_id",
+          "description",
+          "rate_cents",
+          "cost_rate_cents",
+          "billable",
+          "seconds",
+          "running_since",
+          "status",
+          "version",
+          "elapsed_seconds"
+        ],
+        "title": "TimeTracker",
+        "type": "object"
+      },
+      "TimerChangeParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "timer_id": {
+            "title": "Timer Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "command": {
+            "enum": [
+              "pause",
+              "resume",
+              "finish"
+            ],
+            "title": "Command",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "timer_id",
+          "expected_version",
+          "command"
+        ],
+        "title": "TimerChangeParams",
+        "type": "object"
+      },
+      "TimerStartParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          },
+          "project_id": {
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "responsible_user": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Responsible User",
+            "type": "string"
+          },
+          "matter_id": {
+            "title": "Matter Id",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "rate_cents": {
+            "maximum": 1000000000,
+            "minimum": 0,
+            "title": "Rate Cents",
+            "type": "integer"
+          },
+          "cost_rate_cents": {
+            "anyOf": [
+              {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cost Rate Cents"
+          },
+          "billable": {
+            "default": true,
+            "title": "Billable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "matter_id",
+          "description",
+          "rate_cents"
+        ],
+        "title": "TimerStartParams",
         "type": "object"
       },
       "TipShowPayload": {

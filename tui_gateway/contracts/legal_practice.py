@@ -80,6 +80,10 @@ class LegalFee(LegalLine):
     billing_code: str
     activity_type: str
     billable: bool
+    cost_cents: int | None = None
+    cost_rate_cents: int | None = None
+    approval_status: Literal['draft','approved','rejected'] = 'approved'
+    expense_type: Literal['','office','disbursement'] = ''
 
 
 class LegalFeeCode(Result):
@@ -329,6 +333,10 @@ class LegalFeeParams(LegalProjectParams):
     billing_code: str = ""
     activity_type: str = ""
     billable: bool = True
+    cost_cents: int | None = Field(default=None, ge=0, le=1_000_000_000, strict=True)
+    cost_rate_cents: int | None = Field(default=None, ge=0, le=1_000_000_000, strict=True)
+    approval_status: Literal['draft','approved','rejected'] = 'approved'
+    expense_type: Literal['','office','disbursement'] = ''
 
 
 class LegalFeeCodeParams(LegalProjectParams):
@@ -388,7 +396,7 @@ class LegalDocumentParams(LegalProjectParams):
     fee_ids: list[str] = Field(min_length=1, max_length=500)
     due_on: str
     template_id: Literal["classique", "synthese", "detaille"] = "classique"
-    purpose: Literal["standard", "provision_fees", "provision_expenses_fees"] = "standard"
+    purpose: Literal["standard", "provision_fees", "provision_expenses", "provision_expenses_fees"] = "standard"
 
 
 class LegalCreditParams(LegalProjectParams):
@@ -453,3 +461,119 @@ class LegalTaskParams(LegalWorkflowParams):
 
 method("legal.workflow.apply", params=LegalWorkflowParams, result=LegalSnapshot)
 method("legal.task.save", params=LegalTaskParams, result=LegalSnapshot)
+
+
+class FinanceMetrics(Result):
+    minutes: int
+    billable_minutes: int
+    unbilled_cents: int
+    pending_cents: int
+    cost_cents: int
+    billed_net_cents: int
+    cash_received_cents: int
+    outstanding_cents: int
+    missing_costs: int
+    margin_cents: int | None
+
+
+class FinanceBudget(Result):
+    budget_minutes: int
+    revenue_cents: int
+    cost_cents: int
+    version: int
+
+
+class FinanceMatter(FinanceMetrics):
+    id: str
+    title: str
+    reference: str
+    client: str
+    budget: FinanceBudget | None
+    time_over_budget: bool
+    cost_over_budget: bool
+
+
+class FinanceReceivable(Result):
+    document_id: str
+    matter_id: str
+    client: str
+    reference: str
+    due_on: str
+    overdue_days: int
+    balance_cents: int
+    bucket: Literal['not_due','days_1_30','days_31_60','days_61_90','days_over_90']
+
+
+class FinancePendingFee(Result):
+    id: str
+    matter_id: str
+    description: str
+    net_cents: int
+    activity_date: str
+    expense_type: str
+    approval_status: Literal['draft','approved','rejected']
+
+
+from .legal_operations import CabinetOperations
+
+
+class LegalFinanceSnapshot(Result):
+    project_id: str
+    as_of: str
+    currency: Literal['EUR']
+    totals: FinanceMetrics
+    matters: list[FinanceMatter]
+    ageing: dict[str,int]
+    receivables: list[FinanceReceivable]
+    pending_fees: list[FinancePendingFee]
+    ready_fees: list[FinancePendingFee]
+    operations: CabinetOperations
+    scope: str
+
+
+class FinanceExport(Result):
+    filename: str
+    content: str
+    mime: str
+    scope: str
+
+
+class FinanceBudgetParams(LegalProjectParams):
+    request_id: str = Field(min_length=1,max_length=100)
+    matter_id: str
+    expected_version: int = Field(ge=0,le=1_000_000,strict=True)
+    budget_minutes: int = Field(default=0,ge=0,le=1_000_000,strict=True)
+    revenue_cents: int = Field(default=0,ge=0,le=1_000_000_000,strict=True)
+    cost_cents: int = Field(default=0,ge=0,le=1_000_000_000,strict=True)
+
+
+class FinanceReviewParams(LegalProjectParams):
+    request_id: str = Field(min_length=1,max_length=100)
+    fee_id: str
+    approval_status: Literal['draft','approved','rejected']
+    reason: str = Field(min_length=1,max_length=2000)
+
+
+method('legal.finance.snapshot',params=LegalProjectParams,result=LegalFinanceSnapshot)
+method('legal.finance.export',params=LegalProjectParams,result=FinanceExport)
+method('legal.finance.budget.save',params=FinanceBudgetParams,result=LegalSnapshot)
+method('legal.finance.fee.review',params=FinanceReviewParams,result=LegalSnapshot)
+
+
+class FinancePrepareParams(LegalProjectParams):
+    action: Literal['fee.add','finance.budget.save','finance.fee.review','document.create','payment.add',
+                    'business.party.save','business.contract.save','business.purchase.save',
+                    'business.purchase.transition','business.supplier_payment.add',
+                    'finance.timer.start','finance.timer.change','finance.file.extract','finance.file.stamp','finance.billing_order.create','finance.billing_order.invoice','finance.billing_order.cancel','finance.fec.import','finance.objective.save','finance.forecast.save','finance.mileage.add','finance.reminder.prepare']
+    payload: dict
+    request_id: str = Field(min_length=1,max_length=100)
+
+
+class FinancePreparation(Result):
+    project_id: str
+    action: str
+    params: dict
+    description: str
+
+
+method('legal.finance.prepare',params=FinancePrepareParams,result=FinancePreparation)
