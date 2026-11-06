@@ -60,6 +60,9 @@ jobs:
       ACTELYO_RELEASE_VERSION: ${{ inputs.release_version || '2026.11.4' }}
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+      - name: Verify QA evidence selection and size budget
+        shell: pwsh
+        run: scripts/actelyo-download/Test-QAEvidence.ps1
       - name: Admit a distinct installer version
         shell: pwsh
         env:
@@ -222,28 +225,6 @@ jobs:
           $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  Actelyo-Law-Harness-Setup-x64.exe" | Set-Content actelyo-release/SHA256SUMS.txt
           @{ product='Actelyo Law Harness'; source_commit=$env:ACTELYO_SOURCE_SHA; packaging_commit=$env:GITHUB_SHA; artifact='Actelyo-Law-Harness-Setup-x64.exe'; version=$env:ACTELYO_RELEASE_VERSION; sha256=$hash; bytes=(Get-Item $file).Length; signed=$false; model_included=$false; windows='10/11 x64'; verified_installed=$true } | ConvertTo-Json | Set-Content actelyo-release/build-manifest.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        if: always()
-        with:
-          name: actelyo-law-harness-windows-verification
-          path: |
-            actelyo-release/*.txt
-            actelyo-release/*.log
-            actelyo-release/*.json
-            actelyo-release/proof/*.png
-            actelyo-release/proof/*.json
-          if-no-files-found: ignore
-      - name: Retain unverified installer only for failed-test diagnosis
-        if: failure() && steps.native_install.conclusion == 'success'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: actelyo-law-harness-diagnostic-installer-UNVERIFIED
-          path: |
-            actelyo-release/Actelyo-Law-Harness-Setup-x64.exe
-            actelyo-release/installer-inputs.json
-          compression-level: 0
-          retention-days: 3
-          if-no-files-found: error
       - name: Capture window and taskbar icon proof
         shell: pwsh
         run: |
@@ -267,6 +248,25 @@ jobs:
           Get-Content "$proof/report.json"
           $fam | Stop-Process -Force -ErrorAction SilentlyContinue
           if ($titles.Count -eq 0) { throw 'Installed app did not open a window' }
+      - name: Select bounded QA evidence after window capture
+        if: always()
+        id: qa_evidence
+        shell: pwsh
+        run: |
+          $evidence = & scripts/actelyo-download/Select-QAEvidence.ps1 -Root actelyo-release
+          if ($evidence.Files.Count -gt 0) {
+            "paths<<ACTELYO_QA_FILES" >> $env:GITHUB_OUTPUT
+            $evidence.Files >> $env:GITHUB_OUTPUT
+            "ACTELYO_QA_FILES" >> $env:GITHUB_OUTPUT
+          }
+          "QA evidence bytes: $($evidence.TotalBytes)"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always() && steps.qa_evidence.outputs.paths != ''
+        with:
+          name: actelyo-law-harness-windows-verification
+          path: ${{ steps.qa_evidence.outputs.paths }}
+          retention-days: 7
+          if-no-files-found: error
       - name: Publish proof as a draft release
         if: success() && inputs.publish && github.ref == 'refs/heads/main'
         env:
