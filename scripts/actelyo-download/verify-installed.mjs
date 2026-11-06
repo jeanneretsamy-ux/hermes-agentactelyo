@@ -15,8 +15,14 @@ const exe = path.join(installed, 'Actelyo Law Harness.exe')
 assert(fs.existsSync(exe), 'Installed Actelyo executable missing')
 assert(fs.existsSync(path.join(installed, 'resources', 'agent-payload')), 'Bundled local agent missing')
 const runtimeSource = path.join(installed, 'resources', 'agent-payload', 'hermes-agent')
-for (const relative of ['hermes_cli/atelier.py', 'skills/research/actelyo-atelier/SKILL.md', 'skills/research/actelyo-plugin-creator/SKILL.md']) {
-  assert(fs.existsSync(path.join(runtimeSource, relative)), 'Missing installed creator component: ' + relative)
+for (const relative of [
+  'hermes_cli/atelier.py',
+  'skills/research/actelyo-atelier/SKILL.md',
+  'skills/research/actelyo-plugin-creator/SKILL.md',
+  'skills/productivity/actelyo-applications/SKILL.md',
+  'skills/productivity/actelyo-applications/scripts/cabinet_link.py',
+]) {
+  assert(fs.existsSync(path.join(runtimeSource, relative)), 'Missing installed Actelyo component: ' + relative)
 }
 const cleanEnv = { ...process.env }
 for (const key of ['HERMES_PYTHON', 'HERMES_RUNTIME_DIR', 'VIRTUAL_ENV', 'PYTHONPATH', 'PYTHONHOME']) delete cleanEnv[key]
@@ -53,6 +59,9 @@ try {
   await page.keyboard.press('Escape')
   const identity = await app.evaluate(({ app }) => ({ name: app.getName(), version: app.getVersion() }))
   assert.match(identity.name, /Actelyo/i)
+  if (process.env.ACTELYO_RELEASE_VERSION) {
+    assert.equal(identity.version, process.env.ACTELYO_RELEASE_VERSION, 'Installed app version differs from the requested installer version')
+  }
     const cabinet = page.getByRole('navigation', { name: 'Domaines du cabinet juridique' })
     await cabinet.getByText('Droit des Sociétés', { exact: true }).click()
     await cabinet.getByRole('button', { name: '+ Créer un espace Droit des Sociétés', exact: true }).click()
@@ -86,6 +95,8 @@ try {
     await page.getByRole('button', { name: 'Enregistrer l’étape', exact: true }).click()
     await page.getByText('Échéance dépassée', { exact: true }).waitFor()
     await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
+    const {verifyFinance}=await import(pathToFileURL(process.env.ACTELYO_FINANCE_VERIFIER || path.join(process.env.GITHUB_WORKSPACE || process.cwd(),'scripts/actelyo-download/verify-finance.mjs')).href)
+    await verifyFinance(page,proof,path.join(process.env.GITHUB_WORKSPACE || process.cwd(),'scripts/actelyo-download/fixtures/finance-scan.pdf'))
     await page.keyboard.press('Escape')
   await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
   await page.getByTestId('actelyo-studio').waitFor({ timeout: 30000 })
@@ -214,4 +225,5 @@ export async function clearFirstRunOverlay(page, { timeout = 300000, pollInterva
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   await main()
 }
+
 

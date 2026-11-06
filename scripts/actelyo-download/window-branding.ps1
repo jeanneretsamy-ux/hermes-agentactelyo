@@ -1,4 +1,4 @@
-param([string]$Executable,[Parameter(Mandatory=$true)][string]$ExpectedIcon,[string]$ProofDirectory,[switch]$SelfTest,[string]$DifferentIcon,[string]$Product='Actelyo RAG')
+param([string]$Executable,[Parameter(Mandatory=$true)][string]$ExpectedIcon,[string]$ProofDirectory,[switch]$SelfTest,[string]$DifferentIcon,[string]$Product='Actelyo Law Harness',[switch]$ExecutableIconOnly)
 $ErrorActionPreference='Stop'
 Add-Type -ReferencedAssemblies System.Drawing,System.Windows.Forms -TypeDefinition @'
 using System;
@@ -49,6 +49,14 @@ if(!$ProofDirectory -or !$env:RUNNER_TEMP){throw 'Runner proof directory require
 $proof=[IO.Path]::GetFullPath($ProofDirectory);$tempRoot=[IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\')+'\'
 if(!$proof.StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase)){throw 'Proof directory must stay under RUNNER_TEMP'}
 New-Item -ItemType Directory -Path $proof -Force | Out-Null
+$executableIcon=[ActelyoRuntimeIcon]::Extract((Resolve-Path -LiteralPath $Executable).Path,32)
+try{
+ if([ActelyoRuntimeIcon]::Compare($executableIcon,(Resolve-Path -LiteralPath $ExpectedIcon).Path,(Join-Path $proof 'executable-icon.png')) -ne 0){throw 'Embedded executable logo mismatch'}
+}finally{[ActelyoRuntimeIcon]::Release($executableIcon)}
+if($ExecutableIconOnly){
+ @{product=$Product;surface='embedded-executable-icon';matchingExecutableIcon=$true;personalProfileUsed=$false;observedAt=(Get-Date).ToString('o')}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $proof 'executable-branding.json') -Encoding UTF8
+ 'PASS embedded executable icon matches the product icon';exit 0
+}
 $profile=Join-Path $proof 'synthetic-profile'
 $env:HERMES_DESKTOP_USER_DATA_DIR=$profile
 $env:HERMES_HOME=Join-Path $proof 'synthetic-agent-home'
@@ -59,7 +67,7 @@ try{
  if($handle -eq [IntPtr]::Zero){throw 'No actual WM_GETICON surface found'}
  $different=[ActelyoRuntimeIcon]::Compare($handle,(Resolve-Path -LiteralPath $ExpectedIcon).Path,(Join-Path $proof 'window-icon.png'))
  if($different -ne 0){throw "Runtime window logo mismatch: $different pixels"}
- @{product=$Product;surface='native-window-or-class-icon';matchingPixels=$true;personalProfileUsed=$false;observedAt=(Get-Date).ToString('o')}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $proof 'window-branding.json') -Encoding UTF8
+ @{product=$Product;surface='native-window-or-class-icon';matchingPixels=$true;matchingExecutableIcon=$true;personalProfileUsed=$false;observedAt=(Get-Date).ToString('o')}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $proof 'window-branding.json') -Encoding UTF8
  'PASS actual installed window icon matches the product icon'
 }finally{
  $process.Refresh();if(!$process.HasExited){if(!$process.CloseMainWindow()){[ActelyoRuntimeIcon]::CloseSyntheticWindow()};if(!$process.WaitForExit(10000)){Write-Warning 'Synthetic QA process is still stopping'}}

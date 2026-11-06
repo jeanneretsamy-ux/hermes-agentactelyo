@@ -35,3 +35,6 @@ docker/entrypoint.sh text eol=lf
 *.html  text eol=lf
 *.svg   text eol=lf
 *.ps1   text eol=crlf
+
+# PDF cross-reference offsets describe bytes; CRLF conversion corrupts them.
+*.pdf binary

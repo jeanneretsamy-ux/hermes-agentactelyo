@@ -424,6 +424,12 @@ export function createCanonicalChat(
         : {}),
       profile: name,
       intent: 'main',
+      // The first intro streams on the profile's own socket. Navigation alone
+      // does not bind that socket to the main transcript: wait for the empty,
+      // eagerly titled row to hydrate before submitting the birth turn.
+      awaitHydration: true,
+      expectHistory: false,
+      forceResume: true,
       keepAllProfilesScope: route ? true : false,
       workspaceMode: 'bots',
       workspaceOwnerKey: botWorkspaceOwnerKey(bot),

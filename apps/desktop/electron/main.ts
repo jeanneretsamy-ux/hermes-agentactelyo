@@ -7895,6 +7895,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
 
   return attempt().catch(async error => {
     return retryCookie401WithLogin(error, options, {
+      canLogin: async () => (await hasLiveOauthSession(url)) || (await hasLivePortalSession()),
       clearCookies: () => remoteSessionCookies.clear(partition, url),
       login: async () => {
         try {
