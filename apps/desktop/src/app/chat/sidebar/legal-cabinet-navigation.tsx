@@ -20,7 +20,8 @@ const sections: [LegalPracticeSection, string][] = [
   ['matters', 'Clients et dossiers'],
   ['acts', 'Bibliothèque et rédaction'],
   ['tasks', 'Processus et échéances'],
-  ['billing', 'Facturation']
+  ['billing', 'Facturation'],
+  ['finance', 'Pilotage financier']
 ]
 
 export function LegalCabinetNavigation() {

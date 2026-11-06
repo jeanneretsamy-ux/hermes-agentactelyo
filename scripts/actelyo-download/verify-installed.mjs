@@ -86,6 +86,8 @@ try {
     await page.getByRole('button', { name: 'Enregistrer l’étape', exact: true }).click()
     await page.getByText('Échéance dépassée', { exact: true }).waitFor()
     await page.screenshot({ path: path.join(proof, 'installed-legal-cabinet.png') })
+    const {verifyFinance}=await import(pathToFileURL(process.env.ACTELYO_FINANCE_VERIFIER || path.join(process.env.GITHUB_WORKSPACE || process.cwd(),'scripts/actelyo-download/verify-finance.mjs')).href)
+    await verifyFinance(page,proof,path.join(process.env.GITHUB_WORKSPACE || process.cwd(),'scripts/actelyo-download/fixtures/finance-scan.pdf'))
     await page.keyboard.press('Escape')
   await page.getByRole('button', { name: 'Actelyo Studio', exact: true }).click()
   await page.getByTestId('actelyo-studio').waitFor({ timeout: 30000 })
@@ -214,4 +216,5 @@ export async function clearFirstRunOverlay(page, { timeout = 300000, pollInterva
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   await main()
 }
+
 
