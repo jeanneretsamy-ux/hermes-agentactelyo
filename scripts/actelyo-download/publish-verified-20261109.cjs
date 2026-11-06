@@ -23,7 +23,7 @@ async function api(route, method = 'GET', body, missing = false) {
     ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(60000)
   });
   if (missing && response.status === 404) return null;
-  if (!response.ok) throw Error('GitHub HTTP ' + response.status);
+  if (!response.ok) { const detail = await response.json().catch(() => ({})); throw Error('GitHub HTTP ' + response.status + ' ' + route + ': ' + (detail.message || 'request refused')); }
   return response.json();
 }
 async function archive(id) {
@@ -164,6 +164,7 @@ const json = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const receipt = { version, source, qaRun: runId, release: release.html_url, file: parts.artifact, bytes: parts.bytes, sha256: parts.sha256, parts: published, publicAvailabilityVerified: true };
   fs.writeFileSync(path.join(out, 'publication.json'), JSON.stringify(receipt, null, 2)); console.log(JSON.stringify(receipt));
 })().catch(error => { console.error(error.message); console.error('cause=' + (error.cause?.code || error.code || 'none') + ':' + String(error.cause?.message || '').replace(/https?:\/\/\S+/g,'[URL]')); process.exitCode = 1; });
+
 
 
 
