@@ -106,7 +106,8 @@ const json = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   console.log('Verified Windows installation, exact source and native icon; ' + parts.parts.length + ' parts');
   if (!publish) { console.log('Read-only review complete; no release created'); return; }
   const base = 'repos/' + repo, tag = 'desktop-law-v' + version;
-  let release = await api(base + '/releases/tags/' + tag, 'GET', undefined, true);
+  let release = await api(base + '/releases/437014978');
+  if (release.tag_name !== tag) throw Error('Exact publication draft differs');
   if (!release) release = await api(base + '/releases', 'POST', {
     tag_name: tag, target_commitish: source, name: 'Actelyo Law Harness ' + version, draft: true, prerelease: false, make_latest: 'false',
     body: 'Windows x64 — candidat 2026.11.9 non signé. Cabinet natif relié à l’ERP, atelier de plugins et recherche sourcée. Installation Windows, navigation et logo violet natif vérifiés sur cet installateur exact. Les fonctions financières partagées nécessitent la connexion ERP ; les modèles et clés sont à configurer séparément. Aucune certification de qualité juridique, inférence réelle, transmission fiscale, signature ou parité mobile complète. Les sources applicatives c466b323 et dfe8f6f9 sont identiques hors workflows CI et collecte des preuves.'
@@ -164,6 +165,7 @@ const json = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const receipt = { version, source, qaRun: runId, release: release.html_url, file: parts.artifact, bytes: parts.bytes, sha256: parts.sha256, parts: published, publicAvailabilityVerified: true };
   fs.writeFileSync(path.join(out, 'publication.json'), JSON.stringify(receipt, null, 2)); console.log(JSON.stringify(receipt));
 })().catch(error => { console.error(error.message); console.error('cause=' + (error.cause?.code || error.code || 'none') + ':' + String(error.cause?.message || '').replace(/https?:\/\/\S+/g,'[URL]')); process.exitCode = 1; });
+
 
 
 
