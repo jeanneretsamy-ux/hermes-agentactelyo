@@ -42,7 +42,7 @@ import { useEffect, useRef, useState } from 'react'
 import { avatarColor, blobatarSvg, botAppearance, BotFace } from './avatar'
 import { isBackfilledFacePng } from './avatar-image'
 import { AvatarPicker } from './avatar-picker'
-import { $selectedBot } from './bot-state'
+import { saveSelectedRosterBot } from './bot-state'
 import { createCanonicalChat } from './canonical-chat'
 import { $botMeta, botHandle, botRosterKey, filterBots, ROSTER_KEY, saveBotMeta } from './data'
 import { labeled, ResizableFrame } from './dialog-parts'
@@ -70,6 +70,7 @@ import type {
 import { CapabilitiesView, capabilitiesViewRoutesConnections, CheckList } from './profile-config'
 import { deleteBot } from './profile-ops'
 import { botRosterMeta } from './routing'
+import { bumpBotOpenGeneration, getBotOpenGeneration } from './shared'
 import { HubSkillsSection } from './skills-hub'
 import { composeSoul } from './soul'
 import type { BotMeta, ConnectionRow, RosterRow } from './types'
@@ -489,7 +490,10 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         })
       }
 
-      queryClient.invalidateQueries({
+      // Reconciliation may only select this owner after the roster has
+      // observed profiles.create. A pre-create snapshot would otherwise
+      // clear the new selection and reclaim its main pane for the old bot.
+      await queryClient.invalidateQueries({
         queryKey: ROSTER_KEY
       })
 
@@ -504,6 +508,9 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
       return
     }
 
+    const creationConnectionId = targetConnection || activeConnectionId || 'local'
+    const creationGeneration = bumpBotOpenGeneration()
+    const creationStillCurrent = () => creationGeneration === getBotOpenGeneration()
     setBusy(true)
     setError(null)
 
@@ -533,6 +540,16 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         name: slugCreated,
         description: descriptionText,
         title: botTitle,
+        // One captured owner for both provider setup and the first chat.
+        sourceScoped: typeof host.requestProfile === 'function',
+        connectionId: typeof host.requestProfile === 'function' ? creationConnectionId : undefined,
+        connectionKind: creationConnectionId === 'local' ? 'local' : 'remote',
+        route: typeof host.requestProfile === 'function' ? {
+          connectionId: creationConnectionId,
+          mode: creationConnectionId === 'local' ? 'local' : 'remote',
+          profile: slugCreated,
+          targetProfile: slugCreated
+        } : undefined,
         ...(remoteTarget ? { connectionId: targetConnection, remoteSource: true } : {})
       }
 
@@ -564,7 +581,12 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         return
       }
 
-      $selectedBot.set(slug)
+      if (creationStillCurrent()) {
+        // Selection and the main pane must name the same source-qualified
+        // owner. Updating only the legacy routines selection left the roster
+        // on the previous bot, whose refresh then replaced this new chat.
+        saveSelectedRosterBot(bot)
+      }
 
       // Birth the bot's forever chat right away: it introduces itself as
       // the first thing the user sees, and the pin exists from minute one.
@@ -573,15 +595,19 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         // the ONE caller allowed to request the intro turn — genuine New
         // Agent creation. Click-path resolution (openBotCanonicalChat) mints
         // silently so a resolution miss never burns a turn (ScottFive).
-        const sid = await createCanonicalChat(slug, {
-          kickoff: !needsModel
+        // Keep every creation RPC on the new profile's owning service. Opening
+        // the chat can change the foreground gateway; its runtime session id
+        // must never be submitted through that mutable foreground connection.
+        const sid = await createCanonicalChat(typeof host.requestProfile === 'function' ? bot : slugCreated, {
+          kickoff: !needsModel,
+          openingStillCurrent: creationStillCurrent
         })
 
-        if (!sid && typeof host.newChat === 'function') {
+        if (!sid && creationStillCurrent() && typeof host.newChat === 'function') {
           host.newChat(slug)
         }
       } catch {
-        if (typeof host.newChat === 'function') {
+        if (creationStillCurrent() && typeof host.newChat === 'function') {
           host.newChat(slug)
         }
       }

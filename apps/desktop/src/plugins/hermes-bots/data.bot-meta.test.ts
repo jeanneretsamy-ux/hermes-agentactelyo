@@ -64,6 +64,27 @@ const SERVED_PROFILES = {
   profiles: ['beta', 'ops', 'researcher', 'source', 'source-2'].map(name => ({ name, ui_meta_revisions: {} }))
 }
 
+describe('a just-created profile before union enumeration catches up', () => {
+  it.each([
+    ['local', 'local', 'This device'],
+    ['office', 'remote', 'Office']
+  ])('keeps the rich listing on its verified %s source', (connectionId, kind, label) => {
+    const merged = mergeMultiSourceRoster(
+      { profiles: [{ name: 'default' }, { name: 'fresh-scout' }] },
+      {
+        agents: [{ connectionId, connectionKind: kind, profile: 'default' }],
+        sources: [{ connectionId, kind, label, reachable: true }]
+      },
+      connectionId
+    )
+    expect(merged.profiles?.find(row => row.name === 'fresh-scout')).toMatchObject({
+      connectionId,
+      sourceScoped: true,
+      route: { connectionId, mode: kind, profile: 'fresh-scout', targetProfile: 'fresh-scout' }
+    })
+  })
+})
+
 /** Every `host.request` recorded, with the params frozen at call time. */
 function recordRequests(reply: (method: string) => unknown = () => ({})) {
   const calls: Array<{ method: string; params: Record<string, unknown> }> = []

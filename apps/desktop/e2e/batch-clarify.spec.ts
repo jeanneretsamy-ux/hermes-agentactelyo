@@ -77,7 +77,10 @@ test.describe('batch clarify card', () => {
     await confirmButton.click()
 
     // The settled card lists both questions with their locked answers.
-    const settled = page.locator('[data-clarify-settled]')
+    const settled = page.locator('[data-clarify-settled]').filter({
+      has: page.getByText(BATCH_CLARIFY_QUESTIONS[0].question, { exact: true }),
+    })
+    await expect(settled).toHaveCount(1)
     await settled.waitFor({ state: 'visible', timeout: 30_000 })
     await expect(settled.getByText(BATCH_CLARIFY_QUESTIONS[0].question)).toBeVisible()
     await expect(settled.getByText('Coffee', { exact: true })).toBeVisible()
@@ -116,7 +119,10 @@ test.describe('batch clarify card', () => {
     await expect(confirmButton).toBeEnabled()
     await confirmButton.click()
 
-    const settled = page.locator('[data-clarify-settled]')
+    const settled = page.locator('[data-clarify-settled]').filter({
+      has: page.getByText(SINGLE_BATCH_CLARIFY_QUESTIONS[0]!.question, { exact: true }),
+    })
+    await expect(settled).toHaveCount(1)
     await settled.waitFor({ state: 'visible', timeout: 30_000 })
     await expect(settled.getByText(SINGLE_BATCH_CLARIFY_QUESTIONS[0]!.question)).toBeVisible()
     await expect(settled.getByText('Espresso', { exact: true })).toBeVisible()

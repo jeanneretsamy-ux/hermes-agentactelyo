@@ -199,7 +199,10 @@ describe('the lazy row is materialized before anything else touches it', () => {
 
     expect(hostMock.openSession).toHaveBeenCalledWith(
       'stored-1',
-      expect.objectContaining({ tabTitle: 'Bot Chat', workspaceMode: 'bots', workspaceOwnerKey: 'bot:ops' })
+      expect.objectContaining({
+        tabTitle: 'Bot Chat', workspaceMode: 'bots', workspaceOwnerKey: 'bot:ops',
+        awaitHydration: true, expectHistory: false, forceResume: true
+      })
     )
   })
 

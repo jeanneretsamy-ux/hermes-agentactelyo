@@ -138,11 +138,9 @@ test.describe('unread dot survives app restart', () => {
       .toBeGreaterThan(0)
 
     // ── 5. Open session A — the dot clears ─────────────────────────────
-    // The dot sits inside A's sidebar row button; click that row.
-    await unreadDots(page)
-      .first()
-      .locator('xpath=ancestor::button[1]')
-      .click()
+    // The status and reorder handle are siblings of the row's primary
+    // button; nested buttons were removed for keyboard accessibility.
+    await page.locator('[data-slot="sidebar"]').getByRole('button', { name: HELD_PROMPT, exact: true }).click()
 
     await expect
       .poll(() => unreadDots(page).count(), {

@@ -127,7 +127,11 @@ jobs:
         working-directory: apps/desktop
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/run-electron-builder.mjs --win zip --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION"
+        run: |
+          $nativeVersion = $env:ACTELYO_RELEASE_VERSION
+          if (($nativeVersion -split '\.').Count -eq 3) { $nativeVersion += '.0' }
+          node scripts/run-electron-builder.mjs --win --dir --x64 --publish never "--config.extraMetadata.version=$env:ACTELYO_RELEASE_VERSION" "--config.buildVersion=$nativeVersion" "--config.extraMetadata.shortVersion=$nativeVersion" "--config.extraMetadata.shortVersionWindows=$nativeVersion"
+          if ($LASTEXITCODE -ne 0) { throw 'Windows packaging failed' }
       - name: Build and install Actelyo installer
         shell: pwsh
         run: |
@@ -138,11 +142,16 @@ jobs:
           $transcriptPath = Join-Path $releaseDir 'installer-diagnostics.log'
           Start-Transcript -Path $transcriptPath -Force | Out-Null
           try {
-            $zip = @(Get-ChildItem apps/desktop/release -Filter '*win*x64.zip')
-            if ($zip.Count -ne 1) { throw 'Expected exactly one bundled Windows archive' }
-            # Keep the staged source root short; Python packages contain deeply nested filenames.
-            $appSource = Join-Path $env:RUNNER_TEMP 'a'
-            Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $appSource
+            # The deliverable is Inno's installer. Avoid compressing and expanding
+            # a second multi-gigabyte archive merely to feed the same files to Inno.
+            $workspaceRoot = [IO.Path]::GetFullPath($env:GITHUB_WORKSPACE).TrimEnd('\')+'\'
+            $tempRoot = [IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\')+'\'
+            $unpacked = [IO.Path]::GetFullPath((Join-Path $env:GITHUB_WORKSPACE 'apps/desktop/release/win-unpacked'))
+            $appSource = [IO.Path]::GetFullPath((Join-Path $env:RUNNER_TEMP 'a'))
+            if (!$unpacked.StartsWith($workspaceRoot,[StringComparison]::OrdinalIgnoreCase) -or !$appSource.StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected installer staging paths' }
+            if (!(Test-Path -LiteralPath (Join-Path $unpacked 'Actelyo Law Harness.exe')) -or (Test-Path -LiteralPath $appSource)) { throw 'Unpacked application missing or staging destination already exists' }
+            # Use a short verified runner path for deeply nested Python packages.
+            Move-Item -LiteralPath $unpacked -Destination $appSource
             if (-not (Test-Path (Join-Path $appSource 'Actelyo Law Harness.exe'))) { throw 'Wrong application identity' }
             $metadata = (Get-Item (Join-Path $appSource 'Actelyo Law Harness.exe')).VersionInfo
             foreach ($value in @($metadata.ProductVersion, $metadata.FileVersion)) {
@@ -154,6 +163,7 @@ jobs:
             $innoInstaller = Join-Path $env:RUNNER_TEMP "innosetup-$innoVersion-x64.exe"
             $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe"
             Invoke-WebRequest -Uri $innoUrl -OutFile $innoInstaller
+            if ((Get-FileHash -LiteralPath $innoInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Pinned Inno Setup installer digest mismatch' }
             $signature = Get-AuthenticodeSignature -FilePath $innoInstaller
             if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B\.V\.') {
               throw 'Inno Setup installer signature or publisher verification failed'
@@ -192,6 +202,10 @@ jobs:
           if (-not $?) { throw 'Native window icon verification failed' }
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-branding.json" actelyo-release/proof/native-window-branding.json
           Copy-Item "$env:RUNNER_TEMP/law-window-proof/window-icon.png" actelyo-release/proof/native-window-icon.png
+          powershell -NoProfile -File scripts/actelyo-download/window-branding.ps1 -Executable actelyo-release/Actelyo-Law-Harness-Setup-x64.exe -ExpectedIcon apps/desktop/assets/icon.ico -ProofDirectory "$env:RUNNER_TEMP/law-setup-icon-proof" -Product 'Actelyo Law Harness Setup' -ExecutableIconOnly
+          if ($LASTEXITCODE -ne 0) { throw 'Setup executable icon verification failed' }
+          Copy-Item "$env:RUNNER_TEMP/law-setup-icon-proof/executable-branding.json" actelyo-release/proof/setup-executable-branding.json
+          Copy-Item "$env:RUNNER_TEMP/law-setup-icon-proof/executable-icon.png" actelyo-release/proof/setup-executable-icon.png
       - name: Record checksum and exact source
         shell: pwsh
         run: |
