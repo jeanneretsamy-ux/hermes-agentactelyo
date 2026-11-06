@@ -21,10 +21,13 @@ for (const status of [401, 403]) {
     const sandbox = createSandbox(`oauth-recovery-${status}`)
     let mints = 0
     let signedIn = false
+    const requests: string[] = []
+    let observedPage: Awaited<ReturnType<typeof launchDesktop>>['page'] | undefined
     const server = http.createServer((req, res) => {
       req.resume()
       req.on('end', () => {
         const pathname = new URL(req.url ?? '/', 'http://localhost').pathname
+        requests.push(pathname)
         res.setHeader('Content-Type', 'application/json')
         if (pathname === '/api/status') {
           res.end(JSON.stringify({ auth_required: true, auth_flows: [], version: 'test' }))
@@ -68,6 +71,7 @@ for (const status of [401, 403]) {
       }))
       app = launched.app
       const page = launched.page
+      observedPage = page
       await expect(page.getByRole('button', { name: /gateway settings/i })).toBeVisible({ timeout: 60_000 })
       const snapshot = await page.evaluate(() => (window as unknown as DesktopWindow).hermesDesktop.getBootProgress())
       expect(snapshot).toMatchObject({ running: false, retryable: false, statusCode: status })
@@ -102,6 +106,10 @@ for (const status of [401, 403]) {
       }).toMatchObject({ mode: 'remote', baseUrl: url })
       expect(mints).toBeGreaterThan(settledMints)
     } finally {
+      // Synthetic loopback paths and native boot state only: keep the reason
+      // for a stuck recovery screen without recording cookies or headers.
+      const progress = await observedPage?.evaluate(() => (window as unknown as DesktopWindow).hermesDesktop.getBootProgress()).catch(() => null)
+      fs.writeFileSync(test.info().outputPath('oauth-recovery.json'), JSON.stringify({ requests, mints, signedIn, progress }))
       await app?.close()
       server.closeAllConnections()
       await new Promise<void>(resolve => server.close(() => resolve()))
