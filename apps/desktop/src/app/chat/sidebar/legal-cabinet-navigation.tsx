@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 
 import { Codicon } from '@/components/ui/codicon'
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { ExternalLink } from '@/lib/external-link'
 import { $gateway } from '@/store/gateway'
 import {
   isLegalOwnerCurrent,
@@ -14,7 +15,6 @@ import {
 } from '@/store/legal-practice'
 import { $activeGatewayProfile, $profileScope } from '@/store/profile'
 import { createProject, enterProject, projectProfile } from '@/store/projects'
-import { ExternalLink } from '@/lib/external-link'
 
 const sections: [LegalPracticeSection, string][] = [
   ['workspace', 'Structure du domaine'],
