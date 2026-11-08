@@ -77,6 +77,7 @@ describe('a just-created profile before union enumeration catches up', () => {
       },
       connectionId
     )
+
     expect(merged.profiles?.find(row => row.name === 'fresh-scout')).toMatchObject({
       connectionId,
       sourceScoped: true,
@@ -468,6 +469,7 @@ describe("a bot is named by its own backend, never by another bot's cached recor
 
   it('the row shows the name its @handle uses when the backend title and display_name differ', () => {
     $botMeta.set({})
+
     const thin = {
       ...vps,
       connectionLabel: 'VPS',

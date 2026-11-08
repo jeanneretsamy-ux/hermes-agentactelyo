@@ -41,35 +41,63 @@ const snapshot = (project_id = 'one') => ({
   scope: 'Registre de test'
 })
 
-const controlSnapshot = () => ({...snapshot(),operations:{parties:[],contracts:[],purchases:[],supplier_payments:[],timers:[],supplier_balance_cents:0,scope:'Interne',controls:{imports:[],objectives:[],forecasts:[],mileage:[],reminders:[]}}})
-
-it('prepares a forecast in cents without recording it before confirmation',async()=>{
-  const call=vi.fn(async(op:string,input?:Record<string,unknown>)=>op==='snapshot'?controlSnapshot():{proposal_id:'forecast',action:input!.action,params:input!.payload,description:'Prévision à confirmer'})
-  render(<FinanceCabinet call={call} projectId="one"/>);
-  fireEvent.click(screen.getByRole('button',{name:'Actualiser le registre réel'}));await screen.findByText('Registre de test');
-  fireEvent.change(screen.getByLabelText('Entrées prévues (€)'),{target:{value:'199,99'}});
-  fireEvent.change(screen.getByLabelText('Sorties prévues (€)'),{target:{value:'10,50'}});
-  fireEvent.submit(screen.getByRole('button',{name:'Préparer la prévision'}).closest('form')!);
-  await screen.findByRole('button',{name:'Confirmer l’enregistrement'});
-  expect(call).toHaveBeenCalledWith('prepare',expect.objectContaining({action:'finance.forecast.save',payload:expect.objectContaining({incoming_cents:19999,outgoing_cents:1050})}));
-  expect(call.mock.calls.some(([op])=>op==='apply')).toBe(false);
+const controlSnapshot = () => ({
+  ...snapshot(),
+  operations: {
+    parties: [],
+    contracts: [],
+    purchases: [],
+    supplier_payments: [],
+    timers: [],
+    supplier_balance_cents: 0,
+    scope: 'Interne',
+    controls: { imports: [], objectives: [], forecasts: [], mileage: [], reminders: [] }
+  }
 })
 
-it('reports an invalid forecast amount without an unhandled error or financial request',async()=>{
-  const call=vi.fn(async()=>controlSnapshot());render(<FinanceCabinet call={call} projectId="one"/>);
-  fireEvent.click(screen.getByRole('button',{name:'Actualiser le registre réel'}));await screen.findByText('Registre de test');
-  fireEvent.change(screen.getByLabelText('Entrées prévues (€)'),{target:{value:'999999999999999999'}});
-  fireEvent.submit(screen.getByRole('button',{name:'Préparer la prévision'}).closest('form')!);
-  expect((await screen.findByRole('alert')).textContent).toContain('Montant trop élevé');
-  expect(call).toHaveBeenCalledTimes(1);
+it('prepares a forecast in cents without recording it before confirmation', async () => {
+  const call = vi.fn(async (op: string, input?: Record<string, unknown>) =>
+    op === 'snapshot'
+      ? controlSnapshot()
+      : { proposal_id: 'forecast', action: input!.action, params: input!.payload, description: 'Prévision à confirmer' }
+  )
+  render(<FinanceCabinet call={call} projectId="one" />)
+  fireEvent.click(screen.getByRole('button', { name: 'Actualiser le registre réel' }))
+  await screen.findByText('Registre de test')
+  fireEvent.change(screen.getByLabelText('Entrées prévues (€)'), { target: { value: '199,99' } })
+  fireEvent.change(screen.getByLabelText('Sorties prévues (€)'), { target: { value: '10,50' } })
+  fireEvent.submit(screen.getByRole('button', { name: 'Préparer la prévision' }).closest('form')!)
+  await screen.findByRole('button', { name: 'Confirmer l’enregistrement' })
+  expect(call).toHaveBeenCalledWith(
+    'prepare',
+    expect.objectContaining({
+      action: 'finance.forecast.save',
+      payload: expect.objectContaining({ incoming_cents: 19999, outgoing_cents: 1050 })
+    })
+  )
+  expect(call.mock.calls.some(([op]) => op === 'apply')).toBe(false)
+})
+
+it('reports an invalid forecast amount without an unhandled error or financial request', async () => {
+  const call = vi.fn(async () => controlSnapshot())
+  render(<FinanceCabinet call={call} projectId="one" />)
+  fireEvent.click(screen.getByRole('button', { name: 'Actualiser le registre réel' }))
+  await screen.findByText('Registre de test')
+  fireEvent.change(screen.getByLabelText('Entrées prévues (€)'), { target: { value: '999999999999999999' } })
+  fireEvent.submit(screen.getByRole('button', { name: 'Préparer la prévision' }).closest('form')!)
+  expect((await screen.findByRole('alert')).textContent).toContain('Montant trop élevé')
+  expect(call).toHaveBeenCalledTimes(1)
 })
 
 it('prepares a budget and writes only after the separate confirmation', async () => {
   const call = vi.fn(async (op: string, input?: Record<string, unknown>) => {
-    if (op === 'snapshot') {return snapshot()}
+    if (op === 'snapshot') {
+      return snapshot()
+    }
 
-    if (op === 'prepare')
-      {return { proposal_id: 'proposal', action: input!.action, params: input!.payload, description: 'Préparation' }}
+    if (op === 'prepare') {
+      return { proposal_id: 'proposal', action: input!.action, params: input!.payload, description: 'Préparation' }
+    }
 
     return { applied: true, native_request_id: 'native-once', readback: snapshot() }
   })
@@ -112,7 +140,9 @@ it('ignores a late snapshot from a previous project and permits refreshing the n
   fireEvent.click(screen.getByRole('button', { name: 'Actualiser le registre réel' }))
   view.rerender(<FinanceCabinet call={call} projectId="two" />)
   await waitFor(() =>
-    expect((screen.getByRole('button', { name: 'Actualiser le registre réel' }) as HTMLButtonElement).disabled).toBe(false)
+    expect((screen.getByRole('button', { name: 'Actualiser le registre réel' }) as HTMLButtonElement).disabled).toBe(
+      false
+    )
   )
   fireEvent.click(screen.getByRole('button', { name: 'Actualiser le registre réel' }))
   await screen.findByText('Registre de test')

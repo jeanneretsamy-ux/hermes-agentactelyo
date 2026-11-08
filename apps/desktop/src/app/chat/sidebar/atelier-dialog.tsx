@@ -25,9 +25,11 @@ export function AtelierDialog({
   const [panel, setPanel] = useState<AtelierPanel | null>(null)
   const [query, setQuery] = useState('')
   const [kind, setKind] = useState<'chronology' | 'desktop-plugin' | 'mission'>('chronology')
+
   const [missionRequest, setMissionRequest] = useState(
     'Prépare un projet de note à partir des pièces choisies, vérifie les citations et conserve les résultats pour relecture.'
   )
+
   const missionKey = useRef(crypto.randomUUID())
 
   const [request, setRequest] = useState(
@@ -37,6 +39,7 @@ export function AtelierDialog({
   const [pluginRequest, setPluginRequest] = useState(
     'Crée un panneau pour calculer une date après un nombre de jours calendaires, avec un bouton Effacer.'
   )
+
   const selectedRequest = kind === 'chronology' ? request : kind === 'desktop-plugin' ? pluginRequest : missionRequest
 
   const [busy, setBusy] = useState(false)
@@ -54,6 +57,7 @@ export function AtelierDialog({
     if (pending.current || !gateway) {
       return
     }
+
     pending.current = true
     const ticket = generation.current
     const current = () => generation.current === ticket
@@ -91,6 +95,7 @@ export function AtelierDialog({
     if (!gateway) {
       return
     }
+
     gateway
       .request<AtelierSnapshot>('atelier.list', { profile })
       .then(value => {
@@ -145,6 +150,7 @@ export function AtelierDialog({
         if (!root) {
           throw new Error('Cette version Desktop ne fournit pas de dossier de plugins.')
         }
+
         requestComposerInsert(atelierPluginPrompt(pluginRequest, root), { target })
         onClose()
       })
@@ -217,8 +223,7 @@ export function AtelierDialog({
                 setRequest(e.target.value)
               } else if (kind === 'desktop-plugin') {
                 setPluginRequest(e.target.value)
-              }
-              else {
+              } else {
                 setMissionRequest(e.target.value)
                 missionKey.current = crypto.randomUUID()
               }
@@ -253,6 +258,7 @@ export function AtelierDialog({
                 if (!current()) {
                   return
                 }
+
                 setSnapshot(value)
                 setPanel(null)
                 setNotice('Versions actualisées.')
@@ -287,6 +293,7 @@ export function AtelierDialog({
                     if (!current()) {
                       return
                     }
+
                     setPanel(value)
                     setQuery('')
                   })
@@ -319,6 +326,7 @@ export function AtelierDialog({
                       if (!current()) {
                         return
                       }
+
                       setSnapshot(value)
                       setNotice('Version activée. Les versions précédentes restent disponibles.')
                     })
@@ -338,6 +346,7 @@ export function AtelierDialog({
                       if (!current()) {
                         return
                       }
+
                       setSnapshot(value)
                       setNotice('Extension désactivée. Les versions sont conservées.')
                     })

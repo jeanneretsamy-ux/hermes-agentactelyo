@@ -97,7 +97,7 @@ export async function confirmSendDiagnostics(): Promise<void> {
     const gateway = $gateway.get()
 
     if (!gateway) {
-      throw new Error("Actelyo Law Harness gateway unavailable")
+      throw new Error('Actelyo Law Harness gateway unavailable')
     }
 
     const extraFiles = await collectLocalExtras()

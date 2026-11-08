@@ -32,7 +32,7 @@ const FALLBACK_COPY: IntroCopy[] = [
     body: "Bring the code, question, or stuck part. I'll read the room before making changes."
   },
   {
-    headline: "What should Actelyo Law Harness look at?",
+    headline: 'What should Actelyo Law Harness look at?',
     body: "Send the task, failing path, or half-formed plan. I'll help turn it into action."
   },
   {

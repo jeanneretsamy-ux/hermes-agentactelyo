@@ -36,7 +36,9 @@ export function LegalWorkspaceSection({ data, write, submit }: LegalSectionProps
         onChange={async id => {
           setSaved(false)
 
-          if (!id) { return }
+          if (!id) {
+            return
+          }
           const nextTypes = data.domains.find(item => item.id === id)?.matter_types ?? []
           setDomain(id)
           setTypes(nextTypes.join('\n'))
@@ -54,11 +56,7 @@ export function LegalWorkspaceSection({ data, write, submit }: LegalSectionProps
         <Textarea onChange={e => setTypes(e.target.value)} rows={7} value={types} />
       </Field>
       <p>Chaque projet peut devenir un espace spécialisé. Créez des projets séparés pour les différents domaines.</p>
-      {domain !== data.domain && domain && (
-        <p role="status">
-          Application des rubriques et catégories du domaine…
-        </p>
-      )}
+      {domain !== data.domain && domain && <p role="status">Application des rubriques et catégories du domaine…</p>}
       {saved && (
         <p role="status">
           Domaine appliqué : les rubriques sont disponibles dans Clients et dossiers, et les catégories dans

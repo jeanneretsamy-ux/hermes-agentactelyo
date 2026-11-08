@@ -10,26 +10,29 @@ import { openCatalogPluginInstall } from '@/store/plugin-catalog-install'
 export function NativePluginCatalog({ profile }: { profile: null | string }) {
   const [search, setSearch] = useState('')
 
-  const catalog = useQuery({
-    queryKey: ['actelyo-plugin-catalog'],
-    queryFn: async () => {
-      const response = await fetch(PLUGIN_CATALOG_URL, { signal: AbortSignal.timeout(15000) })
+  const catalog = useQuery(
+    {
+      queryKey: ['actelyo-plugin-catalog'],
+      queryFn: async () => {
+        const response = await fetch(PLUGIN_CATALOG_URL, { signal: AbortSignal.timeout(15000) })
 
-      if (!response.ok) {
-        throw new Error('Catalogue indisponible')
+        if (!response.ok) {
+          throw new Error('Catalogue indisponible')
+        }
+
+        const rows: unknown = await response.json()
+
+        if (!Array.isArray(rows)) {
+          throw new Error('Format du catalogue invalide')
+        }
+
+        return rows.filter((row): row is PluginCatalogEntry =>
+          Boolean(row && typeof row.name === 'string' && typeof row.repo === 'string' && row.repo)
+        )
       }
-
-      const rows: unknown = await response.json()
-
-      if (!Array.isArray(rows)) {
-        throw new Error('Format du catalogue invalide')
-      }
-
-      return rows.filter((row): row is PluginCatalogEntry =>
-        Boolean(row && typeof row.name === 'string' && typeof row.repo === 'string' && row.repo)
-      )
-    }
-  }, queryClient)
+    },
+    queryClient
+  )
 
   return (
     <section aria-label="Catalogue de plugins Actelyo" className="h-full space-y-3 overflow-auto p-3">

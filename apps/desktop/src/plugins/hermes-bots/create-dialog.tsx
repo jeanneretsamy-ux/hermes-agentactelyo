@@ -544,12 +544,15 @@ export function CreateAgentDialog({ open, onClose, onConfigureModel, roster }: C
         sourceScoped: typeof host.requestProfile === 'function',
         connectionId: typeof host.requestProfile === 'function' ? creationConnectionId : undefined,
         connectionKind: creationConnectionId === 'local' ? 'local' : 'remote',
-        route: typeof host.requestProfile === 'function' ? {
-          connectionId: creationConnectionId,
-          mode: creationConnectionId === 'local' ? 'local' : 'remote',
-          profile: slugCreated,
-          targetProfile: slugCreated
-        } : undefined,
+        route:
+          typeof host.requestProfile === 'function'
+            ? {
+                connectionId: creationConnectionId,
+                mode: creationConnectionId === 'local' ? 'local' : 'remote',
+                profile: slugCreated,
+                targetProfile: slugCreated
+              }
+            : undefined,
         ...(remoteTarget ? { connectionId: targetConnection, remoteSource: true } : {})
       }
 

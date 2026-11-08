@@ -110,7 +110,9 @@ function LegalCabinetTree({ gateway }: { gateway: ReturnType<typeof $gateway.get
       {expanded && (
         <nav aria-label="Domaines du cabinet juridique" className="max-h-[45vh] space-y-1 overflow-y-auto pl-3 text-sm">
           <div className="px-2 py-1.5">
-            <ExternalLink href="https://actelyo.com/settings?tab=vault">Raccorder Pappers, Drive et mes sources</ExternalLink>
+            <ExternalLink href="https://actelyo.com/settings?tab=vault">
+              Raccorder Pappers, Drive et mes sources
+            </ExternalLink>
             <p className="text-xs text-muted-foreground">Parcours guidé ; l’accès de ce profil reste à tester.</p>
           </div>
           {!owner && <p className="p-2">Sélectionnez un profil connecté pour ouvrir son cabinet.</p>}

@@ -193,7 +193,7 @@ test('a channel that copies the stable identity packages and runs as the regular
       {
         getPath: (): string => assert.fail('stable userData must not be relocated'),
         setPath: (): void => assert.fail('stable userData must not be relocated'),
-          setName: (name: string): void => assert.equal(name, official.displayName)
+        setName: (name: string): void => assert.equal(name, official.displayName)
       },
       branded.identity
     ),

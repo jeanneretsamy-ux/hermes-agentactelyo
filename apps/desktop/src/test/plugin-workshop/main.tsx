@@ -23,6 +23,7 @@ function Workshop() {
     if (!file) {
       return
     }
+
     const id = await loadRuntimePlugin(await file.text(), file.name, { defaultEnabled: false })
 
     if (!id) {
