@@ -26,6 +26,12 @@ def test_real_http_authentication_receipt_and_cancellation(cabinet, tmp_path, ca
             assert self.headers["Authorization"] == "Bearer " + token
             self.send_response(200)
             self.end_headers()
+            if self.path == '/cabinet/catalog':
+                self.wfile.write(json.dumps({'version':1,'approval_mode':'scoped-v1',
+                    'actions':{'source-library-search':['dossier_id','query']},
+                    'dossiers':[{'id':'observed-dossier','name':'Dossier fictif'}],
+                    'owner_id':'private-owner','pendingApprovals':[{'detail':'private'}]}).encode())
+                return
             self.wfile.write(json.dumps({"product": "Actelyo ERP", "native_cabinet": {"version": 1} if state["available"] else None, "pendingApprovals": [{"detail": "private"}]}).encode())
 
         def do_POST(self):
@@ -54,6 +60,10 @@ def test_real_http_authentication_receipt_and_cancellation(cabinet, tmp_path, ca
     try:
         client = cabinet.CabinetClient(bridge)
         assert "pendingApprovals" not in client.status()
+        catalog = client.catalog()
+        assert catalog['actions']['source-library-search'] == ['dossier_id','query']
+        assert catalog['dossiers'][0]['id'] == 'observed-dossier'
+        assert 'owner_id' not in catalog and 'pendingApprovals' not in catalog
         result = client.call("snapshot", {}, "observed-dossier")
         assert result["confirmed"] and result["result"]["id"] == "native-object"
         assert calls[-1]["dossierId"] == "observed-dossier"

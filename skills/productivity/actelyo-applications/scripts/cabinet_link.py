@@ -66,6 +66,15 @@ class CabinetClient:
         self.status()
         return self._request("/dossiers")
 
+    def catalog(self):
+        self.status()
+        value = self._request('/cabinet/catalog')
+        if (not isinstance(value, dict) or value.get('version') != 1
+                or value.get('approval_mode') != 'scoped-v1'
+                or not isinstance(value.get('actions'), dict)):
+            raise ValueError('Native action catalog unavailable; update the paired ERP.')
+        return {key: value[key] for key in ('version', 'actions', 'dossiers', 'amount_unit') if key in value}
+
     def call(self, action: str, fields: dict, dossier_id: str | None = None):
         if not re.fullmatch(r"[a-z][a-z0-9-]{0,79}", action) or not isinstance(fields, dict):
             raise ValueError("Action and JSON object required.")
@@ -95,6 +104,7 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status")
     sub.add_parser("dossiers")
+    sub.add_parser("catalog")
     call = sub.add_parser("call")
     call.add_argument("action")
     call.add_argument("--input-file", type=Path, required=True)
@@ -106,6 +116,8 @@ def main(argv=None):
             result = client.status()
         elif args.command == "dossiers":
             result = client.dossiers()
+        elif args.command == "catalog":
+            result = client.catalog()
         else:
             if args.input_file.stat().st_size > 100000:
                 raise ValueError("Input JSON too large.")
