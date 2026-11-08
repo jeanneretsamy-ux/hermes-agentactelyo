@@ -39,7 +39,7 @@ import {
   writeProviderHome
 } from './harness'
 import { expectNoSymptom } from './known'
-import { startScriptedProvider } from './provider'
+import { type ScriptedProvider, startScriptedProvider } from './provider'
 import { messageRows, type SessionRow, sessionRows } from './remote-helpers'
 
 const KNOWN: Record<string, string> = {
@@ -140,13 +140,48 @@ function lineageFromDb(rows: SessionRow[], rootId: string): string[] {
   }
 }
 
+const compressionYaml = (thresholdTokens: number) =>
+  `compression:\n  in_place: false\n  protect_first_n: 1\n  protect_last_n: 1\n  threshold_tokens: ${thresholdTokens}\n`
+
+/** Measure the incompressible prompt and tool schemas before adding compressible history.
+ * The catalogue grows independently of this sidebar regression; a fixed 24K cap can
+ * trip the compressor's ineffective-compaction guard before the first bulky turn.
+ * A separate sandbox keeps the scenario's one-conversation sidebar invariant.
+ */
+async function requestFloor(provider: ScriptedProvider): Promise<number> {
+  const calibration = createCoreSandbox('rotation-calibration')
+  writeProviderHome(calibration.hermesHome, provider.url, compressionYaml(250_000))
+  const { app, page } = await launchCoreApp(coreAppEnv(calibration))
+
+  try {
+    await waitForInteractive(app, page)
+    provider.script(U(0), [{ text: [`${A(0)} `, 'calibrated'] }])
+    await send(page, `${U(0)} calibrate`, 'Enter', recordWebSockets(page))
+    await expect(viewport(page)).toContainText(`${A(0)} calibrated`, { timeout: 60_000 })
+    await settled(page)
+    const completion = provider.completions.find(c => c.marker === U(0))
+    expect(completion?.finished, 'calibration completed at the real provider edge').toBe(true)
+
+    return Math.ceil(JSON.stringify({ m: completion!.body.messages, t: completion!.body.tools }).length / 4)
+  } finally {
+    await app.close().catch(() => undefined)
+    calibration.cleanup()
+  }
+}
+
 test('lineage: a real compression rotation is one sidebar row per conversation (#121148)', async () => {
   const provider = await startScriptedProvider()
+
+  const threshold = await requestFloor(provider).catch(async error => {
+    await provider.close()
+    throw error
+  }) + 18_000
+
   const sandbox = createCoreSandbox('rotation')
   writeProviderHome(
     sandbox.hermesHome,
     provider.url,
-    'compression:\n  in_place: false\n  protect_first_n: 1\n  protect_last_n: 1\n  threshold_tokens: 24000\n'
+    compressionYaml(threshold)
   )
   const { app, page } = await launchCoreApp(coreAppEnv(sandbox))
   const ws = recordWebSockets(page)

@@ -20,6 +20,7 @@ import { $activeGatewayProfile } from '@/store/profile'
 import { LegalActsSection } from './legal-practice/acts'
 import { LegalBillingSection } from './legal-practice/billing'
 import { legalDraftRequest } from './legal-practice/drafting'
+import { LegalFinanceSection } from './legal-practice/finance'
 import { LegalMattersSection } from './legal-practice/matters'
 import { LegalTasksSection } from './legal-practice/tasks'
 import { LegalWorkspaceSection } from './legal-practice/workspace'
@@ -157,7 +158,8 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
           ['matters', 'Clients et dossiers'],
           ['acts', 'Bibliothèque d’actes'],
           ['tasks', 'Processus et échéances'],
-          ['billing', 'Facturation']
+          ['billing', 'Facturation'],
+          ['finance', 'Pilotage financier']
         ].map(([id, label]) => (
           <Button
             aria-pressed={tab === id}
@@ -203,6 +205,7 @@ export function LegalPracticeContent({ owner }: { owner: LegalPracticeOwner }) {
         <section hidden={tab !== 'billing'}>
           <LegalBillingSection data={data} submit={submit} write={write} />
         </section>
+        {tab === 'finance' && <LegalFinanceSection owner={owner} />}
       </fieldset>
     </div>
   )

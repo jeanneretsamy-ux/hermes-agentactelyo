@@ -31,6 +31,9 @@ test.afterAll(async () => {
 test('constrains prose while tables and code scroll inside their own cards', async () => {
   const page = fixture!.page
 
+  // Match ResizableMarkdownTable before a column drag: auto-layout cells
+  // keep content width. wrap-anywhere belongs only to its resized, fixed
+  // layout; putting it on these cells makes this overflow fixture fit.
   await page.setContent(`
     <style>${rendererCss()}</style>
     <main
@@ -42,10 +45,10 @@ test('constrains prose while tables and code scroll inside their own cards', asy
       <div class="aui-md-table my-2 max-w-full overflow-x-auto">
         <table class="m-0 w-full min-w-[18rem] border-collapse">
           <thead>
-            <tr><th class="wrap-anywhere">Header with a long value</th><th>Other</th></tr>
+            <tr><th>Header with a long value</th><th>Other</th></tr>
           </thead>
           <tbody>
-            <tr><td class="wrap-anywhere">${LONG_TOKEN}</td><td>value</td></tr>
+            <tr><td>${LONG_TOKEN}</td><td>value</td></tr>
           </tbody>
         </table>
       </div>

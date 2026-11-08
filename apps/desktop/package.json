@@ -75,7 +75,9 @@
     "test:e2e": "npm run build && playwright test e2e/",
     "test:e2e:visual": "npm run build && WLR_BACKENDS=headless WLR_NO_HARDWARE_CURSORS=1 cage -- npx playwright test e2e/ --reporter=list",
     "test:e2e:update-snapshots": "npm run build && WLR_BACKENDS=headless WLR_NO_HARDWARE_CURSORS=1 cage -- npx playwright test e2e/ --reporter=list --update-snapshots",
-    "repro:short-session-hang": "node scripts/run-short-session-hang-repro.mjs"
+    "repro:short-session-hang": "node scripts/run-short-session-hang-repro.mjs",
+    "prebuild": "node ../finance-ocr/build.mjs --output public/ocr-runtime",
+    "predev:renderer": "node ../finance-ocr/build.mjs --output public/ocr-runtime"
   },
   "dependencies": {
     "@assistant-ui/core": "0.2.23",
@@ -193,6 +195,7 @@
     "typescript": "6.0.3",
     "vite": "8.2.0",
     "vitest": "4.1.10",
-    "wait-on": "9.0.10"
+    "wait-on": "9.0.10",
+    "@actelyo/finance-ocr": "0.1.0"
   }
 }

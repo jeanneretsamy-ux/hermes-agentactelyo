@@ -122,7 +122,7 @@ auxiliary:
     await fixture?.cleanup()
   })
 
-  test('queues an Enter-submitted draft instead of steering while compaction is active', async ({}, testInfo) => {
+  test('defers an Enter-submitted draft until active compaction completes', async ({}, testInfo) => {
     const { page } = fixture
     const queued = 'E2E_QUEUED_DURING_COMPACTION'
 
@@ -150,7 +150,10 @@ auxiliary:
     await expect(primary).toHaveAttribute('aria-label', 'Stop')
 
     await send(page, queued)
-    await expect(page.getByText('1 Queued')).toBeVisible()
+    // Enter uses session.redirect; the gateway durably queues under its
+    // compression lock and paints the accepted user turn. It is distinct
+    // from the explicit client-side Queue button's "1 Queued" badge.
+    await expect(page.locator('[data-slot="aui_thread-viewport"]')).toContainText(queued)
     expect(fixture.mock.heldCompletionCount()).toBe(1)
     expect(receivedUserTexts()).not.toContain(queued)
     await page.screenshot({ path: testInfo.outputPath('queued-during-compaction.png') })

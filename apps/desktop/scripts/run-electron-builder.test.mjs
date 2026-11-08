@@ -29,6 +29,8 @@ test('validate-only admits real prepared inputs without launching tools and reje
     const args = ['--validate-only', '--prepared', manifest, '--native-deps', nativeDeps, '--dir']
     const options = { spawn: () => { throw new Error('validation must not launch tools') } }
     assert.equal(runElectronBuilder(args, options), 0)
+    assert.equal(runElectronBuilder([...args, '-c.buildVersion=2026.11.5.1', '-c.extraMetadata.shortVersionWindows=2026.11.5.1'], options), 0)
+    assert.throws(() => runElectronBuilder([...args, '-c.buildVersion=not-a-version'], options), /not admitted/)
     assert.throws(() => runElectronBuilder([...args, '-c.npmRebuild=true'], options), /not admitted/)
     assert.throws(() => runElectronBuilder(['--validate-only'], options), /--prepared/)
     const cli = spawnSync(process.execPath, [path.join(import.meta.dirname, 'run-electron-builder.mjs'), ...args], { encoding: 'utf8' })

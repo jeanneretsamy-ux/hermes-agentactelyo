@@ -1,7 +1,7 @@
 ---
 name: actelyo-applications
 description: Operate Actelyo web and desktop applications.
-version: 1.0.0
+version: 1.1.0
 author: Actelyo
 license: MIT
 platforms: [windows, linux, macos]
@@ -54,6 +54,24 @@ python <skill-directory>/scripts/app_control.py screenshot --port 9230 --output 
 References come only from the latest snapshot and become invalid after navigation. Password fields remain manual. For Actelyo.com, the same helper can operate an authenticated Chrome window already opened on the site with its own loopback CDP port; it does not start a logged-in browser or copy credentials.
 
 ## Quick Reference
+
+### Shared cabinet with ERP
+
+For finance, accounting imports, HR and payroll preparation, prefer the native cabinet connector when the updated ERP is running on this PC. This shares the ERP's actual records rather than creating a second ledger inside Law Harness. It does not supply an independent payroll engine, submit social declarations or confirm a bank payment.
+
+Use `search_files` to locate the installed ERP profile's `ecosystem-bridge.json` under the user's application-data directory, or use the exact profile path provided by the user. Do not read or print that file through an agent tool: the helper reads its token locally. Call the bundled helper through `terminal` with structured input files created by `write_file`:
+
+```text
+python <skill-directory>/scripts/cabinet_link.py --bridge <observed-profile>/ecosystem-bridge.json status
+python <skill-directory>/scripts/cabinet_link.py --bridge <observed-profile>/ecosystem-bridge.json dossiers
+python <skill-directory>/scripts/cabinet_link.py --bridge <observed-profile>/ecosystem-bridge.json call snapshot --input-file <workspace>/cabinet-input.json --dossier <observed-dossier-id>
+```
+
+Load `finance-help` with an `action_name` before an unfamiliar operation. Read actual record IDs and the current state first. Use `read-financial-record` for a narrow readback after a change; keep the native receipt. Finance and HR commands use the selected Law Harness model for planning and the deterministic ERP service for execution. A model is not required inside ERP for this connector.
+
+The ERP presents the exact command for native approval. If it is refused or cancelled, stop: do not approve it through another channel or silently repeat it. After a timeout, read the current state before retrying, using original references and request identifiers to avoid duplicates. Invoice issuance, recorded payments, payroll reviews and preparation closures remain distinct from actual email sending, bank transfers or accepted DSN submissions.
+
+Payroll and cabinet-wide HR commands run outside a client-dossier scope. Only import documents explicitly selected by the user. Missing providers, native routes or installed versions are blockers for those capabilities, not reasons to claim success using a mock page or a local file.
 
 | Target | Connection | Identity check |
 | --- | --- | --- |

@@ -59,6 +59,7 @@ export function validatePreparedBuilderArgs(args, inputs) {
       continue
     }
     if (arg === '--dir' || arg === '--publish=never' || arg === '--') continue
+    if (/^(?:-c|--config)\.buildVersion=\d+(?:\.\d+){2,3}$/.test(arg)) continue
     if (/^(?:-c|--config)\.(?:extraMetadata\.(?:version|shortVersion|shortVersionWindows)|directories\.output|mac\.identity)=/.test(arg)) continue
     if (!arg.startsWith('-') && inputs.formats.includes(arg)) continue
     throw preparationRequired(`Argument is not admitted by prepared packaging: ${arg}`)

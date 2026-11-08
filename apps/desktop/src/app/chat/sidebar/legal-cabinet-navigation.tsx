@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 
 import { Codicon } from '@/components/ui/codicon'
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { ExternalLink } from '@/lib/external-link'
 import { $gateway } from '@/store/gateway'
 import {
   isLegalOwnerCurrent,
@@ -20,7 +21,8 @@ const sections: [LegalPracticeSection, string][] = [
   ['matters', 'Clients et dossiers'],
   ['acts', 'Bibliothèque et rédaction'],
   ['tasks', 'Processus et échéances'],
-  ['billing', 'Facturation']
+  ['billing', 'Facturation'],
+  ['finance', 'Pilotage financier']
 ]
 
 export function LegalCabinetNavigation() {
@@ -107,6 +109,10 @@ function LegalCabinetTree({ gateway }: { gateway: ReturnType<typeof $gateway.get
       </SidebarMenuButton>
       {expanded && (
         <nav aria-label="Domaines du cabinet juridique" className="max-h-[45vh] space-y-1 overflow-y-auto pl-3 text-sm">
+          <div className="px-2 py-1.5">
+            <ExternalLink href="https://actelyo.com/settings?tab=vault">Raccorder Pappers, Drive et mes sources</ExternalLink>
+            <p className="text-xs text-muted-foreground">Parcours guidé ; l’accès de ce profil reste à tester.</p>
+          </div>
           {!owner && <p className="p-2">Sélectionnez un profil connecté pour ouvrir son cabinet.</p>}
           {owner && catalog.isPending && <p role="status">Chargement des domaines…</p>}
           {(error || catalog.isError) && (

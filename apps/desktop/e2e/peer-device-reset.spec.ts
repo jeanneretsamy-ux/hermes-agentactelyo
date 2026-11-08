@@ -18,6 +18,7 @@ import {
 } from './fixtures'
 import { writeEnvFile, writeMockProviderConfig } from '../../../tests-js/scripts/mock-provider-config'
 import { collectErrorBanners, type ElectronApplication, expect, installErrorBannerGuard, type Page, test } from './test'
+import { captureRpc } from './capture-rpc'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../../..')
 const LOCAL_LABEL = 'This device'
@@ -134,7 +135,12 @@ async function expectReady(page: Page, label: string): Promise<void> {
 
 async function switchTo(page: Page, label: string): Promise<void> {
   await gateway(page).click()
-  await page.getByRole('menuitemradio', { name: new RegExp(label) }).click()
+  const target = page.getByRole('menuitemradio', { name: new RegExp(label) })
+  const alreadyActive = await target.getAttribute('aria-checked') === 'true'
+  await target.click()
+  if (label === 'This device' && !alreadyActive) {
+    await page.getByRole('dialog', { name: 'Switch to This device?' }).getByRole('button', { name: 'Switch', exact: true }).click()
+  }
   await expectReady(page, label)
 }
 
@@ -166,7 +172,7 @@ const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Pag
 
       for (const hermesHome of [local.hermesHome, remote.hermesHome, remoteProfileHome]) {
         writeMockProviderConfig(hermesHome, mock.url)
-        writeEnvFile(hermesHome)
+        writeEnvFile(hermesHome, 'e2e-mock-key', mock.url)
       }
 
       const port = await freePort()
@@ -214,6 +220,14 @@ const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Pag
 
       const launched = await launchDesktop(isolatedEnv(local))
       app = launched.app
+      const wire: unknown[] = []
+      captureRpc(launched.page, wire)
+      app.on('window', page => captureRpc(page, wire))
+      await info.attach('rpc-capture-started', { body: 'Synthetic requests only; no credentials or prompt bodies', contentType: 'text/plain' })
+      // Persist as frames arrive so teardown errors cannot discard the trace.
+      const wireFile = info.outputPath('peer-rpc.json')
+      const saveWire = () => fs.writeFileSync(wireFile, JSON.stringify(wire))
+      app.on('close', saveWire)
       app.process().stdout?.on('data', chunk => { desktopLog += chunk.toString() })
       app.process().stderr?.on('data', chunk => { desktopLog += chunk.toString() })
       await expectReady(launched.page, LOCAL_LABEL)
@@ -250,7 +264,7 @@ const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Pag
 
 peerTest.setTimeout(240_000)
 
-peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', async ({ gateways: { app, source } }) => {
+peerTest('Ctrl+Shift+N keeps the remote owner and can reopen its stored session', async ({ gateways: { app, source } }) => {
   const remoteProfile = source.locator(`[data-slot="profile-rail-gateway"][data-connection-id="${REMOTE_ID}"]`)
     .getByRole('button', { name: `${REMOTE_PROFILE} · ${REMOTE_LABEL}`, exact: true })
 
@@ -266,6 +280,14 @@ peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', asy
   const peer = await opened
   installErrorBannerGuard(peer)
   await expectReady(peer, REMOTE_LABEL)
+  // Generic peer windows intentionally start a fresh draft (#74948), while
+  // preserving the owning gateway/profile. Reopen history explicitly.
+  expect(new URL(peer.url()).searchParams.get('profile')).toBe(REMOTE_PROFILE)
+  expect(new URL(peer.url()).searchParams.get('connectionId')).toBe(REMOTE_ID)
+  await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toHaveCount(0)
+  const storedChat = peer.getByRole('button', { name: /^Remember this remote profile session/ })
+  await expect(storedChat).toHaveCount(1)
+  await storedChat.click()
   await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toBeVisible({ timeout: 60_000 })
   await expectReady(source, REMOTE_LABEL)
   await peer.reload()

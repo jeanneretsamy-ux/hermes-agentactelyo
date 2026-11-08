@@ -52,6 +52,31 @@ test('a cookie 401 is replayed only for a gate refusal on an idempotent or vouch
   expect(shouldReplayAfterCookie401(new Error('socket reset'), {})).toBe(false)
 })
 
+test('an unsigned gateway returns the original refusal without opening silent login', async () => {
+  const refusal = GATE_401()
+  const actions: string[] = []
+  const recover = (available: boolean) =>
+    retryCookie401WithLogin(refusal, { method: 'GET' }, {
+      canLogin: async () => available,
+      clearCookies: () => {
+        actions.push('clear')
+      },
+      login: async () => {
+        actions.push('login')
+      },
+      retry: async () => {
+        actions.push('retry')
+
+        return 'ok'
+      }
+    })
+
+  await expect(recover(false)).rejects.toBe(refusal)
+  expect(actions).toEqual([])
+  expect(await recover(true)).toBe('ok')
+  expect(actions).toEqual(['clear', 'login', 'retry'])
+})
+
 test('background roster auth leaves a gate 401 for the source row without clearing cookies or opening login', async () => {
   const refusal = GATE_401()
   const actions: string[] = []

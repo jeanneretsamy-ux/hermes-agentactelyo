@@ -1,0 +1,21 @@
+name: Native cabinet connector QA
+on:
+  push:
+    branches: [codex/cabinet-native-bridge, main]
+    paths: ['skills/productivity/actelyo-applications/**', 'tests/skills/test_actelyo_cabinet_skill.py', '.github/workflows/cabinet-bridge.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'true'
+      - name: Real loopback HTTP, credentials, redirect refusal and cancellation
+        run: scripts/run_tests.sh tests/skills/test_actelyo_cabinet_skill.py tests/skills/test_actelyo_applications_skill.py -q -j 1
