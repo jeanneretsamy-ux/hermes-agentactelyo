@@ -275,7 +275,10 @@ test.each(['stable', 'canary', 'commit'])(
       process.env.HERMES_BUILD_COMMIT = 'abcdef1234567890abcdef1234567890abcdef12'
     }
 
-    await assert.rejects(identityForVariant('store'), /Actelyo Store publication requires an Actelyo publisher identity and certificate/)
+    await assert.rejects(
+      identityForVariant('store'),
+      /Actelyo Store publication requires an Actelyo publisher identity and certificate/
+    )
   }
 )
 

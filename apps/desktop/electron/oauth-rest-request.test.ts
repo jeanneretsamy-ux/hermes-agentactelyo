@@ -55,21 +55,26 @@ test('a cookie 401 is replayed only for a gate refusal on an idempotent or vouch
 test('an unsigned gateway returns the original refusal without opening silent login', async () => {
   const refusal = GATE_401()
   const actions: string[] = []
-  const recover = (available: boolean) =>
-    retryCookie401WithLogin(refusal, { method: 'GET' }, {
-      canLogin: async () => available,
-      clearCookies: () => {
-        actions.push('clear')
-      },
-      login: async () => {
-        actions.push('login')
-      },
-      retry: async () => {
-        actions.push('retry')
 
-        return 'ok'
+  const recover = (available: boolean) =>
+    retryCookie401WithLogin(
+      refusal,
+      { method: 'GET' },
+      {
+        canLogin: async () => available,
+        clearCookies: () => {
+          actions.push('clear')
+        },
+        login: async () => {
+          actions.push('login')
+        },
+        retry: async () => {
+          actions.push('retry')
+
+          return 'ok'
+        }
       }
-    })
+    )
 
   await expect(recover(false)).rejects.toBe(refusal)
   expect(actions).toEqual([])

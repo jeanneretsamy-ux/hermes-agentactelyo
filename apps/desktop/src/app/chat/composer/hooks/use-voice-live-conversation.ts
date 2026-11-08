@@ -322,7 +322,7 @@ export function useVoiceLiveConversation({
           refreshStatus()
           void Promise.resolve(latest.current.onSubmit(prompt, voiceContext)).catch(error => {
             notifyError(error, voiceCopy.liveDelegationFailed)
-            session.speak(delegationId, "Sorry, I could not reach Actelyo Law Harness for that request.")
+            session.speak(delegationId, 'Sorry, I could not reach Actelyo Law Harness for that request.')
             setDelegation(null)
             refreshStatus()
           })
@@ -447,7 +447,7 @@ export function useVoiceLiveConversation({
       ) {
         // Turn settled without a speakable reply (tool-only, error, interrupted).
         if (spokenLengthRef.current === 0) {
-          session.think(delegationId, "Actelyo Law Harness finished that request without a spoken result.")
+          session.think(delegationId, 'Actelyo Law Harness finished that request without a spoken result.')
         }
 
         setDelegation(null)

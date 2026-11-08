@@ -6,11 +6,17 @@ export interface PrivateLibraryEntry {
 }
 
 export function parsePrivateLibrary(text: string, domains: string[]): PrivateLibraryEntry[] {
-  if (text.length > 8_000_000) { throw new Error('Bibliothèque trop volumineuse (8 Mo maximum).') }
+  if (text.length > 8_000_000) {
+    throw new Error('Bibliothèque trop volumineuse (8 Mo maximum).')
+  }
   const value = JSON.parse(text)
 
-  if (value?.format !== 'actelyo-private-library-v1' || !Array.isArray(value.entries) ||
-      value.entries.length < 1 || value.entries.length > 500) {
+  if (
+    value?.format !== 'actelyo-private-library-v1' ||
+    !Array.isArray(value.entries) ||
+    value.entries.length < 1 ||
+    value.entries.length > 500
+  ) {
     throw new Error('Format de bibliothèque Actelyo invalide (1 à 500 actes).')
   }
 
@@ -23,7 +29,9 @@ export function parsePrivateLibrary(text: string, domains: string[]): PrivateLib
   }
 
   return value.entries.map((entry: Record<string, unknown>) => {
-    if (!entry || !domains.includes(String(entry.domain))) { throw new Error('Domaine de bibliothèque inconnu.') }
+    if (!entry || !domains.includes(String(entry.domain))) {
+      throw new Error('Domaine de bibliothèque inconnu.')
+    }
     const title = string(entry.title, 500)
     const source = Array.isArray(entry.sources) ? entry.sources[0] : undefined
 
