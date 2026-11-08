@@ -8,6 +8,20 @@ from tools import legal_cabinet
 from tools.registry import registry
 
 
+def test_guided_sources_via_registry_need_no_project_and_accept_no_secret():
+    for provider in ("pappers", "drive", "external"):
+        result = json.loads(registry.dispatch("legal_cabinet", {"action": "source.setup", "provider": provider}))
+        assert result["success"]
+        assert result["data"]["setup_url"] == "https://actelyo.com/settings?tab=vault"
+        assert result["data"]["requires_user_interaction"]
+        assert result["data"]["connected"] is False
+        assert result["data"]["secret_in_chat"] is False
+    for values in ({"provider": "unknown"}, {"provider": "pappers", "api_key": "DO_NOT_ACCEPT"}):
+        result = json.loads(registry.dispatch("legal_cabinet", {"action": "source.setup", **values}))
+        assert result["success"] is False
+        assert "DO_NOT_ACCEPT" not in json.dumps(result)
+
+
 def test_chat_tool_manages_project_workspace_and_invoice_draft(monkeypatch, tmp_path):
     db_path = tmp_path / "projects.db"
     original_connect = pdb.connect_closing

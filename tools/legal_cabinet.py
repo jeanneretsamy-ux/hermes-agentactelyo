@@ -16,13 +16,21 @@ _ACTIONS = (
     'business.party.save','business.contract.save','business.purchase.save',
     'business.purchase.transition','business.supplier_payment.add','finance.timer.start','finance.timer.change',
     'finance.snapshot','finance.export','finance.budget.save','finance.fee.review',
-    "snapshot", "task.save", "workflow.apply", "workspace.set", "firm.settings.set", "client.save",
+    "snapshot", "source.setup", "task.save", "workflow.apply", "workspace.set", "firm.settings.set", "client.save",
     "matter.save", "act.save", "act.search", "act.read", "library.import", "fee.add", "fee_code.save", "subscription.save", "subscription.invoice", "practice_document.create", "document.create", "document.credit", "payment.add", "payment.allocate",
 )
 
 
 def legal_cabinet(action: str, project: str = "", task_id: str | None = None, **values) -> str:
     """Read or update legal workspace records for an explicit or active project."""
+    if action == "source.setup":
+        from hermes_cli.source_connection_guide import source_connection_guide
+        try:
+            if set(values) - {"provider"}:
+                raise ValueError("Ce parcours n'accepte aucun secret ni champ supplémentaire.")
+            return json.dumps({"success": True, "action": action, "data": source_connection_guide(values.get("provider", ""))}, ensure_ascii=False)
+        except ValueError as exc:
+            return json.dumps({"success": False, "error": str(exc)}, ensure_ascii=False)
     from hermes_cli import legal_practice as legal, projects_db as pdb
     from tools.project_tools import _calling_session_project_id
 
@@ -104,6 +112,7 @@ registry.register(
         "name": "legal_cabinet",
         "description": (
             "Manage the legal workspace of a Desktop Project from chat. First use desktop_project(action='list') "
+            "For missing external sources, source.setup (provider: pappers, drive, external) proposes the guided user connection without requiring an active project. Never request API keys, passwords or cookies in chat, and never claim a source is connected without a real read test. "
             "when the active project is unclear, then call snapshot before changes. Actions: snapshot; workspace.set "
             "(domain + matter_types); firm.settings.set (FR firm identity); client.save; matter.save; act.save; "
             "act.search (query searches titles/types, returns up to 50 matches); act.read (id returns the complete saved act); "
@@ -132,6 +141,7 @@ registry.register(
             "properties": {
                 "operation_payload": {"type":"object","description":"Fields of a cabinet business or persistent-timer operation. Party: name, role (prospect/supplier/partner), email, phone, address, notes, optional id, expected_version. Contract: party_id,title,start_on,end_on,amount_cents,status,id,expected_version. Purchase: supplier_id,reference,due_on,lines[{description,quantity_milli,unit_cents,tax_bps}]. Transition: order_id,expected_version,status (ordered/received/closed/cancelled). Supplier payment: order_id,amount_cents,paid_on,reference. Timer start: matter_id,description,rate_cents,cost_rate_cents,billable. Timer change: timer_id,expected_version,command (pause/resume/finish). Pass request_id separately; reread finance.snapshot before updates. These are internal records, no external order/payment/signature."},
                 "action": {"type": "string", "enum": list(_ACTIONS)},
+                "provider": {"type": "string", "enum": ["pappers", "drive", "external"]},
                 "project": {"type": "string", "description": "Project name, slug, or id; defaults to this session's active project."},
                 "domain": {"type": "string", "description": "workspace.set: domain id from snapshot.domains."},
                 "matter_types": {"type": "array", "items": {"type": "string"}},
