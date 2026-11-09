@@ -41,6 +41,8 @@ interface EndpointForm {
   apiMode: CustomEndpointApiMode
   baseUrl: string
   contextLength: string
+  generationAdapter: 'openai-compatible' | 'llama.cpp'
+  generation: Record<string, number | boolean>
   discoverModels: boolean
   id: string
   makeDefault: boolean
@@ -61,6 +63,8 @@ const EMPTY_FORM: EndpointForm = {
   apiMode: '',
   baseUrl: '',
   contextLength: '',
+  generationAdapter: 'openai-compatible',
+  generation: {},
   discoverModels: true,
   id: '',
   makeDefault: true,
@@ -74,6 +78,8 @@ function formFromEndpoint(endpoint: CustomEndpoint): EndpointForm {
     apiMode: endpoint.api_mode ?? '',
     baseUrl: endpoint.base_url,
     contextLength: endpoint.context_length ? String(endpoint.context_length) : '',
+    generationAdapter: endpoint.generation_adapter ?? 'openai-compatible',
+    generation: endpoint.generation_settings ?? {},
     discoverModels: endpoint.discover_models,
     id: endpoint.id,
     makeDefault: Boolean(endpoint.is_current),
@@ -96,6 +102,8 @@ function toPayload(
     model: form.model.trim(),
     api_key: form.apiKey.trim() || undefined,
     api_mode: form.apiMode,
+    generation_adapter: form.generationAdapter,
+    generation_settings: form.generation,
     context_length: Number.isFinite(contextLength) && contextLength > 0 ? contextLength : undefined,
     discover_models: form.discoverModels,
     make_default: form.makeDefault,
@@ -449,6 +457,16 @@ export function CustomEndpointsSettings({ onConfigSaved, onMainModelChanged }: C
                 />
               </label>
             </div>
+            <details className="rounded-md border border-border p-3 text-sm">
+              <summary>{ce.generationLabel}</summary>
+              <p className="my-2 text-xs text-muted-foreground">{ce.generationHint}</p>
+              <fieldset disabled={saving || form.apiMode !== 'chat_completions'} className="grid gap-3 sm:grid-cols-2">
+                <label>{ce.generationAdapter}<select value={form.generationAdapter} onChange={event => setForm(current => ({ ...current, generationAdapter: event.target.value as EndpointForm['generationAdapter'], generation: {} }))}><option value="openai-compatible">OpenAI compatible</option><option value="llama.cpp">llama.cpp</option></select></label>
+                {Object.entries({ temperature: [0,2,0.05], topP:[0.01,1,0.01], maxOutputTokens:[1,32768,1], ...(form.generationAdapter === 'llama.cpp' ? {topK:[1,1000,1],minP:[0,1,0.01],repetitionPenalty:[0.1,2,0.05],seed:[0,4294967295,1]} : {}) }).map(([key,range]) => <label key={key}>{key}<Input type="number" min={range[0]} max={range[1]} step={range[2]} value={typeof form.generation[key] === 'number' ? form.generation[key] as number : ''} onChange={event => {const raw=event.target.value;setForm(current => {const generation={...current.generation};if(raw==='')delete generation[key];else generation[key]=Number(raw);return {...current,generation}})}} /></label>)}
+                {form.generationAdapter === 'llama.cpp' && <label>enable_thinking (llama.cpp)<select value={form.generation.thinking === undefined ? 'default' : String(form.generation.thinking)} onChange={event => setForm(current => { const generation={...current.generation};if(event.target.value==='default')delete generation.thinking;else generation.thinking=event.target.value==='true';return {...current,generation} })}><option value="default">default</option><option value="false">false</option><option value="true">true</option></select></label>}
+              </fieldset>
+              <Button type="button" variant="outline" disabled={saving} onClick={() => setForm(current => ({...current,generation:{}}))}>{ce.generationReset}</Button>
+            </details>
             <label className="grid gap-1.5 text-xs text-muted-foreground">
               {ce.fields.endpointUrl}
               <Input

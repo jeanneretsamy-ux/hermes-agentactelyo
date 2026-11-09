@@ -79,6 +79,18 @@ afterEach(() => {
 })
 
 describe('CustomEndpointsSettings', () => {
+  it('saves advanced sampling and thinking to the selected endpoint', async () => {
+    getCustomEndpoints.mockResolvedValue({...savedResponse,endpoints:[{...savedResponse.endpoints[0],api_mode:'chat_completions',generation_adapter:'llama.cpp',generation_settings:{temperature:0.2,topK:32,thinking:false}}]})
+    saveCustomEndpoint.mockResolvedValue(savedResponse)
+    render(<CustomEndpointsSettings />)
+    await screen.findByText('Profile A')
+    expect((screen.getByLabelText('temperature') as HTMLInputElement).value).toBe('0.2')
+    expect((screen.getByLabelText('enable_thinking (llama.cpp)') as HTMLSelectElement).value).toBe('false')
+    fireEvent.change(screen.getByLabelText('topK'),{target:{value:'48'}})
+    fireEvent.click(screen.getByRole('button',{name:'Save'}))
+    expect(saveCustomEndpoint.mock.calls[0][0]).toMatchObject({generation_adapter:'llama.cpp',generation_settings:{temperature:0.2,topK:48,thinking:false}})
+  })
+
   it('prepares a router without retaining a key or activating it', async () => {
     getCustomEndpoints.mockResolvedValue(emptyResponse)
     render(<CustomEndpointsSettings />)

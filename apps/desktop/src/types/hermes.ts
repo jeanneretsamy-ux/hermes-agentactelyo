@@ -268,6 +268,8 @@ export interface CustomEndpointModelDetail {
 }
 
 export interface CustomEndpoint {
+  generation_adapter?: 'openai-compatible' | 'llama.cpp'
+  generation_settings?: Record<string, number | boolean>
   api_key_preview?: null | string
   api_mode?: CustomEndpointApiMode
   base_url: string
@@ -294,6 +296,8 @@ export interface CustomEndpointsResponse {
 }
 
 export interface CustomEndpointUpdate {
+  generation_adapter?: 'openai-compatible' | 'llama.cpp'
+  generation_settings?: Record<string, number | boolean>
   api_key?: string
   api_mode?: CustomEndpointApiMode
   base_url: string

@@ -10,6 +10,8 @@ import re
 import asyncio
 import time
 import urllib.parse
+from hermes_cli.web_models import CurrentGenerationUpdate
+from hermes_cli.generation_settings import FIELDS as GENERATION_FIELDS, generation_parameters, read_generation_settings
 from fastapi import APIRouter
 from hermes_cli.web_routers._common import (
     REDACTED_CREDENTIAL_WRITE_DETAIL, http_failure, is_redacted_credential_preview,
@@ -455,6 +457,8 @@ def _endpoint_row(
     return {
         "id": endpoint_id, "name": name, "base_url": base_url, "model": model, "models": models,
         "api_mode": _endpoint_api_mode(key_entry),
+        "generation_adapter": key_entry.get("generation_adapter", "openai-compatible"),
+        "generation_settings": read_generation_settings(key_entry),
         "context_length": context_length, "discover_models": discover_models,
         "has_api_key": has_api_key, "api_key_preview": api_key_preview,
         "is_current": is_current, "source": source,
@@ -625,6 +629,29 @@ def _write_custom_endpoint(cfg: Dict[str, Any], body: CustomEndpointUpdate) -> T
     # credentials — ``request_overrides``); rebuilding from scratch silently
     # dropped them on an unrelated edit.
     entry: Dict[str, Any] = dict(existing)
+    if body.generation_settings is not None:
+        adapter = body.generation_adapter or entry.get("generation_adapter", "openai-compatible")
+        mode = body.api_mode if body.api_mode is not None else _endpoint_api_mode(entry)
+        if body.generation_settings and mode != "chat_completions":
+            raise HTTPException(status_code=400, detail="Pin Chat Completions mode before setting sampling parameters")
+        try:
+            parameters = generation_parameters(body.generation_settings, adapter)
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
+        extra = dict(entry.get("extra_body") or {})
+        for wire, *_ in GENERATION_FIELDS.values():
+            extra.pop(wire, None)
+        template = dict(extra.get("chat_template_kwargs") or {})
+        template.pop("enable_thinking", None)
+        requested_template = parameters.pop("chat_template_kwargs", {})
+        template.update(requested_template)
+        if template:
+            extra["chat_template_kwargs"] = template
+        else:
+            extra.pop("chat_template_kwargs", None)
+        extra.update(parameters)
+        entry["extra_body"] = extra
+        entry["generation_adapter"] = adapter
     entry.update({
         "name": name, "base_url": base_url, "model": model,
         "discover_models": bool(body.discover_models),
@@ -723,6 +750,41 @@ def _write_custom_endpoint(cfg: Dict[str, Any], body: CustomEndpointUpdate) -> T
             cfg["model"].pop("api_key", None)
 
     return endpoint_id, entry
+
+
+def _current_generation(cfg):
+    entries = [entry for entry in _custom_endpoint_response(cfg)["endpoints"] if entry["is_current"]]
+    if len(entries) != 1:
+        raise HTTPException(409, "Select a custom Chat Completions endpoint in Law Harness first")
+    entry = entries[0]
+    if entry.get("api_mode") != "chat_completions":
+        raise HTTPException(409, "Pin Chat Completions mode in Law Harness first")
+    import hashlib, json
+    revision = hashlib.sha256(json.dumps({key: entry.get(key) for key in ("id", "model", "generation_adapter", "generation_settings")}, sort_keys=True).encode()).hexdigest()
+    return {"contract": 1, "revision": revision, "endpoint_id": entry["id"], "name": entry["name"], "model": entry["model"],
+            "generation_adapter": entry["generation_adapter"], "generation_settings": entry["generation_settings"],
+            "applies_to": "new-sessions"}
+
+
+@router.get("/api/providers/current-generation")
+def current_generation(profile: Optional[str] = None):
+    with _config_profile_scope(profile):
+        return _current_generation(load_config())
+
+
+@router.post("/api/providers/current-generation")
+def update_current_generation(body: CurrentGenerationUpdate, profile: Optional[str] = None):
+    with _config_profile_scope(profile), _CONFIG_MUTATION_LOCK:
+        cfg = load_config()
+        current = _current_generation(cfg)
+        if current["endpoint_id"] != body.endpoint_id or current["revision"] != body.expected_revision:
+            raise HTTPException(409, "The current provider changed; refresh before saving")
+        entry = next(row for row in _custom_endpoint_response(cfg)["endpoints"] if row["id"] == body.endpoint_id)
+        _write_custom_endpoint(cfg, CustomEndpointUpdate(id=entry["id"], name=entry["name"], base_url=entry["base_url"],
+            model=entry["model"], api_mode="chat_completions", discover_models=entry["discover_models"],
+            generation_adapter=body.generation_adapter, generation_settings=body.generation_settings))
+        save_config(cfg)
+        return _current_generation(load_config())
 
 
 @router.get("/api/providers/custom-endpoints")

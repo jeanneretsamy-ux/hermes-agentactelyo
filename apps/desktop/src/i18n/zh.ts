@@ -1252,6 +1252,11 @@ export const zh = defineLocale({
       backendIdleTimeoutTitle: '后端空闲超时（毫秒）'
     },
     customEndpoints: {
+      generationLabel: "生成设置",
+      generationHint: "编辑前请选择 Chat Completions。空字段使用引擎默认值。更改适用于新会话。",
+      generationAdapter: "采样适配器",
+      generationReset: "使用引擎默认值",
+
       active: '已启用',
       apiKeySet: '已设置 API 密钥',
       use: '使用',

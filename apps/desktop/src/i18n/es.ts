@@ -1621,6 +1621,11 @@ export const esOverrides = {
       backendIdleTimeoutTitle: 'Tiempo de inactividad del backend'
     },
     customEndpoints: {
+      generationLabel: "Ajustes de generación",
+      generationHint: "Seleccione Chat Completions antes de editar. Los campos vacíos usan los valores del motor. Los cambios se aplican a las nuevas sesiones.",
+      generationAdapter: "Adaptador de generación",
+      generationReset: "Valores del motor",
+
       active: 'Activo',
       apiKeySet: 'Clave API configurada',
       use: 'Usar',
