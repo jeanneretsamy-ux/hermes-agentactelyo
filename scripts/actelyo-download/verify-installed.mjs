@@ -3,6 +3,16 @@ import fs from 'node:fs'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { pathToFileURL } from 'node:url'
+export async function nativeSkillsCatalog(page) {
+  const title = page.getByText(/^Actelyo\s*·\s*[^\r\n]+$/, { exact: true })
+  await title.waitFor({ timeout: 90000 })
+  assert.equal(await title.count(), 1, 'Expected one visible native catalog title')
+  const name = (await title.innerText()).trim().replace(/\s+/g, ' ')
+  const catalog = page.getByRole('region', { name, exact: true })
+  await catalog.waitFor({ timeout: 90000 })
+  assert.equal(await catalog.count(), 1, 'The catalog must match its actual translated title')
+  return catalog
+}
 async function main() {
 const { _electron } = createRequire(path.join(process.env.GITHUB_WORKSPACE || process.cwd(), 'apps/desktop/package.json'))('playwright')
 
@@ -147,8 +157,7 @@ try {
     })
   }
   await page.getByText(/^(Capabilities|Capacités)$/).first().click()
-  const catalog = page.getByRole('region', { name: 'Actelyo · Skills Hub' })
-  await catalog.waitFor({ timeout: 90000 })
+  const catalog = await nativeSkillsCatalog(page)
   assert.equal(await catalog.locator('iframe').count(), 0)
   const logos = await page.locator('img').evaluateAll(nodes => nodes.map(n => ({ src: n.src, alt: n.alt, loaded: n.complete && n.naturalWidth > 0 })))
   assert(logos.some(n => n.loaded && /actelyo/i.test(n.src + n.alt)), 'Loaded Actelyo logo missing')

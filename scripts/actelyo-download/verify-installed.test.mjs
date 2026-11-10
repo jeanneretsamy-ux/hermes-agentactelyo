@@ -1,6 +1,30 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { clearFirstRunOverlay } from './verify-installed.mjs'
+import { clearFirstRunOverlay, nativeSkillsCatalog } from './verify-installed.mjs'
+
+for (const label of ['Actelyo · Skills Hub', 'Actelyo · Hub de skills', 'Actelyo · 技能中心']) {
+  test('native catalog uses the observed translated title: ' + label, async () => {
+    const catalog = { waitFor: async () => {}, count: async () => 1 }
+    const page = {
+      getByText(pattern) {
+        assert(pattern.test(label))
+        return { waitFor: async () => {}, count: async () => 1, innerText: async () => label }
+      },
+      getByRole(role, options) {
+        assert.equal(role, 'region')
+        assert.equal(options.name, label)
+        assert.equal(options.exact, true)
+        return catalog
+      }
+    }
+    assert.equal(await nativeSkillsCatalog(page), catalog)
+  })
+}
+
+test('native catalog rejects ambiguous observed titles', async () => {
+  const page = { getByText: () => ({ waitFor: async () => {}, count: async () => 2 }) }
+  await assert.rejects(() => nativeSkillsCatalog(page), /one visible native catalog/)
+})
 
 function startup({ readyAfter = Infinity, transparent = false } = {}) {
   let polls = 0
