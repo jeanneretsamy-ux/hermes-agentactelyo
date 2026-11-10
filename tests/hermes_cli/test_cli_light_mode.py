@@ -311,6 +311,7 @@ _CHILD_SRC = r"""
 import sys, os
 sys.path.insert(0, os.environ["HERMES_REPO"])
 import cli
+print("READY:osc11", flush=True)
 bg = cli._query_osc11_background()
 print("RESULT:" + repr(bg), flush=True)
 # Drain anything left in the tty buffer — must be empty (no leak).
@@ -329,37 +330,55 @@ print("LEFTOVER:" + repr(buf), flush=True)
 """
 
 
-def _run_osc11_child(reply_fn, repo_root, timeout=8.0):
-    """Fork a PTY child running _query_osc11_background().
+def _run_osc11_child(reply_fn, repo_root, timeout=8.0, startup_timeout=60.0):
+    """Exec a PTY child running _query_osc11_background().
 
     reply_fn(query_age_seconds) -> bytes to write once, or None to wait.
     Returns (result_line, leftover_line).
     """
     import pty
+    import subprocess
     import time as _time
 
-    env = dict(_os.environ, HERMES_REPO=str(repo_root))
+    # Suppress import-time theme probing; the explicit query below remains real.
+    env = dict(_os.environ, HERMES_REPO=str(repo_root), HERMES_LIGHT="0")
     for var in ("SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY"):
         env.pop(var, None)
-    pid, master = pty.fork()
-    if pid == 0:  # child
-        _os.execvpe(_sys.executable, [_sys.executable, "-c", _CHILD_SRC], env)
+    # No Python code between fork and exec: macOS runners have background
+    # threads, so pty.fork() can inherit a locked interpreter/runtime state.
+    master, slave = pty.openpty()
+    try:
+        child = subprocess.Popen(
+            [_sys.executable, "-u", "-c", _CHILD_SRC], env=env,
+            stdin=slave, stdout=slave, stderr=slave, start_new_session=True,
+        )
+    except BaseException:
+        _os.close(master)
+        raise
+    finally:
+        _os.close(slave)
     _os.set_blocking(master, False)
     out = b""
     answered = 0
     query_at = None
-    t0 = _time.monotonic()
+    deadline = _time.monotonic() + startup_timeout
+    ready = False
+    complete = False
     try:
-        while _time.monotonic() - t0 < timeout:
+        while _time.monotonic() < deadline:
+            chunk = b""
             try:
                 chunk = _os.read(master, 1024)
                 if chunk:
                     out += chunk
             except (BlockingIOError, OSError):
                 pass
-            # importing cli primes _detect_light_mode() which issues its own
-            # OSC 11 query before the explicit call — answer each query.
-            if query_at is None and out.count(b"\x1b]11;?") > answered:
+            # Import time is not terminal-response time. Keep both bounded,
+            # and start the protocol deadline only after the child is ready.
+            if not ready and b"READY:osc11" in out:
+                ready = True
+                deadline = _time.monotonic() + timeout
+            if ready and query_at is None and out.count(b"\x1b]11;?") > answered:
                 query_at = _time.monotonic()
             if query_at is not None:
                 payload = reply_fn(_time.monotonic() - query_at)
@@ -368,6 +387,9 @@ def _run_osc11_child(reply_fn, repo_root, timeout=8.0):
                     answered += 1
                     query_at = None
             if b"LEFTOVER:" in out and out.rstrip().endswith(b"'"):
+                complete = True
+                break
+            if child.poll() is not None and not chunk:
                 break
             _time.sleep(0.005)
     finally:
@@ -376,11 +398,19 @@ def _run_osc11_child(reply_fn, repo_root, timeout=8.0):
         except OSError:
             pass
         try:
-            _os.waitpid(pid, 0)
-        except ChildProcessError:
-            pass
+            child.wait(timeout=2.0)
+        except subprocess.TimeoutExpired:
+            child.terminate()
+            try:
+                child.wait(timeout=2.0)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait(timeout=2.0)
     text = out.decode("utf-8", "replace")
     print("child raw output:", repr(text))  # aids debugging on failure
+    assert ready, f"CLI child did not become ready (exit={child.returncode}): {text!r}"
+    assert complete, f"Terminal query did not complete (exit={child.returncode}): {text!r}"
+    assert child.returncode == 0, f"CLI child exited abnormally: {child.returncode}"
     result = leftover = None
     for line in text.splitlines():
         # The PTY echoes the query bytes onto the same line as the first
@@ -426,5 +456,22 @@ class TestOsc11Da1Fence:
         """Terminal that answers nothing: give up at the safety-net
         deadline with no leftovers."""
         result, leftover = _run_osc11_child(lambda age: None, repo_root)
+        assert result == "None"
+        assert leftover == "b''"
+
+
+@pytest.mark.platforms("posix")
+class TestOsc11Harness:
+    def test_slow_cli_startup_does_not_consume_terminal_deadline(self, repo_root, monkeypatch):
+        # Longer than the protocol deadline, but still inside the independent
+        # startup budget. The real CLI and real terminal query both execute.
+        monkeypatch.setitem(
+            _run_osc11_child.__globals__, "_CHILD_SRC",
+            "import time\ntime.sleep(2.2)\n" + _CHILD_SRC,
+        )
+        result, leftover = _run_osc11_child(
+            lambda age: b"\x1b[?62;22c", repo_root,
+            timeout=2.0, startup_timeout=60.0,
+        )
         assert result == "None"
         assert leftover == "b''"
