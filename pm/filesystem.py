@@ -108,6 +108,8 @@ def remove_tree(path: Path) -> None:
     would follow a symlink out of the tree. Lives here, not in ``hermes_cli``: PM installs run
     before the rest of the tree exists (the Docker toolchain stage copies only ``pm/``).
     """
+    path = extended_path(path)
+
     def _retry_writable(func, failed, error):
         error = error[1] if isinstance(error, tuple) else error
         if os.name != "nt" or func not in (os.unlink, os.rmdir) or not isinstance(error, PermissionError):

@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from pm.filesystem import extended_path
+from pm.filesystem import extended_path, remove_tree
 from pm.store import tree_digest
 from scripts.bundles.native_prepared import _check_links, _owned
 
@@ -56,3 +56,19 @@ def test_link_escape_is_still_rejected(tmp_path):
         _check_links(root, root)
     with pytest.raises(ValueError, match="escaped"):
         _owned(Path("relative"), root)
+
+
+@pytest.mark.platforms("windows")
+def test_rebuild_removes_only_its_long_readonly_cache_tree(tmp_path):
+    root = tmp_path / "owned-build"
+    outside = tmp_path / "preserved.txt"
+    outside.write_text("keep")
+    folder = extended_path(root) / ("nested_" + "x" * 120)
+    folder.mkdir(parents=True)
+    cache = folder / ("module_" + "y" * 120 + ".pyc")
+    cache.write_bytes(b"cache")
+    cache.chmod(0o444)
+    assert root.resolve().is_relative_to(tmp_path.resolve())
+    remove_tree(root)
+    assert not root.exists()
+    assert outside.read_text() == "keep"
