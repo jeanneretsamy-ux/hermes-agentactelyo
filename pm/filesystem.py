@@ -18,9 +18,24 @@ import time
 _LOCK_POLL_SECONDS = 0.05
 
 
+def extended_path(path: Path) -> Path:
+    """Absolute filesystem spelling without resolving or following links.
+
+    Windows cache and wheel filenames can exceed MAX_PATH even when their
+    source files do not. Keep filesystem operations independent of OS policy.
+    """
+    path = Path(os.path.abspath(path))
+    value = str(path)
+    if os.name != "nt" or value.startswith("\\\\?\\"):
+        return path
+    if value.startswith("\\\\"):
+        return Path("\\\\?\\UNC\\" + value[2:])
+    return Path("\\\\?\\" + value)
+
+
 def is_junction(path: Path) -> bool:
     """Keep junctions opaque even before Python 3.12's Path.is_junction exists."""
-    return os.name == "nt" and path.lstat().st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT
+    return os.name == "nt" and extended_path(path).lstat().st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT
 
 
 def lock_fd(fd: int, *, wait: bool, timeout: float | None = None) -> bool:

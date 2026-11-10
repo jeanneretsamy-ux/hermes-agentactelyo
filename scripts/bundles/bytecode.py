@@ -28,9 +28,9 @@ the baked roots must have a pyc. Unparseable fixtures (deliberately
 invalid test data) are counted and skipped, not failed.
 """
 
-import os
 import subprocess
 from pathlib import Path
+from pm.filesystem import extended_path
 
 MARKER = ".hermes-baked-pycache"
 
@@ -41,13 +41,7 @@ def _filesystem_root(root: Path) -> Path:
     A source path may fit MAX_PATH while its adjacent cache filename does not.
     Extended absolute paths avoid depending on the machine's long-path policy.
     """
-    root = Path(root).resolve()
-    value = str(root)
-    if os.name != "nt" or value.startswith("\\\\?\\"):
-        return root
-    if value.startswith("\\\\"):
-        return Path("\\\\?\\UNC\\" + value[2:])
-    return Path("\\\\?\\" + value)
+    return extended_path(Path(root).resolve())
 
 
 def _import_roots(root: Path) -> list[Path]:
