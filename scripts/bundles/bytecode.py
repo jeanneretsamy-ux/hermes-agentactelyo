@@ -28,10 +28,26 @@ the baked roots must have a pyc. Unparseable fixtures (deliberately
 invalid test data) are counted and skipped, not failed.
 """
 
+import os
 import subprocess
 from pathlib import Path
 
 MARKER = ".hermes-baked-pycache"
+
+
+def _filesystem_root(root: Path) -> Path:
+    """Keep cache_from_source and compileall atomic temporary names usable on Windows.
+
+    A source path may fit MAX_PATH while its adjacent cache filename does not.
+    Extended absolute paths avoid depending on the machine's long-path policy.
+    """
+    root = Path(root).resolve()
+    value = str(root)
+    if os.name != "nt" or value.startswith("\\\\?\\"):
+        return root
+    if value.startswith("\\\\"):
+        return Path("\\\\?\\UNC\\" + value[2:])
+    return Path("\\\\?\\" + value)
 
 
 def _import_roots(root: Path) -> list[Path]:
@@ -78,7 +94,7 @@ def bake_bytecode(root: Path, python: Path) -> dict:
     """Compile every payload module with the staged interpreter and seal the
     caches read-only. ``root`` is the payload root; ``python`` MUST be the
     payload's own staged interpreter binary."""
-    root = Path(root).resolve()
+    root = _filesystem_root(root)
     python = Path(python).resolve()
     if not python.is_file():
         raise FileNotFoundError(f"staged interpreter is missing: {python}")
