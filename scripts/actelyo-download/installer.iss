@@ -52,23 +52,7 @@ Name: "{group}\Actelyo Law Harness"; Filename: "{app}\Actelyo Law Harness.exe"; 
 Name: "{userdesktop}\Actelyo Law Harness"; Filename: "{app}\Actelyo Law Harness.exe"; IconFilename: "{app}\Actelyo Law Harness.exe"; Tasks: desktopicon
 
 [Code]
-function RuntimeDllReady(const Name: String): Boolean;
-var
-  VersionMS, VersionLS, RequiredMS: Cardinal;
-begin
-  Result := False;
-  if not GetVersionNumbers(ExpandConstant('{sys}\') + Name, VersionMS, VersionLS) then
-    Exit;
-  RequiredMS := {#VCRuntimeMajor} * 65536 + {#VCRuntimeMinor};
-  Result := (VersionMS > RequiredMS) or
-    ((VersionMS = RequiredMS) and (VersionLS div 65536 >= {#VCRuntimeBuild}));
-end;
-
-function VCRuntimeReady: Boolean;
-begin
-  Result := RuntimeDllReady('vcruntime140.dll') and
-    RuntimeDllReady('vcruntime140_1.dll') and RuntimeDllReady('msvcp140.dll');
-end;
+#include "runtime-check.iss"
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
