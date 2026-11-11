@@ -1,0 +1,38 @@
+name: Actelyo terminal POSIX qualification
+
+on:
+  push:
+    branches: [codex/real-ai-settings-20261109]
+    paths:
+      - tests/hermes_cli/test_cli_light_mode.py
+      - .github/workflows/actelyo-terminal-posix-qa.yml
+  pull_request:
+    paths:
+      - tests/hermes_cli/test_cli_light_mode.py
+      - .github/workflows/actelyo-terminal-posix-qa.yml
+
+permissions:
+  contents: read
+
+jobs:
+  terminal:
+    # Standard runners are free only in public repositories. Never move this
+    # qualification onto a billed private-repository runner automatically.
+    if: github.event.repository.private == false
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, macos-15-intel]
+    steps:
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+      - uses: ./.github/actions/setup-pm
+        with:
+          extras: '["all", "telegram", "anthropic", "mistral", "fal", "modal", "daytona", "parallel-web"]'
+          test-environment: 'true'
+          save-tools-cache: 'false'
+          save-python-cache: 'false'
+      - name: Run real terminal protocol tests
+        shell: bash
+        run: scripts/run_tests.sh tests/hermes_cli/test_cli_light_mode.py -j 1 -q -k 'TestOsc11Da1Fence or TestOsc11Harness' --file-timeout 300

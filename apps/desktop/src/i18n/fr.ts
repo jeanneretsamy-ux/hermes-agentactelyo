@@ -1626,6 +1626,11 @@ export const frOverrides = {
       backendIdleTimeoutTitle: "Délai d'inactivité du backend"
     },
     customEndpoints: {
+      generationLabel: "Réglages fins de génération",
+      generationHint: "Choisissez Chat Completions avant de modifier ces réglages. Un champ vide garde le réglage du moteur. À température zéro, le choix est déterministe. Les changements de modèle s’appliquent aux nouvelles sessions.",
+      generationAdapter: "Adaptateur de génération",
+      generationReset: "Réglages du moteur",
+
       presetLabel: 'Fournisseurs préconfigurés',
       presetNotice: 'Utilisez votre propre clé API et testez le catalogue réel avant d’enregistrer. Un routeur local peut transmettre vos documents à des fournisseurs cloud. Pour FreeLLMAPI, configurez PORT=3002 pour éviter Actelyo RAG sur le port 3001. Disponibilité et tarifs dépendent de vos fournisseurs.',
       presetHelp: 'Configuration / clé API',

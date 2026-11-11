@@ -57,6 +57,15 @@ class CustomEndpointUpdate(BaseModel):
     make_default: bool = False
     models: Optional[List[str]] = None
     model_details: Optional[List[CustomEndpointModelDetail]] = None
+    generation_adapter: Optional[Literal["openai-compatible", "llama.cpp"]] = None
+    generation_settings: Optional[Dict[str, Any]] = None
+
+class CurrentGenerationUpdate(BaseModel):
+    model_config = {"extra": "forbid"}
+    expected_revision: str
+    endpoint_id: str
+    generation_adapter: Literal["openai-compatible", "llama.cpp"]
+    generation_settings: Dict[str, Any]
 
 class MessagingPlatformUpdate(BaseModel):
     enabled: Optional[bool] = None

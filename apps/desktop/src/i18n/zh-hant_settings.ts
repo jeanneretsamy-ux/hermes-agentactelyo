@@ -707,6 +707,11 @@ export const zhHantSettings = {
       backendIdleTimeoutTitle: '後端閒置逾時（毫秒）'
     },
     customEndpoints: {
+      generationLabel: "生成設定",
+      generationHint: "編輯前請選擇 Chat Completions。空欄位使用引擎預設值。變更適用於新工作階段。",
+      generationAdapter: "取樣介面",
+      generationReset: "使用引擎預設值",
+
       active: '已啟用',
       apiKeySet: '已設定 API 金鑰',
       use: '使用',

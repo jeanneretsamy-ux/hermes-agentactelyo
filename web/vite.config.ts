@@ -82,7 +82,7 @@ function hermesDevToken(): Plugin {
 export default defineConfig({
   plugins: [
     react(),
-    babel({ presets: [compilerPreset()] }),
+    babel({ cwd: configDir, presets: [compilerPreset()] }),
     tailwindcss(),
     hermesDevToken(),
   ],

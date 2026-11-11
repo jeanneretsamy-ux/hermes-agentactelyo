@@ -11,6 +11,7 @@ import tomllib
 from pathlib import Path
 
 from pm.store import current_target, tree_digest
+from pm.filesystem import extended_path
 from scripts.build.inputs import AgentInputs, RESOURCE_ENV
 
 
@@ -37,11 +38,13 @@ def preparation_lock(out: Path):
 
 
 def _digest(path: Path) -> str:
+    path = extended_path(path)
     return tree_digest(path) if path.is_dir() else hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _source_digest(code: Path) -> str:
     """Ignore only assembly-owned products, leaving admitted source immutable."""
+    code = extended_path(code)
     project = tomllib.loads((code / "pyproject.toml").read_text(encoding="utf-8-sig"))["project"]
     dist = re.sub(r"[-_.]+", "_", project["name"])
     generated = {"install-stamp.json", "hermes_cli/tui_dist", "hermes_cli/web_dist",
@@ -63,14 +66,18 @@ def _source_digest(code: Path) -> str:
 
 
 def _owned(path: Path, out: Path) -> None:
-    if not path.is_absolute() or not path.exists() or not path.resolve().is_relative_to(out):
+    if not path.is_absolute():
+        raise ValueError(f"missing or escaped prepared path: {path}")
+    path = extended_path(path)
+    out = extended_path(out.resolve())
+    if not path.exists() or not path.resolve().is_relative_to(out):
         raise ValueError(f"missing or escaped prepared path: {path}")
 
 
 def _check_links(path: Path, out: Path) -> None:
     from pm.filesystem import is_junction
 
-    for directory, dirs, files in os.walk(path):
+    for directory, dirs, files in os.walk(extended_path(path)):
         for name in dirs + files:
             entry = Path(directory) / name
             if entry.is_symlink() or is_junction(entry):

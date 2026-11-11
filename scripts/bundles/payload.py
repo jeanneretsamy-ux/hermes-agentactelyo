@@ -10,6 +10,7 @@ import sys
 import tarfile
 import tempfile
 from pathlib import Path
+from pm.filesystem import remove_tree
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -42,7 +43,7 @@ def snapshot(repo: Path, ref: str, destination: Path, exclude: tuple[str, ...] =
             ["git", "archive", "--format=tar", "--output", str(archive), ref, "--", *pathspecs],
             cwd=repo, check=True)
         if destination.exists():
-            shutil.rmtree(destination)
+            remove_tree(destination)
         destination.mkdir(parents=True)
         with tarfile.open(archive) as source:
             source.extractall(destination, filter="data")

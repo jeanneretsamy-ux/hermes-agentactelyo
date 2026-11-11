@@ -84,6 +84,10 @@ jobs:
           if ($env:ACTELYO_SOURCE_SHA -notmatch '^[0-9a-fA-F]{40}$') { throw 'Product source must be a full commit SHA' }
           Copy-Item scripts/actelyo-download/verify-installed.mjs "$env:RUNNER_TEMP/verify-actelyo-installed.mjs"
           Copy-Item scripts/actelyo-download/verify-finance.mjs "$env:RUNNER_TEMP/verify-actelyo-finance.mjs"
+          $packaging = Join-Path $env:RUNNER_TEMP 'actelyo-installer-source'
+          New-Item -ItemType Directory -Path "$packaging/scripts/actelyo-download" -Force | Out-Null
+          Copy-Item scripts/actelyo-download/installer.iss,scripts/actelyo-download/Get-VCRuntime.ps1,scripts/actelyo-download/vc-runtime.json "$packaging/scripts/actelyo-download/"
+          "ACTELYO_PACKAGING_SOURCE=$packaging" >> $env:GITHUB_ENV
           "ACTELYO_FINANCE_VERIFIER=$env:RUNNER_TEMP/verify-actelyo-finance.mjs" >> $env:GITHUB_ENV
           git fetch origin $env:ACTELYO_SOURCE_SHA --depth=1
           if ($LASTEXITCODE -ne 0) { throw 'Product source unavailable' }
@@ -185,7 +189,12 @@ jobs:
             $compiler = Join-Path $innoRoot 'ISCC.exe'
             if (-not (Test-Path $compiler)) { throw 'Pinned Inno Setup 7 compiler unavailable after installation' }
             $compileLog = Join-Path $releaseDir 'installer-compile.log'
-            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" "/DBuildVersion=$env:ACTELYO_RELEASE_VERSION" scripts/actelyo-download/installer.iss 2>&1
+            $packaging = $env:ACTELYO_PACKAGING_SOURCE
+            New-Item -ItemType Directory -Path "$packaging/apps/desktop/assets" -Force | Out-Null
+            Copy-Item apps/desktop/assets/icon.ico "$packaging/apps/desktop/assets/icon.ico"
+            Copy-Item LICENSE "$packaging/LICENSE"
+            $runtime = & "$packaging/scripts/actelyo-download/Get-VCRuntime.ps1" -Destination (Join-Path $env:RUNNER_TEMP 'vc_redist.x64.exe')
+            $compileOutput = & $compiler "/DAppSource=$appSource" "/DReleaseDir=$releaseDir" "/DBuildVersion=$env:ACTELYO_RELEASE_VERSION" "/DVCRedistSource=$($runtime.path)" "/DVCRedistSHA256=$($runtime.sha256)" "/DVCRuntimeMajor=$($runtime.major)" "/DVCRuntimeMinor=$($runtime.minor)" "/DVCRuntimeBuild=$($runtime.build)" "$packaging/scripts/actelyo-download/installer.iss" 2>&1
             $compileExitCode = $LASTEXITCODE
             $compileOutput | Set-Content -LiteralPath $compileLog
             $compileOutput | Write-Output

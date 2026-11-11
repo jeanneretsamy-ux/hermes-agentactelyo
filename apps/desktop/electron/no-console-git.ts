@@ -151,6 +151,12 @@ export function noConsoleGitEnv(base: NodeJS.ProcessEnv | undefined, gitBin: str
   const env: NodeJS.ProcessEnv = {}
 
   for (const [key, value] of Object.entries(base || {})) {
+    // This host is non-interactive. Never inherit a command-based pager;
+    // simple-git 4 deliberately rejects it rather than enabling unsafePager.
+    if (/^(git_pager|pager)$/i.test(key)) {
+      continue
+    }
+
     if (value !== undefined) {
       env[key] = value
     }

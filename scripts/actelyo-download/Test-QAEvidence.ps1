@@ -17,6 +17,23 @@ try {
   if (!$rejected) { throw 'Oversized evidence was not refused' }
   $empty = & (Join-Path $PSScriptRoot 'Select-QAEvidence.ps1') -Root (Join-Path $fixture 'absent')
   if ($empty.Files.Count -ne 0 -or $empty.TotalBytes -ne 0) { throw 'Missing failure evidence directory must be allowed' }
+  $logPath = Join-Path $fixture 'installer.log'
+  [IO.File]::WriteAllText($logPath, ('Installed file and verified checksum.' + [Environment]::NewLine) * 60000)
+  $originalHash = (Get-FileHash -LiteralPath $logPath).Hash
+  $compressed = & (Join-Path $PSScriptRoot 'Select-QAEvidence.ps1') -Root $fixture -MaximumBytes 64KB
+  if (!$compressed.LogsCompressed -or $compressed.TotalBytes -gt 64KB) { throw 'Large compressible logs did not fit the unchanged budget' }
+  if (@($compressed.Files | Where-Object { $_ -match '\.(exe|part01)$' }).Count) { throw 'Installer entered compressed evidence' }
+  $archive = [IO.Compression.ZipFile]::OpenRead(@($compressed.Files | Where-Object { $_ -like '*.zip' })[0])
+  try {
+    $entry = $archive.GetEntry('installer.log')
+    if (!$entry -or $entry.Length -ne (Get-Item -LiteralPath $logPath).Length) { throw 'Compressed log incomplete' }
+    $inputStream = $entry.Open()
+    try {
+      $sha = [Security.Cryptography.SHA256]::Create()
+      try { $restoredHash = [BitConverter]::ToString($sha.ComputeHash($inputStream)).Replace('-','') } finally { $sha.Dispose() }
+    } finally { $inputStream.Dispose() }
+    if ($restoredHash -ne $originalHash -or (Get-FileHash -LiteralPath $logPath).Hash -ne $originalHash) { throw 'Original or archived log changed' }
+  } finally { $archive.Dispose() }
   Write-Output 'PASS QA evidence: original reports retained, installer excluded, size limit enforced'
 } finally {
   $resolved = [IO.Path]::GetFullPath($fixture)

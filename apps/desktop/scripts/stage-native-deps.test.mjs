@@ -73,7 +73,7 @@ test('a missing Linux HUD toolchain leaves no empty package directories', () => 
     const distDir = join(tmp, 'dist')
     assert.equal(buildHudModifierMonitor({ source: join(tmp, 'missing-source'), distDir, platform: 'linux', arch: 'x64' }), null)
     assert.equal(existsSync(join(distDir, 'native')), false)
-    assert.match(warnings.join('\n'), /desktop packaging continues/)
+    assert.match(warnings.join('\n'), /modifier tap unavailable/)
   } finally {
     console.warn = originalWarn
     fs.rmSync(tmp, { recursive: true, force: true })
@@ -405,7 +405,7 @@ test('validation rejects a staged binary with the wrong platform magic', () => {
 // ─── stageGetWindowsInto tests ──────────────────────────────────────
 
 /** Create a minimal fake get-windows source tree in a temp dir. */
-function makeFakeGetWindows(srcRoot, { version = '9.3.0', bindings = [] } = {}) {
+function makeFakeGetWindows(srcRoot, { version = '10.0.0', bindings = [] } = {}) {
   fs.mkdirSync(join(srcRoot, 'lib'), { recursive: true })
   fs.writeFileSync(join(srcRoot, 'package.json'), JSON.stringify({ name: 'get-windows', version, main: 'index.js' }))
   fs.writeFileSync(join(srcRoot, 'index.js'), 'export {};')
@@ -490,7 +490,7 @@ test('win32-x64 staging degrades to the fail-soft JS surface when only foreign b
   }
 })
 
-test('win32-arm64 staging omits incompatible bindings and keeps the fail-soft JS surface', () => {
+test('win32-arm64 staging omits incompatible bindings and preserves v10 empty results', async () => {
   const tmp = fs.mkdtempSync(join(os.tmpdir(), 'hermes-stage-'))
   try {
     const srcRoot = join(tmp, 'get-windows')
@@ -507,6 +507,11 @@ test('win32-arm64 staging omits incompatible bindings and keeps the fail-soft JS
 
     assert.ok(existsSync(join(destRoot, 'lib', 'windows.js')))
     assert.ok(!existsSync(join(destRoot, 'lib', 'binding')))
+    const windows = await import(pathToFileURL(join(destRoot, 'lib', 'windows.js')).href)
+    assert.equal(await windows.activeWindow(), undefined)
+    assert.equal(windows.activeWindowSync(), undefined)
+    assert.deepEqual(await windows.openWindows(), [])
+    assert.deepEqual(windows.openWindowsSync(), [])
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true })
   }
@@ -624,7 +629,7 @@ test('staging refuses a get-windows version the lib/windows.js rewrite was not v
 
     assert.throws(
       () => stageGetWindowsInto(srcRoot, destRoot, { platform: 'darwin' }),
-      /verified against 9\.3\.0/
+      /verified against 10\.0\.0/
     )
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true })

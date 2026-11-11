@@ -68,6 +68,24 @@ def test_bake_rejects_missing_import_root(tmp_path):
         bake_bytecode(tmp_path, Path(sys.executable))
 
 
+@pytest.mark.skipif(os.name != "nt", reason="Windows extended filesystem paths")
+def test_bake_covers_cache_names_beyond_max_path(tmp_path):
+    from importlib.util import cache_from_source
+    from scripts.bundles.bytecode import _filesystem_root
+
+    root = _make_payload(_filesystem_root(tmp_path))
+    folder = root / "venv" / f"lib/python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages" / "pronunciation_dictionary" / "types"
+    folder.mkdir(parents=True)
+    module = folder / ("body_add_a_pronunciation_dictionary_" + "workspace_access_" * 6 + ".py")
+    module.write_text("VALUE = 'real long path module'\n")
+    cache = Path(cache_from_source(module))
+    assert len(str(cache).removeprefix("\\\\?\\")) > 260
+    result = bake_bytecode(root, Path(sys.executable))
+    assert cache.is_file()
+    assert cache.read_bytes()[4:8] == b"\x01\x00\x00\x00"
+    assert result["modules"] >= 4
+
+
 def _load_wrapper():
     """Import the wrapper with placeholders substituted, like the build does."""
     from scripts.build.launchers import render_wrapper
@@ -102,11 +120,14 @@ def test_launcher_keeps_user_cache_redirect_without_marker(tmp_path):
     payload = _make_payload(tmp_path)
     here = payload / "bin"
     here.mkdir()
-    environ = {"HOME": str(tmp_path / "userhome")}
+    environ = {"HOME": str(tmp_path / "userhome"),
+               "LOCALAPPDATA": str(tmp_path / "userlocal")}
+    expected = (tmp_path / "userlocal" / "hermes" / "pycache"
+                if sys.platform == "win32" else
+                tmp_path / "userhome" / ".cache" / "hermes-pycache")
     original = sys.pycache_prefix
     try:
         ns["configure"](str(here), environ=environ)
-        assert environ["PYTHONPYCACHEPREFIX"] == str(
-            tmp_path / "userhome" / ".cache" / "hermes-pycache")
+        assert environ["PYTHONPYCACHEPREFIX"] == str(expected)
     finally:
         sys.pycache_prefix = original

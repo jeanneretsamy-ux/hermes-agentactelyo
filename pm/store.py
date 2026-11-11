@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import IO
 
-from pm.filesystem import is_junction
+from pm.filesystem import extended_path, is_junction
 
 
 
@@ -314,6 +314,7 @@ def tree_digest(root: Path) -> str:
     state, not package bytes — the digest is over what pm published."""
     import hashlib
 
+    root = extended_path(root)
     files: list[tuple[str, Path]] = []
     for dirpath, dirnames, filenames in os.walk(root):
         descend = []

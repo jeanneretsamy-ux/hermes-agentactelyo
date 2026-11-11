@@ -1620,6 +1620,11 @@ export const deOverrides = {
       backendIdleTimeoutTitle: 'Leerlauf-Timeout des Backends'
     },
     customEndpoints: {
+      generationLabel: "Generierungseinstellungen",
+      generationHint: "Vor dem Bearbeiten Chat Completions wählen. Leere Felder verwenden die Engine-Standardwerte. Änderungen gelten für neue Sitzungen.",
+      generationAdapter: "Sampling-Adapter",
+      generationReset: "Engine-Standardwerte",
+
       active: 'Aktiv',
       apiKeySet: 'API-Schlüssel gesetzt',
       use: 'Verwenden',

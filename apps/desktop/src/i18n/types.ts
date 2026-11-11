@@ -1074,6 +1074,11 @@ export interface Translations {
       backendIdleTimeoutTitle: string
     }
     customEndpoints: {
+      generationLabel: string
+      generationHint: string
+      generationAdapter: string
+      generationReset: string
+
       presetLabel?: string
       presetNotice?: string
       presetHelp?: string
