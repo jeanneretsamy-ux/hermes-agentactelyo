@@ -5,6 +5,7 @@ import { connect } from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 
+import { simpleGit } from 'simple-git'
 import { expect, test, vi } from 'vitest'
 
 import {
@@ -12,13 +13,54 @@ import {
   execGit,
   killTimedGitChildren,
   NO_CONSOLE_GIT_SCRIPT,
+  noConsoleGitEnv,
   planNoConsoleGitSpawn,
   resolveNoConsolePython,
   simpleGitBinary
 } from './no-console-git'
 
+const pythonCommand = process.env.HERMES_DESKTOP_PYTHON || (process.platform === 'win32' ? 'python' : 'python3')
+
 const gitArgs = ['-c', 'windows.appendAtomically=false', 'merge-base', '--is-ancestor', 'origin/main', 'HEAD']
 const gitBin = 'C:\\Program Files\\Git\\cmd\\git.exe'
+
+test('non-interactive git drops inherited pager commands while preserving its executable environment', () => {
+  const original = { Path: 'C:\\tools', GIT_PAGER: 'untrusted-pager', pager: 'another-pager', LANG: 'fr_FR.UTF-8' }
+  const env = noConsoleGitEnv(original, gitBin)
+
+  assert.equal(env.GIT_PAGER, undefined)
+  assert.equal(env.pager, undefined)
+  assert.equal(env.Path, original.Path)
+  assert.equal(env.LANG, original.LANG)
+  assert.equal(env.GIT_TERMINAL_PROMPT, '0')
+  assert.equal(JSON.parse(env.HERMES_GIT_ARGV0!), gitBin)
+  assert.equal(original.GIT_PAGER, 'untrusted-pager')
+})
+
+test.runIf(process.platform === 'win32')('simple-git 4 runs the real no-console Python host with only terminal prompting allowed', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'git-host-integration-'))
+
+  try {
+    const python = execFileSync(pythonCommand, ['-c', 'import sys; print(sys.executable)'], { encoding: 'utf8' }).trim()
+    const binary = execFileSync('where.exe', ['git'], { encoding: 'utf8' }).split(/\r?\n/).find(Boolean)!
+    const script = path.join(dir, 'host.py')
+    fs.writeFileSync(script, NO_CONSOLE_GIT_SCRIPT)
+
+    const git = simpleGit({
+      baseDir: dir,
+      binary: [python, script],
+      allowEnvironment: ['GIT_TERMINAL_PROMPT'],
+      unsafe: { allowUnsafeCustomBinary: true }
+    }).env(noConsoleGitEnv({ SystemRoot: process.env.SystemRoot, PATH: process.env.PATH, TEMP: dir, TMP: dir }, binary))
+
+    assert.equal((await git.raw(['version'])).trim(), execFileSync('git', ['version'], { encoding: 'utf8' }).trim())
+    await git.init()
+    fs.writeFileSync(path.join(dir, 'actual-file.txt'), 'Real local file\n')
+    assert.deepEqual((await git.status()).not_added, ['actual-file.txt', 'host.py'])
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+})
 
 // A node "git" that spawns a grandchild owning a TCP listener, then hangs:
 // the listener only goes away if the whole tree is killed.
@@ -44,7 +86,7 @@ function hangingTreeFixture() {
   )
 
   if (process.platform === 'win32') {
-    const python = execFileSync('python3', ['-c', 'import sys; print(sys.executable)'], { encoding: 'utf8' }).trim()
+    const python = execFileSync(pythonCommand, ['-c', 'import sys; print(sys.executable)'], { encoding: 'utf8' }).trim()
     vi.stubEnv('HERMES_DESKTOP_PYTHON', python)
   }
 
@@ -217,7 +259,7 @@ test('host script forwards git argv unchanged and sets CREATE_NO_WINDOW', () => 
 
     fs.writeFileSync(script, NO_CONSOLE_GIT_SCRIPT)
 
-    const out = execFileSync('python3', [script, ...gitArgs], {
+    const out = execFileSync(pythonCommand, [script, ...gitArgs], {
       encoding: 'utf8',
       env: {
         ...process.env,
