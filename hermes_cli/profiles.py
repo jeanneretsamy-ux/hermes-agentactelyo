@@ -803,7 +803,11 @@ def _seed_model_config(profile_dir: Path) -> None:
         from hermes_constants import get_hermes_home
         from hermes_cli.config import atomic_config_write, read_user_config_raw
         source = get_hermes_home() / "config.yaml"
-        seed = launch_model_seed(read_user_config_raw(source)) if source.is_file() else {}
+        source_cfg = read_user_config_raw(source) if source.is_file() else {}
+        seed = launch_model_seed(source_cfg)
+        if not seed and not any(source_cfg.get(k) for k in ("provider", "base_url", "api_base")):
+            from hermes_cli.actelyo_defaults import actelyo_local_model_seed
+            seed = actelyo_local_model_seed()
         if seed:
             atomic_config_write(config_path, seed)
 
