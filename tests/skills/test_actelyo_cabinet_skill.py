@@ -3,6 +3,9 @@ import importlib.util
 import json
 from pathlib import Path
 import threading
+import os
+import subprocess
+import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -40,7 +43,7 @@ def test_real_http_authentication_receipt_and_cancellation(cabinet, tmp_path, ca
             calls.append(body)
             self.send_response(200)
             self.end_headers()
-            result = {"cancelled": True} if state["cancelled"] else {"content": [{"type": "text", "text": json.dumps({"id": "native-object", "status": "draft"})}]}
+            result = {"cancelled": True} if state["cancelled"] else {"content": [{"type": "text", "text": json.dumps({"id": "native-object", "status": "draft", "label": "Réunion 😀"})}]}
             self.wfile.write(json.dumps(result).encode())
 
         def log_message(self, *args):
@@ -57,20 +60,29 @@ def test_real_http_authentication_receipt_and_cancellation(cabinet, tmp_path, ca
         result = client.call("snapshot", {}, "observed-dossier")
         assert result["confirmed"] and result["result"]["id"] == "native-object"
         assert calls[-1]["dossierId"] == "observed-dossier"
+        input_file = tmp_path / "input.json"
+        input_file.write_text("{}")
+        piped = subprocess.run([sys.executable, cabinet.__file__, "--bridge", str(bridge),
+            "call", "snapshot", "--input-file", str(input_file), "--dossier", "observed-dossier"],
+            env={**os.environ,"PYTHONIOENCODING":"cp1252"}, capture_output=True, encoding="ascii", timeout=10)
+        assert piped.returncode == 0, piped.stderr
+        assert json.loads(piped.stdout)["result"]["label"] == "Réunion 😀"
+        assert token not in piped.stdout
+        successful_calls = len(calls)
         state["cancelled"] = True
         input_file = tmp_path / "input.json"
         input_file.write_text("{}")
         assert cabinet.main(["--bridge", str(bridge), "call", "snapshot", "--input-file", str(input_file)]) == 3
         output = capsys.readouterr().out
         assert token not in output and json.loads(output)["confirmed"] is False
-        assert len(calls) == 2
+        assert len(calls) == successful_calls + 1
         state["available"] = False
         with pytest.raises(ValueError, match="update"):
             client.status()
         state["available"], state["redirect"] = True, True
         with pytest.raises(ValueError, match="redirect"):
             client.call("snapshot", {})
-        assert len(calls) == 2
+        assert len(calls) == successful_calls + 1
     finally:
         server.shutdown()
         server.server_close()

@@ -110,7 +110,8 @@ def main(argv=None):
             if args.input_file.stat().st_size > 100000:
                 raise ValueError("Input JSON too large.")
             result = client.call(args.action, json.loads(args.input_file.read_text(encoding="utf-8-sig")), args.dossier)
-        text = json.dumps(result, ensure_ascii=False, indent=2)
+        # JSON escapes preserve all Unicode through Windows legacy pipe encodings.
+        text = json.dumps(result, ensure_ascii=True, indent=2)
         if args.receipt:
             with args.receipt.open("x", encoding="utf-8") as output:
                 output.write(text)
