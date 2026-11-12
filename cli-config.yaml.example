@@ -70,12 +70,13 @@ plugins:
 # Model Configuration
 # =============================================================================
 model:
-  # Default model to use (can be overridden with --model flag)
+  # Select a real chat model loaded in Actelyo LLM (or use --model).
+  # The first-run template never guesses a model ID or selects a cloud model.
   # Both "default" and "model" work as the key name here.
-  default: "anthropic/claude-opus-4.6"
+  default: ""
   
   # Inference provider selection:
-  #   "auto"         - Auto-detect from credentials (default)
+  #   "auto"         - Auto-detect from credentials (optional, explicit choice)
   #   "openrouter"   - OpenRouter (requires: OPENROUTER_API_KEY or OPENAI_API_KEY)
   #   "nous"         - Nous Portal OAuth (requires: hermes auth add nous)
   #   "nous-api"     - Nous Portal API key (requires: NOUS_API_KEY)
@@ -105,11 +106,11 @@ model:
   #   It works with both no-auth and auth-enabled server modes.
   #
   # Can also be overridden for a single invocation with the --provider flag.
-  provider: "auto"
+  provider: "custom"
   
-  # API configuration (falls back to OPENROUTER_API_KEY env var)
-  # api_key: "your-key-here"  # Uncomment to set here instead of .env
-  base_url: "https://openrouter.ai/api/v1"
+  # Actelyo LLM runs on this computer. No API key is required locally.
+  # Other providers remain available through setup; existing profiles are not changed.
+  base_url: "http://127.0.0.1:1235/v1"
 
   # Stream API responses from the provider (default: true). The agent core
   # prefers streaming for every turn — subagents included — for liveness
