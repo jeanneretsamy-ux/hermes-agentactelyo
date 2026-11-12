@@ -4,6 +4,6 @@ ACTELYO_LLM_BASE_URL = "http://127.0.0.1:1235/v1"
 
 
 def actelyo_local_model_seed() -> dict:
-    # An empty ID requires an actual model selection. It is not an invented
-    # catalogue entry and does not authorize cloud fallback or model download.
+    # An empty ID discovers the single loaded LLM from the actual local
+    # catalogue; it never authorizes cloud fallback or a model download.
     return {"model": {"provider": "custom", "base_url": ACTELYO_LLM_BASE_URL, "default": ""}}

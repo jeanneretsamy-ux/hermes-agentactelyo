@@ -439,8 +439,15 @@ def _auto_detect_local_model(base_url: str) -> str:
         url = base_url.rstrip("/")
         resp = requests.get((url if url.endswith("/v1") else url + "/v1") + "/models", timeout=(2, 3))
         if resp.ok:
-            models = resp.json().get("data", [])
-            if len(models) == 1 and models[0].get("id", ""):
+            catalog = resp.json()
+            models = catalog.get("data", [])
+            if catalog.get("actelyo_llm") is True:
+                # Actelyo lists installed models too, including embeddings.
+                # Only one actually loaded language model can serve this chat.
+                models = [item for item in models if isinstance(item, dict)
+                          and item.get("type") == "llm" and item.get("state") == "loaded"]
+            if (len(models) == 1 and isinstance(models[0], dict)
+                    and isinstance(models[0].get("id"), str) and models[0]["id"].strip()):
                 return models[0]["id"]
     except Exception as exc:
         logger.debug("Auto-detect model from %s failed: %s", base_url, exc)
